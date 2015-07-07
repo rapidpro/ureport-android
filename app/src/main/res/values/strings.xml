@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">Ureport</string>
-    <string name="label_login">Login</string>
+
+    <string name="login_username">Username/E-mail</string>
+    <string name="login_password">Password</string>
+    <string name="login_required_field">Campo obrigatório</string>
+    <string name="login">Login</string>
+    <string name="login_facebook">Facebook</string>
+    <string name="login_google">Google+</string>
+    <string name="login_twitter">Login with Twitter</string>
+    <string name="login_skip">Skip Login</string>
+    <string name="login_or">Or</string>
+    <string name="login_sign_up">Don\'t have an account? Sign up</string>
 </resources>

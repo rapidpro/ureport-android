@@ -19,7 +19,13 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':support-android')
     compile 'com.android.support:appcompat-v7:22.2.0'
 }
