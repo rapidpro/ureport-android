@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Ureport</string>
+    <string name="label_login">Login</string>
 </resources>
