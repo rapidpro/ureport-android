@@ -16,6 +16,10 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activities.MainActivity"
+            android:label="@string/label_home" />
+
         <meta-data android:name="AA_DB_NAME" android:value="Ureport.db" />
         <meta-data android:name="AA_DB_VERSION" android:value="1" />
 

@@ -1,99 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"/>
 
-        <br.com.ilhasoft.support.widget.CustomTextInputLayout
+    <ScrollView
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AppTheme.FormMargin">
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/username"
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:hint="@string/sign_up_username"/>
+                android:layout_marginTop="10dp"
+                style="@style/AppTheme.FormMargin">
 
-        </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+                <EditText
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:hint="@string/sign_up_username"/>
 
-        <br.com.ilhasoft.support.widget.CustomTextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/AppTheme.FormMargin">
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
-            <EditText
-                android:id="@+id/email"
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:hint="@string/sign_up_email"/>
+                style="@style/AppTheme.FormMargin">
 
-        </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+                <EditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:hint="@string/sign_up_email"/>
 
-        <br.com.ilhasoft.support.widget.CustomTextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/AppTheme.FormMargin">
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
-            <EditText
-                android:id="@+id/password"
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:hint="@string/login_password"/>
+                style="@style/AppTheme.FormMargin">
 
-        </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="@string/login_password"/>
 
-        <br.com.ilhasoft.support.widget.CustomTextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/AppTheme.FormMargin">
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
-            <EditText
-                android:id="@+id/birthday"
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="date"
-                android:hint="@string/sign_up_birthday"/>
+                style="@style/AppTheme.FormMargin">
 
-        </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+                <EditText
+                    android:id="@+id/birthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="date"
+                    android:hint="@string/sign_up_birthday"/>
+
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
 
-        <Spinner
-            android:id="@+id/country"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            style="@style/Widget.AppCompat.Spinner.Underlined" />
+            <Spinner
+                android:id="@+id/country"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                style="@style/Widget.AppCompat.Spinner.Underlined" />
 
-        <Spinner
-            android:id="@+id/gender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            style="@style/Widget.AppCompat.Spinner.Underlined"/>
+            <Spinner
+                android:id="@+id/gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
-        <Button
-            android:id="@+id/confirm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_up_confirm"
-            android:layout_marginTop="20dp"
-            style="@style/AppTheme.FormMargin"/>
+            <Button
+                android:id="@+id/confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_up_confirm"
+                android:layout_marginTop="20dp"
+                style="@style/AppTheme.FormMargin"/>
 
-    </LinearLayout>
+        </LinearLayout>
 
-</ScrollView>
+    </ScrollView>
+</LinearLayout>

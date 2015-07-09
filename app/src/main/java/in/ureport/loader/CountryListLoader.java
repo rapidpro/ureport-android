@@ -1,6 +1,7 @@
-package in.ureport.tasks;
+package in.ureport.loader;
 
-import android.os.AsyncTask;
+import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,13 +14,17 @@ import in.ureport.models.holders.UserLocale;
 /**
  * Created by ilhasoft on 7/9/15.
  */
-public class ListCountriesTask extends AsyncTask<Void, Void, List<UserLocale>> {
+public class CountryListLoader extends AsyncTaskLoader<List<UserLocale>> {
+
+    public CountryListLoader(Context context) {
+        super(context);
+    }
 
     @Override
-    protected List<UserLocale> doInBackground(Void... voids) {
+    public List<UserLocale> loadInBackground() {
         List<UserLocale> userLocales = new ArrayList<>();
 
-        Locale [] locales = Locale.getAvailableLocales();
+        Locale[] locales = Locale.getAvailableLocales();
         for (Locale locale : locales) {
             String country = locale.getDisplayCountry();
             UserLocale userLocale = new UserLocale(locale);
@@ -43,4 +48,5 @@ public class ListCountriesTask extends AsyncTask<Void, Void, List<UserLocale>> {
             return userLocale.getLocale().getDisplayCountry().compareTo(t1.getLocale().getDisplayCountry());
         }
     }
+
 }

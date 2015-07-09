@@ -1,5 +1,6 @@
 package in.ureport.models;
 
+import android.os.Parcelable;
 import android.support.annotation.StringRes;
 
 import com.activeandroid.Model;
@@ -15,21 +16,6 @@ import in.ureport.R;
  */
 @Table(name = "User")
 public class User extends Model {
-
-    public enum Gender {
-        Male(R.string.user_gender_male),
-        Female(R.string.user_gender_female);
-
-        private int value;
-
-        Gender(@StringRes int value) {
-            this.value = value;
-        }
-
-        public int getStringResource() {
-            return value;
-        }
-    }
 
     @Column(name = "email")
     private String email;
@@ -48,6 +34,8 @@ public class User extends Model {
 
     @Column(name = "gender")
     private Gender gender;
+
+    private Type type;
 
     public String getEmail() {
         return email;
@@ -95,5 +83,47 @@ public class User extends Model {
 
     public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", birthday=" + birthday +
+                ", country='" + country + '\'' +
+                ", gender=" + gender +
+                '}';
+    }
+
+    public enum Gender {
+        Male(R.string.user_gender_male),
+        Female(R.string.user_gender_female);
+
+        private int value;
+
+        Gender(@StringRes int value) {
+            this.value = value;
+        }
+
+        public int getStringResource() {
+            return value;
+        }
+    }
+
+    public enum Type {
+        Ureport,
+        Facebook,
+        Twitter,
+        Google
     }
 }
