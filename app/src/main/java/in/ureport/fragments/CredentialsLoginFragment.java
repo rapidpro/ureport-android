@@ -58,10 +58,10 @@ public class CredentialsLoginFragment extends Fragment {
     }
 
     private boolean validateFields() {
-        boolean usernameCorrect = validator.validateEmpty(username, getString(R.string.login_required_field));
-        boolean passwordCorrect = validator.validateEmpty(password, getString(R.string.login_required_field));
+        boolean validUsername = validator.validateEmpty(username, getString(R.string.error_required_field));
+        boolean validPassword = validator.validateEmpty(password, getString(R.string.error_required_field));
 
-        return usernameCorrect && passwordCorrect;
+        return validUsername && validPassword;
     }
 
     private void setupToolbar(View view) {
