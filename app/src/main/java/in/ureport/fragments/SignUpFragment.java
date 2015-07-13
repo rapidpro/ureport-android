@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,17 +15,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
+import br.com.ilhasoft.support.widget.DatePickerFragment;
 import in.ureport.R;
 import in.ureport.loader.CountryListLoader;
 import in.ureport.managers.ToolbarDesigner;
@@ -36,7 +40,7 @@ import in.ureport.tasks.SaveUserTask;
 /**
  * Created by ilhasoft on 7/9/15.
  */
-public class SignUpFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<UserLocale>> {
+public class SignUpFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<UserLocale>>, DatePickerDialog.OnDateSetListener {
 
     private static final String TAG = "SignUpFragment";
 
@@ -58,7 +62,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         validator = new EditTextValidator();
-        birthdayFormatter = DateFormat.getDateInstance(DateFormat.LONG);
+        birthdayFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
 
         return inflater.inflate(R.layout.fragment_sign_up, container, false);
     }
@@ -69,13 +73,13 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         setupView(view);
     }
 
-
-
     private void setupView(View view) {
         username = (EditText) view.findViewById(R.id.username);
         email = (EditText) view.findViewById(R.id.email);
         password = (EditText) view.findViewById(R.id.password);
+
         birthday = (EditText) view.findViewById(R.id.birthday);
+        birthday.setOnClickListener(onBirthdayClickListener);
 
         gender = (Spinner) view.findViewById(R.id.gender);
         loadUserGenders();
@@ -186,22 +190,6 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         return birthdayAsDate;
     }
 
-    private View.OnClickListener onConfirmClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(isFieldsValid()) {
-                User user = createUser();
-
-                SaveUserTask saveUserTask = new SaveUserTask();
-                saveUserTask.execute(user);
-
-                if(loginListener != null) {
-                    loginListener.userReady(user);
-                }
-            }
-        }
-    };
-
     @Override
     public Loader<List<UserLocale>> onCreateLoader(int id, Bundle args) {
         return new CountryListLoader(getActivity());
@@ -222,4 +210,39 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoaderReset(Loader<List<UserLocale>> loader) {}
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+
+        birthday.setText(birthdayFormatter.format(calendar.getTime()));
+    }
+
+    private View.OnClickListener onBirthdayClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            DatePickerFragment datePickerFragment = new DatePickerFragment();
+            datePickerFragment.setOnDateSetListener(SignUpFragment.this);
+            datePickerFragment.show(getFragmentManager(), "datePickerFragment");
+        }
+    };
+
+    private View.OnClickListener onConfirmClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(isFieldsValid()) {
+                User user = createUser();
+
+                SaveUserTask saveUserTask = new SaveUserTask(getActivity());
+                saveUserTask.execute(user);
+
+                if(loginListener != null) {
+                    loginListener.userReady(user);
+                }
+            }
+        }
+    };
 }
