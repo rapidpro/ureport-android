@@ -23,4 +23,17 @@
     <string name="error_minimum_size">Set a value higher than %1$s characters</string>
     <string name="error_valid_email">Set a valid e-mail</string>
     <string name="label_home">Home</string>
+    <string name="load_message_wait">Wait...</string>
+    <string name="main_stories">Stories</string>
+    <string name="main_polls">Polls</string>
+    <string name="main_news_feed">News Feed</string>
+    <string name="main_menu_home">Home</string>
+    <string name="main_menu_chat">Chat</string>
+    <string name="main_menu_country_programs">Country Programs</string>
+    <string name="main_menu_group_unicef">Unicef</string>
+    <string name="main_menu_subitem_make_donations">Make Donations</string>
+    <string name="main_menu_subitem_buy_goods">Buy goods</string>
+    <string name="main_menu_subitem_embassadors">Embassadors</string>
+    <string name="base_menu_open_drawer">Open Menu</string>
+    <string name="base_menu_close_drawer">Close Menu</string>
 </resources>

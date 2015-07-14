@@ -1,5 +1,6 @@
 package in.ureport.models;
 
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.StringRes;
 
@@ -7,15 +8,16 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import in.ureport.R;
 
 /**
- * Created by ilhasoft on 7/9/15.
+ * Created by johncordeiro on 7/9/15.
  */
 @Table(name = "User")
-public class User extends Model {
+public class User extends Model implements Parcelable {
 
     @Column(name = "email")
     private String email;
@@ -35,6 +37,7 @@ public class User extends Model {
     @Column(name = "gender")
     private Gender gender;
 
+    @Column(name = "type")
     private Type type;
 
     public String getEmail() {
@@ -126,4 +129,47 @@ public class User extends Model {
         Twitter,
         Google
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.email);
+        dest.writeString(this.username);
+        dest.writeString(this.password);
+        dest.writeLong(birthday != null ? birthday.getTime() : -1);
+        dest.writeString(this.country);
+        dest.writeInt(this.gender == null ? -1 : this.gender.ordinal());
+        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
+    }
+
+    public User() {
+    }
+
+    protected User(Parcel in) {
+        this.email = in.readString();
+        this.username = in.readString();
+        this.password = in.readString();
+        long tmpBirthday = in.readLong();
+        this.birthday = tmpBirthday == -1 ? null : new Date(tmpBirthday);
+        this.country = in.readString();
+        int tmpGender = in.readInt();
+        this.gender = tmpGender == -1 ? null : User.Gender.values()[tmpGender];
+        int tmpType = in.readInt();
+        this.type = tmpType == -1 ? null : User.Type.values()[tmpType];
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

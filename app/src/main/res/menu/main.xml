@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:checked="true"
+            android:title="@string/main_menu_home"/>
+        <item
+            android:id="@+id/chat"
+            android:title="@string/main_menu_chat"/>
+
+        <item
+            android:id="@+id/countryPrograms"
+            android:title="@string/main_menu_country_programs"/>
+
+        <item
+            android:id="@+id/headerUnicef"
+            android:title="@string/main_menu_group_unicef">
+            <menu>
+                <item
+                    android:id="@+id/makeDonations"
+                    android:title="@string/main_menu_subitem_make_donations"/>
+                <item
+                    android:id="@+id/buyMerchandising"
+                    android:title="@string/main_menu_subitem_buy_goods"/>
+                <item
+                    android:id="@+id/embassadors"
+                    android:title="@string/main_menu_subitem_embassadors" />
+            </menu>
+        </item>
+    </group>
+</menu>

@@ -9,11 +9,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Date;
+
 import in.ureport.R;
 import in.ureport.models.User;
+import in.ureport.tasks.SocialNetworkLoginTask;
 
 /**
- * Created by ilhasoft on 7/7/15.
+ * Created by johncordeiro on 7/7/15.
  */
 public class LoginFragment extends Fragment {
 
@@ -34,6 +37,15 @@ public class LoginFragment extends Fragment {
     private void setupView(View view) {
         Button loginWithCredentials = (Button) view.findViewById(R.id.loginWithCredentials);
         loginWithCredentials.setOnClickListener(onLoginWithCredentialsClickListener);
+
+        Button loginWithTwitter = (Button) view.findViewById(R.id.loginWithTwitter);
+        loginWithTwitter.setOnClickListener(new OnSocialNetworkClickListener(User.Type.Twitter));
+
+        Button loginWithGoogle = (Button) view.findViewById(R.id.loginWithGoogle);
+        loginWithGoogle.setOnClickListener(new OnSocialNetworkClickListener(User.Type.Google));
+
+        Button loginWithFacebook = (Button) view.findViewById(R.id.loginWithFacebook);
+        loginWithFacebook.setOnClickListener(new OnSocialNetworkClickListener(User.Type.Facebook));
 
         TextView signUp = (TextView) view.findViewById(R.id.signUp);
         signUp.setOnClickListener(onSignUpClickListener);
@@ -61,7 +73,31 @@ public class LoginFragment extends Fragment {
         }
     };
 
+    private class OnSocialNetworkClickListener implements View.OnClickListener {
+
+        private User.Type type;
+
+        public OnSocialNetworkClickListener(User.Type type) {
+            this.type = type;
+        }
+
+        @Override
+        public void onClick(View view) {
+            SocialNetworkLoginTask socialNetworkLoginTask = new SocialNetworkLoginTask(getActivity()){
+                @Override
+                protected void onPostExecute(User user) {
+                    super.onPostExecute(user);
+                    if(loginListener != null) {
+                        loginListener.loginWithSocialNetwork(user);
+                    }
+                }
+            };
+            socialNetworkLoginTask.execute(type);
+        }
+    }
+
     public static interface LoginListener {
+        void loginWithSocialNetwork(User user);
         void loginWithCredentials();
         void signUp();
         void userReady(User user);

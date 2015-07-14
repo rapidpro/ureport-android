@@ -1,7 +1,7 @@
 package in.ureport.models.holders;
 
 /**
- * Created by ilhasoft on 7/9/15.
+ * Created by johncordeiro on 7/9/15.
  */
 public class Login {
 

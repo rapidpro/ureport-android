@@ -5,14 +5,15 @@ import android.content.Context;
 import br.com.ilhasoft.support.preferences.Preferences;
 
 /**
- * Created by ilhasoft on 7/9/15.
+ * Created by johncordeiro on 7/9/15.
  */
 public class SystemPreferences extends Preferences {
 
     public static final Long USER_NO_LOGGED_ID = -1L;
 
     private enum Fields {
-        UserLoggedId
+        UserLoggedId,
+        FakeDateCreated
     }
 
     public SystemPreferences(Context context) {
@@ -25,5 +26,13 @@ public class SystemPreferences extends Preferences {
 
     public Long getUserLoggedId() {
         return getValue(Fields.UserLoggedId, USER_NO_LOGGED_ID);
+    }
+
+    public void setFakeDataCreated(Boolean created) {
+        setValue(Fields.FakeDateCreated, created);
+    }
+
+    public Boolean isFakeDataCreated() {
+        return getValue(Fields.FakeDateCreated, false);
     }
 }

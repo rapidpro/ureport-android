@@ -6,7 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 /**
- * Created by ilhasoft on 7/9/15.
+ * Created by johncordeiro on 7/9/15.
  */
 public class ToolbarDesigner {
 

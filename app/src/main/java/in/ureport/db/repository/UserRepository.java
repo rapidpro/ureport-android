@@ -5,7 +5,7 @@ import in.ureport.models.User;
 import in.ureport.models.holders.Login;
 
 /**
- * Created by ilhasoft on 7/9/15.
+ * Created by johncordeiro on 7/9/15.
  */
 public interface UserRepository extends AbstractRepository<User> {
 

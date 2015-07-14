@@ -38,13 +38,25 @@ import in.ureport.models.holders.UserLocale;
 import in.ureport.tasks.SaveUserTask;
 
 /**
- * Created by ilhasoft on 7/9/15.
+ * Created by johncordeiro on 7/9/15.
  */
 public class SignUpFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<UserLocale>>, DatePickerDialog.OnDateSetListener {
 
     private static final String TAG = "SignUpFragment";
 
+    private static final String EXTRA_USER = "user";
+
     private static final int FIELDS_MINIMUM_SIZE = 5;
+
+    public static SignUpFragment newInstance(User user) {
+        SignUpFragment signUpFragment = new SignUpFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable(EXTRA_USER, user);
+
+        signUpFragment.setArguments(args);
+        return signUpFragment;
+    }
 
     private EditText username;
     private EditText email;
@@ -55,6 +67,8 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
 
     private EditTextValidator validator;
     private DateFormat birthdayFormatter;
+    private User user;
+    private User.Type userType = User.Type.Ureport;
 
     private LoginFragment.LoginListener loginListener;
 
@@ -63,14 +77,54 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         validator = new EditTextValidator();
         birthdayFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        getUserFromArguments();
 
         return inflater.inflate(R.layout.fragment_sign_up, container, false);
+    }
+
+    private void getUserFromArguments() {
+        Bundle args = getArguments();
+        if(args != null && args.containsKey(EXTRA_USER)) {
+            user = args.getParcelable(EXTRA_USER);
+        }
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
+        setupUserIfExists();
+    }
+
+    private void setupUserIfExists() {
+        if(user != null) {
+            userType = user.getType();
+
+            setEditTextValue(username, user.getUsername());
+            setEditTextValue(email, user.getEmail());
+            setEditTextDate(birthday, user.getBirthday());
+            setUserGenderValue();
+        }
+    }
+
+    private void setUserGenderValue() {
+        UserGender userGender = new UserGender(getActivity(), user.getGender());
+        ArrayAdapter<UserGender> adapter = ((ArrayAdapter<UserGender>) gender.getAdapter());
+        int position = adapter.getPosition(userGender);
+
+        gender.setSelection(position);
+    }
+
+    private void setEditTextValue(EditText editText, String value) {
+        if(value != null && value.length() > 0) {
+            editText.setText(value);
+        }
+    }
+
+    private void setEditTextDate(EditText editText, Date date) {
+        if(date != null) {
+            editText.setText(birthdayFormatter.format(date));
+        }
     }
 
     private void setupView(View view) {
@@ -163,7 +217,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     @NonNull
     private User createUser() {
         User user = new User();
-        user.setType(User.Type.Ureport);
+        user.setType(userType);
         user.setUsername(username.getText().toString());
         user.setEmail(email.getText().toString());
         user.setPassword(password.getText().toString());

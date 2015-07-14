@@ -5,21 +5,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
-import java.util.List;
-import java.util.Objects;
-
 import in.ureport.R;
-import in.ureport.db.business.UserBusiness;
-import in.ureport.db.repository.UserRepository;
 import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
 import in.ureport.models.User;
 import in.ureport.pref.SystemPreferences;
-import in.ureport.tasks.GetUserLoggedTask;
 
 /**
- * Created by ilhasoft on 7/7/15.
+ * Created by johncordeiro on 7/7/15.
  */
 public class LoginActivity extends AppCompatActivity implements LoginFragment.LoginListener {
 
@@ -67,6 +61,11 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     @Override
+    public void loginWithSocialNetwork(User user) {
+        addSignUpFragment(user);
+    }
+
+    @Override
     public void signUp() {
         addSignUpFragment();
     }
@@ -83,7 +82,11 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     private void addSignUpFragment() {
-        SignUpFragment signUpFragment = new SignUpFragment();
+        addSignUpFragment(null);
+    }
+
+    private void addSignUpFragment(User user) {
+        SignUpFragment signUpFragment = SignUpFragment.newInstance(user);
         signUpFragment.setLoginListener(this);
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

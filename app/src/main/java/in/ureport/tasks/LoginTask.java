@@ -11,7 +11,7 @@ import in.ureport.models.holders.Login;
 import in.ureport.pref.SystemPreferences;
 
 /**
- * Created by ilhasoft on 7/7/15.
+ * Created by johncordeiro on 7/7/15.
  */
 public class LoginTask extends AsyncTask<Login, Void, User> {
 

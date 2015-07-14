@@ -1,12 +1,21 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
+        <item name="colorAccent">#277a91</item>
         <item name="android:buttonStyle">@style/AppTheme.Button</item>
     </style>
 
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button">
+        <item name="textAllCaps">false</item>
+    </style>
+
+    <style name="AppTheme.TabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/AppTheme.TextAppearance</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
     </style>
 

@@ -20,7 +20,7 @@ import in.ureport.models.holders.Login;
 import in.ureport.tasks.LoginTask;
 
 /**
- * Created by ilhasoft on 7/7/15.
+ * Created by johncordeiro on 7/7/15.
  */
 public class CredentialsLoginFragment extends Fragment {
 

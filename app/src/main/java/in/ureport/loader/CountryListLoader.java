@@ -12,7 +12,7 @@ import java.util.Locale;
 import in.ureport.models.holders.UserLocale;
 
 /**
- * Created by ilhasoft on 7/9/15.
+ * Created by johncordeiro on 7/9/15.
  */
 public class CountryListLoader extends AsyncTaskLoader<List<UserLocale>> {
 

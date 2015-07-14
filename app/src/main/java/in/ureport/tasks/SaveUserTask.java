@@ -7,7 +7,7 @@ import in.ureport.models.User;
 import in.ureport.pref.SystemPreferences;
 
 /**
- * Created by ilhasoft on 7/9/15.
+ * Created by johncordeiro on 7/9/15.
  */
 public class SaveUserTask extends AsyncTask<User, Void, Boolean> {
 
