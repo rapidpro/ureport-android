@@ -2,6 +2,7 @@ package in.ureport.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -21,6 +22,7 @@ public class BaseActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
+    private FloatingActionButton mainActionButton;
 
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
@@ -37,6 +39,9 @@ public class BaseActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setVisibility(hasTabLayout() ? View.VISIBLE : View.GONE);
+
+        mainActionButton = (FloatingActionButton) findViewById(R.id.mainActionButton);
+        mainActionButton.setVisibility(hasMainActionButton() ? View.VISIBLE : View.GONE);
 
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout
@@ -75,7 +80,15 @@ public class BaseActivity extends AppCompatActivity {
         return tabLayout;
     }
 
+    public FloatingActionButton getMainActionButton() {
+        return mainActionButton;
+    }
+
     public boolean hasTabLayout() {
         return true;
+    }
+
+    public boolean hasMainActionButton() {
+        return false;
     }
 }

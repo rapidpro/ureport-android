@@ -9,11 +9,14 @@ import java.util.Date;
 /**
  * Created by johncordeiro on 7/14/15.
  */
-@Table(name = "User")
+@Table(name = "Story")
 public class Story extends Model {
 
     @Column(name = "title")
     private String title;
+
+    @Column(name = "content")
+    private String content;
 
     @Column(name = "createdDate")
     private Date createdDate;
@@ -24,12 +27,26 @@ public class Story extends Model {
     @Column(name = "contributions")
     private Integer contributions;
 
+    @Column(name = "coauthors")
+    private Integer coauthors;
+
+    public Story() {
+    }
+
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Date getCreatedDate() {
@@ -54,5 +71,13 @@ public class Story extends Model {
 
     public void setContributions(Integer contributions) {
         this.contributions = contributions;
+    }
+
+    public Integer getCoauthors() {
+        return coauthors;
+    }
+
+    public void setCoauthors(Integer coauthors) {
+        this.coauthors = coauthors;
     }
 }

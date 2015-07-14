@@ -25,7 +25,7 @@
 
         <meta-data
             android:name="AA_MODELS"
-            android:value="in.ureport.models.User" />
+            android:value="in.ureport.models.User,in.ureport.models.Story" />
 
     </application>
 

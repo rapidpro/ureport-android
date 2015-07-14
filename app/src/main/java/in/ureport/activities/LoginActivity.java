@@ -11,6 +11,7 @@ import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
 import in.ureport.models.User;
 import in.ureport.pref.SystemPreferences;
+import in.ureport.tasks.CreateFakeDataTask;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -72,7 +73,13 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void userReady(User user) {
-        startMainActivity();
+        new CreateFakeDataTask(this){
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                startMainActivity();
+            }
+        }.execute(user);
     }
 
     private void startMainActivity() {

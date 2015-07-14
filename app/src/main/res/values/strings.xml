@@ -36,4 +36,12 @@
     <string name="main_menu_subitem_embassadors">Embassadors</string>
     <string name="base_menu_open_drawer">Open Menu</string>
     <string name="base_menu_close_drawer">Close Menu</string>
+    <string name="stories_list_item_author">by %1$s</string>
+    <string name="stories_list_item_contributions">%1$s contributions</string>
+    <string name="story_item_read_full_story">Read full story</string>
+
+    <plurals name="stories_list_item_coauthors">
+        <item quantity="one">1 co-author</item>
+        <item quantity="other">%1$s co-authors</item>
+    </plurals>
 </resources>
