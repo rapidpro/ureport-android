@@ -39,6 +39,9 @@
     <string name="stories_list_item_author">by %1$s</string>
     <string name="stories_list_item_contributions">%1$s contributions</string>
     <string name="story_item_read_full_story">Read full story</string>
+    <string name="label_new_story">New Story</string>
+    <string name="create_story_insert_cover">Insert a cover image</string>
+    <string name="create_story_insert_title">Insert title</string>
 
     <plurals name="stories_list_item_coauthors">
         <item quantity="one">1 co-author</item>

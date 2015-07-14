@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.activities.BaseActivity;
 import in.ureport.loader.StoriesLoader;
 import in.ureport.models.Story;
 import in.ureport.views.adapters.StoriesAdapter;

@@ -1,5 +1,6 @@
 package in.ureport.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
@@ -47,6 +48,7 @@ public class MainActivity extends BaseActivity {
         setupNavigationAdapter();
 
         getTabLayout().setupWithViewPager(pager);
+        getMainActionButton().setOnClickListener(onCreateStoryClickListener);
     }
 
     private void loadUser() {
@@ -85,6 +87,14 @@ public class MainActivity extends BaseActivity {
         @Override
         public void onPageSelected(int position) {
             getMainActionButton().setVisibility(containsMainActionButton(position) ? View.VISIBLE : View.GONE);
+        }
+    };
+
+    private View.OnClickListener onCreateStoryClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent createStoryIntent = new Intent(MainActivity.this, CreateStoryActivity.class);
+            startActivity(createStoryIntent);
         }
     };
 }
