@@ -42,6 +42,27 @@
     <string name="label_new_story">New Story</string>
     <string name="create_story_insert_cover">Insert a cover image</string>
     <string name="create_story_insert_title">Insert title</string>
+    <string name="create_story_insert_story_content">Tell us your story</string>
+    <string name="create_story_title_media">Media</string>
+    <string name="create_story_add_coauthors">Add co-authors</string>
+    <string name="create_story_add_markers">Add markers</string>
+    <string name="media_remove">Remove</string>
+    <string name="media_add_title">Add Media</string>
+    <string name="create_story_title_media_source">Choose a media source:</string>
+    <string name="create_story_insert_cover_title">Insert a cover image</string>
+    <string name="create_story_title_cover_image">Choose the cover image source:</string>
+    <string name="action_title_publish">Publish</string>
+
+    <string-array name="create_story_cover_sources">
+        <item>Gallery</item>
+        <item>Camera</item>
+    </string-array>
+
+    <string-array name="create_story_media_sources">
+        <item>Gallery</item>
+        <item>Camera</item>
+        <item>Youtube</item>
+    </string-array>
 
     <plurals name="stories_list_item_coauthors">
         <item quantity="one">1 co-author</item>

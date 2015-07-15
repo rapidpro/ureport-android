@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_story_height"
         android:scaleType="centerCrop"
-        android:src="@drawable/story1"/>
+        android:src="@drawable/cover_example"/>
 
     <View
         android:layout_width="match_parent"
@@ -69,7 +69,7 @@
                 android:layout_marginLeft="10dp"
                 android:gravity="center_vertical"
                 android:drawablePadding="5dp"
-                android:drawableLeft="@drawable/coauthors"
+                android:drawableLeft="@drawable/coauthors_white"
                 android:textColor="@android:color/white"
                 android:maxLines="1"
                 android:textSize="14sp"

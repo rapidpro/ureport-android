@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/addMedia"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/item_media_size"
+    android:layout_height="@dimen/item_media_size"
+    android:minWidth="@dimen/item_media_size"
+    android:minHeight="@dimen/item_media_size"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/shape_media"
+    tools:padding="5dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/ic_camera_grey600_36dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="1dp"
+        android:gravity="center"
+        android:text="@string/media_add_title"/>
+
+</LinearLayout>

@@ -2,4 +2,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="item_story_height">190dp</dimen>
+    <dimen name="item_media_size">80dp</dimen>
 </resources>
