@@ -2,6 +2,8 @@ package in.ureport.db.business;
 
 import com.activeandroid.query.Select;
 
+import java.util.List;
+
 import br.com.ilhasoft.support.db.business.AbstractBusiness;
 import in.ureport.db.repository.UserRepository;
 import in.ureport.models.User;
@@ -19,7 +21,13 @@ public class UserBusiness extends AbstractBusiness<User> implements UserReposito
     @Override
     public User login(Login login) {
         return new Select().from(getTypeClass())
-                    .where("email = ? AND password = ?", login.getEmail(), login.getPassword())
+                    .where("username = ? AND password = ?", login.getUsername(), login.getPassword())
                     .executeSingle();
+    }
+
+    public List<User> getAllExcluding(User user) {
+        return new Select().from(getTypeClass())
+                .where("username != ?", user.getUsername())
+                .execute();
     }
 }

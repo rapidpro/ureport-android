@@ -5,17 +5,17 @@ package in.ureport.models.holders;
  */
 public class Login {
 
-    private String email;
+    private String username;
 
     private String password;
 
-    public Login(String email, String password) {
-        this.email = email;
+    public Login(String username, String password) {
+        this.username = username;
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {

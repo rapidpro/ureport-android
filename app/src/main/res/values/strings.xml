@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Ureport</string>
 
-    <string name="login_username">Username/E-mail</string>
+    <string name="login_username">Username</string>
     <string name="login_password">Password</string>
     <string name="error_required_field">Required field</string>
     <string name="login">Login</string>
@@ -52,6 +52,8 @@
     <string name="create_story_insert_cover_title">Insert a cover image</string>
     <string name="create_story_title_cover_image">Choose the cover image source:</string>
     <string name="action_title_publish">Publish</string>
+    <string name="invite_coauthor_ureporters">U-reporters</string>
+    <string name="action_label_search">Search</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

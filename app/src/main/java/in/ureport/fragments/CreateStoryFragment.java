@@ -6,15 +6,15 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ import java.util.List;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
+import in.ureport.models.User;
 import in.ureport.util.SpaceItemDecoration;
 import in.ureport.views.adapters.MediaAdapter;
 
@@ -33,11 +34,18 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     public static final String MEDIA_PICTURE = "picture";
     public static final String MEDIA_VIDEO = "video";
 
+    private static final String TAG = "CreateStoryFragment";
+
+    private List<User> selectedCoauthors;
     private List<String> mediaList;
+
     private MediaAdapter mediaAdapter;
 
     private ImageView cover;
     private View insertCoverInfo;
+    private EditText coauthors;
+
+    private StoryCreationListener storyCreationListener;
 
     @Nullable
     @Override
@@ -57,15 +65,12 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void setupView(View view) {
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-
-        AppCompatActivity activity = ((AppCompatActivity) getActivity());
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setHasOptionsMenu(true);
 
         cover = (ImageView) view.findViewById(R.id.cover);
         insertCoverInfo = view.findViewById(R.id.insertCoverInfo);
+        coauthors = (EditText) view.findViewById(R.id.coauthors);
+        coauthors.setOnClickListener(onCoauthorsClickListener);
 
         FloatingActionButton addCover = (FloatingActionButton) view.findViewById(R.id.addCover);
         addCover.setOnClickListener(onAddCoverClickListener);
@@ -79,7 +84,6 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
         UnitConverter converter = new UnitConverter(getActivity());
         mediaAddList.addItemDecoration(new SpaceItemDecoration((int)converter.convertDpToPx(10)));
-
         mediaAddList.setAdapter(mediaAdapter);
     }
 
@@ -87,6 +91,17 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_create_story, menu);
+    }
+
+    public void setSelectedCoauthors(List<User> selectedCoauthors) {
+        this.selectedCoauthors = selectedCoauthors;
+
+        String coauthorsTemplate = getResources().getQuantityString(R.plurals.stories_list_item_coauthors, selectedCoauthors.size());
+        coauthors.setText(String.format(coauthorsTemplate, selectedCoauthors.size()));
+    }
+
+    public void setStoryCreationListener(StoryCreationListener storyCreationListener) {
+        this.storyCreationListener = storyCreationListener;
     }
 
     @Override
@@ -103,6 +118,16 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
                 .create();
         alertDialog.show();
     }
+
+    private View.OnClickListener onCoauthorsClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Log.i(TAG, "onClick selected coauthors: " + (selectedCoauthors != null ? selectedCoauthors.size() : 0));
+
+            if (storyCreationListener != null)
+                storyCreationListener.addCoauthors(selectedCoauthors);
+        }
+    };
 
     private DialogInterface.OnClickListener onMediaSelectedListener = new DialogInterface.OnClickListener() {
         @Override
@@ -136,4 +161,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             insertCoverInfo.setVisibility(View.GONE);
         }
     };
+
+    public interface StoryCreationListener {
+        void addCoauthors(List<User> coauthors);
+    }
 }
