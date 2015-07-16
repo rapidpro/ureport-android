@@ -7,7 +7,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.listener.ItemSelectionListener;
+import in.ureport.listener.SelectionResultListener;
 import in.ureport.loader.UsersLoader;
 import in.ureport.models.User;
 import in.ureport.views.adapters.CoauthorAdapter;
@@ -25,14 +26,14 @@ import in.ureport.views.adapters.CoauthorAdapter;
 /**
  * Created by johncordeiro on 7/15/15.
  */
-public class InviteCoauthorFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<User>>, CoauthorAdapter.CoauthorSelectionListener {
+public class InviteCoauthorFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<User>>, ItemSelectionListener<User> {
 
     private static final String EXTRA_SELECTED_COAUTHORS = "selectedCoauthors";
 
     private RecyclerView usersList;
     private List<User> selectedCoauthors;
 
-    private InviteCoauthorResultListener inviteCoauthorResultListener;
+    private SelectionResultListener<User> selectionResultListener;
 
     public static InviteCoauthorFragment newInstance(ArrayList<User> coauthors) {
         InviteCoauthorFragment inviteCoauthorFragment = new InviteCoauthorFragment();
@@ -78,8 +79,8 @@ public class InviteCoauthorFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(inviteCoauthorResultListener != null)
-            inviteCoauthorResultListener.onCoauthorsInviteResult(selectedCoauthors);
+        if(selectionResultListener != null)
+            selectionResultListener.onSelectionResult(selectedCoauthors);
     }
 
     private void setupView(View view) {
@@ -96,10 +97,8 @@ public class InviteCoauthorFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<List<User>> loader, List<User> data) {
-        Log.i("InviteCoauthorFragment", "onLoadFinished selectedCoauthors: " + selectedCoauthors);
-
         CoauthorAdapter coauthorAdapter = new CoauthorAdapter(data, selectedCoauthors);
-        coauthorAdapter.setCoauthorSelectionListener(this);
+        coauthorAdapter.setItemSelectionListener(this);
 
         usersList.setAdapter(coauthorAdapter);
     }
@@ -108,20 +107,16 @@ public class InviteCoauthorFragment extends Fragment implements LoaderManager.Lo
     public void onLoaderReset(Loader<List<User>> loader) {}
 
     @Override
-    public void onCoauthorSelected(User user) {
+    public void onItemSelected(User user) {
         selectedCoauthors.add(user);
     }
 
     @Override
-    public void onCoauthorDeselected(User user) {
+    public void onItemDeselected(User user) {
         selectedCoauthors.remove(user);
     }
 
-    public void setInviteCoauthorResultListener(InviteCoauthorResultListener inviteCoauthorResultListener) {
-        this.inviteCoauthorResultListener = inviteCoauthorResultListener;
-    }
-
-    public interface InviteCoauthorResultListener {
-        void onCoauthorsInviteResult(List<User> selectedCoauthors);
+    public void setSelectionResultListener(SelectionResultListener<User> selectionResultListener) {
+        this.selectionResultListener = selectionResultListener;
     }
 }

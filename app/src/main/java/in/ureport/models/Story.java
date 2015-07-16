@@ -27,8 +27,8 @@ public class Story extends Model {
     @Column(name = "contributions")
     private Integer contributions;
 
-    @Column(name = "coauthors")
-    private Integer coauthors;
+    @Column(name = "markers")
+    private String markers;
 
     public Story() {
     }
@@ -73,11 +73,11 @@ public class Story extends Model {
         this.contributions = contributions;
     }
 
-    public Integer getCoauthors() {
-        return coauthors;
+    public String getMarkers() {
+        return markers;
     }
 
-    public void setCoauthors(Integer coauthors) {
-        this.coauthors = coauthors;
+    public void setMarkers(String markers) {
+        this.markers = markers;
     }
 }

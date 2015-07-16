@@ -46,8 +46,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
         ImageView image;
         TextView title;
-        TextView coauthors;
         TextView author;
+        TextView markers;
         TextView contributions;
 
         public ViewHolder(View itemView) {
@@ -57,17 +57,14 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             contributionsTemplate = itemView.getContext().getString(R.string.stories_list_item_contributions);
 
             image = (ImageView) itemView.findViewById(R.id.image);
-            coauthors = (TextView) itemView.findViewById(R.id.coauthors);
             title = (TextView) itemView.findViewById(R.id.title);
             author = (TextView) itemView.findViewById(R.id.author);
+            markers = (TextView) itemView.findViewById(R.id.markers);
             contributions = (TextView) itemView.findViewById(R.id.contributions);
         }
 
         private void bind(Story story) {
-            String coauthorsTemplate = itemView.getContext().getResources().getQuantityString(R.plurals.stories_list_item_coauthors
-                    , story.getCoauthors());
-            coauthors.setText(String.format(coauthorsTemplate, story.getCoauthors()));
-
+            markers.setText(story.getMarkers());
             title.setText(story.getTitle());
             author.setText(String.format(authorTemplate, story.getUser().getUsername()));
             contributions.setText(String.format(contributionsTemplate, story.getContributions()));

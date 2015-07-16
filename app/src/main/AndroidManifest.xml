@@ -24,11 +24,18 @@
             android:name=".activities.CreateStoryActivity"
             android:label="@string/label_new_story"
             android:parentActivityName=".activities.MainActivity">
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
+        </activity>
 
+        <activity
+            android:name=".activities.StoryViewActivity"
+            android:label="@string/label_story_view"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
         </activity>
 
         <meta-data android:name="AA_DB_NAME" android:value="Ureport.db" />
@@ -36,7 +43,7 @@
 
         <meta-data
             android:name="AA_MODELS"
-            android:value="in.ureport.models.User,in.ureport.models.Story" />
+            android:value="in.ureport.models.User,in.ureport.models.Story,in.ureport.models.Marker" />
 
     </application>
 

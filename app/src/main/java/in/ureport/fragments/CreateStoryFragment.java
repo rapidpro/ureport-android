@@ -2,27 +2,34 @@ package in.ureport.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
+import in.ureport.db.business.UserBusiness;
+import in.ureport.db.repository.UserRepository;
+import in.ureport.models.Marker;
+import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.pref.SystemPreferences;
+import in.ureport.tasks.PublishStoryTask;
 import in.ureport.util.SpaceItemDecoration;
 import in.ureport.views.adapters.MediaAdapter;
 
@@ -34,16 +41,14 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     public static final String MEDIA_PICTURE = "picture";
     public static final String MEDIA_VIDEO = "video";
 
-    private static final String TAG = "CreateStoryFragment";
-
-    private List<User> selectedCoauthors;
+    private List<Marker> selectedMarkers;
     private List<String> mediaList;
 
     private MediaAdapter mediaAdapter;
 
-    private ImageView cover;
-    private View insertCoverInfo;
-    private EditText coauthors;
+    private EditText markers;
+    private EditText title;
+    private EditText content;
 
     private StoryCreationListener storyCreationListener;
 
@@ -67,13 +72,11 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private void setupView(View view) {
         setHasOptionsMenu(true);
 
-        cover = (ImageView) view.findViewById(R.id.cover);
-        insertCoverInfo = view.findViewById(R.id.insertCoverInfo);
-        coauthors = (EditText) view.findViewById(R.id.coauthors);
-        coauthors.setOnClickListener(onCoauthorsClickListener);
+        title = (EditText) view.findViewById(R.id.title);
+        content = (EditText) view.findViewById(R.id.content);
 
-        FloatingActionButton addCover = (FloatingActionButton) view.findViewById(R.id.addCover);
-        addCover.setOnClickListener(onAddCoverClickListener);
+        markers = (EditText) view.findViewById(R.id.markers);
+        markers.setOnClickListener(onMarkerClickListener);
 
         mediaAdapter = new MediaAdapter(mediaList);
         mediaAdapter.setHasStableIds(true);
@@ -83,7 +86,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         mediaAddList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         UnitConverter converter = new UnitConverter(getActivity());
-        mediaAddList.addItemDecoration(new SpaceItemDecoration((int)converter.convertDpToPx(10)));
+        mediaAddList.addItemDecoration(new SpaceItemDecoration((int) converter.convertDpToPx(10)));
         mediaAddList.setAdapter(mediaAdapter);
     }
 
@@ -93,11 +96,62 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         inflater.inflate(R.menu.menu_create_story, menu);
     }
 
-    public void setSelectedCoauthors(List<User> selectedCoauthors) {
-        this.selectedCoauthors = selectedCoauthors;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_publish:
+                publishStory();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-        String coauthorsTemplate = getResources().getQuantityString(R.plurals.stories_list_item_coauthors, selectedCoauthors.size());
-        coauthors.setText(String.format(coauthorsTemplate, selectedCoauthors.size()));
+    private void publishStory() {
+        if(isFieldsValid()) {
+            final Story story = new Story();
+            story.setTitle(title.getText().toString());
+            story.setContributions(0);
+            story.setContent(content.getText().toString());
+            story.setCreatedDate(new Date());
+
+            String markersText = markers.getText().toString();
+            story.setMarkers(markersText.length() == 0 ? "" : markersText);
+
+            PublishStoryTask publishStoryTask = new PublishStoryTask(getActivity()) {
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    if(storyCreationListener != null)
+                        storyCreationListener.storyCreated(story);
+                }
+            };
+            publishStoryTask.execute(story);
+        }
+    }
+
+    private boolean isFieldsValid() {
+        EditTextValidator validator = new EditTextValidator();
+        String errorMessage = getString(R.string.error_required_field);
+
+        return validator.validateEmpty(title, errorMessage) && validator.validateEmpty(content, errorMessage);
+    }
+
+    public void setSelectedMarkers(List<Marker> selectedMarkers) {
+        this.selectedMarkers = selectedMarkers;
+        markers.setText(getMarkerTexts(selectedMarkers));
+    }
+
+    @NonNull
+    private String getMarkerTexts(List<Marker> selectedMarkers) {
+        StringBuilder markersText = new StringBuilder();
+        for (int i = 0; i < selectedMarkers.size(); i++) {
+            Marker selectedMarker = selectedMarkers.get(i);
+            markersText.append(selectedMarker.getName());
+
+            if(i < selectedMarkers.size()-1)
+                markersText.append(", ");
+        }
+        return markersText.toString();
     }
 
     public void setStoryCreationListener(StoryCreationListener storyCreationListener) {
@@ -119,13 +173,11 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         alertDialog.show();
     }
 
-    private View.OnClickListener onCoauthorsClickListener = new View.OnClickListener() {
+    private View.OnClickListener onMarkerClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Log.i(TAG, "onClick selected coauthors: " + (selectedCoauthors != null ? selectedCoauthors.size() : 0));
-
             if (storyCreationListener != null)
-                storyCreationListener.addCoauthors(selectedCoauthors);
+                storyCreationListener.addMarkers(selectedMarkers);
         }
     };
 
@@ -143,26 +195,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         }
     };
 
-    private View.OnClickListener onAddCoverClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.create_story_title_cover_image)
-                    .setItems(R.array.create_story_cover_sources, onCoverSourceSelectedListener)
-                    .create();
-            alertDialog.show();
-        }
-    };
-
-    private DialogInterface.OnClickListener onCoverSourceSelectedListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialogInterface, int position) {
-            cover.setImageResource(R.drawable.cover_example);
-            insertCoverInfo.setVisibility(View.GONE);
-        }
-    };
-
     public interface StoryCreationListener {
-        void addCoauthors(List<User> coauthors);
+        void addMarkers(List<Marker> markers);
+        void storyCreated(Story story);
     }
 }

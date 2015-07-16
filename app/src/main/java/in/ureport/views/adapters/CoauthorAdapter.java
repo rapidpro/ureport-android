@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.listener.ItemSelectionListener;
 import in.ureport.models.User;
 
 /**
@@ -20,7 +21,7 @@ public class CoauthorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private List<User> users;
     private List<User> selectedCoauthors;
 
-    private CoauthorSelectionListener coauthorSelectionListener;
+    private ItemSelectionListener<User> itemSelectionListener;
 
     public CoauthorAdapter(List<User> users, List<User> selectedCoauthors) {
         this.users = users;
@@ -43,8 +44,8 @@ public class CoauthorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return users.size();
     }
 
-    public void setCoauthorSelectionListener(CoauthorSelectionListener coauthorSelectionListener) {
-        this.coauthorSelectionListener = coauthorSelectionListener;
+    public void setItemSelectionListener(ItemSelectionListener<User> itemSelectionListener) {
+        this.itemSelectionListener = itemSelectionListener;
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
@@ -68,20 +69,15 @@ public class CoauthorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private View.OnClickListener onCheckClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (coauthorSelectionListener != null) {
+                if (itemSelectionListener != null) {
                     User user = users.get(getLayoutPosition());
                     if (check.isChecked()) {
-                        coauthorSelectionListener.onCoauthorSelected(user);
+                        itemSelectionListener.onItemSelected(user);
                     } else {
-                        coauthorSelectionListener.onCoauthorDeselected(user);
+                        itemSelectionListener.onItemDeselected(user);
                     }
                 }
             }
         };
-    }
-
-    public interface CoauthorSelectionListener {
-        void onCoauthorSelected(User user);
-        void onCoauthorDeselected(User user);
     }
 }

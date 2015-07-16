@@ -162,7 +162,7 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         story1.setCreatedDate(new Date());
         story1.setUser(user);
         story1.setContributions(25);
-        story1.setCoauthors(2);
+        story1.setMarkers("Education");
 
         Story story2 = new Story();
         story2.setTitle(context.getString(R.string.story2_title));
@@ -170,7 +170,7 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         story2.setCreatedDate(new Date());
         story2.setUser(user);
         story2.setContributions(123);
-        story2.setCoauthors(5);
+        story2.setMarkers("Water");
 
         Story story3 = new Story();
         story3.setTitle(context.getString(R.string.story3_title));
@@ -178,7 +178,7 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         story3.setCreatedDate(new Date());
         story3.setUser(user);
         story3.setContributions(14);
-        story3.setCoauthors(10);
+        story3.setMarkers("Education, Politics");
 
         Story story4 = new Story();
         story4.setTitle(context.getString(R.string.story4_title));
@@ -186,7 +186,7 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         story4.setCreatedDate(new Date());
         story4.setUser(user);
         story4.setContributions(10);
-        story4.setCoauthors(8);
+        story4.setMarkers("Politics");
 
         List<Story> stories = new ArrayList<>();
         stories.add(story1);

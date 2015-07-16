@@ -1,23 +1,27 @@
 package in.ureport.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.fragments.CreateStoryFragment;
-import in.ureport.fragments.InviteCoauthorFragment;
-import in.ureport.models.User;
+import in.ureport.fragments.MarkersFragment;
+import in.ureport.listener.SelectionResultListener;
+import in.ureport.models.Marker;
+import in.ureport.models.Story;
 
 /**
  * Created by johncordeiro on 7/14/15.
  */
-public class CreateStoryActivity extends AppCompatActivity implements CreateStoryFragment.StoryCreationListener, InviteCoauthorFragment.InviteCoauthorResultListener {
+public class CreateStoryActivity extends AppCompatActivity implements CreateStoryFragment.StoryCreationListener, SelectionResultListener<Marker> {
 
+    private static final String TAG = "CreateStoryActivity";
     private CreateStoryFragment createStoryFragment;
 
     @Override
@@ -33,12 +37,20 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
 
     @Override
     public boolean onSupportNavigateUp() {
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0)
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
-        else
+        } else {
+            setResult(Activity.RESULT_CANCELED);
             finish();
+        }
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(Activity.RESULT_CANCELED);
+        super.onBackPressed();
     }
 
     private void setupView() {
@@ -57,22 +69,29 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
     }
 
     @Override
-    public void onCoauthorsInviteResult(List<User> selectedCoauthors) {
-        createStoryFragment.setSelectedCoauthors(selectedCoauthors);
+    public void addMarkers(List<Marker> selectedMarkers) {
+        MarkersFragment markersFragment;
+        if(selectedMarkers != null && selectedMarkers.size() > 0)
+            markersFragment = MarkersFragment.newInstance((ArrayList<Marker>)selectedMarkers);
+        else
+            markersFragment = new MarkersFragment();
+
+        markersFragment.setSelectionResultListener(this);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.content, markersFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
-    public void addCoauthors(List<User> selectedCoauthors) {
-        InviteCoauthorFragment inviteCoauthorFragment;
-        if(selectedCoauthors != null && selectedCoauthors.size() > 0)
-            inviteCoauthorFragment = InviteCoauthorFragment.newInstance((ArrayList<User>)selectedCoauthors);
-        else
-            inviteCoauthorFragment = new InviteCoauthorFragment();
+    public void storyCreated(Story story) {
+        setResult(Activity.RESULT_OK);
+        finish();
+    }
 
-        inviteCoauthorFragment.setInviteCoauthorResultListener(this);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.content, inviteCoauthorFragment)
-                .addToBackStack(null)
-                .commit();
+    @Override
+    public void onSelectionResult(List<Marker> markers) {
+        Log.i(TAG, "onSelectionResult markers: " + markers);
+        createStoryFragment.setSelectedMarkers(markers);
     }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="marker_name_water">Water</string>
+    <string name="marker_name_sanitation">Sanitation</string>
+    <string name="marker_name_politics">Politics</string>
+    <string name="marker_name_education">Education</string>
+    <string name="marker_name_violence">Violence</string>
+</resources>

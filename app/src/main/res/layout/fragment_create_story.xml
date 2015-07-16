@@ -10,57 +10,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:animateLayoutChanges="true">
-
-            <ImageView
-                android:id="@+id/cover"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_story_height"
-                android:scaleType="centerCrop"
-                android:fitsSystemWindows="true"
-                android:background="#dcdcdc"/>
-
-            <LinearLayout
-                android:id="@+id/insertCoverInfo"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/item_story_height"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_camera_grey600_36dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create_story_insert_cover_title"/>
-
-            </LinearLayout>
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/addCover"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_marginTop="-32dp"
-                android:layout_marginRight="@dimen/fab_margin"
-                android:layout_marginEnd="@dimen/fab_margin"
-                android:src="@drawable/ic_camera_white_24dp"
-                android:layout_below="@+id/cover"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:clickable="true"/>
-
-        </RelativeLayout>
-
         <br.com.ilhasoft.support.widget.CustomTextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AppTheme.FormMargin">
+            style="@style/AppTheme.FormMargin"
+            android:layout_marginTop="10dp">
 
             <EditText
                 android:id="@+id/title"
@@ -72,18 +26,6 @@
                 android:hint="@string/create_story_insert_title"/>
 
         </br.com.ilhasoft.support.widget.CustomTextInputLayout>
-
-        <EditText
-            android:id="@+id/coauthors"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            style="@style/AppTheme.FormMargin"
-            android:drawablePadding="5dp"
-            android:drawableLeft="@drawable/coauthors_black"
-            android:inputType="text"
-            android:focusable="false"
-            android:hint="@string/create_story_add_coauthors"/>
 
         <EditText
             android:id="@+id/markers"

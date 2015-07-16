@@ -38,6 +38,10 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
         super.onViewCreated(view, savedInstanceState);
 
         setupView(view);
+        loadStories();
+    }
+
+    public void loadStories() {
         getLoaderManager().initLoader(0, null, this).forceLoad();
     }
 
