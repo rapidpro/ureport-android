@@ -3,4 +3,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="item_story_height">190dp</dimen>
     <dimen name="item_media_size">80dp</dimen>
+    <dimen name="default_cover_height">120dp</dimen>
+    <dimen name="card_margin">6dp</dimen>
 </resources>

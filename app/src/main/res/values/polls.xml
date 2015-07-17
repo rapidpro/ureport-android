@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="poll1_description">Hi, according to a recent survey (2011), about 50 million nigerians practice open defecation. In ur community do u think this is a major problem?</string>
+
+    <string name="poll1_question1">Do you think this is a major problem in Nigeria</string>
+    <string name="poll1_question1_answer1">Yes</string>
+    <string name="poll1_question1_answer2">No</string>
+
+    <string name="poll1_question2">Why do you think people practice open defecation</string>
+    <string name="poll1_question2_answer1">People have no latrines or toilets people have no latrines or toilets</string>
+    <string name="poll1_question2_answer2">The latrines or toilets are dirty an</string>
+    <string name="poll1_question2_answer3">People have to wait too long on a qu</string>
+    <string name="poll1_question2_answer4">People do not care</string>
+
+    <string name="poll1_question3">What is the best practice to stop the spread of diarrhoeal disease</string>
+    <string name="poll1_question3_answer1">Hand washing with soap</string>
+    <string name="poll1_question3_answer2">Drinking water treated</string>
+    <string name="poll1_question3_answer3">Using safe toilets</string>
+
+    <string name="poll2_description">Hello, do you think all the children in your community are going to school regularly?</string>
+    <string name="poll2_question1">Do you think children in your community are attending school?</string>
+    <string name="poll2_question1_answer1">Yes</string>
+    <string name="poll2_question1_answer2">No</string>
+
+    <string name="poll2_question2">Who do you think are not attending school?</string>
+    <string name="poll2_question2_answer1">Girls</string>
+    <string name="poll2_question2_answer2">Boys</string>
+</resources>

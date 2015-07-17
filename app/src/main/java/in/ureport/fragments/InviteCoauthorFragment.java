@@ -21,7 +21,7 @@ import in.ureport.listener.ItemSelectionListener;
 import in.ureport.listener.SelectionResultListener;
 import in.ureport.loader.UsersLoader;
 import in.ureport.models.User;
-import in.ureport.views.adapters.CoauthorAdapter;
+import in.ureport.views.adapters.UserAdapter;
 
 /**
  * Created by johncordeiro on 7/15/15.
@@ -97,10 +97,10 @@ public class InviteCoauthorFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public void onLoadFinished(Loader<List<User>> loader, List<User> data) {
-        CoauthorAdapter coauthorAdapter = new CoauthorAdapter(data, selectedCoauthors);
-        coauthorAdapter.setItemSelectionListener(this);
+        UserAdapter userAdapter = new UserAdapter(data, selectedCoauthors);
+        userAdapter.setItemSelectionListener(this);
 
-        usersList.setAdapter(coauthorAdapter);
+        usersList.setAdapter(userAdapter);
     }
 
     @Override

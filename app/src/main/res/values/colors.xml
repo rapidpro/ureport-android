@@ -2,4 +2,8 @@
 <resources>
     <color name="primary_color">#42c0ec</color>
     <color name="primary_dark_color">#3293b6</color>
+    <color name="translucent_cover">#5000</color>
+
+    <color name="button">#e8e8e8</color>
+    <color name="button_pressed">#c0c0c0</color>
 </resources>

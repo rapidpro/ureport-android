@@ -26,7 +26,7 @@
     <string name="load_message_wait">Wait...</string>
     <string name="main_stories">Stories</string>
     <string name="main_polls">Polls</string>
-    <string name="main_news_feed">News Feed</string>
+    <string name="main_news_feed">Program News</string>
     <string name="main_menu_home">Home</string>
     <string name="main_menu_chat">Chat</string>
     <string name="main_menu_country_programs">Country Programs</string>
@@ -55,6 +55,17 @@
     <string name="label_story_view">Story View</string>
     <string name="story_view_contribute">Contribute to this story</string>
     <string name="story_contribution_add">Add a contribution</string>
+    <string name="polls_participate">Participate</string>
+    <string name="polls_current">Current poll</string>
+    <string name="polls_responded_info">%1$s responded out of %2$s</string>
+    <string name="polls_response_rate">%1$s%% response rate</string>
+    <string name="polls_see_results">See results</string>
+    <string name="news_more_statistics">More statistics</string>
+    <string name="news_ureporters">U-reporters in %1$s</string>
+    <string name="news_statistics_global_ureporters">Global U-reporters</string>
+    <string name="news_statistics_gender_rate">Rate by Gender</string>
+    <string name="news_statistics_most_active">4 most active regions</string>
+    <string name="news_statistics_age_rate">Rate by Age</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

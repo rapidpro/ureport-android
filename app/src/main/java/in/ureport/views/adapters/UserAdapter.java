@@ -16,14 +16,14 @@ import in.ureport.models.User;
 /**
  * Created by johncordeiro on 7/15/15.
  */
-public class CoauthorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<User> users;
     private List<User> selectedCoauthors;
 
     private ItemSelectionListener<User> itemSelectionListener;
 
-    public CoauthorAdapter(List<User> users, List<User> selectedCoauthors) {
+    public UserAdapter(List<User> users, List<User> selectedCoauthors) {
         this.users = users;
         this.selectedCoauthors = selectedCoauthors;
     }

@@ -3,8 +3,6 @@ package in.ureport.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +30,7 @@ public class MainActivity extends BaseActivity {
     private User user;
 
     private StoriesListFragment storiesListFragment;
+    private NewsFragment newsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,10 +75,11 @@ public class MainActivity extends BaseActivity {
 
     private void setupNavigationAdapter() {
         storiesListFragment = new StoriesListFragment();
-
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
         NavigationItem pollsItem = new NavigationItem(new PollsFragment(), getString(R.string.main_polls));
-        NavigationItem newsItem = new NavigationItem(new NewsFragment(), getString(R.string.main_news_feed));
+
+        newsFragment = NewsFragment.newInstance(user);
+        NavigationItem newsItem = new NavigationItem(newsFragment, getString(R.string.main_news_feed));
 
         MainNavigationAdapter adapter = new MainNavigationAdapter(getSupportFragmentManager()
                 , storiesItem, pollsItem, newsItem);
@@ -92,6 +92,7 @@ public class MainActivity extends BaseActivity {
         protected void onPostExecute(User user) {
             super.onPostExecute(user);
             MainActivity.this.user = user;
+            newsFragment.setUser(user);
             getToolbar().setTitle(user.getCountry());
         }
     };

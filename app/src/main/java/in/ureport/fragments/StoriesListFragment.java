@@ -25,6 +25,8 @@ import in.ureport.views.adapters.StoriesAdapter;
  */
 public class StoriesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Story>>, StoriesAdapter.StoryViewListener {
 
+    private static final int LOADER_ID_STORIES_LIST = 10;
+
     private RecyclerView storiesList;
 
     @Nullable
@@ -42,7 +44,7 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
     }
 
     public void loadStories() {
-        getLoaderManager().initLoader(0, null, this).forceLoad();
+        getLoaderManager().initLoader(LOADER_ID_STORIES_LIST, null, this).forceLoad();
     }
 
     private void setupView(View view) {
