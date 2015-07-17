@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:minHeight="50dp"
+    android:paddingTop="5dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    tools:background="#f00">
+
+    <Button
+        android:id="@+id/addContribution"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@drawable/ic_add_circle_grey_600_36dp"/>
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:imeOptions="actionDone"
+        android:ellipsize="start"
+        android:singleLine="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:hint="@string/story_contribution_add"
+        tools:text="asuhdsahudas asdudasuhduhas asdhudasuhdas adshuadsuhadsuh saduhdasuhdasu asdhuaduhaduhs adsuhadsuhdashu"/>
+
+</LinearLayout>

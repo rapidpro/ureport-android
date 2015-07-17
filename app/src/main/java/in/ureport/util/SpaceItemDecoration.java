@@ -9,14 +9,35 @@ import android.view.View;
  */
 public class SpaceItemDecoration extends RecyclerView.ItemDecoration {
 
-    private final int horizontalSpaceWidth;
+    private enum Type {
+        Horizontal,
+        Vertical
+    }
 
-    public SpaceItemDecoration(int horizontalSpaceWidth) {
+    private Type type;
+
+    private int horizontalSpaceWidth;
+    private int verticalSpaceHeight;
+
+    public void setHorizontalSpaceWidth(int horizontalSpaceWidth) {
+        type = Type.Horizontal;
         this.horizontalSpaceWidth = horizontalSpaceWidth;
+    }
+
+    public void setVerticalSpaceHeight(int verticalSpaceHeight) {
+        type = Type.Vertical;
+        this.verticalSpaceHeight = verticalSpaceHeight;
     }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        outRect.right = horizontalSpaceWidth;
+        switch(type) {
+            case Horizontal:
+                outRect.right = horizontalSpaceWidth;
+                break;
+            case Vertical:
+                outRect.bottom = verticalSpaceHeight;
+        }
+
     }
 }

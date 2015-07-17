@@ -31,7 +31,7 @@ public class CoauthorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new ViewHolder(inflater.inflate(R.layout.item_coauthor, parent, false));
+        return new ViewHolder(inflater.inflate(R.layout.item_user, parent, false));
     }
 
     @Override

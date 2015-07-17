@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
     public StoriesAdapter(List<Story> stories) {
         this.stories = stories;
     }
+
+    private StoryViewListener storyViewListener;
 
     @Override
     public StoriesAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
@@ -60,7 +63,10 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             title = (TextView) itemView.findViewById(R.id.title);
             author = (TextView) itemView.findViewById(R.id.author);
             markers = (TextView) itemView.findViewById(R.id.markers);
-            contributions = (TextView) itemView.findViewById(R.id.contributions);
+            contributions = (TextView) itemView.findViewById(R.id.contributors);
+
+            Button readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
+            readFullStory.setOnClickListener(onReadFullStoryClickListener);
         }
 
         private void bind(Story story) {
@@ -69,5 +75,21 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             author.setText(String.format(authorTemplate, story.getUser().getUsername()));
             contributions.setText(String.format(contributionsTemplate, story.getContributions()));
         }
+
+        private View.OnClickListener onReadFullStoryClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (storyViewListener != null)
+                    storyViewListener.onStoryViewClick(stories.get(getLayoutPosition()));
+            }
+        };
+    }
+
+    public void setStoryViewListener(StoryViewListener storyViewListener) {
+        this.storyViewListener = storyViewListener;
+    }
+
+    public interface StoryViewListener {
+        void onStoryViewClick(Story story);
     }
 }

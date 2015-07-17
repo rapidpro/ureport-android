@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,11 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.activities.BaseActivity;
+import in.ureport.activities.StoryViewActivity;
 import in.ureport.loader.StoriesLoader;
 import in.ureport.models.Story;
 import in.ureport.views.adapters.StoriesAdapter;
@@ -23,7 +23,7 @@ import in.ureport.views.adapters.StoriesAdapter;
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class StoriesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Story>> {
+public class StoriesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Story>>, StoriesAdapter.StoryViewListener {
 
     private RecyclerView storiesList;
 
@@ -58,9 +58,17 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onLoadFinished(Loader<List<Story>> loader, List<Story> data) {
         StoriesAdapter adapter = new StoriesAdapter(data);
+        adapter.setStoryViewListener(this);
         storiesList.setAdapter(adapter);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Story>> loader) {}
+
+    @Override
+    public void onStoryViewClick(Story story) {
+        Intent storyViewIntent = new Intent(getActivity(), StoryViewActivity.class);
+        storyViewIntent.putExtra(StoryViewActivity.EXTRA_STORY, story);
+        startActivity(storyViewIntent);
+    }
 }

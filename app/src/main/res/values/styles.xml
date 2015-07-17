@@ -24,4 +24,10 @@
         <item name="android:layout_marginRight">20dp</item>
     </style>
 
+    <style name="AppTheme.StoryInfo">
+        <item name="android:maxLines">1</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
 </resources>

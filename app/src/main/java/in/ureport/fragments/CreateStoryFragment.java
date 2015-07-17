@@ -38,9 +38,6 @@ import in.ureport.views.adapters.MediaAdapter;
  */
 public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaListener {
 
-    public static final String MEDIA_PICTURE = "picture";
-    public static final String MEDIA_VIDEO = "video";
-
     private List<Marker> selectedMarkers;
     private List<String> mediaList;
 
@@ -78,7 +75,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         markers = (EditText) view.findViewById(R.id.markers);
         markers.setOnClickListener(onMarkerClickListener);
 
-        mediaAdapter = new MediaAdapter(mediaList);
+        mediaAdapter = new MediaAdapter(mediaList, true);
         mediaAdapter.setHasStableIds(true);
         mediaAdapter.setMediaListener(this);
 
@@ -86,7 +83,9 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         mediaAddList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
         UnitConverter converter = new UnitConverter(getActivity());
-        mediaAddList.addItemDecoration(new SpaceItemDecoration((int) converter.convertDpToPx(10)));
+        SpaceItemDecoration mediaItemDecoration = new SpaceItemDecoration();
+        mediaItemDecoration.setHorizontalSpaceWidth((int) converter.convertDpToPx(10));
+        mediaAddList.addItemDecoration(mediaItemDecoration);
         mediaAddList.setAdapter(mediaAdapter);
     }
 
@@ -186,10 +185,10 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         public void onClick(DialogInterface dialogInterface, int position) {
             switch (position) {
                 case 2:
-                    mediaList.add(MEDIA_VIDEO);
+                    mediaList.add(MediaAdapter.MEDIA_VIDEO);
                     break;
                 default:
-                    mediaList.add(MEDIA_PICTURE);
+                    mediaList.add(MediaAdapter.MEDIA_PICTURE);
             }
             mediaAdapter.updateMediaList(mediaList);
         }

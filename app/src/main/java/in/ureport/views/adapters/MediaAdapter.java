@@ -18,6 +18,9 @@ import in.ureport.fragments.CreateStoryFragment;
  */
 public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public static final String MEDIA_PICTURE = "picture";
+    public static final String MEDIA_VIDEO = "video";
+
     private static final String TAG = "MediaAdapter";
 
     private static final int MEDIA_TYPE = 0;
@@ -26,10 +29,13 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final long ADD_MEDIA_ITEM_ID = 1000;
 
     private List<String> mediaList;
+    private boolean editMode;
+
     private MediaListener mediaListener;
 
-    public MediaAdapter(List<String> mediaList) {
+    public MediaAdapter(List<String> mediaList, boolean editMode) {
         this.mediaList = mediaList;
+        this.editMode = editMode;
     }
 
     @Override
@@ -37,9 +43,9 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch(viewType) {
             case MEDIA_TYPE:
-                return new MediaViewHolder(inflater.inflate(R.layout.view_media, null));
+                return new MediaViewHolder(inflater.inflate(R.layout.view_media, parent, false));
             case ADD_MEDIA_TYPE:
-                return new AddMediaViewHolder(inflater.inflate(R.layout.view_add_media, null));
+                return new AddMediaViewHolder(inflater.inflate(R.layout.view_add_media, parent, false));
         }
         return null;
     }
@@ -63,6 +69,8 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
+        if(!editMode) return MEDIA_TYPE;
+
         if(position == mediaList.size()) {
             return ADD_MEDIA_TYPE;
         }
@@ -72,7 +80,10 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mediaList.size() + 1;
+        if(editMode)
+            return mediaList.size() + 1;
+        else
+            return mediaList.size();
     }
 
     public void setMediaListener(MediaListener mediaListener) {
@@ -94,11 +105,12 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             image = (ImageView) itemView.findViewById(R.id.image);
 
             Button remove = (Button) itemView.findViewById(R.id.remove);
+            remove.setVisibility(editMode ? View.VISIBLE : View.GONE);
             remove.setOnClickListener(onRemoveClickListener);
         }
 
         private void bindView(String media) {
-            if (media.equals(CreateStoryFragment.MEDIA_VIDEO)) {
+            if (media.equals(MEDIA_VIDEO)) {
                 image.setImageResource(R.drawable.ic_video_grey600_36dp);
             } else {
                 image.setImageResource(R.drawable.ic_camera_grey600_36dp);
