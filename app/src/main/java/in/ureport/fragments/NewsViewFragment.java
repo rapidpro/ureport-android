@@ -37,13 +37,13 @@ public class NewsViewFragment extends Fragment {
     private News news;
 
     public static NewsViewFragment newInstance(News news) {
-        NewsViewFragment stonewsViewFragmentyViewFragment = new NewsViewFragment();
+        NewsViewFragment newsViewFragment = new NewsViewFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_NEWS, news);
-        stonewsViewFragmentyViewFragment.setArguments(args);
+        newsViewFragment.setArguments(args);
 
-        return stonewsViewFragmentyViewFragment;
+        return newsViewFragment;
     }
 
     @Override

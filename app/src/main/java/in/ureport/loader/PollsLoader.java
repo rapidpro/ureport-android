@@ -1,6 +1,7 @@
 package in.ureport.loader;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.models.MultipleChoiceQuestion;
 import in.ureport.models.Poll;
 
 /**
@@ -33,6 +35,9 @@ public class PollsLoader extends AsyncTaskLoader<List<Poll>> {
         poll1.setResponded(42957);
         poll1.setPolled(519574);
 
+        List<MultipleChoiceQuestion> multipleChoiceQuestionList = getMultipleChoiceQuestions();
+        poll1.setQuestions(multipleChoiceQuestionList);
+
         Calendar date2 = Calendar.getInstance();
         date2.roll(Calendar.MONTH, -2);
 
@@ -47,8 +52,34 @@ public class PollsLoader extends AsyncTaskLoader<List<Poll>> {
         polls.add(poll1);
         polls.add(poll2);
 
-        Log.i("PollsLoader", "loadInBackground " + polls.size());
-
         return polls;
+    }
+
+    @NonNull
+    private List<MultipleChoiceQuestion> getMultipleChoiceQuestions() {
+        List<MultipleChoiceQuestion> multipleChoiceQuestionList = new ArrayList<>();
+        multipleChoiceQuestionList.add(getMultipleChoiceQuestion(R.string.poll1_question1
+                , R.string.poll1_question1_answer1, R.string.poll1_question1_answer2));
+        multipleChoiceQuestionList.add(getMultipleChoiceQuestion(R.string.poll1_question2
+                , R.string.poll1_question2_answer1, R.string.poll1_question2_answer2
+                , R.string.poll1_question2_answer3, R.string.poll1_question2_answer4));
+        multipleChoiceQuestionList.add(getMultipleChoiceQuestion(R.string.poll1_question3
+                , R.string.poll1_question3_answer1, R.string.poll1_question3_answer2
+                , R.string.poll1_question3_answer3));
+        return multipleChoiceQuestionList;
+    }
+
+    private MultipleChoiceQuestion getMultipleChoiceQuestion(int questionId, int... choicesId) {
+        String question = getContext().getString(questionId);
+        List<String> choices = new ArrayList<>();
+
+        for (int choiceId : choicesId) {
+            choices.add(getContext().getString(choiceId));
+        }
+
+        MultipleChoiceQuestion multipleChoiceQuestion = new MultipleChoiceQuestion();
+        multipleChoiceQuestion.setQuestion(question);
+        multipleChoiceQuestion.setChoices(choices);
+        return multipleChoiceQuestion;
     }
 }

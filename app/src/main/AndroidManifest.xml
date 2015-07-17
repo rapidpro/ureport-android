@@ -56,6 +56,15 @@
                 android:value=".activities.MainActivity" />
         </activity>
 
+        <activity
+            android:name=".activities.AnswerPollActivity"
+            android:label="@string/label_story_view"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+
         <meta-data android:name="AA_DB_NAME" android:value="Ureport.db" />
         <meta-data android:name="AA_DB_VERSION" android:value="1" />
 

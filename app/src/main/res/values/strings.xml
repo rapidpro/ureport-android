@@ -66,6 +66,7 @@
     <string name="news_statistics_gender_rate">Rate by Gender</string>
     <string name="news_statistics_most_active">4 most active regions</string>
     <string name="news_statistics_age_rate">Rate by Age</string>
+    <string name="answer_polls_respond">Respond</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

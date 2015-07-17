@@ -26,6 +26,8 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private DateFormat dateFormatter;
     private NumberFormat numberFormatter;
 
+    private PollParticipationListener pollParticipationListener;
+
     public PollAdapter(List<Poll> polls) {
         this.polls = polls;
         dateFormatter = SimpleDateFormat.getDateInstance(DateFormat.SHORT);
@@ -83,6 +85,7 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             boolean current = poll.getExpirationDate().after(new Date());
             if(current) {
                 participate.setText(R.string.polls_participate);
+                participate.setOnClickListener(onParticipateClickListener);
             } else {
                 participate.setText(R.string.polls_see_results);
             }
@@ -96,5 +99,21 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 info.setText(dateFormatter.format(poll.getExpirationDate()));
             }
         }
+
+        private View.OnClickListener onParticipateClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pollParticipationListener != null)
+                    pollParticipationListener.onParticipate(polls.get(getLayoutPosition()));
+            }
+        };
+    }
+
+    public void setPollParticipationListener(PollParticipationListener pollParticipationListener) {
+        this.pollParticipationListener = pollParticipationListener;
+    }
+
+    public interface PollParticipationListener {
+        void onParticipate(Poll poll);
     }
 }

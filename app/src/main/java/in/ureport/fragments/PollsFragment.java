@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.activities.AnswerPollActivity;
 import in.ureport.loader.PollsLoader;
 import in.ureport.models.Poll;
 import in.ureport.views.adapters.PollAdapter;
@@ -22,7 +24,7 @@ import in.ureport.views.adapters.PollAdapter;
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class PollsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Poll>> {
+public class PollsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Poll>>, PollAdapter.PollParticipationListener {
 
     private static final String TAG = "PollsFragment";
 
@@ -62,9 +64,17 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoadFinished(Loader<List<Poll>> loader, List<Poll> data) {
         PollAdapter adapter = new PollAdapter(data);
+        adapter.setPollParticipationListener(this);
         pollsList.setAdapter(adapter);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Poll>> loader) {}
+
+    @Override
+    public void onParticipate(Poll poll) {
+        Intent answerPollIntent = new Intent(getActivity(), AnswerPollActivity.class);
+        answerPollIntent.putExtra(AnswerPollActivity.EXTRA_POLL, poll);
+        startActivity(answerPollIntent);
+    }
 }
