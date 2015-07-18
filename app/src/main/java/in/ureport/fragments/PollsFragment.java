@@ -17,6 +17,7 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.activities.AnswerPollActivity;
+import in.ureport.activities.PollResultsActivity;
 import in.ureport.loader.PollsLoader;
 import in.ureport.models.Poll;
 import in.ureport.views.adapters.PollAdapter;
@@ -76,5 +77,12 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
         Intent answerPollIntent = new Intent(getActivity(), AnswerPollActivity.class);
         answerPollIntent.putExtra(AnswerPollActivity.EXTRA_POLL, poll);
         startActivity(answerPollIntent);
+    }
+
+    @Override
+    public void onSeeResults(Poll poll) {
+        Intent pollResultsIntent = new Intent(getActivity(), PollResultsActivity.class);
+        pollResultsIntent.putExtra(AnswerPollActivity.EXTRA_POLL, poll);
+        startActivity(pollResultsIntent);
     }
 }

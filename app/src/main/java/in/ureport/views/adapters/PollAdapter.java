@@ -88,6 +88,7 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 participate.setOnClickListener(onParticipateClickListener);
             } else {
                 participate.setText(R.string.polls_see_results);
+                participate.setOnClickListener(onSeeResultsClickListener);
             }
         }
 
@@ -107,6 +108,14 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     pollParticipationListener.onParticipate(polls.get(getLayoutPosition()));
             }
         };
+
+        private View.OnClickListener onSeeResultsClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (pollParticipationListener != null)
+                    pollParticipationListener.onSeeResults(polls.get(getLayoutPosition()));
+            }
+        };
     }
 
     public void setPollParticipationListener(PollParticipationListener pollParticipationListener) {
@@ -115,5 +124,6 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface PollParticipationListener {
         void onParticipate(Poll poll);
+        void onSeeResults(Poll poll);
     }
 }

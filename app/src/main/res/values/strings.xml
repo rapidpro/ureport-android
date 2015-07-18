@@ -71,6 +71,9 @@
     <string name="confirm_neutral_dialog_button">Ok</string>
     <string name="answer_poll_greetings_title">Congratulations!</string>
     <string name="answer_poll_greeting_message">Thank you for participating in this poll, the outcomes will be available soon.</string>
+    <string name="label_poll_results">All results</string>
+    <string name="label_poll_region_results">Result by Region</string>
+    <string name="poll_results_by_region">See results by region</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

@@ -115,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="10dp"
-                android:background="#44c9c9c9"/>
+                android:background="@color/line"/>
 
             <TextView
                 android:id="@+id/content"
@@ -132,7 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="10dp"
-                android:background="#44c9c9c9"/>
+                android:background="@color/line"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/contributionList"

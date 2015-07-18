@@ -22,7 +22,9 @@ public class Poll implements Parcelable {
 
     private int polled;
 
-    private List<? extends PollQuestion> questions;
+    private List<PollQuestion> questions;
+
+    private List<PollResult> results;
 
     public String getDescription() {
         return description;
@@ -64,12 +66,20 @@ public class Poll implements Parcelable {
         this.polled = polled;
     }
 
-    public List<? extends PollQuestion> getQuestions() {
+    public List<PollQuestion> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(List<? extends PollQuestion> questions) {
+    public void setQuestions(List<PollQuestion> questions) {
         this.questions = questions;
+    }
+
+    public List<PollResult> getResults() {
+        return results;
+    }
+
+    public void setResults(List<PollResult> results) {
+        this.results = results;
     }
 
     @Override
@@ -85,6 +95,7 @@ public class Poll implements Parcelable {
         dest.writeInt(this.responded);
         dest.writeInt(this.polled);
         dest.writeList(this.questions);
+        dest.writeList(this.results);
     }
 
     public Poll() {
@@ -99,6 +110,8 @@ public class Poll implements Parcelable {
         this.polled = in.readInt();
         this.questions = new ArrayList<>();
         in.readList(this.questions, PollQuestion.class.getClassLoader());
+        this.results = new ArrayList<>();
+        in.readList(this.results, PollResult.class.getClassLoader());
     }
 
     public static final Creator<Poll> CREATOR = new Creator<Poll>() {

@@ -6,4 +6,5 @@
 
     <color name="button">#e8e8e8</color>
     <color name="button_pressed">#c0c0c0</color>
+    <color name="line">#44c9c9c9</color>
 </resources>
