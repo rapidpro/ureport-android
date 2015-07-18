@@ -3,41 +3,69 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="140dp"
-    android:minHeight="140dp"
+    android:layout_height="160dp"
+    android:minHeight="160dp"
     android:background="#e5e5e5">
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="45dp"
         android:maxLines="1"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:textColor="@android:color/black"
         android:textSize="20sp"
         android:text="\@Jon Snow"/>
 
     <TextView
-        android:id="@+id/ranking"
+        android:id="@+id/points"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/name"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
-        android:text="Ranking: 125"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:textColor="@android:color/black"
+        android:text="Points: 125"/>
 
     <TextView
         android:id="@+id/polls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/ranking"
+        android:layout_below="@+id/points"
         android:layout_marginTop="5dp"
-        android:text="Polls: 21"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:textColor="@android:color/black"
+        android:text="Polls: 20"/>
+
+    <TextView
+        android:id="@+id/stories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/points"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/polls"
+        android:layout_toEndOf="@+id/polls"
+        android:textColor="@android:color/black"
+        android:text="Stories: 30"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#AAA"
         android:layout_alignParentBottom="true"/>
+
+    <Spinner
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/polls"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        android:entries="@array/country_programs"/>
 
 </RelativeLayout>

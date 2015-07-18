@@ -8,7 +8,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import in.ureport.activities.AnswerPollActivity;
 import in.ureport.activities.PollResultsActivity;
 import in.ureport.loader.PollsLoader;
 import in.ureport.models.Poll;
+import in.ureport.models.User;
 import in.ureport.views.adapters.PollAdapter;
 
 /**
@@ -27,11 +27,34 @@ import in.ureport.views.adapters.PollAdapter;
  */
 public class PollsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Poll>>, PollAdapter.PollParticipationListener {
 
-    private static final String TAG = "PollsFragment";
+    private static final String EXTRA_USER = "user";
 
     private static final int LOADER_ID_POLLS = 20;
 
     private RecyclerView pollsList;
+
+    private User user;
+    private boolean publicType = true;
+
+    public static PollsFragment newInstance(User user) {
+        PollsFragment pollsFragment = new PollsFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable(EXTRA_USER, user);
+        pollsFragment.setArguments(args);
+
+        return pollsFragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle extras = getArguments();
+        if(extras != null && extras.containsKey(EXTRA_USER)) {
+            user = extras.getParcelable(EXTRA_USER);
+            publicType = false;
+        }
+    }
 
     @Nullable
     @Override
@@ -42,7 +65,6 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupView(view);
     }
 
@@ -59,7 +81,11 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<List<Poll>> onCreateLoader(int id, Bundle args) {
-        return new PollsLoader(getActivity());
+        if(publicType) {
+            return new PollsLoader(getActivity());
+        } else {
+            return new PollsLoader(getActivity(), user);
+        }
     }
 
     @Override

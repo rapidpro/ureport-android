@@ -36,22 +36,23 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         if(!systemPreferences.isFakeDataCreated()) {
-            saveFakeStories(users[0]);
-            saveFakeUsers();
+            List<User> newUsers = saveFakeUsers();
+            saveFakeStories(newUsers.toArray(new User[]{}));
 
             systemPreferences.setFakeDataCreated(true);
         }
         return null;
     }
 
-    private void saveFakeUsers() {
+    private List<User> saveFakeUsers() {
         List<User> newUsers = getNewUsers();
 
         UserRepository userRepository = new UserBusiness();
         userRepository.create(newUsers);
+        return newUsers;
     }
 
-    private void saveFakeStories(User user) {
+    private void saveFakeStories(User... user) {
         List<Story> stories = getFakeStories(user);
 
         StoryRepository storyRepository = new StoryBusiness();
@@ -67,6 +68,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user1.setType(User.Type.Twitter);
         user1.setBirthday(new Date());
         user1.setCountry("Uganda");
+        user1.setPolls(20);
+        user1.setStories(10);
+        user1.setPoints(user1.getPolls() + user1.getStories());
 
         User user2 = new User();
         user2.setUsername("domingos_hailey123");
@@ -75,6 +79,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user2.setType(User.Type.Twitter);
         user2.setBirthday(new Date());
         user2.setCountry("Spain");
+        user2.setPolls(25);
+        user2.setStories(15);
+        user2.setPoints(user2.getPolls() + user2.getStories());
 
         User user3 = new User();
         user3.setUsername("pauleenk12");
@@ -83,6 +90,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user3.setType(User.Type.Facebook);
         user3.setBirthday(new Date());
         user3.setCountry("Uganda");
+        user3.setPolls(30);
+        user3.setStories(20);
+        user3.setPoints(user3.getPolls() + user3.getStories());
 
         User user4 = new User();
         user4.setUsername("robertap");
@@ -91,6 +101,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user4.setType(User.Type.Facebook);
         user4.setBirthday(new Date());
         user4.setCountry("Brazil");
+        user4.setPolls(1);
+        user4.setStories(2);
+        user4.setPoints(user4.getPolls() + user4.getStories());
 
         User user5 = new User();
         user5.setUsername("phil89");
@@ -99,6 +112,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user5.setType(User.Type.Facebook);
         user5.setBirthday(new Date());
         user5.setCountry("United States");
+        user5.setPolls(10);
+        user5.setStories(28);
+        user5.setPoints(user5.getPolls() + user5.getStories());
 
         User user6 = new User();
         user6.setUsername("joshy");
@@ -107,6 +123,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user6.setType(User.Type.Ureport);
         user6.setBirthday(new Date());
         user6.setCountry("United States");
+        user6.setPolls(5);
+        user6.setStories(30);
+        user6.setPoints(user6.getPolls() + user6.getStories());
 
         User user7 = new User();
         user7.setUsername("tommy20");
@@ -115,6 +134,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user7.setType(User.Type.Google);
         user7.setBirthday(new Date());
         user7.setCountry("Nigeria");
+        user7.setPolls(8);
+        user7.setStories(16);
+        user7.setPoints(user7.getPolls() + user7.getStories());
 
         User user8 = new User();
         user8.setUsername("maria_gloria");
@@ -123,6 +145,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user8.setType(User.Type.Ureport);
         user8.setBirthday(new Date());
         user8.setCountry("Brazil");
+        user8.setPolls(40);
+        user8.setStories(100);
+        user8.setPoints(user8.getPolls() + user8.getStories());
 
         User user9 = new User();
         user9.setUsername("carvajal");
@@ -131,6 +156,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user9.setType(User.Type.Facebook);
         user9.setBirthday(new Date());
         user9.setCountry("Spain");
+        user9.setPolls(10);
+        user9.setStories(1);
+        user9.setPoints(user9.getPolls() + user9.getStories());
 
         User user10 = new User();
         user10.setUsername("gonzalez1000");
@@ -139,6 +167,9 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         user10.setType(User.Type.Google);
         user10.setBirthday(new Date());
         user10.setCountry("Mexico");
+        user10.setPolls(10);
+        user10.setStories(90);
+        user10.setPoints(user10.getPolls() + user10.getStories());
 
         List<User> newUsers = new ArrayList<>();
         newUsers.add(user1);
@@ -155,12 +186,12 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
     }
 
     @NonNull
-    private List<Story> getFakeStories(User user) {
+    private List<Story> getFakeStories(User... users) {
         Story story1 = new Story();
         story1.setTitle(context.getString(R.string.story1_title));
         story1.setContent(context.getString(R.string.story1_content));
         story1.setCreatedDate(new Date());
-        story1.setUser(user);
+        story1.setUser(users[0]);
         story1.setContributions(25);
         story1.setMarkers("Education");
 
@@ -168,7 +199,7 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         story2.setTitle(context.getString(R.string.story2_title));
         story2.setContent(context.getString(R.string.story2_content));
         story2.setCreatedDate(new Date());
-        story2.setUser(user);
+        story2.setUser(users[1]);
         story2.setContributions(123);
         story2.setMarkers("Water");
 
@@ -176,7 +207,7 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         story3.setTitle(context.getString(R.string.story3_title));
         story3.setContent(context.getString(R.string.story3_content));
         story3.setCreatedDate(new Date());
-        story3.setUser(user);
+        story3.setUser(users[2]);
         story3.setContributions(14);
         story3.setMarkers("Education, Politics");
 
@@ -184,7 +215,7 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
         story4.setTitle(context.getString(R.string.story4_title));
         story4.setContent(context.getString(R.string.story4_content));
         story4.setCreatedDate(new Date());
-        story4.setUser(user);
+        story4.setUser(users[3]);
         story4.setContributions(10);
         story4.setMarkers("Politics");
 

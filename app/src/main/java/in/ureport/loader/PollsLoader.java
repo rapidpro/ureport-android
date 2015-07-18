@@ -16,6 +16,7 @@ import in.ureport.models.OpenQuestion;
 import in.ureport.models.Poll;
 import in.ureport.models.PollQuestion;
 import in.ureport.models.PollResult;
+import in.ureport.models.User;
 import in.ureport.models.WordsResult;
 
 /**
@@ -23,8 +24,17 @@ import in.ureport.models.WordsResult;
  */
 public class PollsLoader extends AsyncTaskLoader<List<Poll>> {
 
+    private boolean publicType = true;
+    private User user;
+
     public PollsLoader(Context context) {
         super(context);
+    }
+
+    public PollsLoader(Context context, User user) {
+        super(context);
+        this.user = user;
+        this.publicType = false;
     }
 
     @Override
@@ -59,7 +69,7 @@ public class PollsLoader extends AsyncTaskLoader<List<Poll>> {
         poll2.setResults(resultsForPoll2);
 
         List<Poll> polls = new ArrayList<>();
-        polls.add(poll1);
+        if(publicType) polls.add(poll1);
         polls.add(poll2);
 
         return polls;

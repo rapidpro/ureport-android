@@ -74,6 +74,17 @@
     <string name="label_poll_results">All results</string>
     <string name="label_poll_region_results">Result by Region</string>
     <string name="poll_results_by_region">See results by region</string>
+    <string name="menu_notifications_title">Notifications</string>
+    <string name="label_profile">Profile</string>
+    <string name="label_edit">Edit</string>
+    <string name="label_logout">Logout</string>
+    <string name="profile_my_stories">My stories</string>
+    <string name="profile_answered_polls">Answered Polls</string>
+    <string name="profile_ranking">Ranking</string>
+    <string name="list_stories_error">You did not publish any story so far.</string>
+    <string name="profile_polls">Polls: %1$s</string>
+    <string name="profile_stories">Stories: %1$s</string>
+    <string name="menu_points">Points: %1$s</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>
@@ -85,4 +96,25 @@
         <item>Camera</item>
         <item>Youtube</item>
     </string-array>
+
+    <string-array name="country_programs">
+        <item>Switch Country Program</item>
+        <item>Burundi</item>
+        <item>Cameroun</item>
+        <item>Chile</item>
+        <item>Drc</item>
+        <item>Indonesia</item>
+        <item>Liberia</item>
+        <item>Mali</item>
+        <item>México</item>
+        <item>Nigeria</item>
+        <item>République Centrafricaine</item>
+        <item>Sénégal</item>
+        <item>Sierra Leone</item>
+        <item>Swaziland</item>
+        <item>Uganda</item>
+        <item>Zambia</item>
+        <item>Zimbabwe</item>
+    </string-array>
+
 </resources>

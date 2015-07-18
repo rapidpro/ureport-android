@@ -1,8 +1,10 @@
 package in.ureport.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -12,25 +14,31 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import in.ureport.R;
+import in.ureport.models.User;
+import in.ureport.tasks.GetUserLoggedTask;
 
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
+    private NavigationView menuNavigation;
     private FloatingActionButton mainActionButton;
-
     private ActionBarDrawerToggle actionBarDrawerToggle;
+
+    private User user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
         setupBaseView();
+        loadUser();
     }
 
     private void setupBaseView() {
@@ -42,6 +50,8 @@ public class BaseActivity extends AppCompatActivity {
 
         mainActionButton = (FloatingActionButton) findViewById(R.id.mainActionButton);
         mainActionButton.setVisibility(hasMainActionButton() ? View.VISIBLE : View.GONE);
+
+        menuNavigation = (NavigationView) findViewById(R.id.menuNavigation);
 
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout
@@ -72,6 +82,47 @@ public class BaseActivity extends AppCompatActivity {
         content.addView(view);
     }
 
+    private void loadUser() {
+        loadUserTask.execute();
+    }
+
+    private GetUserLoggedTask loadUserTask = new GetUserLoggedTask(this) {
+        @Override
+        protected void onPostExecute(User user) {
+            super.onPostExecute(user);
+            updateUserInfo(user);
+            setUser(user);
+        }
+    };
+
+    private void updateUserInfo(User user) {
+        BaseActivity.this.user = user;
+        if(user != null) {
+            View menuHeader = getLayoutInflater().inflate(R.layout.view_header_menu, null);
+            menuHeader.setOnClickListener(onMenuHeaderClickListener);
+
+            TextView name = (TextView) menuHeader.findViewById(R.id.name);
+            name.setText("@" + user.getUsername());
+
+            TextView points = (TextView) menuHeader.findViewById(R.id.points);
+            points.setText(getString(R.string.menu_points, user.getPoints()));
+
+            TextView polls = (TextView) menuHeader.findViewById(R.id.polls);
+            polls.setText(getString(R.string.profile_polls, user.getPolls()));
+
+            TextView stories = (TextView) menuHeader.findViewById(R.id.stories);
+            stories.setText(getString(R.string.profile_stories, user.getStories()));
+
+            menuNavigation.addHeaderView(menuHeader);
+        }
+    }
+
+    public User getLoggedUser() {
+        return user;
+    }
+
+    public void setUser(User user){}
+
     public Toolbar getToolbar() {
         return toolbar;
     }
@@ -91,4 +142,12 @@ public class BaseActivity extends AppCompatActivity {
     public boolean hasMainActionButton() {
         return false;
     }
+
+    private View.OnClickListener onMenuHeaderClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent profileIntent = new Intent(BaseActivity.this, ProfileActivity.class);
+            startActivity(profileIntent);
+        }
+    };
 }

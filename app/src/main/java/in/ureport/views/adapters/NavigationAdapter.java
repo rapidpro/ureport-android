@@ -12,11 +12,11 @@ import in.ureport.models.holders.NavigationItem;
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class MainNavigationAdapter extends FragmentPagerAdapter {
+public class NavigationAdapter extends FragmentPagerAdapter {
 
     private List<NavigationItem> navigationItems;
 
-    public MainNavigationAdapter(FragmentManager fm, NavigationItem... navigationItems) {
+    public NavigationAdapter(FragmentManager fm, NavigationItem... navigationItems) {
         super(fm);
         this.navigationItems = Arrays.asList(navigationItems);
     }

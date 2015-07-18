@@ -21,6 +21,10 @@
             android:label="@string/label_home" />
 
         <activity
+            android:name=".activities.ProfileActivity"
+            android:label="@string/label_profile"/>
+
+        <activity
             android:name=".activities.CreateStoryActivity"
             android:label="@string/label_new_story"
             android:parentActivityName=".activities.MainActivity">

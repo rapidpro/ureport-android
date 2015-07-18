@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 
 import in.ureport.R;
@@ -13,8 +12,7 @@ import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
-import in.ureport.tasks.GetUserLoggedTask;
-import in.ureport.views.adapters.MainNavigationAdapter;
+import in.ureport.views.adapters.NavigationAdapter;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -27,7 +25,6 @@ public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
 
     private ViewPager pager;
-    private User user;
 
     private StoriesListFragment storiesListFragment;
     private NewsFragment newsFragment;
@@ -37,7 +34,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupView();
-        loadUser();
     }
 
     @Override
@@ -65,10 +61,6 @@ public class MainActivity extends BaseActivity {
         getMainActionButton().setOnClickListener(onCreateStoryClickListener);
     }
 
-    private void loadUser() {
-        loadUserTask.execute();
-    }
-
     private boolean containsMainActionButton(int position) {
         return position == POSITION_MAIN_ACTION_BUTTON;
     }
@@ -78,24 +70,21 @@ public class MainActivity extends BaseActivity {
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
         NavigationItem pollsItem = new NavigationItem(new PollsFragment(), getString(R.string.main_polls));
 
-        newsFragment = NewsFragment.newInstance(user);
+        newsFragment = NewsFragment.newInstance(getLoggedUser());
         NavigationItem newsItem = new NavigationItem(newsFragment, getString(R.string.main_news_feed));
 
-        MainNavigationAdapter adapter = new MainNavigationAdapter(getSupportFragmentManager()
+        NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager()
                 , storiesItem, pollsItem, newsItem);
 
         pager.setAdapter(adapter);
     }
 
-    private GetUserLoggedTask loadUserTask = new GetUserLoggedTask(this) {
-        @Override
-        protected void onPostExecute(User user) {
-            super.onPostExecute(user);
-            MainActivity.this.user = user;
-            newsFragment.setUser(user);
-            getToolbar().setTitle(user.getCountry());
-        }
-    };
+    @Override
+    public void setUser(User user) {
+        super.setUser(user);
+        newsFragment.setUser(user);
+        getToolbar().setTitle(user.getCountry());
+    }
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override

@@ -8,7 +8,6 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import in.ureport.R;
@@ -39,6 +38,15 @@ public class User extends Model implements Parcelable {
 
     @Column(name = "type")
     private Type type;
+
+    @Column(name = "points")
+    private Integer points;
+
+    @Column(name = "stories")
+    private Integer stories;
+
+    @Column(name = "polls")
+    private Integer polls;
 
     public String getEmail() {
         return email;
@@ -94,6 +102,30 @@ public class User extends Model implements Parcelable {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public Integer getPoints() {
+        return points != null ? points : 0;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
+    }
+
+    public Integer getStories() {
+        return stories != null ? stories : 0;
+    }
+
+    public void setStories(Integer stories) {
+        this.stories = stories;
+    }
+
+    public Integer getPolls() {
+        return polls != null ? polls : 0;
+    }
+
+    public void setPolls(Integer polls) {
+        this.polls = polls;
     }
 
     @Override

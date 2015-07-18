@@ -13,6 +13,6 @@ public interface UserRepository extends AbstractRepository<User> {
 
     User login(Login login);
 
-    List<User> getAllExcluding(User user);
+    List<User> getAllOrdered();
 
 }

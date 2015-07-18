@@ -25,9 +25,9 @@ public class UserBusiness extends AbstractBusiness<User> implements UserReposito
                     .executeSingle();
     }
 
-    public List<User> getAllExcluding(User user) {
+    public List<User> getAllOrdered() {
         return new Select().from(getTypeClass())
-                .where("username != ?", user.getUsername())
+                .orderBy("points DESC")
                 .execute();
     }
 }
