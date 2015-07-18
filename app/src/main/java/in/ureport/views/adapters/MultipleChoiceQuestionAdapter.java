@@ -1,15 +1,19 @@
 package in.ureport.views.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.listener.PollQuestionAnswerListener;
+import in.ureport.models.MultipleChoiceQuestion;
 
 /**
  * Created by johncordeiro on 7/17/15.
@@ -21,11 +25,13 @@ public class MultipleChoiceQuestionAdapter extends RecyclerView.Adapter<Recycler
 
     private static final int NO_CHOSEN_YET = -1;
 
-    private List<String> choices;
     private int chosen = NO_CHOSEN_YET;
 
-    public MultipleChoiceQuestionAdapter(List<String> choices) {
-        this.choices = choices;
+    private PollQuestionAnswerListener pollQuestionAnswerListener;
+    private MultipleChoiceQuestion multipleChoiceQuestion;
+
+    public MultipleChoiceQuestionAdapter(MultipleChoiceQuestion multipleChoiceQuestion) {
+        this.multipleChoiceQuestion = multipleChoiceQuestion;
     }
 
     @Override
@@ -44,14 +50,14 @@ public class MultipleChoiceQuestionAdapter extends RecyclerView.Adapter<Recycler
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch(getItemViewType(position)) {
             case TYPE_ITEM:
-                ((ItemViewHolder)holder).bindView(choices.get(position));
+                ((ItemViewHolder)holder).bindView(multipleChoiceQuestion.getChoices().get(position));
                 break;
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(position == choices.size()) {
+        if(position == multipleChoiceQuestion.getChoices().size()) {
             return TYPE_RESPOND;
         }
         return TYPE_ITEM;
@@ -59,7 +65,11 @@ public class MultipleChoiceQuestionAdapter extends RecyclerView.Adapter<Recycler
 
     @Override
     public int getItemCount() {
-        return choices.size() + 1;
+        return multipleChoiceQuestion.getChoices().size() + 1;
+    }
+
+    public void setPollQuestionAnswerListener(PollQuestionAnswerListener pollQuestionAnswerListener) {
+        this.pollQuestionAnswerListener = pollQuestionAnswerListener;
     }
 
     private class RespondViewHolder extends RecyclerView.ViewHolder {
@@ -74,7 +84,14 @@ public class MultipleChoiceQuestionAdapter extends RecyclerView.Adapter<Recycler
         private View.OnClickListener onRespondClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(chosen == NO_CHOSEN_YET) {
+                    Context context = view.getContext();
+                    Toast.makeText(context, context.getString(R.string.answer_poll_choose_error), Toast.LENGTH_LONG)
+                            .show();
+                } else if(pollQuestionAnswerListener != null) {
+                    multipleChoiceQuestion.setAnswer(multipleChoiceQuestion.getChoices().get(chosen));
+                    pollQuestionAnswerListener.onQuestionAnswered(multipleChoiceQuestion);
+                }
             }
         };
     }

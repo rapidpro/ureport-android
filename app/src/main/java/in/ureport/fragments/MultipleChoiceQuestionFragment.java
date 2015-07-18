@@ -12,8 +12,9 @@ import android.widget.TextView;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
+import in.ureport.listener.PollQuestionAnswerListener;
 import in.ureport.models.MultipleChoiceQuestion;
-import in.ureport.models.Poll;
+import in.ureport.models.PollQuestion;
 import in.ureport.util.SpaceItemDecoration;
 import in.ureport.views.adapters.MultipleChoiceQuestionAdapter;
 
@@ -25,6 +26,8 @@ public class MultipleChoiceQuestionFragment extends Fragment {
     private static final String EXTRA_POLL_QUESTION = "multipleChoiceQuestion";
 
     private MultipleChoiceQuestion multipleChoiceQuestion;
+
+    private PollQuestionAnswerListener pollQuestionAnswerListener;
 
     public static MultipleChoiceQuestionFragment newInstance(MultipleChoiceQuestion multipleChoiceQuestion) {
         MultipleChoiceQuestionFragment multipleChoiceQuestionFragment = new MultipleChoiceQuestionFragment();
@@ -70,7 +73,12 @@ public class MultipleChoiceQuestionFragment extends Fragment {
         spaceItemDecoration.setVerticalSpaceHeight((int)unitConverter.convertDpToPx(5));
         choiceList.addItemDecoration(spaceItemDecoration);
 
-        MultipleChoiceQuestionAdapter multipleChoiceQuestionAdapter = new MultipleChoiceQuestionAdapter(multipleChoiceQuestion.getChoices());
+        MultipleChoiceQuestionAdapter multipleChoiceQuestionAdapter = new MultipleChoiceQuestionAdapter(multipleChoiceQuestion);
+        multipleChoiceQuestionAdapter.setPollQuestionAnswerListener(pollQuestionAnswerListener);
         choiceList.setAdapter(multipleChoiceQuestionAdapter);
+    }
+
+    public void setPollQuestionAnswerListener(PollQuestionAnswerListener pollQuestionAnswerListener) {
+        this.pollQuestionAnswerListener = pollQuestionAnswerListener;
     }
 }

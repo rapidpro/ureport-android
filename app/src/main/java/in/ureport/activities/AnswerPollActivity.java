@@ -11,7 +11,7 @@ import in.ureport.models.Poll;
 /**
  * Created by johncordeiro on 7/17/15.
  */
-public class AnswerPollActivity extends AppCompatActivity {
+public class AnswerPollActivity extends AppCompatActivity implements AnswerPollFragment.AnswerPollListener {
 
     public static final String EXTRA_POLL = "poll";
 
@@ -26,6 +26,7 @@ public class AnswerPollActivity extends AppCompatActivity {
                 Poll poll = extras.getParcelable(EXTRA_POLL);
 
                 AnswerPollFragment answerPollFragment = AnswerPollFragment.newInstance(poll);
+                answerPollFragment.setAnswerPollListener(this);
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.content, answerPollFragment)
                         .commit();
@@ -33,5 +34,10 @@ public class AnswerPollActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    @Override
+    public void onPollAnswered(Poll poll) {
+        finish();
     }
 }

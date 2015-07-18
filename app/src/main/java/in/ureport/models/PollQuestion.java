@@ -41,4 +41,20 @@ public abstract class PollQuestion implements Parcelable {
         this.question = in.readString();
         this.answer = in.readString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PollQuestion that = (PollQuestion) o;
+
+        return question.equals(that.question);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return question.hashCode();
+    }
 }

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.List;
 
 import in.ureport.fragments.MultipleChoiceQuestionFragment;
+import in.ureport.listener.PollQuestionAnswerListener;
 import in.ureport.models.MultipleChoiceQuestion;
 import in.ureport.models.PollQuestion;
 
@@ -17,6 +18,8 @@ public class PollQuestionAdapter extends FragmentPagerAdapter {
 
     private List<? extends PollQuestion> pollQuestions;
 
+    private PollQuestionAnswerListener pollQuestionAnswerListener;
+
     public PollQuestionAdapter(FragmentManager manager, List<? extends PollQuestion> pollQuestions) {
         super(manager);
         this.pollQuestions = pollQuestions;
@@ -26,7 +29,10 @@ public class PollQuestionAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         PollQuestion pollQuestion = pollQuestions.get(position);
         if(pollQuestion instanceof MultipleChoiceQuestion) {
-            return MultipleChoiceQuestionFragment.newInstance((MultipleChoiceQuestion)pollQuestion);
+            MultipleChoiceQuestionFragment multipleChoiceQuestionFragment = MultipleChoiceQuestionFragment
+                    .newInstance((MultipleChoiceQuestion) pollQuestion);
+            multipleChoiceQuestionFragment.setPollQuestionAnswerListener(pollQuestionAnswerListener);
+            return multipleChoiceQuestionFragment;
         }
         return null;
     }
@@ -34,5 +40,9 @@ public class PollQuestionAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return pollQuestions.size();
+    }
+
+    public void setPollQuestionAnswerListener(PollQuestionAnswerListener pollQuestionAnswerListener) {
+        this.pollQuestionAnswerListener = pollQuestionAnswerListener;
     }
 }

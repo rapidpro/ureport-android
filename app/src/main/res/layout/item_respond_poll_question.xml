@@ -2,17 +2,17 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
     android:layout_gravity="center">
 
     <Button
         android:id="@+id/respond"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
         android:layout_gravity="center"
-        android:textSize="20sp"
+        android:background="@null"
         android:text="@string/answer_polls_respond"/>
 
 </FrameLayout>

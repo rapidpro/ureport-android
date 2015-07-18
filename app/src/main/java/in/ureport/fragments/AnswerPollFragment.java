@@ -1,29 +1,36 @@
 package in.ureport.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import in.ureport.R;
+import in.ureport.listener.PollQuestionAnswerListener;
 import in.ureport.models.Poll;
+import in.ureport.models.PollQuestion;
 import in.ureport.views.adapters.PollQuestionAdapter;
 import in.ureport.views.widgets.ContentPager;
 
 /**
  * Created by johncordeiro on 7/17/15.
  */
-public class AnswerPollFragment extends Fragment {
+public class AnswerPollFragment extends Fragment implements PollQuestionAnswerListener {
+
+    private static final String TAG = "AnswerPollFragment";
 
     private static final String EXTRA_POLL = "poll";
 
     private Poll poll;
+    private ContentPager questionsList;
+
+    private AnswerPollListener answerPollListener;
 
     public static AnswerPollFragment newInstance(Poll poll) {
         AnswerPollFragment answerPollFragment = new AnswerPollFragment();
@@ -63,10 +70,47 @@ public class AnswerPollFragment extends Fragment {
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ContentPager questionsList = (ContentPager) view.findViewById(R.id.questionsList);
-//        questionsList.setPagingEnabled(false);
+        questionsList = (ContentPager) view.findViewById(R.id.questionsList);
+        questionsList.setPagingEnabled(false);
 
         PollQuestionAdapter pollQuestionAdapter = new PollQuestionAdapter(getFragmentManager(), poll.getQuestions());
+        pollQuestionAdapter.setPollQuestionAnswerListener(this);
         questionsList.setAdapter(pollQuestionAdapter);
+    }
+
+    @Override
+    public void onQuestionAnswered(PollQuestion pollQuestion) {
+        int indexOfQuestion = poll.getQuestions().indexOf(pollQuestion);
+        if(indexOfQuestion != poll.getQuestions().size()-1) {
+            questionsList.setCurrentItem(indexOfQuestion+1, true);
+        } else {
+            showConfirmDialog();
+        }
+    }
+
+    private void showConfirmDialog() {
+        AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.answer_poll_greetings_title)
+                .setMessage(R.string.answer_poll_greeting_message)
+                .setNeutralButton(R.string.confirm_neutral_dialog_button, onConfirmClickListener)
+                .setCancelable(false)
+                .create();
+        dialog.show();
+    }
+
+    private DialogInterface.OnClickListener onConfirmClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (answerPollListener != null)
+                answerPollListener.onPollAnswered(poll);
+        }
+    };
+
+    public void setAnswerPollListener(AnswerPollListener answerPollListener) {
+        this.answerPollListener = answerPollListener;
+    }
+
+    public interface AnswerPollListener {
+        void onPollAnswered(Poll poll);
     }
 }

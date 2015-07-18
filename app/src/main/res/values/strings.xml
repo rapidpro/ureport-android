@@ -67,6 +67,10 @@
     <string name="news_statistics_most_active">4 most active regions</string>
     <string name="news_statistics_age_rate">Rate by Age</string>
     <string name="answer_polls_respond">Respond</string>
+    <string name="answer_poll_choose_error">You need to choose an answer!</string>
+    <string name="confirm_neutral_dialog_button">Ok</string>
+    <string name="answer_poll_greetings_title">Congratulations!</string>
+    <string name="answer_poll_greeting_message">Thank you for participating in this poll, the outcomes will be available soon.</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>
