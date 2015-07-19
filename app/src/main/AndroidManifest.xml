@@ -27,6 +27,14 @@
             android:label="@string/label_home" />
 
         <activity
+            android:name=".activities.AboutActivity"
+            android:label="@string/label_about_ureport" />
+
+        <activity
+            android:name=".activities.DonationActivity"
+            android:label="@string/label_donation" />
+
+        <activity
             android:name=".activities.ProfileActivity"
             android:label="@string/label_profile"
             android:parentActivityName=".activities.MainActivity">
@@ -36,7 +44,7 @@
         </activity>
 
         <activity
-            android:name=".activities.NewChatActivity"
+            android:name=".activities.ChatCreationActivity"
             android:label="@string/label_new_chat"
             android:parentActivityName=".activities.ChatActivity">
             <meta-data

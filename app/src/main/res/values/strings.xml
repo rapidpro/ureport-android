@@ -37,7 +37,7 @@
     <string name="base_menu_close_drawer">Close Menu</string>
     <string name="stories_list_item_author">by %1$s</string>
     <string name="stories_list_item_contributions">%1$s contributors</string>
-    <string name="story_item_read_full_story">Read full story</string>
+    <string name="story_item_read_full_story">See full story</string>
     <string name="label_new_story">New Story</string>
     <string name="create_story_insert_cover">Insert a cover image</string>
     <string name="create_story_insert_title">Insert title</string>
@@ -93,6 +93,24 @@
     <string name="label_new_chat">New chat</string>
     <string name="chat_create_group_title">Create a Group</string>
     <string name="chat_ureporters">U-Reporters</string>
+    <string name="chat_group_title_hint">Group title</string>
+    <string name="chat_private_group_title">Private group?</string>
+    <string name="chat_new_invite_ureporters">Invite U-reporters</string>
+    <string name="chat_new_invite_ureporters_count">%1$s u-reporters</string>
+    <string name="label_create">Create</string>
+    <string name="chat_create_result_title">Success!</string>
+    <string name="chat_create_group_result_message">The group was created with success!</string>
+    <string name="chat_group_description_hint">Group description</string>
+    <string name="label_create_group">Create group</string>
+    <string name="chat_create_individual_message">Do you want to create a new chat room with this u-reporter?</string>
+    <string name="cancel_dialog_button">Cancel</string>
+    <string name="label_action_notifications">Notifications</string>
+    <string name="about_content">U-Report is a global platform where YOU speak out on issues YOU care about and have positive change in your community anywhere in the world. U-Report is free and open to everyone. Join U-Report today and be part of the global movement for positive social change.</string>
+    <string name="label_about_ureport">About U-Report</string>
+    <string name="about_subtitle">Voice\nMatters</string>
+    <string name="label_make_donation_subtitle">Make\nDonation</string>
+    <string name="make_donations_content">Support the project by making donation to U-Report platform move forward.</string>
+    <string name="label_donation">Donation</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <Button
         android:id="@+id/createGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,9 +14,12 @@
         android:drawableStart="@drawable/ic_people_grey_600_36dp"
         android:padding="25dp"
         android:drawablePadding="20dp"
+        android:clickable="true"
+        android:background="?android:selectableItemBackground"
         android:textColor="@android:color/black"
         android:textSize="20sp"
-        android:text="@string/chat_create_group_title"/>
+        android:text="@string/chat_create_group_title"
+        tools:ignore="NewApi"/>
 
     <View
         android:layout_width="match_parent"

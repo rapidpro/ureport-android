@@ -2,7 +2,6 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="@dimen/card_margin">
 
     <LinearLayout
@@ -17,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_marginBottom="10dp"
             android:animateLayoutChanges="true"
             style="@style/AppTheme.CardItemPadding" />
 
@@ -24,7 +24,6 @@
             android:id="@+id/resultsByRegion"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="10dp"
             android:background="@drawable/selector_button_normal"
             android:text="@string/poll_results_by_region" />
 

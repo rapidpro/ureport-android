@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -10,11 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import in.ureport.R;
+import in.ureport.activities.MainActivity;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
+import in.ureport.pref.SystemPreferences;
 import in.ureport.views.adapters.NavigationAdapter;
 
 /**
@@ -82,6 +86,9 @@ public class ProfileFragment extends Fragment {
 
         pager = (ViewPager)view.findViewById(R.id.pager);
         tabs = (TabLayout)view.findViewById(R.id.tabs);
+
+        Button logout = (Button) view.findViewById(R.id.logout);
+        logout.setOnClickListener(onLogoutClickListener);
     }
 
     public void updateUser(User user) {
@@ -105,5 +112,23 @@ public class ProfileFragment extends Fragment {
         NavigationAdapter navigationAdapter = new NavigationAdapter(getFragmentManager(), storiesItem, pollsItem, rankingItem);
         pager.setAdapter(navigationAdapter);
         tabs.setupWithViewPager(pager);
+    }
+
+    private View.OnClickListener onLogoutClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            logout();
+        }
+    };
+
+    private void logout() {
+        SystemPreferences systemPreferences = new SystemPreferences(getActivity());
+        systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
+
+        Intent backIntent = new Intent(getActivity(), MainActivity.class);
+        backIntent.putExtra(MainActivity.EXTRA_FORCED_LOGIN, true);
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(backIntent);
+        getActivity().finish();
     }
 }

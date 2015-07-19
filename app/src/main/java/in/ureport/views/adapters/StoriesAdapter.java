@@ -44,14 +44,15 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        String authorTemplate;
-        String contributionsTemplate;
+        private final String authorTemplate;
+        private final String contributionsTemplate;
 
-        ImageView image;
-        TextView title;
-        TextView author;
-        TextView markers;
-        TextView contributions;
+        private final ImageView image;
+        private final TextView title;
+        private final TextView author;
+        private final TextView markers;
+        private final TextView contributions;
+        private final TextView summary;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -64,12 +65,14 @@ public class StoriesAdapter extends RecyclerView.Adapter<StoriesAdapter.ViewHold
             author = (TextView) itemView.findViewById(R.id.author);
             markers = (TextView) itemView.findViewById(R.id.markers);
             contributions = (TextView) itemView.findViewById(R.id.contributors);
+            summary = (TextView) itemView.findViewById(R.id.summary);
 
             Button readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
             readFullStory.setOnClickListener(onReadFullStoryClickListener);
         }
 
         private void bind(Story story) {
+            summary.setText(story.getContent());
             markers.setText(story.getMarkers());
             title.setText(story.getTitle());
             author.setText(String.format(authorTemplate, story.getUser().getUsername()));

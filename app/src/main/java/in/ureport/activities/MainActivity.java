@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import in.ureport.R;
@@ -23,6 +25,7 @@ public class MainActivity extends BaseActivity {
     private static final int REQUEST_CODE_CREATE_STORY = 10;
 
     private static final String TAG = "MainActivity";
+    public static final String EXTRA_FORCED_LOGIN = "forcedLogin";
 
     private ViewPager pager;
 
@@ -32,13 +35,52 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
+    }
+
+    private void checkForcedLogin() {
+        Bundle extras = getIntent().getExtras();
+        if(extras != null && extras.containsKey(EXTRA_FORCED_LOGIN)) {
+            Boolean forcedLogin = extras.getBoolean(EXTRA_FORCED_LOGIN, false);
+
+            if(forcedLogin) {
+                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(loginIntent);
+                finish();
+            }
+        }
     }
 
     @Override
     public boolean hasMainActionButton() {
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.notifications:
+                openEndDrawer();
+                break;
+            case R.id.chat:
+                startChatActivity();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void startChatActivity() {
+        Intent chatIntent = new Intent(this, ChatActivity.class);
+        startActivity(chatIntent);
+        finish();
     }
 
     @Override
@@ -83,8 +125,11 @@ public class MainActivity extends BaseActivity {
     @Override
     public void setUser(User user) {
         super.setUser(user);
-        newsFragment.setUser(user);
-        getToolbar().setTitle(user.getCountry());
+
+        if(user != null) {
+            newsFragment.setUser(user);
+            getToolbar().setTitle(user.getCountry());
+        }
     }
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {

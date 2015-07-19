@@ -34,6 +34,8 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private PollResultsListener pollResultsListener;
 
+    private boolean showResultsByRegion = true;
+
     private PollResultsAdapter() {
         dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
         numberFormat = NumberFormat.getIntegerInstance();
@@ -94,6 +96,7 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             Button resultsByRegion = (Button) itemView.findViewById(R.id.resultsByRegion);
             resultsByRegion.setOnClickListener(onViewResultsByRegionClickListener);
+            resultsByRegion.setVisibility(showResultsByRegion ? View.VISIBLE : View.GONE);
         }
 
         protected void bindView(PollResult pollResult) {
@@ -155,6 +158,10 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 wordsList.addView(textView, position);
             }
         }
+    }
+
+    public void setShowResultsByRegion(boolean showResultsByRegion) {
+        this.showResultsByRegion = showResultsByRegion;
     }
 
     public void setPollResultsListener(PollResultsListener pollResultsListener) {

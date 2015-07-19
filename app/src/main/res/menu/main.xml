@@ -12,8 +12,13 @@
 
         <item
             android:id="@+id/headerUnicef"
-            android:title="@string/main_menu_group_unicef">
+            android:title="@string/main_menu_group_unicef"
+            android:checkableBehavior="single">
             <menu>
+                <item
+                    android:id="@+id/about"
+                    android:title="@string/label_about_ureport"/>
+
                 <item
                     android:id="@+id/makeDonations"
                     android:title="@string/main_menu_subitem_make_donations"/>

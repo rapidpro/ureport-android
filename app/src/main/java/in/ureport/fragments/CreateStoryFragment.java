@@ -23,12 +23,8 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
-import in.ureport.db.business.UserBusiness;
-import in.ureport.db.repository.UserRepository;
 import in.ureport.models.Marker;
 import in.ureport.models.Story;
-import in.ureport.models.User;
-import in.ureport.pref.SystemPreferences;
 import in.ureport.tasks.PublishStoryTask;
 import in.ureport.util.SpaceItemDecoration;
 import in.ureport.views.adapters.MediaAdapter;
@@ -98,7 +94,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.action_publish:
+            case R.id.publish:
                 publishStory();
                 return true;
         }

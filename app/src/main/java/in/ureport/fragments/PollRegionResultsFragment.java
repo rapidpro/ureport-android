@@ -49,7 +49,6 @@ public class PollRegionResultsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupView(view);
     }
 
@@ -64,6 +63,7 @@ public class PollRegionResultsFragment extends Fragment {
         resultsList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         PollResultsAdapter pollResultsAdapter = new PollResultsAdapter(pollResult);
+        pollResultsAdapter.setShowResultsByRegion(false);
         resultsList.setAdapter(pollResultsAdapter);
     }
 }

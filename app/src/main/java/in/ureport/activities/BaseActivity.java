@@ -3,15 +3,16 @@ package in.ureport.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +27,13 @@ import in.ureport.tasks.GetUserLoggedTask;
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
+    private AppBarLayout appBar;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private NavigationView menuNavigation;
     private FloatingActionButton mainActionButton;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private DrawerLayout drawerLayout;
 
     private User user;
 
@@ -46,6 +49,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        appBar = (AppBarLayout) findViewById(R.id.appbar);
+
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setVisibility(hasTabLayout() ? View.VISIBLE : View.GONE);
 
@@ -55,7 +60,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         menuNavigation = (NavigationView) findViewById(R.id.menuNavigation);
         menuNavigation.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
 
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout
                 , toolbar, R.string.base_menu_open_drawer, R.string.base_menu_close_drawer);
 
@@ -119,34 +124,42 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public User getLoggedUser() {
+    protected User getLoggedUser() {
         return user;
     }
 
-    public void setUser(User user){}
+    protected void setUser(User user){}
 
-    public Toolbar getToolbar() {
+    protected Toolbar getToolbar() {
         return toolbar;
     }
 
-    public TabLayout getTabLayout() {
+    protected TabLayout getTabLayout() {
         return tabLayout;
     }
 
-    public FloatingActionButton getMainActionButton() {
+    protected FloatingActionButton getMainActionButton() {
         return mainActionButton;
     }
 
-    public boolean hasTabLayout() {
+    protected boolean hasTabLayout() {
         return true;
     }
 
-    public boolean hasMainActionButton() {
+    protected boolean hasMainActionButton() {
         return false;
     }
 
-    public NavigationView getMenuNavigation() {
+    protected NavigationView getMenuNavigation() {
         return menuNavigation;
+    }
+
+    protected AppBarLayout getAppBar() {
+        return appBar;
+    }
+
+    protected void openEndDrawer() {
+        drawerLayout.openDrawer(GravityCompat.END);
     }
 
     private View.OnClickListener onMenuHeaderClickListener = new View.OnClickListener() {
@@ -162,14 +175,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(MenuItem menuItem) {
             Intent navigationIntent;
             switch(menuItem.getItemId()) {
+                case R.id.home:
+                    navigationIntent = new Intent(BaseActivity.this, MainActivity.class);
+                    break;
                 case R.id.chat:
                     navigationIntent = new Intent(BaseActivity.this, ChatActivity.class);
-                    menuItem.setChecked(true);
+                    break;
+                case R.id.about:
+                    navigationIntent = new Intent(BaseActivity.this, AboutActivity.class);
+                    break;
+                case R.id.makeDonations:
+                    navigationIntent = new Intent(BaseActivity.this, DonationActivity.class);
                     break;
                 default:
-                    navigationIntent = new Intent(BaseActivity.this, ProfileActivity.class);
+                    return true;
             }
 
+            menuItem.setChecked(true);
             startActivity(navigationIntent);
             finish();
             return true;

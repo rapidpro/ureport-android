@@ -73,7 +73,7 @@ public class ChatActivity extends BaseActivity {
     private View.OnClickListener onCreateChatClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent newChatIntent = new Intent(ChatActivity.this, NewChatActivity.class);
+            Intent newChatIntent = new Intent(ChatActivity.this, ChatCreationActivity.class);
             startActivity(newChatIntent);
         }
     };
