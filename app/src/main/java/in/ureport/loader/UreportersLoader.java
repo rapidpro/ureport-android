@@ -8,20 +8,22 @@ import java.util.List;
 import in.ureport.db.business.UserBusiness;
 import in.ureport.db.repository.UserRepository;
 import in.ureport.models.User;
+import in.ureport.pref.SystemPreferences;
 
 /**
- * Created by johncordeiro on 7/15/15.
+ * Created by johncordeiro on 19/07/15.
  */
-public class UsersLoader extends AsyncTaskLoader<List<User>> {
+public class UreportersLoader extends AsyncTaskLoader<List<User>> {
 
-    public UsersLoader(Context context) {
+    public UreportersLoader(Context context) {
         super(context);
     }
 
     @Override
     public List<User> loadInBackground() {
-        UserRepository repository = new UserBusiness();
-        return repository.getAllOrdered();
-    }
+        SystemPreferences systemPreferences = new SystemPreferences(getContext());
 
+        UserRepository repository = new UserBusiness();
+        return repository.getAllExcluding(systemPreferences.getUserLoggedId());
+    }
 }

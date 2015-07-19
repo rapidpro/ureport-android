@@ -19,7 +19,7 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.listener.ItemSelectionListener;
 import in.ureport.listener.SelectionResultListener;
-import in.ureport.loader.UsersLoader;
+import in.ureport.loader.RankingLoader;
 import in.ureport.models.User;
 import in.ureport.views.adapters.UserAdapter;
 
@@ -92,7 +92,7 @@ public class InviteCoauthorFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<List<User>> onCreateLoader(int id, Bundle args) {
-        return new UsersLoader(getActivity());
+        return new RankingLoader(getActivity());
     }
 
     @Override

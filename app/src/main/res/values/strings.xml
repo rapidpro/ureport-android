@@ -90,6 +90,9 @@
     <string name="chat_invite_contacts_title">Your contacts</string>
     <string name="chat_contact_invite_button">Invite</string>
     <string name="chat_invite">Invite</string>
+    <string name="label_new_chat">New chat</string>
+    <string name="chat_create_group_title">Create a Group</string>
+    <string name="chat_ureporters">U-Reporters</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

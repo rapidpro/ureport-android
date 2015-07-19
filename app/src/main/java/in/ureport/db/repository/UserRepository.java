@@ -15,4 +15,6 @@ public interface UserRepository extends AbstractRepository<User> {
 
     List<User> getAllOrdered();
 
+    List<User> getAllExcluding(Long id);
+
 }

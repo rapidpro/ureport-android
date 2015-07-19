@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.loader.UsersLoader;
+import in.ureport.loader.RankingLoader;
 import in.ureport.models.User;
 import in.ureport.util.DividerItemDecoration;
 import in.ureport.views.adapters.RankingAdapter;
@@ -69,7 +69,7 @@ public class RankingFragment extends Fragment implements LoaderManager.LoaderCal
 
     @Override
     public Loader<List<User>> onCreateLoader(int id, Bundle args) {
-        return new UsersLoader(getActivity());
+        return new RankingLoader(getActivity());
     }
 
     @Override

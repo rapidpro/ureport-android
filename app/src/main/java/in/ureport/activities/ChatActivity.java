@@ -1,5 +1,6 @@
 package in.ureport.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -19,8 +20,6 @@ public class ChatActivity extends BaseActivity {
     private static final int PAGE_POSITION_MY_CHATS = 1;
     private static final int PAGE_POSITION_GROUPS = 0;
 
-    private ViewPager pager;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +28,7 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void setupView() {
-        pager = (ViewPager) findViewById(R.id.pager);
+        ViewPager pager = (ViewPager) findViewById(R.id.pager);
         pager.addOnPageChangeListener(onPageChangeListener);
 
         NavigationItem chatGroupItem = new NavigationItem(new ChatGroupFragment(), getString(R.string.chat_groups));
@@ -74,7 +73,8 @@ public class ChatActivity extends BaseActivity {
     private View.OnClickListener onCreateChatClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Intent newChatIntent = new Intent(ChatActivity.this, NewChatActivity.class);
+            startActivity(newChatIntent);
         }
     };
 }

@@ -5,6 +5,9 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="80dp"
+    android:clickable="true"
+    android:background="?android:selectableItemBackground"
+    tools:ignore="NewApi"
     tools:background="#f00">
 
     <FrameLayout

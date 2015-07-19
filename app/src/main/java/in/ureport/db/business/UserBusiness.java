@@ -30,4 +30,11 @@ public class UserBusiness extends AbstractBusiness<User> implements UserReposito
                 .orderBy("points DESC")
                 .execute();
     }
+
+    @Override
+    public List<User> getAllExcluding(Long id) {
+        return new Select().from(getTypeClass())
+                .where("id != ?", id)
+                .execute();
+    }
 }

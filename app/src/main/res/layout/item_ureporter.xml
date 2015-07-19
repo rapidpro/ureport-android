@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:padding="10dp"
+    android:clickable="true"
+    android:background="?android:selectableItemBackground"
+    tools:ignore="NewApi">
+
+    <FrameLayout
+        android:id="@+id/mark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp">
+
+        <br.com.ilhasoft.support.widget.Pacman
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:pacmanBackgroundColor="#ddd"
+            app:pacmanForegroundColor="#aaa"
+            app:pacmanProgress="20"/>
+
+        <TextView
+            android:id="@+id/firstLetter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLength="1"
+            android:layout_gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            tools:text="J"/>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        tools:text="JonSnow"/>
+
+</LinearLayout>
