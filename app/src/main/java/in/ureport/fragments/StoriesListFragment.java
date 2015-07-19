@@ -31,7 +31,7 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
     private static final String EXTRA_USER = "user";
 
     private RecyclerView storiesList;
-    private TextView info;
+    private View info;
 
     private User user;
     private boolean publicType = true;
@@ -78,7 +78,7 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
         storiesList = (RecyclerView) view.findViewById(R.id.storiesList);
         storiesList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        info = (TextView) view.findViewById(R.id.info);
+        info = view.findViewById(R.id.info);
     }
 
     @Override
