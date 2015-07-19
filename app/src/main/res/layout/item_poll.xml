@@ -9,56 +9,57 @@
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="260dp"
+        android:layout_height="wrap_content"
         tools:background="#f00">
 
-        <ImageView
+        <View
             android:id="@+id/pollCover"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/default_cover_height"
+            android:layout_height="@dimen/poll_cover_height"
             android:scaleType="centerCrop"
-            android:src="@drawable/poll_sample"/>
+            tools:background="@color/poll_category_child"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/default_cover_height"
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:scaleType="centerCrop"
-            android:background="@color/translucent_cover"/>
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            tools:background="@drawable/poll_category_child"/>
 
         <TextView
             android:id="@+id/info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:textSize="18sp"
             style="@style/AppTheme.Info"
             tools:text="@string/polls_current"/>
 
         <TextView
-            android:id="@+id/responseRate"
-            android:layout_width="wrap_content"
+            android:id="@+id/category"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/responded"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
+            android:layout_below="@+id/info"
+            android:layout_toLeftOf="@+id/icon"
+            android:textSize="22sp"
+            android:maxLines="2"
             style="@style/AppTheme.Info"
-            tools:text="@string/polls_response_rate"/>
-
-        <TextView
-            android:id="@+id/responded"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/pollCover"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            style="@style/AppTheme.Info"
-            tools:text="@string/polls_responded_info"/>
+            tools:text="@string/poll_category_child"/>
 
         <TextView
             android:id="@+id/description"
             android:layout_width="match_parent"
-            android:layout_height="110dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/pollCover"
             android:maxLines="4"
             android:ellipsize="end"
@@ -66,12 +67,34 @@
             android:padding="10dp"
             tools:text="@string/poll1_description"/>
 
+        <TextView
+            android:id="@+id/responseRate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/description"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            tools:text="@string/polls_response_rate"/>
+
+        <TextView
+            android:id="@+id/responded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/description"
+            android:layout_toRightOf="@+id/responseRate"
+            android:layout_toEndOf="@+id/responseRate"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            tools:text="@string/polls_responded_info"/>
+
         <Button
             android:id="@+id/participate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/responded"
+            android:textColor="?attr/colorPrimary"
             android:text="@string/polls_participate"
             android:background="@null"/>
 

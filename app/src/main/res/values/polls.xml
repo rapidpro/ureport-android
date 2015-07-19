@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="poll_category_child">Child Protection</string>
+    <color name="poll_category_child">#8471c2</color>
+    <drawable name="poll_category_child">@drawable/category_child_icon</drawable>
+
+    <string name="poll_category_water">Water and Sanation</string>
+    <color name="poll_category_water">#70ace0</color>
+    <drawable name="poll_category_water">@drawable/category_water_icon</drawable>
+
     <string name="poll1_description">Hi, according to a recent survey (2011), about 50 million nigerians practice open defecation. In ur community do u think this is a major problem?</string>
 
     <string name="poll1_question1">Do you think this is a major problem in Nigeria</string>

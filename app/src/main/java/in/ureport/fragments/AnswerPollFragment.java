@@ -10,6 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import in.ureport.R;
 import in.ureport.listener.PollQuestionAnswerListener;
@@ -76,6 +80,15 @@ public class AnswerPollFragment extends Fragment implements PollQuestionAnswerLi
         PollQuestionAdapter pollQuestionAdapter = new PollQuestionAdapter(getFragmentManager(), poll.getQuestions());
         pollQuestionAdapter.setPollQuestionAnswerListener(this);
         questionsList.setAdapter(pollQuestionAdapter);
+
+        View pollCover = view.findViewById(R.id.pollCover);
+        pollCover.setBackgroundColor(getResources().getColor(poll.getCategory().getColor()));
+
+        TextView category = (TextView) view.findViewById(R.id.category);
+        category.setText(poll.getCategory().getName());
+
+        ImageView icon = (ImageView) view.findViewById(R.id.icon);
+        icon.setImageResource(poll.getCategory().getIcon());
     }
 
     @Override

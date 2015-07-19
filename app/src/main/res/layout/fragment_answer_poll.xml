@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,12 +12,58 @@
         android:background="?attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark" />
 
-    <ImageView
+    <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/default_cover_height"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/poll_sample"/>
+        tools:background="#f00">
+
+        <View
+            android:id="@+id/pollCover"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/poll_cover_height"
+            android:scaleType="centerCrop"
+            tools:background="@color/poll_category_child"/>
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="centerCrop"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            tools:background="@drawable/poll_category_child"/>
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:textSize="18sp"
+            style="@style/AppTheme.Info"
+            android:text="@string/polls_current"/>
+
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_below="@+id/info"
+            android:layout_toLeftOf="@+id/icon"
+            android:textSize="22sp"
+            android:maxLines="2"
+            style="@style/AppTheme.Info"
+            tools:text="@string/poll_category_child"/>
+
+    </RelativeLayout>
 
     <in.ureport.views.widgets.ContentPager
         android:id="@+id/questionsList"

@@ -21,7 +21,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:textSize="18sp"
-            android:textColor="@android:color/black"
             tools:text="@string/news_ureporters" />
 
         <LinearLayout
@@ -38,7 +37,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
-                android:textColor="@android:color/black"
                 android:text="254,235"/>
 
             <TextView
@@ -52,7 +50,6 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
                 android:textSize="24sp"
-                android:textColor="@android:color/black"
                 android:text="20%"/>
 
             <TextView
@@ -65,7 +62,6 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginStart="20dp"
                 android:textSize="24sp"
-                android:textColor="@android:color/black"
                 android:text="80%"/>
 
         </LinearLayout>
@@ -74,7 +70,8 @@
             android:id="@+id/statistics"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@drawable/selector_button_normal"
+            android:background="@null"
+            android:textColor="?attr/colorPrimary"
             android:text="@string/news_more_statistics"/>
 
     </LinearLayout>

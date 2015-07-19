@@ -16,6 +16,8 @@ public class Poll implements Parcelable {
 
     private Date expirationDate;
 
+    private PollCategory category;
+
     private int responseRate;
 
     private int responded;
@@ -40,6 +42,14 @@ public class Poll implements Parcelable {
 
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public PollCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(PollCategory category) {
+        this.category = category;
     }
 
     public int getResponseRate() {
@@ -91,6 +101,7 @@ public class Poll implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.description);
         dest.writeLong(expirationDate != null ? expirationDate.getTime() : -1);
+        dest.writeParcelable(this.category, 0);
         dest.writeInt(this.responseRate);
         dest.writeInt(this.responded);
         dest.writeInt(this.polled);
@@ -105,6 +116,7 @@ public class Poll implements Parcelable {
         this.description = in.readString();
         long tmpExpirationDate = in.readLong();
         this.expirationDate = tmpExpirationDate == -1 ? null : new Date(tmpExpirationDate);
+        this.category = in.readParcelable(PollCategory.class.getClassLoader());
         this.responseRate = in.readInt();
         this.responded = in.readInt();
         this.polled = in.readInt();

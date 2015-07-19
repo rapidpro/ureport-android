@@ -54,7 +54,7 @@
     <string name="label_story_view">Story View</string>
     <string name="story_view_contribute">Contribute to this story</string>
     <string name="story_contribution_add">Add a contribution</string>
-    <string name="polls_participate">Participate</string>
+    <string name="polls_participate">Answer</string>
     <string name="polls_current">Current poll</string>
     <string name="polls_responded_info">%1$s responded out of %2$s</string>
     <string name="polls_response_rate">%1$s%% response rate</string>

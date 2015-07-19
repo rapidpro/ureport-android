@@ -14,6 +14,7 @@ import in.ureport.models.MultipleChoiceQuestion;
 import in.ureport.models.MultipleResult;
 import in.ureport.models.OpenQuestion;
 import in.ureport.models.Poll;
+import in.ureport.models.PollCategory;
 import in.ureport.models.PollQuestion;
 import in.ureport.models.PollResult;
 import in.ureport.models.User;
@@ -49,6 +50,13 @@ public class PollsLoader extends AsyncTaskLoader<List<Poll>> {
         poll1.setResponded(42957);
         poll1.setPolled(519574);
 
+        PollCategory waterCategory = new PollCategory();
+        waterCategory.setColor(R.color.poll_category_water);
+        waterCategory.setIcon(R.drawable.poll_category_water);
+        waterCategory.setName(getContext().getString(R.string.poll_category_water));
+
+        poll1.setCategory(waterCategory);
+
         List<PollQuestion> questionsForPoll1 = getPollQuestionsForPoll1();
         poll1.setQuestions(questionsForPoll1);
 
@@ -61,6 +69,13 @@ public class PollsLoader extends AsyncTaskLoader<List<Poll>> {
         poll2.setResponseRate(6);
         poll2.setResponded(30321);
         poll2.setPolled(469380);
+
+        PollCategory childCategory = new PollCategory();
+        childCategory.setColor(R.color.poll_category_child);
+        childCategory.setIcon(R.drawable.poll_category_child);
+        childCategory.setName(getContext().getString(R.string.poll_category_child));
+
+        poll2.setCategory(childCategory);
 
         List<PollQuestion> questionsForPoll2 = getPollQuestionsForPoll2();
         poll2.setQuestions(questionsForPoll2);

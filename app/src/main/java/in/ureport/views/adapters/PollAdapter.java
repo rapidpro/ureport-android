@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -52,10 +53,15 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView description;
-        private TextView info;
-        private TextView responseRate;
-        private TextView responded;
+        private final View pollCover;
+        private final TextView category;
+        private final ImageView icon;
+
+        private final TextView description;
+        private final TextView info;
+        private final TextView responseRate;
+        private final TextView responded;
+
         private Button participate;
 
         public ViewHolder(View itemView) {
@@ -66,9 +72,17 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             responseRate = (TextView) itemView.findViewById(R.id.responseRate);
             responded = (TextView) itemView.findViewById(R.id.responded);
             participate = (Button) itemView.findViewById(R.id.participate);
+
+            pollCover = itemView.findViewById(R.id.pollCover);
+            category = (TextView) itemView.findViewById(R.id.category);
+            icon = (ImageView) itemView.findViewById(R.id.icon);
         }
 
         private void bindView(Poll poll) {
+            pollCover.setBackgroundColor(itemView.getContext().getResources().getColor(poll.getCategory().getColor()));
+            category.setText(poll.getCategory().getName());
+            icon.setImageResource(poll.getCategory().getIcon());
+
             description.setText(poll.getDescription());
 
             setInfo(poll);
