@@ -29,7 +29,6 @@
     <string name="main_news_feed">Program News</string>
     <string name="main_menu_home">Home</string>
     <string name="main_menu_chat">Chat</string>
-    <string name="main_menu_country_programs">Country Programs</string>
     <string name="main_menu_group_unicef">Unicef</string>
     <string name="main_menu_subitem_make_donations">Make Donations</string>
     <string name="main_menu_subitem_buy_goods">Buy goods</string>
@@ -85,6 +84,12 @@
     <string name="profile_polls">Polls: %1$s</string>
     <string name="profile_stories">Stories: %1$s</string>
     <string name="menu_points">Points: %1$s</string>
+    <string name="chat_groups">Groups</string>
+    <string name="chat_groups_join">Join</string>
+    <string name="chat_rooms">My chats</string>
+    <string name="chat_invite_contacts_title">Your contacts</string>
+    <string name="chat_contact_invite_button">Invite</string>
+    <string name="chat_invite">Invite</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

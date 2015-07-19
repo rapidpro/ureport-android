@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="in.ureport">
 
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:label="@string/app_name"
@@ -21,8 +23,17 @@
             android:label="@string/label_home" />
 
         <activity
+            android:name=".activities.ChatActivity"
+            android:label="@string/label_home" />
+
+        <activity
             android:name=".activities.ProfileActivity"
-            android:label="@string/label_profile"/>
+            android:label="@string/label_profile"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
 
         <activity
             android:name=".activities.CreateStoryActivity"

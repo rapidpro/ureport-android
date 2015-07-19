@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mainActionButton.setVisibility(hasMainActionButton() ? View.VISIBLE : View.GONE);
 
         menuNavigation = (NavigationView) findViewById(R.id.menuNavigation);
+        menuNavigation.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
 
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout
@@ -143,11 +145,34 @@ public abstract class BaseActivity extends AppCompatActivity {
         return false;
     }
 
+    public NavigationView getMenuNavigation() {
+        return menuNavigation;
+    }
+
     private View.OnClickListener onMenuHeaderClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             Intent profileIntent = new Intent(BaseActivity.this, ProfileActivity.class);
             startActivity(profileIntent);
+        }
+    };
+
+    private NavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new NavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(MenuItem menuItem) {
+            Intent navigationIntent;
+            switch(menuItem.getItemId()) {
+                case R.id.chat:
+                    navigationIntent = new Intent(BaseActivity.this, ChatActivity.class);
+                    menuItem.setChecked(true);
+                    break;
+                default:
+                    navigationIntent = new Intent(BaseActivity.this, ProfileActivity.class);
+            }
+
+            startActivity(navigationIntent);
+            finish();
+            return true;
         }
     };
 }

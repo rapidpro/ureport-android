@@ -59,6 +59,7 @@ public class MainActivity extends BaseActivity {
 
         getTabLayout().setupWithViewPager(pager);
         getMainActionButton().setOnClickListener(onCreateStoryClickListener);
+        getMenuNavigation().getMenu().findItem(R.id.home).setChecked(true);
     }
 
     private boolean containsMainActionButton(int position) {

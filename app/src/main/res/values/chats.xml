@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="chatgroup1_title">Potable Water</string>
+    <string name="chatgroup1_description">Water is essential for life. The amount of drinking water required is variable. It depends on physical activity, age, other health problems, and environmental conditions.</string>
+
+    <string name="chatgroup2_title">Education</string>
+    <string name="chatgroup2_description">Education is the process of facilitating learning. Knowledge, skills, values, beliefs, and habits of a group of people are transferred to other people, through storytelling, discussion, teaching, training, or research.</string>
+
+    <string name="chatgroup3_title">Children at School</string>
+    <string name="chatgroup3_description">Children can achieve well at school when their family and friends take an interest in their school and schoolwork.</string>
+
+    <string name="chatgroup4_title">Kampala Group</string>
+    <string name="chatgroup4_description">Friends of Kampala talking</string>
+
+    <string name="chatgroup5_title">Politics</string>
+    <string name="chatgroup5_description">Solve all the society problems must be a priority</string>
+
+    <string name="chat1_lastMessage">So what?</string>
+    <string name="chat2_lastMessage">Have a nice day group!</string>
+
+</resources>
