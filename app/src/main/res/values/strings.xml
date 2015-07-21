@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Ureport</string>
+    <string name="app_name">U-Report</string>
 
     <string name="login_username">Username</string>
     <string name="login_password">Password</string>
