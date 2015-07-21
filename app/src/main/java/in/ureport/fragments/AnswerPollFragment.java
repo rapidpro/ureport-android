@@ -13,8 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import in.ureport.R;
 import in.ureport.listener.PollQuestionAnswerListener;
 import in.ureport.models.Poll;
@@ -63,7 +61,6 @@ public class AnswerPollFragment extends Fragment implements PollQuestionAnswerLi
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupView(view);
     }
 

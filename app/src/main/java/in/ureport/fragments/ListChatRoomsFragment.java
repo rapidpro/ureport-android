@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.activities.ChatRoomActivity;
 import in.ureport.loader.ChatRoomsLoader;
 import in.ureport.models.ChatRoom;
 import in.ureport.util.DividerItemDecoration;
@@ -22,14 +24,14 @@ import in.ureport.views.adapters.ChatRoomsAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class ChatRoomsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<ChatRoom>> {
+public class ListChatRoomsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<ChatRoom>>, ChatRoomsAdapter.OnChatRoomSelectedListener {
 
     private RecyclerView chatsList;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_chat_rooms, container, false);
+        return inflater.inflate(R.layout.fragment_list_chat_rooms, container, false);
     }
 
     @Override
@@ -58,9 +60,17 @@ public class ChatRoomsFragment extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onLoadFinished(Loader<List<ChatRoom>> loader, List<ChatRoom> data) {
         ChatRoomsAdapter chatRoomsAdapter = new ChatRoomsAdapter(data);
+        chatRoomsAdapter.setOnChatRoomSelectedListener(this);
         chatsList.setAdapter(chatRoomsAdapter);
     }
 
     @Override
     public void onLoaderReset(Loader<List<ChatRoom>> loader) {}
+
+    @Override
+    public void onChatRoomSelected(ChatRoom chatRoom) {
+        Intent chatRoomIntent = new Intent(getActivity(), ChatRoomActivity.class);
+        chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM, chatRoom);
+        startActivity(chatRoomIntent);
+    }
 }

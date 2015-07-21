@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <RelativeLayout
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:background="?android:selectableItemBackground"
+            tools:ignore="NewApi">
+
+            <FrameLayout
+                android:id="@+id/mark"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                tools:visibility="visible">
+
+                <br.com.ilhasoft.support.widget.Pacman
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:pacmanBackgroundColor="#ddd"
+                    app:pacmanForegroundColor="#aaa"
+                    app:pacmanProgress="20"/>
+
+                <TextView
+                    android:id="@+id/firstLetter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLength="1"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    tools:text="J"/>
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_toRightOf="@+id/mark"
+                android:layout_toEndOf="@+id/mark"
+                android:layout_centerVertical="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                tools:text="Eddie"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/messagesList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="40dp"
+        android:orientation="horizontal"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp">
+
+        <EditText
+            android:id="@+id/message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:layout_toLeftOf="@+id/send"
+            android:layout_toStartOf="@+id/send"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:paddingLeft="35dp"
+            android:paddingStart="35dp"
+            android:inputType="textMultiLine"
+            android:maxLines="3"
+            android:background="@drawable/shape_round_edittext"
+            android:hint="@string/chat_room_message_hint"
+            tools:targetApi="17"/>
+
+        <Button
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/ic_keyboard_alt_black_24dp"/>
+
+        <Button
+            android:id="@+id/send"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ic_send_black_36dp"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,11 +1,14 @@
 package in.ureport.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public abstract class ChatRoom {
+public abstract class ChatRoom implements Parcelable {
 
     private String lastMessage;
 
@@ -36,4 +39,22 @@ public abstract class ChatRoom {
     public void setUnreadMessages(Integer unreadMessages) {
         this.unreadMessages = unreadMessages;
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.lastMessage);
+        dest.writeLong(lastMessageDate != null ? lastMessageDate.getTime() : -1);
+        dest.writeValue(this.unreadMessages);
+    }
+
+    public ChatRoom() {
+    }
+
+    protected ChatRoom(Parcel in) {
+        this.lastMessage = in.readString();
+        long tmpLastMessageDate = in.readLong();
+        this.lastMessageDate = tmpLastMessageDate == -1 ? null : new Date(tmpLastMessageDate);
+        this.unreadMessages = (Integer) in.readValue(Integer.class.getClassLoader());
+    }
+
 }

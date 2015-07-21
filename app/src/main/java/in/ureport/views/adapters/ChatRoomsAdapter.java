@@ -25,6 +25,8 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private DateFormat hourFormatter;
 
+    private OnChatRoomSelectedListener onChatRoomSelectedListener;
+
     public ChatRoomsAdapter(List<ChatRoom> chatRooms) {
         this.chatRooms = chatRooms;
         hourFormatter = DateFormat.getTimeInstance(DateFormat.SHORT);
@@ -62,6 +64,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             lastMessage = (TextView) itemView.findViewById(R.id.lastMessage);
             lastMessageDate = (TextView) itemView.findViewById(R.id.lastMessageDate);
             unreadMessages = (TextView) itemView.findViewById(R.id.unreadMessages);
+            itemView.setOnClickListener(onItemClickListener);
         }
 
         private void bindView(ChatRoom chatRoom) {
@@ -87,7 +90,22 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             lastMessageDate.setText(hourFormatter.format(chatRoom.getLastMessageDate()));
-
         }
+
+        private View.OnClickListener onItemClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (onChatRoomSelectedListener != null)
+                    onChatRoomSelectedListener.onChatRoomSelected(chatRooms.get(getLayoutPosition()));
+            }
+        };
+    }
+
+    public void setOnChatRoomSelectedListener(OnChatRoomSelectedListener onChatRoomSelectedListener) {
+        this.onChatRoomSelectedListener = onChatRoomSelectedListener;
+    }
+
+    public interface OnChatRoomSelectedListener {
+        void onChatRoomSelected(ChatRoom chatRoom);
     }
 }

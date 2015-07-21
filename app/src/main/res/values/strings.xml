@@ -111,6 +111,12 @@
     <string name="label_make_donation_subtitle">Make\nDonation</string>
     <string name="make_donations_content">Support the project by making donation to U-Report platform move forward.</string>
     <string name="label_donation">Donation</string>
+    <string name="chat_room_message_hint">Write a message</string>
+    <string name="label_action_search">Search</string>
+    <string name="label_leave_group">Leave Group</string>
+    <string name="chat_group_info_created_date">Created by Unicef, %1$S</string>
+    <string name="label_group_info">Group info</string>
+    <string name="chat_group_leave">Do you really want to leave this group?</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

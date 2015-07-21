@@ -19,4 +19,17 @@
     <string name="chat1_lastMessage">So what?</string>
     <string name="chat2_lastMessage">Have a nice day group!</string>
 
+    <string-array name="responses">
+        <item>Hey</item>
+        <item>Hi!</item>
+        <item>Really?</item>
+        <item>I understand</item>
+        <item>It\'s a great idea</item>
+        <item>I agree with you</item>
+        <item>I love this app</item>
+        <item>Did you answer the poll?</item>
+        <item>Keep talking</item>
+        <item>Ok!</item>
+    </string-array>
+
 </resources>

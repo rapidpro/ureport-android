@@ -45,24 +45,29 @@ public class ChatRoomsLoader extends AsyncTaskLoader<List<ChatRoom>> {
         date2.roll(Calendar.HOUR, -2);
         date2.roll(Calendar.MINUTE, -30);
 
+        Calendar groupCreationDate = Calendar.getInstance();
+        groupCreationDate.roll(Calendar.DATE, -28);
+
         ChatGroup chatGroup1 = new ChatGroup();
         chatGroup1.setTitle(getContext().getString(R.string.chatgroup4_title));
         chatGroup1.setDescription(getContext().getString(R.string.chatgroup4_description));
+        chatGroup1.setCreationDate(groupCreationDate.getTime());
 
         GroupChatRoom groupChatRoom1 = new GroupChatRoom();
         groupChatRoom1.setLastMessage(getContext().getString(R.string.chat2_lastMessage));
         groupChatRoom1.setLastMessageDate(date2.getTime());
         groupChatRoom1.setUnreadMessages(2);
-        groupChatRoom1.setParticipants(users.subList(4, 5));
+        groupChatRoom1.setParticipants(users.subList(0, 4));
         groupChatRoom1.setChatGroup(chatGroup1);
 
         ChatGroup chatGroup2 = new ChatGroup();
         chatGroup2.setTitle(getContext().getString(R.string.chatgroup5_title));
         chatGroup2.setDescription(getContext().getString(R.string.chatgroup5_description));
+        chatGroup2.setCreationDate(groupCreationDate.getTime());
 
         GroupChatRoom groupChatRoom2 = new GroupChatRoom();
         groupChatRoom2.setLastMessageDate(date2.getTime());
-        groupChatRoom2.setParticipants(users.subList(4, 5));
+        groupChatRoom2.setParticipants(users.subList(3, 9));
         groupChatRoom2.setChatGroup(chatGroup2);
 
         Calendar date3 = Calendar.getInstance();

@@ -3,11 +3,12 @@ package in.ureport.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import android.view.View;
 
 import in.ureport.R;
 import in.ureport.fragments.ChatGroupFragment;
-import in.ureport.fragments.ChatRoomsFragment;
+import in.ureport.fragments.ListChatRoomsFragment;
 import in.ureport.fragments.InviteContactsFragment;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.views.adapters.NavigationAdapter;
@@ -32,7 +33,7 @@ public class ChatActivity extends BaseActivity {
         pager.addOnPageChangeListener(onPageChangeListener);
 
         NavigationItem chatGroupItem = new NavigationItem(new ChatGroupFragment(), getString(R.string.chat_groups));
-        NavigationItem chatRoomsItem = new NavigationItem(new ChatRoomsFragment(), getString(R.string.chat_rooms));
+        NavigationItem chatRoomsItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.chat_rooms));
         NavigationItem inviteItem = new NavigationItem(new InviteContactsFragment(), getString(R.string.chat_invite));
 
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager(), chatGroupItem, chatRoomsItem, inviteItem);
@@ -43,6 +44,12 @@ public class ChatActivity extends BaseActivity {
         getMainActionButton().setImageResource(R.drawable.ic_edit_white_24dp);
         getMainActionButton().setOnClickListener(onCreateChatClickListener);
         getMenuNavigation().getMenu().findItem(R.id.chat).setChecked(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_chat, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
