@@ -20,7 +20,6 @@ import in.ureport.models.GroupChatRoom;
 public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragment.ChatRoomListener {
 
     public static final String EXTRA_CHAT_ROOM = "chatRoom";
-    private ChatRoom chatRoom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +27,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         setContentView(R.layout.activity_generic);
 
         if(savedInstanceState == null) {
-            chatRoom = getIntent().getParcelableExtra(EXTRA_CHAT_ROOM);
+            ChatRoom chatRoom = getIntent().getParcelableExtra(EXTRA_CHAT_ROOM);
             ChatRoomFragment chatRoomFragment = ChatRoomFragment.newInstance(chatRoom);
             chatRoomFragment.setChatRoomListener(this);
             getSupportFragmentManager().beginTransaction()

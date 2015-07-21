@@ -48,6 +48,20 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
 
     private static final int FIELDS_MINIMUM_SIZE = 5;
 
+    private EditText username;
+
+    private EditText email;
+    private EditText password;
+    private EditText birthday;
+    private Spinner country;
+    private Spinner gender;
+    private EditTextValidator validator;
+
+    private DateFormat birthdayFormatter;
+    private User user;
+    private User.Type userType = User.Type.Ureport;
+    private LoginFragment.LoginListener loginListener;
+
     public static SignUpFragment newInstance(User user) {
         SignUpFragment signUpFragment = new SignUpFragment();
 
@@ -57,20 +71,6 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         signUpFragment.setArguments(args);
         return signUpFragment;
     }
-
-    private EditText username;
-    private EditText email;
-    private EditText password;
-    private EditText birthday;
-    private Spinner country;
-    private Spinner gender;
-
-    private EditTextValidator validator;
-    private DateFormat birthdayFormatter;
-    private User user;
-    private User.Type userType = User.Type.Ureport;
-
-    private LoginFragment.LoginListener loginListener;
 
     @Nullable
     @Override
