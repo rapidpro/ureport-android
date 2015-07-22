@@ -80,7 +80,6 @@
 
             </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
-
             <Spinner
                 android:id="@+id/country"
                 android:layout_width="match_parent"
@@ -89,6 +88,19 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:paddingLeft="@dimen/spinner_padding_left"
+                android:paddingStart="@dimen/spinner_padding_left"
+                style="@style/Widget.AppCompat.Spinner.Underlined"/>
+
+            <Spinner
+                android:id="@+id/state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:entries="@array/states"
                 android:paddingLeft="@dimen/spinner_padding_left"
                 android:paddingStart="@dimen/spinner_padding_left"
                 style="@style/Widget.AppCompat.Spinner.Underlined"/>

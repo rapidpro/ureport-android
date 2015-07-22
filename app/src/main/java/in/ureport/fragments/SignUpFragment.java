@@ -54,6 +54,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     private EditText password;
     private EditText birthday;
     private Spinner country;
+    private Spinner state;
     private Spinner gender;
     private EditTextValidator validator;
 
@@ -103,7 +104,14 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
             setEditTextValue(username, user.getUsername());
             setEditTextValue(email, user.getEmail());
             setEditTextDate(birthday, user.getBirthday());
+            setPasswordVisibility();
             setUserGenderValue();
+        }
+    }
+
+    private void setPasswordVisibility() {
+        if(userType != User.Type.Ureport) {
+            password.setVisibility(View.GONE);
         }
     }
 
@@ -140,6 +148,8 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
 
         country = (Spinner) view.findViewById(R.id.country);
         loadCountryList();
+
+        state = (Spinner) view.findViewById(R.id.state);
 
         Button confirm = (Button) view.findViewById(R.id.confirm);
         confirm.setOnClickListener(onConfirmClickListener);
@@ -198,12 +208,18 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
                 , FIELDS_MINIMUM_SIZE);
 
         boolean validTextFields = validator.validateSizeMulti(FIELDS_MINIMUM_SIZE
-                , messageNameValidation, username, password);
+                , messageNameValidation, username);
         boolean validEmail = validator.validateEmail(email, getString(R.string.error_valid_email));
         boolean validBirthday = validator.validateEmpty(birthday, getString(R.string.error_required_field));
 
         return validTextFields && validEmail && validBirthday &&
-                isSpinnerValid(country) && isSpinnerValid(gender);
+                isSpinnerValid(country) && isSpinnerValid(gender) && isSpinnerValid(state) &&
+                validatePasswordIfNeeded(messageNameValidation);
+    }
+
+    private boolean validatePasswordIfNeeded(String messageNameValidation) {
+        return (userType == User.Type.Ureport && validator.validateSize(password, FIELDS_MINIMUM_SIZE, messageNameValidation)
+                || userType != User.Type.Ureport);
     }
 
     private boolean isSpinnerValid(Spinner spinner) {
@@ -293,9 +309,8 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
                 SaveUserTask saveUserTask = new SaveUserTask(getActivity());
                 saveUserTask.execute(user);
 
-                if(loginListener != null) {
+                if(loginListener != null)
                     loginListener.userReady(user);
-                }
             }
         }
     };

@@ -32,7 +32,7 @@
     <string name="main_menu_group_unicef">Unicef</string>
     <string name="main_menu_subitem_make_donations">Make Donations</string>
     <string name="main_menu_subitem_buy_goods">Buy goods</string>
-    <string name="main_menu_subitem_embassadors">Embassadors</string>
+    <string name="main_menu_subitem_embassadors">Ambassadors</string>
     <string name="base_menu_open_drawer">Open Menu</string>
     <string name="base_menu_close_drawer">Close Menu</string>
     <string name="stories_list_item_author">by %1$s</string>
@@ -149,6 +149,24 @@
         <item>Uganda</item>
         <item>Zambia</item>
         <item>Zimbabwe</item>
+    </string-array>
+
+    <string-array name="states">
+        <item>State 1</item>
+        <item>State 2</item>
+        <item>State 3</item>
+        <item>State 4</item>
+        <item>State 5</item>
+        <item>State 6</item>
+        <item>State 7</item>
+        <item>State 8</item>
+        <item>State 9</item>
+        <item>State 10</item>
+        <item>State 11</item>
+        <item>State 12</item>
+        <item>State 13</item>
+        <item>State 14</item>
+        <item>State 15</item>
     </string-array>
 
 </resources>

@@ -9,26 +9,32 @@
         <item
             android:id="@+id/chat"
             android:title="@string/main_menu_chat"/>
-
-        <item
-            android:id="@+id/headerUnicef"
-            android:title="@string/main_menu_group_unicef"
-            android:checkableBehavior="single">
-            <menu>
-                <item
-                    android:id="@+id/about"
-                    android:title="@string/label_about_ureport"/>
-
-                <item
-                    android:id="@+id/makeDonations"
-                    android:title="@string/main_menu_subitem_make_donations"/>
-                <item
-                    android:id="@+id/buyMerchandising"
-                    android:title="@string/main_menu_subitem_buy_goods"/>
-                <item
-                    android:id="@+id/embassadors"
-                    android:title="@string/main_menu_subitem_embassadors" />
-            </menu>
-        </item>
     </group>
+
+
+    <group
+        android:checkableBehavior="single"
+        android:title="@string/main_menu_group_unicef">
+        <item
+            android:id="@+id/about"
+            android:title="@string/label_about_ureport"/>
+        <item
+            android:id="@+id/makeDonations"
+            android:title="@string/main_menu_subitem_make_donations"/>
+    </group>
+
+    <item
+        android:id="@+id/headerUnicef"
+        android:title="@string/main_menu_group_unicef"
+        android:checkableBehavior="single">
+        <menu>
+            <item
+                android:id="@+id/buyMerchandising"
+                android:title="@string/main_menu_subitem_buy_goods"/>
+            <item
+                android:id="@+id/ambassadors"
+                android:title="@string/main_menu_subitem_embassadors" />
+        </menu>
+    </item>
+
 </menu>

@@ -19,7 +19,7 @@ public class AboutActivity extends BaseActivity {
     }
 
     private void setupView() {
-        getMenuNavigation().getMenu().findItem(R.id.headerUnicef).getSubMenu().findItem(R.id.about).setChecked(true);
+        getMenuNavigation().getMenu().findItem(R.id.about).setChecked(true);
         addHeaderToAppbar();
     }
 

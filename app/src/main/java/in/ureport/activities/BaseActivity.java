@@ -2,6 +2,7 @@ package in.ureport.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -39,6 +40,9 @@ import in.ureport.views.adapters.NotificationAdapter;
  * Created by johncordeiro on 7/13/15.
  */
 public abstract class BaseActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Notification>> {
+
+    private static final String URL_UNICEF_SHOP = "http://www.unicefusa.org/help/shop";
+    private static final String URL_UNICEF_AMBASSADORS = "http://www.unicefusa.org/supporters/celebrities/ambassadors";
 
     private AppBarLayout appBar;
     private Toolbar toolbar;
@@ -233,6 +237,12 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                 case R.id.makeDonations:
                     navigationIntent = new Intent(BaseActivity.this, DonationActivity.class);
                     break;
+                case R.id.buyMerchandising:
+                    openMerchandise(URL_UNICEF_SHOP);
+                    return true;
+                case R.id.ambassadors:
+                    openMerchandise(URL_UNICEF_AMBASSADORS);
+                    return true;
                 default:
                     return true;
             }
@@ -243,5 +253,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             return true;
         }
     };
+
+    private void openMerchandise(String url) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(browserIntent);
+    }
 
 }
