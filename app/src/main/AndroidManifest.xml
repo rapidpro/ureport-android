@@ -25,7 +25,7 @@
 
         <activity
             android:name=".activities.ChatActivity"
-            android:label="@string/label_home" />
+            android:label="@string/label_chat" />
 
         <activity
             android:name=".activities.AboutActivity"

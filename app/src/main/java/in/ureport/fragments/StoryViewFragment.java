@@ -19,6 +19,7 @@ import java.util.List;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
+import in.ureport.UreportApplication;
 import in.ureport.models.Story;
 import in.ureport.util.SpaceItemDecoration;
 import in.ureport.util.WrapLinearLayoutManager;
@@ -122,8 +123,10 @@ public class StoryViewFragment extends Fragment {
     private View.OnClickListener onContributeClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            view.setVisibility(View.GONE);
-            contributionAdapter.startContribution();
+            if(UreportApplication.validateUserLogin(getActivity())) {
+                view.setVisibility(View.GONE);
+                contributionAdapter.startContribution();
+            }
         }
     };
 }

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.UreportApplication;
 import in.ureport.activities.AnswerPollActivity;
 import in.ureport.activities.PollResultsActivity;
 import in.ureport.loader.PollsLoader;
@@ -100,9 +101,11 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onParticipate(Poll poll) {
-        Intent answerPollIntent = new Intent(getActivity(), AnswerPollActivity.class);
-        answerPollIntent.putExtra(AnswerPollActivity.EXTRA_POLL, poll);
-        startActivity(answerPollIntent);
+        if(UreportApplication.validateUserLogin(getActivity())) {
+            Intent answerPollIntent = new Intent(getActivity(), AnswerPollActivity.class);
+            answerPollIntent.putExtra(AnswerPollActivity.EXTRA_POLL, poll);
+            startActivity(answerPollIntent);
+        }
     }
 
     @Override

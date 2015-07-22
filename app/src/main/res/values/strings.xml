@@ -117,6 +117,8 @@
     <string name="chat_group_info_created_date">Created by Unicef, %1$S</string>
     <string name="label_group_info">Group info</string>
     <string name="chat_group_leave">Do you really want to leave this group?</string>
+    <string name="login_validation_error_message">You need to login before making this action!\nDo you want to login now ?</string>
+    <string name="label_chat">Chat</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

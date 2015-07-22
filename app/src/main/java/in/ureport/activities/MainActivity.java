@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import in.ureport.R;
+import in.ureport.UreportApplication;
 import in.ureport.fragments.NewsFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
@@ -78,9 +79,11 @@ public class MainActivity extends BaseActivity {
     }
 
     private void startChatActivity() {
-        Intent chatIntent = new Intent(this, ChatActivity.class);
-        startActivity(chatIntent);
-        finish();
+        if(UreportApplication.validateUserLogin(MainActivity.this)) {
+            Intent chatIntent = new Intent(this, ChatActivity.class);
+            startActivity(chatIntent);
+            finish();
+        }
     }
 
     @Override
@@ -146,8 +149,10 @@ public class MainActivity extends BaseActivity {
     private View.OnClickListener onCreateStoryClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent createStoryIntent = new Intent(MainActivity.this, CreateStoryActivity.class);
-            startActivityForResult(createStoryIntent, REQUEST_CODE_CREATE_STORY);
+            if(UreportApplication.validateUserLogin(MainActivity.this)) {
+                Intent createStoryIntent = new Intent(MainActivity.this, CreateStoryActivity.class);
+                startActivityForResult(createStoryIntent, REQUEST_CODE_CREATE_STORY);
+            }
         }
     };
 }

@@ -22,7 +22,7 @@ import in.ureport.pref.SystemPreferences;
 /**
  * Created by johncordeiro on 7/14/15.
  */
-public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
+public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
 
     private Context context;
 
@@ -31,9 +31,7 @@ public class CreateFakeDataTask extends AsyncTask<User, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(User... users) {
-        if(users.length == 0) return null;
-
+    protected Void doInBackground(Void... aVoid) {
         SystemPreferences systemPreferences = new SystemPreferences(context);
         if(!systemPreferences.isFakeDataCreated()) {
             List<User> newUsers = saveFakeUsers();

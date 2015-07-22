@@ -1,10 +1,8 @@
 package in.ureport.fragments;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,7 +47,6 @@ public class ChatRoomFragment extends Fragment {
     private ChatRoom chatRoom;
 
     private User user;
-    private User friend;
 
     private ChatRoomListener chatRoomListener;
 
@@ -131,8 +128,6 @@ public class ChatRoomFragment extends Fragment {
 
     private void setupViewForGroupChat(View view) {
         GroupChatRoom groupChatRoom = (GroupChatRoom)chatRoom;
-        friend = groupChatRoom.getParticipants().get(getRandomInt(0, groupChatRoom.getParticipants().size()-1));
-
         name.setText(groupChatRoom.getChatGroup().getTitle());
 
         View info = view.findViewById(R.id.info);
@@ -141,15 +136,13 @@ public class ChatRoomFragment extends Fragment {
 
     private void setupViewForIndividualChat(View view) {
         IndividualChatRoom individualChatRoom = (IndividualChatRoom)chatRoom;
-        friend = individualChatRoom.getFriend();
-
-        name.setText("@"+friend.getUsername());
+        name.setText("@" + individualChatRoom.getFriend().getUsername());
 
         View mark = view.findViewById(R.id.mark);
         mark.setVisibility(View.VISIBLE);
 
         TextView firstLetter = (TextView) view.findViewById(R.id.firstLetter);
-        firstLetter.setText(friend.getUsername().toUpperCase());
+        firstLetter.setText(individualChatRoom.getFriend().getUsername().toUpperCase());
     }
 
     private void loadLocalUser() {
@@ -174,12 +167,22 @@ public class ChatRoomFragment extends Fragment {
                 ChatMessage chatMessage = new ChatMessage();
                 chatMessage.setDate(new Date());
                 chatMessage.setMessage(responses[getRandomInt(0, responses.length - 1)]);
-                chatMessage.setUser(friend);
+                chatMessage.setUser(getFriend());
                 chatMessage.setChatRoom(chatRoom);
 
                 addChatMessage(chatMessage);
             }
         }, 2000);
+    }
+
+    private User getFriend() {
+        if(chatRoom instanceof GroupChatRoom) {
+            GroupChatRoom groupChatRoom = ((GroupChatRoom)chatRoom);
+            return groupChatRoom.getParticipants().get(getRandomInt(0, groupChatRoom.getParticipants().size()-1));
+        } else {
+            IndividualChatRoom individualChatRoom = ((IndividualChatRoom)chatRoom);
+            return individualChatRoom.getFriend();
+        }
     }
 
     private void addChatMessage(ChatMessage chatMessage) {

@@ -6,9 +6,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import in.ureport.R;
+import in.ureport.UreportApplication;
 import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
+import in.ureport.managers.UserLoginManager;
 import in.ureport.models.User;
 import in.ureport.pref.SystemPreferences;
 import in.ureport.tasks.CreateFakeDataTask;
@@ -32,8 +34,9 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     private void checkUserLoggedAndProceed() {
         SystemPreferences systemPreferences = new SystemPreferences(this);
         Long userLoggedId = systemPreferences.getUserLoggedId();
+        UserLoginManager.userLoggedIn = !userLoggedId.equals(SystemPreferences.USER_NO_LOGGED_ID);
 
-        if(!userLoggedId.equals(SystemPreferences.USER_NO_LOGGED_ID)) {
+        if(UserLoginManager.userLoggedIn) {
             startMainActivity();
         }
     }
@@ -49,6 +52,11 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     @Override
     public void loginWithCredentials() {
         addCredentialsLoginFragment();
+    }
+
+    @Override
+    public void skipLogin() {
+        createFakeDataAndProcced();
     }
 
     private void addCredentialsLoginFragment() {
@@ -73,17 +81,23 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void userReady(User user) {
-        new CreateFakeDataTask(this){
+        UserLoginManager.userLoggedIn = true;
+        createFakeDataAndProcced();
+    }
+
+    private void createFakeDataAndProcced() {
+        new CreateFakeDataTask(this) {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
                 startMainActivity();
             }
-        }.execute(user);
+        }.execute();
     }
 
     private void startMainActivity() {
         Intent mainIntent = new Intent(this, MainActivity.class);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(mainIntent);
         finish();
     }

@@ -35,6 +35,9 @@ public class LoginFragment extends Fragment {
     }
 
     private void setupView(View view) {
+        TextView skipLogin = (TextView) view.findViewById(R.id.skipLogin);
+        skipLogin.setOnClickListener(onSkipLoginClickListener);
+
         Button loginWithCredentials = (Button) view.findViewById(R.id.loginWithCredentials);
         loginWithCredentials.setOnClickListener(onLoginWithCredentialsClickListener);
 
@@ -96,9 +99,18 @@ public class LoginFragment extends Fragment {
         }
     }
 
+    private View.OnClickListener onSkipLoginClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (loginListener != null)
+                loginListener.skipLogin();
+        }
+    };
+
     public static interface LoginListener {
         void loginWithSocialNetwork(User user);
         void loginWithCredentials();
+        void skipLogin();
         void signUp();
         void userReady(User user);
     }

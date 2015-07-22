@@ -61,7 +61,13 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
-        app:headerLayout="@layout/view_header_notifications"
-        app:menu="@menu/notifications"/>
+        app:headerLayout="@layout/view_header_notifications">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/notificationsList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>
