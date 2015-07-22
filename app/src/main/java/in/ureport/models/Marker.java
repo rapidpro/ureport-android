@@ -71,4 +71,10 @@ public class Marker extends Model implements Parcelable {
         }
     };
 
+    @Override
+    public String toString() {
+        return "Marker{" +
+                "name='" + name + '\'' +
+                '}';
+    }
 }

@@ -69,12 +69,8 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if(!editMode) return MEDIA_TYPE;
-
-        if(position == mediaList.size()) {
+        if(editMode && position == mediaList.size())
             return ADD_MEDIA_TYPE;
-        }
-
         return MEDIA_TYPE;
     }
 

@@ -34,7 +34,7 @@ public class Story extends Model implements Parcelable {
     private String markers;
 
     @Column(name = "image")
-    private Integer image;
+    private String image;
 
     public Story() {
     }
@@ -87,11 +87,11 @@ public class Story extends Model implements Parcelable {
         this.markers = markers;
     }
 
-    public Integer getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(Integer image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -108,7 +108,7 @@ public class Story extends Model implements Parcelable {
         dest.writeParcelable(this.user, 0);
         dest.writeValue(this.contributions);
         dest.writeString(this.markers);
-        dest.writeValue(this.image);
+        dest.writeString(this.image);
     }
 
     protected Story(Parcel in) {
@@ -119,7 +119,7 @@ public class Story extends Model implements Parcelable {
         this.user = in.readParcelable(User.class.getClassLoader());
         this.contributions = (Integer) in.readValue(Integer.class.getClassLoader());
         this.markers = in.readString();
-        this.image = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.image = in.readString();
     }
 
     public static final Creator<Story> CREATOR = new Creator<Story>() {

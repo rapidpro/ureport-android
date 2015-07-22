@@ -6,8 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -101,6 +103,17 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        setCloseIconToNavigation();
+    }
+
+    private void setCloseIconToNavigation() {
+        AppCompatActivity activity = (AppCompatActivity)getActivity();
+        activity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+    }
+
     private void publishStory() {
         if(isFieldsValid()) {
             final Story story = new Story();
@@ -132,6 +145,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     public void setSelectedMarkers(List<Marker> selectedMarkers) {
+        setCloseIconToNavigation();
         this.selectedMarkers = selectedMarkers;
         markers.setText(getMarkerTexts(selectedMarkers));
     }

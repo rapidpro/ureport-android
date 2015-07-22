@@ -32,14 +32,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            style="@style/AppTheme.FormMargin"
             android:drawablePadding="5dp"
-            android:drawableLeft="@drawable/ic_tag_black_18dp"
-            android:drawableStart="@drawable/ic_tag_black_18dp"
+            android:drawableLeft="@drawable/ic_tag_grey600_18dp"
+            android:drawableStart="@drawable/ic_tag_grey600_18dp"
             android:gravity="start"
             android:textAlignment="viewStart"
             android:inputType="text"
             android:focusable="false"
+            style="@style/AppTheme.FormMargin"
+            android:textColorHint="?attr/colorPrimary"
             android:hint="@string/create_story_add_markers"/>
 
         <br.com.ilhasoft.support.widget.CustomTextInputLayout
@@ -68,7 +69,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/mediaAddList"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/item_media_size"
+            android:layout_height="90dp"
             android:orientation="horizontal"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"

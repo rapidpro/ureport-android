@@ -91,7 +91,6 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
 
     @Override
     public void onSelectionResult(List<Marker> markers) {
-        Log.i(TAG, "onSelectionResult markers: " + markers);
         createStoryFragment.setSelectedMarkers(markers);
     }
 }

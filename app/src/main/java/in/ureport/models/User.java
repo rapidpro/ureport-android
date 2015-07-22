@@ -34,7 +34,7 @@ public class User extends Model implements Parcelable {
     private String country;
 
     @Column(name = "picture")
-    private Integer picture;
+    private String picture;
 
     @Column(name = "gender")
     private Gender gender;
@@ -91,11 +91,11 @@ public class User extends Model implements Parcelable {
         this.country = country;
     }
 
-    public Integer getPicture() {
+    public String getPicture() {
         return picture;
     }
 
-    public void setPicture(Integer picture) {
+    public void setPicture(String picture) {
         this.picture = picture;
     }
 
@@ -203,7 +203,7 @@ public class User extends Model implements Parcelable {
         dest.writeString(this.password);
         dest.writeLong(birthday != null ? birthday.getTime() : -1);
         dest.writeString(this.country);
-        dest.writeValue(this.picture);
+        dest.writeString(this.picture);
         dest.writeInt(this.gender == null ? -1 : this.gender.ordinal());
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
         dest.writeValue(this.points);
@@ -221,7 +221,7 @@ public class User extends Model implements Parcelable {
         long tmpBirthday = in.readLong();
         this.birthday = tmpBirthday == -1 ? null : new Date(tmpBirthday);
         this.country = in.readString();
-        this.picture = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.picture = in.readString();
         int tmpGender = in.readInt();
         this.gender = tmpGender == -1 ? null : User.Gender.values()[tmpGender];
         int tmpType = in.readInt();

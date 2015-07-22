@@ -23,11 +23,11 @@ public class MarkersLoader extends AsyncTaskLoader<List<Marker>> {
     @Override
     public List<Marker> loadInBackground() {
         List<Marker> markers = new ArrayList<>();
-        markers.add(new Marker(getContext().getString(R.string.marker_name_water)));
-        markers.add(new Marker(getContext().getString(R.string.marker_name_sanitation)));
-        markers.add(new Marker(getContext().getString(R.string.marker_name_politics)));
-        markers.add(new Marker(getContext().getString(R.string.marker_name_education)));
-        markers.add(new Marker(getContext().getString(R.string.marker_name_violence)));
+
+        String [] markerStringArray = getContext().getResources().getStringArray(R.array.markers);
+        for (String marker : markerStringArray) {
+            markers.add(new Marker(marker));
+        }
 
         return markers;
     }

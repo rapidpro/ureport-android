@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -69,6 +70,13 @@ public class MarkersFragment extends Fragment implements LoaderManager.LoaderCal
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
         getLoaderManager().initLoader(0, null, this).forceLoad();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppCompatActivity activity = (AppCompatActivity)getActivity();
+        activity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_done_white_24dp);
     }
 
     private void setupView(View view) {

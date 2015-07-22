@@ -66,8 +66,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        if(!publicType) return stories.size();
-        return stories.size() + 1;
+        if(publicType) return stories.size() + 1;
+        return stories.size();
     }
 
     @Override
@@ -104,7 +104,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private void bind(User user) {
             name.setHint(itemView.getContext().getString(R.string.list_stories_header_title, user.getUsername()));
-            picture.setImageResource(UserDataManager.getUserImage(user));
+            picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), user));
         }
 
         private View.OnClickListener onPublishStoryClickListener = new View.OnClickListener() {
@@ -166,7 +166,9 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private void bindImage(Story story) {
             if(story.getImage() != null) {
-                image.setImageResource(story.getImage());
+                int imageId = itemView.getResources().getIdentifier(story.getImage(), "drawable"
+                        , itemView.getContext().getPackageName());
+                image.setImageResource(imageId);
                 image.setVisibility(View.VISIBLE);
             } else {
                 image.setVisibility(View.GONE);
@@ -174,7 +176,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void bindAuthor(Story story) {
-            picture.setImageResource(UserDataManager.getUserImage(story.getUser()));
+            picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), story.getUser()));
             author.setText("@" + story.getUser().getUsername());
         }
 

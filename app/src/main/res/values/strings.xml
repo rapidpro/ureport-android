@@ -50,7 +50,7 @@
     <string name="create_story_title_cover_image">Choose the cover image source:</string>
     <string name="action_title_publish">Publish</string>
     <string name="action_label_search">Search</string>
-    <string name="create_story_add_marker_title">Add a Marker</string>
+    <string name="create_story_add_marker_title">New marker</string>
     <string name="label_story_view">Story View</string>
     <string name="story_view_contribute">Contribute to this story</string>
     <string name="story_contribution_add">Add a contribution</string>
