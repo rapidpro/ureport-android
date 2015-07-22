@@ -153,7 +153,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     private void loadUserGenders() {
         List<UserGender> userGenders = getUserGenders();
 
-        ArrayAdapter<UserGender> genderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, userGenders);
+        ArrayAdapter<UserGender> genderAdapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, userGenders);
         genderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         gender.setAdapter(genderAdapter);
     }
@@ -255,7 +255,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     private void updateUserLocale(List<UserLocale> data) {
-        ArrayAdapter<UserLocale> localeAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, data);
+        ArrayAdapter<UserLocale> localeAdapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, data);
         localeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         country.setAdapter(localeAdapter);

@@ -131,7 +131,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:layout_gravity="bottom"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             style="@style/AppTheme.TabLayout" />
 
     </android.support.design.widget.AppBarLayout>

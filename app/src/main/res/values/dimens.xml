@@ -6,4 +6,6 @@
     <dimen name="default_cover_height">120dp</dimen>
     <dimen name="poll_cover_height">100dp</dimen>
     <dimen name="card_margin">6dp</dimen>
+
+    <dimen name="spinner_padding_left">0dp</dimen>
 </resources>

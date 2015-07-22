@@ -21,6 +21,8 @@
         android:id="@+id/question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="start"
+        android:textAlignment="viewStart"
         android:textSize="18sp"
         android:textColor="@android:color/black"
         tools:text="@string/poll1_question1"

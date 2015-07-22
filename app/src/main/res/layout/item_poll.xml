@@ -51,6 +51,9 @@
             android:layout_marginStart="10dp"
             android:layout_below="@+id/info"
             android:layout_toLeftOf="@+id/icon"
+            android:layout_toStartOf="@+id/icon"
+            android:gravity="start"
+            android:textAlignment="viewStart"
             android:textSize="22sp"
             android:maxLines="2"
             style="@style/AppTheme.Info"
@@ -63,6 +66,8 @@
             android:layout_below="@+id/pollCover"
             android:maxLines="4"
             android:ellipsize="end"
+            android:gravity="start"
+            android:textAlignment="viewStart"
             android:textSize="18sp"
             android:padding="10dp"
             tools:text="@string/poll1_description"/>

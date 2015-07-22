@@ -35,6 +35,9 @@
             style="@style/AppTheme.FormMargin"
             android:drawablePadding="5dp"
             android:drawableLeft="@drawable/ic_tag_black_18dp"
+            android:drawableStart="@drawable/ic_tag_black_18dp"
+            android:gravity="start"
+            android:textAlignment="viewStart"
             android:inputType="text"
             android:focusable="false"
             android:hint="@string/create_story_add_markers"/>

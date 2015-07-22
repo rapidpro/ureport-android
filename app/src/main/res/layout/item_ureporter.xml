@@ -8,8 +8,7 @@
     android:gravity="center_vertical"
     android:padding="10dp"
     android:clickable="true"
-    android:background="?android:selectableItemBackground"
-    tools:ignore="NewApi">
+    android:background="?attr/selectableItemBackground">
 
     <FrameLayout
         android:id="@+id/mark"
@@ -45,6 +44,8 @@
         android:layout_weight="1"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
+        android:gravity="start"
+        android:textAlignment="viewStart"
         android:textSize="16sp"
         android:textColor="@android:color/black"
         tools:text="JonSnow"/>

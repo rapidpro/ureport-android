@@ -24,6 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/cover"
+            android:gravity="start"
+            android:textAlignment="viewStart"
             android:maxLines="3"
             android:ellipsize="end"
             android:textSize="18sp"

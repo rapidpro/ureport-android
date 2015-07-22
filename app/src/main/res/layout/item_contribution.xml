@@ -13,20 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="17sp"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|start"
         android:textColor="@android:color/black"
+        android:textAlignment="viewStart"
         tools:text="darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan darik_mulsan"/>
 
     <TextView
         android:id="@+id/author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|start"
         android:maxLines="1"
         android:textColor="@android:color/darker_gray"
         android:layout_marginTop="3dp"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
+        android:textAlignment="viewStart"
         tools:text="by darik_mulsan"/>
 
 </LinearLayout>

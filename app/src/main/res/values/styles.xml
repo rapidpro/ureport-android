@@ -4,7 +4,6 @@
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
         <item name="colorAccent">#277a91</item>
-        <item name="toolbarStyle">@style/AppTheme.Toolbar</item>
         <item name="android:buttonStyle">@style/AppTheme.Button</item>
     </style>
 
@@ -12,8 +11,10 @@
         <item name="textAllCaps">false</item>
     </style>
 
-    <style name="AppTheme.Toolbar" parent="Widget.AppCompat.Toolbar">
-        <item name="android:textColor">@android:color/white</item>
+    <style name="AppTheme.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:gravity">start</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="paddingStart">20dp</item>
     </style>
 
     <style name="AppTheme.TabLayout" parent="Widget.Design.TabLayout">
