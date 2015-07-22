@@ -1,105 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="@dimen/item_story_height">
+    android:layout_margin="@dimen/card_margin">
 
     <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/item_story_height"
-        android:gravity="start"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/item_story_height"
+        android:padding="10dp">
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/story1"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/picture"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            tools:src="@drawable/gloria" />
 
-        <View
+        <TextView
+            android:id="@+id/author"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/item_story_height"
-            android:background="@color/translucent_cover"/>
+            android:layout_height="50dp"
+            android:layout_toRightOf="@+id/picture"
+            android:layout_toEndOf="@+id/picture"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:gravity="center_vertical|start"
+            android:textAlignment="viewStart"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="\@Jon Snow"/>
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_above="@+id/author"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/author"
             android:gravity="start"
             android:maxLines="2"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textStyle="bold"
             android:textSize="20sp"
             android:ellipsize="end"
             tools:text="Boosting community development, disease control with sms-based platform"/>
 
         <TextView
-            android:id="@+id/author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_above="@+id/markers"
-            android:gravity="center_vertical"
-            android:textSize="16sp"
-            style="@style/AppTheme.Info"
-            tools:text="by John Cordeiro"/>
-
-        <TextView
             android:id="@+id/markers"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:padding="10dp"
-            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:gravity="center_vertical|start"
+            android:textAlignment="viewStart"
             android:visibility="visible"
-            android:background="#5000"
-            style="@style/AppTheme.Info"
+            android:drawableLeft="@drawable/ic_tag_grey600_18dp"
+            android:drawableStart="@drawable/ic_tag_grey600_18dp"
+            android:drawablePadding="5dp"
             tools:text="Water, Violence, Education"/>
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/item_story_height"
+            android:layout_marginBottom="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/story2"
+            android:layout_below="@+id/markers"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/image"
+            android:ellipsize="end"
+            android:maxLines="4"
+            android:gravity="center_vertical|start"
+            android:textAlignment="viewStart"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            tools:text="@string/story1_content"/>
+
+        <TextView
+            android:id="@+id/contributors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/summary"
+            android:gravity="center_vertical"
+            android:drawablePadding="5dp"
+            android:drawableLeft="@drawable/ic_person_black_24dp"
+            android:drawableStart="@drawable/ic_person_black_24dp"
+            android:textSize="16sp"
+            tools:text="25 contributions" />
+
+        <Button
+            android:id="@+id/readFullStory"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_below="@+id/contributors"
+            android:background="@null"
+            android:textColor="?attr/colorPrimary"
+            android:text="@string/story_item_contribute_to_story"/>
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/summary"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:ellipsize="end"
-        android:maxLines="4"
-        android:gravity="center_vertical|start"
-        android:textAlignment="viewStart"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        tools:text="@string/story1_content"/>
-
-    <TextView
-        android:id="@+id/contributors"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
-
-        android:gravity="center_vertical"
-        android:drawablePadding="5dp"
-        android:drawableLeft="@drawable/ic_person_black_24dp"
-        android:drawableStart="@drawable/ic_person_black_24dp"
-        android:textSize="16sp"
-        tools:text="25 contributions" />
-
-    <Button
-        android:id="@+id/readFullStory"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="5dp"
-        android:background="@null"
-        android:textColor="?attr/colorPrimary"
-        android:text="@string/story_item_read_full_story"/>
-
-</LinearLayout>
+</android.support.v7.widget.CardView>

@@ -33,6 +33,9 @@ public class User extends Model implements Parcelable {
     @Column(name = "country")
     private String country;
 
+    @Column(name = "picture")
+    private Integer picture;
+
     @Column(name = "gender")
     private Gender gender;
 
@@ -86,6 +89,14 @@ public class User extends Model implements Parcelable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public Integer getPicture() {
+        return picture;
+    }
+
+    public void setPicture(Integer picture) {
+        this.picture = picture;
     }
 
     public Gender getGender() {
@@ -162,49 +173,6 @@ public class User extends Model implements Parcelable {
         Google
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.email);
-        dest.writeString(this.username);
-        dest.writeString(this.password);
-        dest.writeLong(birthday != null ? birthday.getTime() : -1);
-        dest.writeString(this.country);
-        dest.writeInt(this.gender == null ? -1 : this.gender.ordinal());
-        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
-    }
-
-    public User() {
-    }
-
-    protected User(Parcel in) {
-        this.email = in.readString();
-        this.username = in.readString();
-        this.password = in.readString();
-        long tmpBirthday = in.readLong();
-        this.birthday = tmpBirthday == -1 ? null : new Date(tmpBirthday);
-        this.country = in.readString();
-        int tmpGender = in.readInt();
-        this.gender = tmpGender == -1 ? null : User.Gender.values()[tmpGender];
-        int tmpType = in.readInt();
-        this.type = tmpType == -1 ? null : User.Type.values()[tmpType];
-    }
-
-    public static final Creator<User> CREATOR = new Creator<User>() {
-        public User createFromParcel(Parcel source) {
-            return new User(source);
-        }
-
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -222,4 +190,54 @@ public class User extends Model implements Parcelable {
         result = 31 * result + username.hashCode();
         return result;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.email);
+        dest.writeString(this.username);
+        dest.writeString(this.password);
+        dest.writeLong(birthday != null ? birthday.getTime() : -1);
+        dest.writeString(this.country);
+        dest.writeValue(this.picture);
+        dest.writeInt(this.gender == null ? -1 : this.gender.ordinal());
+        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
+        dest.writeValue(this.points);
+        dest.writeValue(this.stories);
+        dest.writeValue(this.polls);
+    }
+
+    public User() {
+    }
+
+    protected User(Parcel in) {
+        this.email = in.readString();
+        this.username = in.readString();
+        this.password = in.readString();
+        long tmpBirthday = in.readLong();
+        this.birthday = tmpBirthday == -1 ? null : new Date(tmpBirthday);
+        this.country = in.readString();
+        this.picture = (Integer) in.readValue(Integer.class.getClassLoader());
+        int tmpGender = in.readInt();
+        this.gender = tmpGender == -1 ? null : User.Gender.values()[tmpGender];
+        int tmpType = in.readInt();
+        this.type = tmpType == -1 ? null : User.Type.values()[tmpType];
+        this.points = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.stories = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.polls = (Integer) in.readValue(Integer.class.getClassLoader());
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

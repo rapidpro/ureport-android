@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
-        <item name="colorAccent">#277a91</item>
+        <item name="colorAccent">#287ca0</item>
         <item name="android:buttonStyle">@style/AppTheme.Button</item>
     </style>
 
@@ -40,6 +40,12 @@
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
+    </style>
+
+    <style name="AppTheme.CustomButton">
+        <item name="android:layout_marginLeft">25dp</item>
+        <item name="android:layout_marginRight">25dp</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

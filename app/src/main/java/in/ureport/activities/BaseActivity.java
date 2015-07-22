@@ -171,7 +171,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         return tabLayout;
     }
 
-    protected FloatingActionButton getMainActionButton() {
+    public FloatingActionButton getMainActionButton() {
         return mainActionButton;
     }
 

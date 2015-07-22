@@ -122,9 +122,10 @@
                 android:id="@+id/confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/sign_up_confirm"
-                android:layout_marginTop="20dp"
-                style="@style/AppTheme.FormMargin"/>
+                android:layout_margin="20dp"
+                android:background="@drawable/shape_gray_round_button"
+                android:textColor="@android:color/white"
+                android:text="@string/sign_up_confirm"/>
 
         </LinearLayout>
 

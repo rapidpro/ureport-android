@@ -119,6 +119,9 @@
     <string name="chat_group_leave">Do you really want to leave this group?</string>
     <string name="login_validation_error_message">You need to login before making this action!\nDo you want to login now ?</string>
     <string name="label_chat">Chat</string>
+    <string name="login_forgot_password">Forgot password?</string>
+    <string name="story_item_contribute_to_story">Contribute to this story</string>
+    <string name="list_stories_header_title">Hi %1$s, tell us what\'s going on</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

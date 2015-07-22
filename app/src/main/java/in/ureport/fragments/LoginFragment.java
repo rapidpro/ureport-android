@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.util.Date;
 
+import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.models.User;
 import in.ureport.tasks.SocialNetworkLoginTask;
@@ -21,6 +22,7 @@ import in.ureport.tasks.SocialNetworkLoginTask;
 public class LoginFragment extends Fragment {
 
     private LoginListener loginListener;
+    private StatusBarDesigner statusBarDesigner;
 
     @Nullable
     @Override
@@ -31,7 +33,18 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupObjects();
         setupView(view);
+    }
+
+    private void setupObjects() {
+        statusBarDesigner = new StatusBarDesigner();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        statusBarDesigner.setStatusBarColor(getActivity(), R.color.yellow);
     }
 
     private void setupView(View view) {

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
+import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import br.com.ilhasoft.support.widget.DatePickerFragment;
 import in.ureport.R;
 import in.ureport.loader.CountryListLoader;
@@ -95,6 +96,17 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
         setupUserIfExists();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        resetStatusBarColor();
+    }
+
+    private void resetStatusBarColor() {
+        StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
+        statusBarDesigner.setStatusBarColor(getActivity(), R.color.primary_dark_color);
     }
 
     private void setupUserIfExists() {

@@ -2,6 +2,7 @@ package in.ureport.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -13,14 +14,17 @@ import in.ureport.UreportApplication;
 import in.ureport.fragments.NewsFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
+import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.views.adapters.NavigationAdapter;
+import in.ureport.views.adapters.StoriesAdapter;
 
 /**
  * Created by johncordeiro on 7/9/15.
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements FloatingActionButtonListener
+        , StoriesAdapter.OnPublishStoryListener {
 
     private static final int POSITION_MAIN_ACTION_BUTTON = 0;
     private static final int REQUEST_CODE_CREATE_STORY = 10;
@@ -101,10 +105,20 @@ public class MainActivity extends BaseActivity {
         pager = (ViewPager) findViewById(R.id.pager);
         pager.addOnPageChangeListener(onPageChangeListener);
         setupNavigationAdapter();
+        hideFloatingButtonDelayed();
 
         getTabLayout().setupWithViewPager(pager);
         getMainActionButton().setOnClickListener(onCreateStoryClickListener);
         getMenuNavigation().getMenu().findItem(R.id.home).setChecked(true);
+    }
+
+    private void hideFloatingButtonDelayed() {
+        getMainActionButton().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hideFloatingButton();
+            }
+        }, 1000);
     }
 
     private boolean containsMainActionButton(int position) {
@@ -113,6 +127,8 @@ public class MainActivity extends BaseActivity {
 
     private void setupNavigationAdapter() {
         storiesListFragment = new StoriesListFragment();
+        storiesListFragment.setFloatingActionButtonListener(this);
+        storiesListFragment.setOnPublishStoryListener(this);
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
         NavigationItem pollsItem = new NavigationItem(new PollsFragment(), getString(R.string.main_polls));
 
@@ -131,8 +147,48 @@ public class MainActivity extends BaseActivity {
 
         if(user != null) {
             newsFragment.setUser(user);
+            storiesListFragment.updateUser(user);
             getToolbar().setTitle(user.getCountry());
         }
+    }
+
+    @Override
+    public void showFloatingButton() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            getMainActionButton().animate().translationY(0).start();
+        } else {
+            getMainActionButton().setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void hideFloatingButton() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            getMainActionButton().animate().translationY(getMainActionButton().getHeight()
+                    + getResources().getDimension(R.dimen.fab_margin)).start();
+        } else {
+            getMainActionButton().setVisibility(View.GONE);
+        }
+    }
+
+    private void checkFloatingButtonVisibility(int position) {
+        if(containsMainActionButton(position)) {
+            showFloatingButton();
+        } else {
+            hideFloatingButton();
+        }
+    }
+
+    private void publishStory() {
+        if(UreportApplication.validateUserLogin(MainActivity.this)) {
+            Intent createStoryIntent = new Intent(MainActivity.this, CreateStoryActivity.class);
+            startActivityForResult(createStoryIntent, REQUEST_CODE_CREATE_STORY);
+        }
+    }
+
+    @Override
+    public void onPublishStory() {
+        publishStory();
     }
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -142,17 +198,14 @@ public class MainActivity extends BaseActivity {
         public void onPageScrollStateChanged(int state) {}
         @Override
         public void onPageSelected(int position) {
-            getMainActionButton().setVisibility(containsMainActionButton(position) ? View.VISIBLE : View.GONE);
+            checkFloatingButtonVisibility(position);
         }
     };
 
     private View.OnClickListener onCreateStoryClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(UreportApplication.validateUserLogin(MainActivity.this)) {
-                Intent createStoryIntent = new Intent(MainActivity.this, CreateStoryActivity.class);
-                startActivityForResult(createStoryIntent, REQUEST_CODE_CREATE_STORY);
-            }
+            publishStory();
         }
     };
 }

@@ -11,13 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
+import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.loader.StoriesLoader;
+import in.ureport.managers.RecyclerScrollListener;
+import in.ureport.managers.UserLoginManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.views.adapters.StoriesAdapter;
@@ -25,7 +27,8 @@ import in.ureport.views.adapters.StoriesAdapter;
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class StoriesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Story>>, StoriesAdapter.StoryViewListener {
+public class StoriesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Story>>
+        , StoriesAdapter.OnStoryViewListener {
 
     private static final int LOADER_ID_STORIES_LIST = 10;
     private static final String EXTRA_USER = "user";
@@ -35,6 +38,11 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
 
     private User user;
     private boolean publicType = true;
+
+    private StoriesAdapter.OnPublishStoryListener onPublishStoryListener;
+
+    private FloatingActionButtonListener floatingActionButtonListener;
+    private StoriesAdapter adapter;
 
     public static StoriesListFragment newInstance(User user) {
         StoriesListFragment storiesListFragment = new StoriesListFragment();
@@ -77,6 +85,7 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
     private void setupView(View view) {
         storiesList = (RecyclerView) view.findViewById(R.id.storiesList);
         storiesList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        storiesList.addOnScrollListener(new RecyclerScrollListener(floatingActionButtonListener));
 
         info = view.findViewById(R.id.info);
     }
@@ -94,15 +103,15 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onLoadFinished(Loader<List<Story>> loader, List<Story> data) {
         if(data != null && !data.isEmpty()) {
-            StoriesAdapter adapter = new StoriesAdapter(data);
-            adapter.setStoryViewListener(this);
+            adapter = new StoriesAdapter(data);
+            if(needsUserPublish()) adapter.setUser(user);
+            adapter.setOnStoryViewListener(this);
+            adapter.setOnPublishStoryListener(onPublishStoryListener);
             storiesList.setAdapter(adapter);
-
             info.setVisibility(View.GONE);
         } else {
             info.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override
@@ -115,8 +124,20 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
         startActivity(storyViewIntent);
     }
 
+    public void setOnPublishStoryListener(StoriesAdapter.OnPublishStoryListener onPublishStoryListener) {
+        this.onPublishStoryListener = onPublishStoryListener;
+    }
+
+    public void setFloatingActionButtonListener(FloatingActionButtonListener floatingActionButtonListener) {
+        this.floatingActionButtonListener = floatingActionButtonListener;
+    }
+
     public void updateUser(User user) {
         this.user = user;
-        getLoaderManager().restartLoader(0, null, this).forceLoad();
+        if(adapter != null && needsUserPublish()) adapter.setUser(user);
+    }
+
+    private boolean needsUserPublish() {
+        return publicType && UserLoginManager.userLoggedIn && user != null;
     }
 }

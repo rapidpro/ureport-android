@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
+import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.managers.ToolbarDesigner;
 import in.ureport.models.User;
@@ -41,6 +42,17 @@ public class CredentialsLoginFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        resetStatusBarColor();
+    }
+
+    private void resetStatusBarColor() {
+        StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
+        statusBarDesigner.setStatusBarColor(getActivity(), R.color.primary_dark_color);
     }
 
     private void setupView(View view) {

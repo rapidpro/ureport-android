@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.com.ilhasoft.support.db.business.AbstractBusiness;
-import br.com.ilhasoft.support.db.repository.AbstractRepository;
 import in.ureport.R;
 import in.ureport.db.business.StoryBusiness;
 import in.ureport.db.business.UserBusiness;
@@ -66,6 +64,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user1.setType(User.Type.Twitter);
         user1.setBirthday(new Date());
         user1.setCountry("Uganda");
+        user1.setPicture(R.drawable.gloria);
         user1.setPolls(20);
         user1.setStories(10);
         user1.setPoints(user1.getPolls() + user1.getStories());
@@ -143,6 +142,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user8.setType(User.Type.Ureport);
         user8.setBirthday(new Date());
         user8.setCountry("Brazil");
+        user8.setPicture(R.drawable.gloria);
         user8.setPolls(40);
         user8.setStories(100);
         user8.setPoints(user8.getPolls() + user8.getStories());
@@ -197,6 +197,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         story2.setTitle(context.getString(R.string.story2_title));
         story2.setContent(context.getString(R.string.story2_content));
         story2.setCreatedDate(new Date());
+        story2.setImage(R.drawable.story2);
         story2.setUser(users[1]);
         story2.setContributions(123);
         story2.setMarkers("Water");

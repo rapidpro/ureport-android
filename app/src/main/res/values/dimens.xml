@@ -8,4 +8,6 @@
     <dimen name="card_margin">6dp</dimen>
 
     <dimen name="spinner_padding_left">0dp</dimen>
+    <dimen name="button_radius">25dp</dimen>
+    <dimen name="logo_container_height">180dp</dimen>
 </resources>

@@ -1,4 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="in.ureport">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="in.ureport">
+
+    <uses-sdk
+        tools:overrideLibrary="de.hdodenhof.circleimageview"/>
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
