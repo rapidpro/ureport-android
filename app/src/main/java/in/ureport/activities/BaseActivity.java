@@ -8,28 +8,37 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.Locale;
 
 import in.ureport.R;
+import in.ureport.loader.NotificationLoader;
 import in.ureport.managers.UserLoginManager;
+import in.ureport.models.Notification;
 import in.ureport.models.User;
 import in.ureport.tasks.GetUserLoggedTask;
+import in.ureport.util.DividerItemDecoration;
+import in.ureport.views.adapters.NotificationAdapter;
 
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Notification>> {
 
     private AppBarLayout appBar;
     private Toolbar toolbar;
@@ -38,6 +47,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private FloatingActionButton mainActionButton;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private DrawerLayout drawerLayout;
+    private RecyclerView notificationsList;
 
     private User user;
 
@@ -46,7 +56,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base);
         setupBaseView();
-        loadUser();
+        loadData();
     }
 
     private void setupBaseView() {
@@ -67,6 +77,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout
                 , toolbar, R.string.base_menu_open_drawer, R.string.base_menu_close_drawer);
+
+        notificationsList = (RecyclerView) findViewById(R.id.notificationsList);
+        notificationsList.setLayoutManager(new LinearLayoutManager(this));
+        notificationsList.addItemDecoration(new DividerItemDecoration(this));
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
@@ -93,8 +107,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         content.addView(view);
     }
 
-    private void loadUser() {
+    private void loadData() {
         loadUserTask.execute();
+        getSupportLoaderManager().initLoader(0, null, this).forceLoad();
     }
 
     private GetUserLoggedTask loadUserTask = new GetUserLoggedTask(this) {
@@ -176,6 +191,20 @@ public abstract class BaseActivity extends AppCompatActivity {
         drawerLayout.openDrawer(GravityCompat.END);
     }
 
+    @Override
+    public Loader<List<Notification>> onCreateLoader(int id, Bundle args) {
+        return new NotificationLoader(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Notification>> loader, List<Notification> data) {
+        NotificationAdapter adapter = new NotificationAdapter(data);
+        notificationsList.setAdapter(adapter);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Notification>> loader) {}
+
     private View.OnClickListener onMenuHeaderClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -214,4 +243,5 @@ public abstract class BaseActivity extends AppCompatActivity {
             return true;
         }
     };
+
 }
