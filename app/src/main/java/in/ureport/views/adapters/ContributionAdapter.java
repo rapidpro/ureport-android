@@ -6,12 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.managers.UserDataManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.User;
 
@@ -19,8 +21,6 @@ import in.ureport.models.User;
  * Created by johncordeiro on 7/15/15.
  */
 public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private static final String TAG = "ContributionAdapter";
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_ITEM_ADD = 1;
@@ -116,23 +116,22 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private String authorTemplate;
-
-        private TextView contribution;
-        private TextView author;
+        private final TextView contribution;
+        private final TextView author;
+        private final ImageView picture;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
 
-            authorTemplate = itemView.getContext().getString(R.string.stories_list_item_author);
-
+            picture = (ImageView) itemView.findViewById(R.id.picture);
             contribution = (TextView) itemView.findViewById(R.id.contribution);
             author = (TextView) itemView.findViewById(R.id.author);
         }
 
         private void bindView(Contribution contribution) {
+            this.picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), user));
             this.contribution.setText(contribution.getContribution());
-            this.author.setText(String.format(authorTemplate, contribution.getAuthor().getUsername()));
+            this.author.setText("@"+user.getUsername());
 
         }
     }

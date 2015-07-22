@@ -184,7 +184,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View view) {
                 if (onStoryViewListener != null)
-                    onStoryViewListener.onStoryViewClick(stories.get(getLayoutPosition()));
+                    onStoryViewListener.onStoryViewClick(stories.get(getListPosition(getLayoutPosition())));
             }
         };
     }

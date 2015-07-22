@@ -21,7 +21,6 @@ import in.ureport.models.Story;
  */
 public class CreateStoryActivity extends AppCompatActivity implements CreateStoryFragment.StoryCreationListener, SelectionResultListener<Marker> {
 
-    private static final String TAG = "CreateStoryActivity";
     private CreateStoryFragment createStoryFragment;
 
     @Override

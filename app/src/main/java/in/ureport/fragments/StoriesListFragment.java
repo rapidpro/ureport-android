@@ -121,6 +121,7 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
     public void onStoryViewClick(Story story) {
         Intent storyViewIntent = new Intent(getActivity(), StoryViewActivity.class);
         storyViewIntent.putExtra(StoryViewActivity.EXTRA_STORY, story);
+        storyViewIntent.putExtra(StoryViewActivity.EXTRA_USER, user);
         startActivity(storyViewIntent);
     }
 

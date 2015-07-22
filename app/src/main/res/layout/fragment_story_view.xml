@@ -24,21 +24,82 @@
             app:expandedTitleMarginStart="48dp"
             app:expandedTitleMarginEnd="64dp">
 
-            <ImageView
-                android:id="@+id/cover"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
                 android:fitsSystemWindows="true"
-                android:src="@drawable/cover_example"
-                app:layout_collapseMode="parallax" />
+                android:orientation="vertical"
+                app:layout_collapseMode="parallax"
+                android:layout_marginLeft="15dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:layout_above="@+id/markers"
+                    android:gravity="start"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    android:textColor="@android:color/white"
+                    android:textSize="24sp"
+                    tools:text="Boosting community development, disease control with sms-based platform"/>
+
+                <TextView
+                    android:id="@+id/markers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:drawablePadding="5dp"
+                    android:drawableLeft="@drawable/ic_tag_white_18dp"
+                    android:drawableStart="@drawable/ic_tag_white_18dp"
+                    android:textColor="@android:color/white"
+                    tools:text="Water, Violence, Education"
+                    style="@style/AppTheme.Info" />
+
+            </RelativeLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin">
+
+                <RelativeLayout
+                    android:id="@+id/info"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/picture"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerVertical="true"
+                        tools:src="@drawable/gloria" />
+
+                    <TextView
+                        android:id="@+id/author"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_toRightOf="@+id/picture"
+                        android:layout_toEndOf="@+id/picture"
+                        android:layout_centerVertical="true"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/white"
+                        tools:text="Eddie"/>
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -61,68 +122,11 @@
             android:gravity="start">
 
             <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="start"
-                android:maxLines="3"
-                android:ellipsize="end"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                tools:text="Boosting community development, disease control with sms-based platform"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="5dp">
-
-                <TextView
-                    android:id="@+id/author"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:textColor="@android:color/black"
-                    style="@style/AppTheme.Info"
-                    tools:text="by John Cordeiro"/>
-
-                <TextView
-                    android:id="@+id/contributors"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:drawableLeft="@drawable/contributors_black"
-                    android:drawablePadding="5dp"
-                    android:textColor="@android:color/black"
-                    tools:text="25 contributions"
-                    style="@style/AppTheme.Info" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/markers"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="@android:color/black"
-                tools:text="Water, Violence, Education"
-                style="@style/AppTheme.Info" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:background="@color/line"/>
-
-            <TextView
                 android:id="@+id/content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:textAlignment="viewStart"
                 android:gravity="start"
                 android:ellipsize="end"
@@ -136,29 +140,30 @@
                 android:background="@color/line"/>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/contributionList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"/>
-
-            <TextView
-                android:id="@+id/mediaTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/create_story_title_media"
-                android:textColor="@android:color/black"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_marginTop="10dp"/>
-
-            <android.support.v7.widget.RecyclerView
                 android:id="@+id/mediaList"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_media_size"
                 android:minHeight="@dimen/item_media_size"
                 android:orientation="horizontal"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/contributors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp" />
+                android:gravity="center_vertical"
+                android:drawablePadding="5dp"
+                android:drawableLeft="@drawable/ic_person_black_24dp"
+                android:drawableStart="@drawable/ic_person_black_24dp"
+                android:textSize="16sp"
+                tools:text="25 contributions" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/contributionList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
 
             <Button
                 android:id="@+id/contribute"
