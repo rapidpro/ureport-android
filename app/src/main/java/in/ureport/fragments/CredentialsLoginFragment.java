@@ -52,7 +52,7 @@ public class CredentialsLoginFragment extends Fragment {
 
     private void resetStatusBarColor() {
         StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
-        statusBarDesigner.setStatusBarColor(getActivity(), R.color.primary_dark_color);
+        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.primary_dark_color);
     }
 
     private void setupView(View view) {

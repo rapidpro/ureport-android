@@ -94,13 +94,13 @@
     <string name="chat_create_group_title">Create a Group</string>
     <string name="chat_ureporters">U-Reporters</string>
     <string name="chat_group_title_hint">Group title</string>
-    <string name="chat_private_group_title">Private group?</string>
-    <string name="chat_new_invite_ureporters">Invite U-reporters</string>
+    <string name="chat_private_group_title">Private group</string>
+    <string name="chat_new_invite_ureporters">Search U-Reporters</string>
     <string name="chat_new_invite_ureporters_count">%1$s u-reporters</string>
     <string name="label_create">Create</string>
     <string name="chat_create_result_title">Success!</string>
     <string name="chat_create_group_result_message">The group was created with success!</string>
-    <string name="chat_group_description_hint">Group description</string>
+    <string name="chat_group_description_hint">Description</string>
     <string name="label_create_group">Create group</string>
     <string name="chat_create_individual_message">Do you want to create a new chat room with this u-reporter?</string>
     <string name="cancel_dialog_button">Cancel</string>
@@ -124,8 +124,10 @@
     <string name="list_stories_header_title">Hi %1$s, tell us what\'s going on</string>
     <string name="main_menu_group_institutional">Institutional</string>
     <string name="main_menu_settings">Settings</string>
-    <string name="group_info_leave_button">leave this group</string>
+    <string name="group_info_add_ureporter">Add U-Reporter</string>
     <string name="label_group_information">Information</string>
+    <string name="country_program_validation_error">You can\'t do this action for this country program!</string>
+    <string name="label_group_edit">Edit group</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

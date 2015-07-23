@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.managers.UserDataManager;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 
@@ -104,7 +104,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private void bind(User user) {
             name.setHint(itemView.getContext().getString(R.string.list_stories_header_title, user.getUsername()));
-            picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), user));
+            picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
         }
 
         private View.OnClickListener onPublishStoryClickListener = new View.OnClickListener() {
@@ -176,7 +176,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void bindAuthor(Story story) {
-            picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), story.getUser()));
+            picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), story.getUser()));
             author.setText("@" + story.getUser().getUsername());
         }
 

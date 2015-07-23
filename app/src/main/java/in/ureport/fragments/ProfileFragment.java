@@ -12,10 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import in.ureport.R;
 import in.ureport.activities.MainActivity;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.pref.SystemPreferences;
@@ -29,12 +31,12 @@ public class ProfileFragment extends Fragment {
     private static final String EXTRA_USER = "user";
 
     private TextView name;
-    private TextView firstLetter;
     private ViewPager pager;
     private TextView points;
     private TextView polls;
     private TextView stories;
     private TabLayout tabs;
+    private ImageView picture;
 
     private User user;
 
@@ -78,7 +80,7 @@ public class ProfileFragment extends Fragment {
         activity.getSupportActionBar().setTitle("");
 
         name = (TextView)view.findViewById(R.id.name);
-        firstLetter = (TextView)view.findViewById(R.id.firstLetter);
+        picture = (ImageView)view.findViewById(R.id.picture);
 
         points = (TextView) view.findViewById(R.id.points);
         polls = (TextView) view.findViewById(R.id.polls);
@@ -96,7 +98,7 @@ public class ProfileFragment extends Fragment {
             setupPagerWithUser(user);
 
             name.setText("@"+user.getUsername());
-            firstLetter.setText(user.getUsername().toUpperCase());
+            picture.setImageResource(UserViewManager.getUserImage(getActivity(), user));
 
             points.setText(getString(R.string.menu_points, user.getPoints()));
             polls.setText(getString(R.string.profile_polls, user.getPolls()));
@@ -124,6 +126,7 @@ public class ProfileFragment extends Fragment {
     private void logout() {
         SystemPreferences systemPreferences = new SystemPreferences(getActivity());
         systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
+        systemPreferences.setCountryCode("");
 
         Intent backIntent = new Intent(getActivity(), MainActivity.class);
         backIntent.putExtra(MainActivity.EXTRA_FORCED_LOGIN, true);

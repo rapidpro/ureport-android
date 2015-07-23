@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.activeandroid.ActiveAndroid;
 
-import in.ureport.managers.UserLoginManager;
+import in.ureport.managers.UserManager;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -18,6 +18,6 @@ public class UreportApplication extends Application {
     }
 
     public static boolean validateUserLogin(Context context) {
-        return UserLoginManager.validateUserLogin(context);
+        return UserManager.validateKeyAction(context);
     }
 }

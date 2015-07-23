@@ -8,13 +8,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 
+import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.views.adapters.UreportersAdapter;
@@ -47,6 +52,24 @@ public class GroupInfoFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_group_info, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.editGroup:
+                break;
+            case R.id.leaveGroup:
+                leaveGroup();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,8 +86,10 @@ public class GroupInfoFragment extends Fragment {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setTitle(R.string.label_group_info);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        activity.getSupportActionBar().setTitle(R.string.label_group_info);
+        toolbar.setTitle(R.string.label_group_info);
+        setHasOptionsMenu(true);
 
         RecyclerView ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -74,6 +99,11 @@ public class GroupInfoFragment extends Fragment {
 
         TextView ureportersCount = (TextView) view.findViewById(R.id.ureportersCount);
         ureportersCount.setText(getString(R.string.chat_new_invite_ureporters_count, chatRoom.getParticipants().size()));
+
+        ResourceUtil resourceUtil = new ResourceUtil(getActivity());
+
+        ImageView picture = (ImageView) view.findViewById(R.id.picture);
+        picture.setImageResource(resourceUtil.getDrawableId(chatRoom.getChatGroup().getPicture(), R.drawable.face));
 
         TextView title = (TextView) view.findViewById(R.id.title);
         title.setText(chatRoom.getChatGroup().getTitle());
@@ -86,20 +116,14 @@ public class GroupInfoFragment extends Fragment {
 
         TextView date = (TextView) view.findViewById(R.id.date);
         date.setText(getString(R.string.chat_group_info_created_date, creationDate));
-
-        Button leaveGroup = (Button) view.findViewById(R.id.leaveGroup);
-        leaveGroup.setOnClickListener(onLeaveGroupClickListener);
     }
 
     public void setChatRoomListener(ChatRoomFragment.ChatRoomListener chatRoomListener) {
         this.chatRoomListener = chatRoomListener;
     }
 
-    private View.OnClickListener onLeaveGroupClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(chatRoomListener != null)
-                chatRoomListener.onChatRoomLeave(chatRoom);
-        }
-    };
+    private void leaveGroup() {
+        if(chatRoomListener != null)
+            chatRoomListener.onChatRoomLeave(chatRoom);
+    }
 }

@@ -9,7 +9,7 @@ import in.ureport.models.User;
 /**
  * Created by johncordeiro on 7/22/15.
  */
-public class UserDataManager {
+public class UserViewManager {
 
     @DrawableRes
     public static int getUserImage(Context context, User user) {

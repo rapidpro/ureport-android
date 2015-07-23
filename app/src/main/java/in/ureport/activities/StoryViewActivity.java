@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import in.ureport.R;
 import in.ureport.fragments.StoryViewFragment;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 
@@ -19,6 +20,7 @@ public class StoryViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_generic);
 
         Bundle extras = getIntent().getExtras();

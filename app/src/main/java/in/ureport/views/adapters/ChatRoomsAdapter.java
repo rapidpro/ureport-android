@@ -10,8 +10,9 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
-import in.ureport.managers.UserDataManager;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.ChatGroup;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
@@ -58,8 +59,12 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private final TextView lastMessageDate;
         private final TextView unreadMessages;
 
+        private final ResourceUtil resourceUtil;
+
         public ViewHolder(View itemView) {
             super(itemView);
+
+            resourceUtil = new ResourceUtil(itemView.getContext());
 
             name = (TextView) itemView.findViewById(R.id.name);
             picture = (ImageView) itemView.findViewById(R.id.picture);
@@ -73,7 +78,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             if(chatRoom instanceof IndividualChatRoom) {
                 User friend = ((IndividualChatRoom)chatRoom).getFriend();
                 name.setText("@" + friend.getUsername());
-                picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), friend));
+                picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), friend));
             } else if(chatRoom instanceof GroupChatRoom) {
                 ChatGroup chatGroup = ((GroupChatRoom)chatRoom).getChatGroup();
                 name.setText(chatGroup.getTitle());
@@ -95,8 +100,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         private int getGroupPicture(ChatGroup chatGroup) {
-            return itemView.getContext().getResources().getIdentifier(chatGroup.getPicture(), "drawable"
-                                , itemView.getContext().getPackageName());
+            return resourceUtil.getDrawableId(chatGroup.getPicture(), R.drawable.face);
         }
 
         private View.OnClickListener onItemClickListener = new View.OnClickListener() {

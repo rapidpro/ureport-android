@@ -26,6 +26,7 @@ public class SaveUserTask extends AsyncTask<User, Void, Boolean> {
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setUserLoggedId(id);
+        systemPreferences.setCountryCode(user.getCountry());
 
         return true;
     }

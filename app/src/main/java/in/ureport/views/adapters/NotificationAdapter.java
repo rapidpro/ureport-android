@@ -11,7 +11,7 @@ import java.text.DateFormat;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.managers.UserDataManager;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.Notification;
 
 /**
@@ -63,7 +63,7 @@ public class NotificationAdapter extends RecyclerView.Adapter {
 
             if(notification.getUser() != null) {
                 picture.setVisibility(View.VISIBLE);
-                picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), notification.getUser()));
+                picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), notification.getUser()));
             } else {
                 picture.setVisibility(View.GONE);
             }

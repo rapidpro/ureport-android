@@ -6,11 +6,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import in.ureport.R;
-import in.ureport.UreportApplication;
 import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
-import in.ureport.managers.UserLoginManager;
+import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.pref.SystemPreferences;
 import in.ureport.tasks.CreateFakeDataTask;
@@ -34,9 +34,11 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     private void checkUserLoggedAndProceed() {
         SystemPreferences systemPreferences = new SystemPreferences(this);
         Long userLoggedId = systemPreferences.getUserLoggedId();
-        UserLoginManager.userLoggedIn = !userLoggedId.equals(SystemPreferences.USER_NO_LOGGED_ID);
+        UserManager.userLoggedIn = !userLoggedId.equals(SystemPreferences.USER_NO_LOGGED_ID);
+        UserManager.countryCode = systemPreferences.getCountryCode();
 
-        if(UserLoginManager.userLoggedIn) {
+        if(UserManager.userLoggedIn) {
+            CountryProgramManager.switchCountryProgram(UserManager.countryCode);
             startMainActivity();
         }
     }
@@ -81,7 +83,10 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void userReady(User user) {
-        UserLoginManager.userLoggedIn = true;
+        UserManager.userLoggedIn = true;
+        UserManager.countryCode = user.getCountry();
+
+        CountryProgramManager.switchCountryProgram(user.getCountry());
         createFakeDataAndProcced();
     }
 

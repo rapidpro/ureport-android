@@ -13,6 +13,7 @@ import in.ureport.R;
 import in.ureport.fragments.CreateStoryFragment;
 import in.ureport.fragments.MarkersFragment;
 import in.ureport.listener.SelectionResultListener;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.Marker;
 import in.ureport.models.Story;
 
@@ -26,6 +27,7 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_create_story);
         setupView();
 

@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import in.ureport.R;
 import in.ureport.fragments.ChatRoomFragment;
 import in.ureport.fragments.GroupInfoFragment;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
 
@@ -24,6 +25,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_generic);
 
         if(savedInstanceState == null) {

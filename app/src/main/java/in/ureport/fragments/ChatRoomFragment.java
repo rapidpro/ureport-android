@@ -23,7 +23,7 @@ import java.util.Random;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
-import in.ureport.managers.UserDataManager;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
@@ -145,7 +145,7 @@ public class ChatRoomFragment extends Fragment {
         name.setText("@" + individualChatRoom.getFriend().getUsername());
 
         ImageView picture = (ImageView) view.findViewById(R.id.picture);
-        picture.setImageResource(UserDataManager.getUserImage(getActivity(), individualChatRoom.getFriend()));
+        picture.setImageResource(UserViewManager.getUserImage(getActivity(), individualChatRoom.getFriend()));
         picture.setVisibility(View.VISIBLE);
     }
 

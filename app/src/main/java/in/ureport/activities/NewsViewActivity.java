@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import in.ureport.R;
 import in.ureport.fragments.NewsViewFragment;
 import in.ureport.fragments.StoryViewFragment;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.News;
 import in.ureport.models.Story;
 
@@ -19,6 +20,7 @@ public class NewsViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_generic);
 
         if(savedInstanceState == null) {

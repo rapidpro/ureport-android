@@ -11,7 +11,7 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -37,12 +37,23 @@
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="10dp">
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/picture"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignTop="@+id/title"
+                    tools:src="@drawable/gloria" />
+
                 <TextView
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
+                    android:layout_toRightOf="@+id/picture"
+                    android:layout_toEndOf="@+id/picture"
                     android:layout_above="@+id/description"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:gravity="start"
                     android:maxLines="2"
                     android:ellipsize="end"
@@ -56,6 +67,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_above="@+id/date"
+                    android:layout_toRightOf="@+id/picture"
+                    android:layout_toEndOf="@+id/picture"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginBottom="15dp"
                     android:maxLines="3"
                     android:ellipsize="end"
@@ -66,6 +81,10 @@
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/picture"
+                    android:layout_toEndOf="@+id/picture"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_alignParentBottom="true"
                     android:textColor="@android:color/white"
                     tools:text="@string/chat_group_info_created_date"/>
@@ -76,7 +95,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_collapseMode="pin" />
 
@@ -91,12 +110,12 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <Button
-            android:id="@+id/leaveGroup"
+            android:id="@+id/addUreporter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:elevation="10dp"
-            android:text="@string/group_info_leave_button"/>
+            android:text="@string/group_info_add_ureporter"/>
 
         <TextView
             android:id="@+id/ureportersCount"

@@ -15,6 +15,7 @@ import in.ureport.fragments.NewsFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.listener.FloatingActionButtonListener;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.views.adapters.NavigationAdapter;
@@ -148,7 +149,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         if(user != null) {
             newsFragment.setUser(user);
             storiesListFragment.updateUser(user);
-            getToolbar().setTitle(user.getCountry());
+            getToolbar().setTitle(CountryProgramManager.getCurrentCountryProgram().getName());
         }
     }
 

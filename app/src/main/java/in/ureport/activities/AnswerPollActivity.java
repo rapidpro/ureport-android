@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import in.ureport.R;
 import in.ureport.fragments.AnswerPollFragment;
 import in.ureport.fragments.NewsViewFragment;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.Poll;
 
 /**
@@ -17,6 +18,7 @@ public class AnswerPollActivity extends AppCompatActivity implements AnswerPollF
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        CountryProgramManager.setThemeIfNeeded(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generic);
 

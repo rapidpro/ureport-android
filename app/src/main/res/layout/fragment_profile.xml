@@ -25,38 +25,19 @@
                 android:layout_height="?attr/actionBarSize"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
 
-            <FrameLayout
-                android:id="@+id/mark"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/picture"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginTop="20dp"
-                android:layout_centerHorizontal="true">
-
-                <br.com.ilhasoft.support.widget.Pacman
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    app:pacmanBackgroundColor="#ddd"
-                    app:pacmanForegroundColor="#aaa"
-                    app:pacmanProgress="20"/>
-
-                <TextView
-                    android:id="@+id/firstLetter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxLength="1"
-                    android:layout_gravity="center"
-                    android:textColor="@android:color/black"
-                    android:textSize="30sp"
-                    android:textStyle="bold"
-                    tools:text="J"/>
-
-            </FrameLayout>
+                android:layout_centerHorizontal="true"
+                tools:src="@drawable/gloria" />
 
             <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/mark"
+                android:layout_below="@+id/picture"
                 android:layout_marginTop="10dp"
                 android:layout_centerHorizontal="true"
                 android:textColor="@android:color/white"
@@ -73,7 +54,7 @@
                 android:layout_centerHorizontal="true"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                android:text="Polls: 20"/>
+                tools:text="Polls: 20"/>
 
             <TextView
                 android:id="@+id/stories"
@@ -82,10 +63,12 @@
                 android:layout_below="@+id/name"
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="25dp"
+                android:layout_marginEnd="25dp"
                 android:layout_toLeftOf="@+id/polls"
+                android:layout_toStartOf="@+id/polls"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                android:text="Stories: 30"/>
+                tools:text="Stories: 30"/>
 
             <TextView
                 android:id="@+id/points"
@@ -94,10 +77,12 @@
                 android:layout_below="@+id/name"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="25dp"
+                android:layout_marginStart="25dp"
                 android:layout_toRightOf="@+id/polls"
+                android:layout_toEndOf="@+id/polls"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                android:text="Points: 125"/>
+                tools:text="Points: 125"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -105,12 +90,15 @@
                 android:orientation="horizontal"
                 android:layout_below="@+id/polls"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp">
+                android:layout_marginTop="5dp"
+                android:gravity="center_horizontal">
 
                 <Button
                     android:id="@+id/edit"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
+                    android:background="@drawable/shape_simple_dark_button"
+                    android:textColor="@android:color/white"
                     android:textSize="12sp"
                     android:text="@string/label_edit" />
 
@@ -118,8 +106,12 @@
                     android:id="@+id/logout"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/shape_simple_dark_button"
+                    android:textColor="@android:color/white"
                     android:textSize="12sp"
-                    android:text="@string/label_logout"/>
+                    android:text="@string/label_logout" />
 
             </LinearLayout>
 
@@ -131,7 +123,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:layout_gravity="bottom"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             style="@style/AppTheme.TabLayout" />
 
     </android.support.design.widget.AppBarLayout>

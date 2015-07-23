@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.managers.UserDataManager;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.User;
 
@@ -129,7 +129,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         private void bindView(Contribution contribution) {
-            this.picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), user));
+            this.picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
             this.contribution.setText(contribution.getContribution());
             this.author.setText("@"+user.getUsername());
 

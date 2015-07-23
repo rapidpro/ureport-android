@@ -4,11 +4,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.User;
 
 /**
@@ -41,16 +43,16 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView name;
-        private final TextView firstLetter;
         private final TextView polls;
         private final TextView stories;
         private final TextView points;
+        private final ImageView picture;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             name = (TextView) itemView.findViewById(R.id.name);
-            firstLetter = (TextView) itemView.findViewById(R.id.firstLetter);
+            picture = (ImageView) itemView.findViewById(R.id.picture);
             polls = (TextView) itemView.findViewById(R.id.polls);
             stories = (TextView) itemView.findViewById(R.id.stories);
             points = (TextView) itemView.findViewById(R.id.points);
@@ -58,7 +60,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private void bindView(User user) {
             name.setText("@"+user.getUsername());
-            firstLetter.setText(user.getUsername().toUpperCase());
+            picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
             polls.setText(itemView.getContext().getString(R.string.profile_polls, user.getPolls()));
             stories.setText(itemView.getContext().getString(R.string.profile_stories, user.getStories()));
             points.setText(String.valueOf(user.getPoints()));

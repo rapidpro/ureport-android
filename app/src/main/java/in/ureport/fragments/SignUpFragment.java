@@ -106,7 +106,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
 
     private void resetStatusBarColor() {
         StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
-        statusBarDesigner.setStatusBarColor(getActivity(), R.color.primary_dark_color);
+        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.primary_dark_color);
     }
 
     private void setupUserIfExists() {
@@ -252,7 +252,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         user.setBirthday(getBirthdayDate());
 
         UserLocale userLocale = (UserLocale) country.getAdapter().getItem(country.getSelectedItemPosition());
-        String displayCountry = userLocale.getLocale().getDisplayCountry();
+        String displayCountry = userLocale.getLocale().getISO3Country();
         user.setCountry(displayCountry);
 
         UserGender userGender = (UserGender)gender.getAdapter().getItem(gender.getSelectedItemPosition());

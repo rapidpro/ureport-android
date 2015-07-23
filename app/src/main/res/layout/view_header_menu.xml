@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="180dp"
     android:minHeight="180dp"
-    android:background="#54b7e0">
+    android:background="?attr/colorPrimary">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/picture"

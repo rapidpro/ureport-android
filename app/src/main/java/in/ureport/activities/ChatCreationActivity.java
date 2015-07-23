@@ -10,6 +10,7 @@ import in.ureport.R;
 import in.ureport.fragments.CreateGroupFragment;
 import in.ureport.fragments.NewChatFragment;
 import in.ureport.listener.ChatCreationListener;
+import in.ureport.managers.CountryProgramManager;
 
 /**
  * Created by johncordeiro on 19/07/15.
@@ -19,6 +20,7 @@ public class ChatCreationActivity extends AppCompatActivity implements ChatCreat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_new_chat);
         setupView();
 

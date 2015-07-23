@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import in.ureport.R;
 import in.ureport.fragments.ProfileFragment;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.User;
 import in.ureport.tasks.GetUserLoggedTask;
 
@@ -18,6 +19,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_generic);
 
         if(savedInstanceState == null) {

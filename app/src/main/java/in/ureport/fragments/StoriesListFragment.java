@@ -19,7 +19,7 @@ import in.ureport.activities.StoryViewActivity;
 import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.loader.StoriesLoader;
 import in.ureport.managers.RecyclerScrollListener;
-import in.ureport.managers.UserLoginManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.views.adapters.StoriesAdapter;
@@ -139,6 +139,6 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
     }
 
     private boolean needsUserPublish() {
-        return publicType && UserLoginManager.userLoggedIn && user != null;
+        return publicType && UserManager.userLoggedIn && user != null;
     }
 }

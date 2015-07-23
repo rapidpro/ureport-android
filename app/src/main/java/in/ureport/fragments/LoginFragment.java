@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.Date;
-
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.models.User;
@@ -44,7 +42,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        statusBarDesigner.setStatusBarColor(getActivity(), R.color.yellow);
+        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.yellow);
     }
 
     private void setupView(View view) {

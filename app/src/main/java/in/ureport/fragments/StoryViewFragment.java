@@ -21,7 +21,7 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.UreportApplication;
-import in.ureport.managers.UserDataManager;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.util.SpaceItemDecoration;
@@ -95,7 +95,7 @@ public class StoryViewFragment extends Fragment {
         author.setText("@"+story.getUser().getUsername());
 
         ImageView picture = (ImageView) view.findViewById(R.id.picture);
-        picture.setImageResource(UserDataManager.getUserImage(getActivity(), story.getUser()));
+        picture.setImageResource(UserViewManager.getUserImage(getActivity(), story.getUser()));
 
         TextView contributors = (TextView) view.findViewById(R.id.contributors);
         contributors.setText(String.format(getString(R.string.stories_list_item_contributions), story.getContributions()));
