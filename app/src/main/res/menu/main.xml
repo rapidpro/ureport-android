@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/mainNavigation"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/home"
-            android:checked="true"
             android:title="@string/main_menu_home"/>
         <item
             android:id="@+id/chat"
@@ -12,28 +13,33 @@
     </group>
 
     <group
+        android:id="@+id/headerUnicef"
         android:checkableBehavior="single"
-        android:title="@string/main_menu_group_unicef">
+        android:title="@string/main_menu_group_institutional">
+        <item
+            android:title="@string/main_menu_group_institutional"
+            android:checkable="false"
+            android:enabled="false" />
         <item
             android:id="@+id/about"
             android:title="@string/label_about_ureport"/>
         <item
             android:id="@+id/makeDonations"
             android:title="@string/main_menu_subitem_make_donations"/>
+        <item
+            android:id="@+id/buyMerchandising"
+            android:title="@string/main_menu_subitem_buy_goods"/>
+        <item
+            android:id="@+id/ambassadors"
+            android:title="@string/main_menu_subitem_embassadors" />
     </group>
 
-    <item
-        android:id="@+id/headerUnicef"
-        android:title="@string/main_menu_group_unicef"
+    <group
+        android:id="@+id/settngs"
         android:checkableBehavior="single">
-        <menu>
-            <item
-                android:id="@+id/buyMerchandising"
-                android:title="@string/main_menu_subitem_buy_goods"/>
-            <item
-                android:id="@+id/ambassadors"
-                android:title="@string/main_menu_subitem_embassadors" />
-        </menu>
-    </item>
+        <item
+            android:id="@+id/settings"
+            android:title="@string/main_menu_settings"/>
+    </group>
 
 </menu>

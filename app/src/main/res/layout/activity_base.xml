@@ -55,6 +55,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        app:itemBackground="@android:color/transparent"
+        app:itemTextColor="@color/selector_item_menu"
         app:menu="@menu/main"/>
 
     <android.support.design.widget.NavigationView
@@ -62,13 +64,15 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="end"
+        android:clipToPadding="false"
+        android:background="@android:color/white"
         app:headerLayout="@layout/view_header_notifications">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/notificationsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="70dp"/>
+            android:layout_marginTop="90dp"/>
 
     </android.support.design.widget.NavigationView>
 

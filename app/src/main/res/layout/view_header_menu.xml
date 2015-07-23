@@ -1,45 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:minHeight="160dp"
-    android:background="#e5e5e5">
+    android:layout_height="180dp"
+    android:minHeight="180dp"
+    android:background="#54b7e0">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/picture"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="45dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        app:border_width="3dp"
+        app:border_color="#fff"
+        tools:src="@drawable/gloria" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="45dp"
+        android:layout_toRightOf="@+id/picture"
+        android:layout_toEndOf="@+id/picture"
         android:maxLines="1"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
-        android:text="\@Jon Snow"/>
+        tools:text="\@Jon Snow"/>
 
     <TextView
         android:id="@+id/points"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/name"
+        android:layout_toRightOf="@+id/picture"
+        android:layout_toEndOf="@+id/picture"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
-        android:textColor="@android:color/black"
-        android:text="Points: 125"/>
+        android:textColor="@android:color/white"
+        tools:text="Points: 125"/>
 
     <TextView
         android:id="@+id/polls"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/points"
+        android:layout_toRightOf="@+id/stories"
+        android:layout_toEndOf="@+id/stories"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:textColor="@android:color/black"
-        android:text="Polls: 20"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@android:color/white"
+        tools:text="Polls: 20"/>
 
     <TextView
         android:id="@+id/stories"
@@ -47,23 +65,26 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/points"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/polls"
-        android:layout_toEndOf="@+id/polls"
-        android:textColor="@android:color/black"
-        android:text="Stories: 30"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_toRightOf="@+id/picture"
+        android:layout_toEndOf="@+id/picture"
+        android:textColor="@android:color/white"
+        tools:text="Stories: 30"/>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#AAA"
+        android:layout_height="50dp"
+        android:background="@drawable/shape_gradient_background"
         android:layout_alignParentBottom="true"/>
 
     <Spinner
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/polls"
-        android:layout_marginTop="5dp"
+        android:id="@+id/countryPrograms"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginLeft="12dp"
         android:layout_marginStart="12dp"
         android:entries="@array/country_programs"/>

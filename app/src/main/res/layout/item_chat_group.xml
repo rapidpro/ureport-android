@@ -3,16 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="120dp">
+    android:layout_height="wrap_content"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp">
 
     <Button
         android:id="@+id/join"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="75dp"
+        android:layout_height="35dp"
         android:layout_marginRight="10dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
+        android:textColor="@android:color/white"
+        android:background="@drawable/shape_simple_button"
         android:text="@string/chat_groups_join"/>
 
     <TextView
@@ -34,10 +38,10 @@
     <TextView
         android:id="@+id/description"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="start"
         android:layout_marginTop="7dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginRight="10dp"
@@ -45,7 +49,7 @@
         android:layout_toLeftOf="@+id/join"
         android:layout_toStartOf="@+id/join"
         android:layout_below="@+id/title"
-        android:maxLines="4"
+        android:maxLines="2"
         android:ellipsize="end"
         tools:text="@string/chatgroup1_description"/>
 

@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:background="#f00">
+    android:layout_height="90dp"
+    android:minHeight="90dp"
+    android:fitsSystemWindows="true">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|start"
-        android:paddingTop="40dp"
+        android:layout_marginTop="20dp"
         android:paddingBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
         android:textStyle="bold"
         android:textSize="18sp"
         android:text="@string/menu_notifications_title"/>
+
+    <Button
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="@drawable/ic_settings_grey_700_36dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_gravity="end|center_vertical"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_gravity="bottom"
+        android:background="@color/line"/>
 
 </FrameLayout>

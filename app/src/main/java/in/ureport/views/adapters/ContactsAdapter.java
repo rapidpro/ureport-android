@@ -41,15 +41,18 @@ public class ContactsAdapter extends RecyclerView.Adapter {
     private class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView name;
+        private final TextView phone;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             name = (TextView) itemView.findViewById(R.id.name);
+            phone = (TextView) itemView.findViewById(R.id.phone);
         }
 
         private void bindView(Contact contact) {
             name.setText(contact.getName());
+            phone.setText(contact.getPhoneNumber());
         }
     }
 }

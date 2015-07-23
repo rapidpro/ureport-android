@@ -4,12 +4,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.managers.UserDataManager;
 import in.ureport.models.Notification;
 
 /**
@@ -45,17 +47,26 @@ public class NotificationAdapter extends RecyclerView.Adapter {
 
         private final TextView message;
         private final TextView date;
+        private final ImageView picture;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             message = (TextView) itemView.findViewById(R.id.message);
             date = (TextView) itemView.findViewById(R.id.date);
+            picture = (ImageView) itemView.findViewById(R.id.picture);
         }
 
         private void bindView(Notification notification) {
             message.setText(notification.getMessage());
             date.setText(hourFormatter.format(notification.getDate()));
+
+            if(notification.getUser() != null) {
+                picture.setVisibility(View.VISIBLE);
+                picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), notification.getUser()));
+            } else {
+                picture.setVisibility(View.GONE);
+            }
         }
     }
 }

@@ -1,10 +1,8 @@
 package in.ureport.fragments;
 
-import android.annotation.SuppressLint;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,18 +27,8 @@ import in.ureport.views.adapters.ContactsAdapter;
  */
 public class InviteContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String[] PROJECTION = {ContactsContract.Contacts._ID,
-                                                ContactsContract.Contacts.LOOKUP_KEY,
-                                                getDisplayName()};
+    private static final String[] PROJECTION = {Phone._ID, Phone.DISPLAY_NAME, Phone.NUMBER};
     private RecyclerView contactsList;
-
-    @NonNull
-    @SuppressLint("InlinedApi")
-    private static String getDisplayName() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB ?
-                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY :
-                ContactsContract.Contacts.DISPLAY_NAME;
-    }
 
     @Nullable
     @Override
@@ -64,8 +52,8 @@ public class InviteContactsFragment extends Fragment implements LoaderManager.Lo
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), ContactsContract.Contacts.CONTENT_URI, PROJECTION, null, null
-                , getDisplayName() + " ASC");
+        return new CursorLoader(getActivity(), Phone.CONTENT_URI, PROJECTION, null, null
+                , Phone.DISPLAY_NAME + " ASC");
     }
 
     @Override
@@ -79,9 +67,10 @@ public class InviteContactsFragment extends Fragment implements LoaderManager.Lo
     @NonNull
     private List<Contact> getContactsFromCursor(Cursor data) {
         List<Contact> contacts = new ArrayList<>();
-        int displayNameIndex = data.getColumnIndex(getDisplayName());
+        int displayNameIndex = data.getColumnIndex(Phone.DISPLAY_NAME);
+        int numberIndex = data.getColumnIndex(Phone.NUMBER);
         while(data.moveToNext()) {
-            contacts.add(new Contact(data.getString(displayNameIndex)));
+            contacts.add(new Contact(data.getString(displayNameIndex), data.getString(numberIndex)));
         }
         return contacts;
     }

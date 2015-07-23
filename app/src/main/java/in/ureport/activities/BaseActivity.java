@@ -22,6 +22,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.List;
@@ -29,6 +32,8 @@ import java.util.Locale;
 
 import in.ureport.R;
 import in.ureport.loader.NotificationLoader;
+import in.ureport.managers.SpinnerColorSwitcher;
+import in.ureport.managers.UserDataManager;
 import in.ureport.managers.UserLoginManager;
 import in.ureport.models.Notification;
 import in.ureport.models.User;
@@ -141,6 +146,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             View menuHeader = getLayoutInflater().inflate(R.layout.view_header_menu, null);
             menuHeader.setOnClickListener(onMenuHeaderClickListener);
 
+            ImageView picture = (ImageView) menuHeader.findViewById(R.id.picture);
+            picture.setImageResource(UserDataManager.getUserImage(this, user));
+
             TextView name = (TextView) menuHeader.findViewById(R.id.name);
             name.setText("@" + user.getUsername());
 
@@ -153,8 +161,22 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             TextView stories = (TextView) menuHeader.findViewById(R.id.stories);
             stories.setText(getString(R.string.profile_stories, user.getStories()));
 
+            Spinner countryPrograms = (Spinner) menuHeader.findViewById(R.id.countryPrograms);
+            countryPrograms.setAdapter(getCountryProgramsAdapter());
+
+            SpinnerColorSwitcher spinnerColorSwitcher = new SpinnerColorSwitcher(this);
+            spinnerColorSwitcher.switchToColor(countryPrograms, android.R.color.white);
+
             menuNavigation.addHeaderView(menuHeader);
         }
+    }
+
+    @NonNull
+    private ArrayAdapter<String> getCountryProgramsAdapter() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.view_spinner_dropdown_white
+                , getResources().getStringArray(R.array.country_programs));
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
     }
 
     protected User getLoggedUser() {

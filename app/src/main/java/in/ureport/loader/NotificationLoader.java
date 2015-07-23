@@ -8,7 +8,11 @@ import java.util.Date;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.db.business.UserBusiness;
+import in.ureport.db.repository.UserRepository;
 import in.ureport.models.Notification;
+import in.ureport.models.User;
+import in.ureport.pref.SystemPreferences;
 
 /**
  * Created by johncordeiro on 21/07/15.
@@ -21,11 +25,15 @@ public class NotificationLoader extends AsyncTaskLoader<List<Notification>> {
 
     @Override
     public List<Notification> loadInBackground() {
+        UserRepository repository = new UserBusiness();
+        List<User> user = repository.getAllExcluding(new SystemPreferences(getContext()).getUserLoggedId());
+
         List<Notification> notifications = new ArrayList<>();
 
         Notification notification = new Notification();
-        notification.setMessage(getContext().getString(R.string.notification_message1));
+        notification.setMessage(getContext().getString(R.string.notification_message1, user.get(3).getUsername()));
         notification.setDate(new Date());
+        notification.setUser(user.get(3));
 
         Notification notification2 = new Notification();
         notification2.setMessage(getContext().getString(R.string.notification_message2));

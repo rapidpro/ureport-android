@@ -22,12 +22,12 @@
 
     <string name="error_minimum_size">Set a value higher than %1$s characters</string>
     <string name="error_valid_email">Set a valid e-mail</string>
-    <string name="label_home">Home</string>
+    <string name="label_home">Main</string>
     <string name="load_message_wait">Wait...</string>
     <string name="main_stories">Stories</string>
     <string name="main_polls">Polls</string>
     <string name="main_news_feed">Program News</string>
-    <string name="main_menu_home">Home</string>
+    <string name="main_menu_home">Main</string>
     <string name="main_menu_chat">Chat</string>
     <string name="main_menu_group_unicef">Unicef</string>
     <string name="main_menu_subitem_make_donations">Make Donations</string>
@@ -87,7 +87,7 @@
     <string name="chat_groups">Groups</string>
     <string name="chat_groups_join">Join</string>
     <string name="chat_rooms">My chats</string>
-    <string name="chat_invite_contacts_title">Your contacts</string>
+    <string name="chat_invite_contacts_title">Send a SMS to invite your friends</string>
     <string name="chat_contact_invite_button">Invite</string>
     <string name="chat_invite">Invite</string>
     <string name="label_new_chat">New chat</string>
@@ -122,6 +122,8 @@
     <string name="login_forgot_password">Forgot password?</string>
     <string name="story_item_contribute_to_story">Contribute to this story</string>
     <string name="list_stories_header_title">Hi %1$s, tell us what\'s going on</string>
+    <string name="main_menu_group_institutional">Institutional</string>
+    <string name="main_menu_settings">Settings</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

@@ -6,30 +6,63 @@
     android:layout_width="match_parent"
     android:layout_height="70dp">
 
+    <ImageView
+        android:id="@+id/picture"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/contact"/>
+
     <TextView
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="17dp"
+        android:layout_toRightOf="@+id/picture"
+        android:layout_toEndOf="@+id/picture"
         android:layout_toLeftOf="@+id/invite"
         android:layout_toStartOf="@+id/invite"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:gravity="start"
         android:textAlignment="viewStart"
         android:textSize="16sp"
         android:textColor="@android:color/black"
-        android:layout_centerVertical="true"
+        tools:text="Jon Snow"/>
+
+    <TextView
+        android:id="@+id/phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_toRightOf="@+id/picture"
+        android:layout_toEndOf="@+id/picture"
+        android:layout_toLeftOf="@+id/invite"
+        android:layout_toStartOf="@+id/invite"
+        android:layout_below="@+id/name"
+        android:maxLines="2"
+        android:gravity="start"
+        android:textAlignment="viewStart"
+        android:textSize="16sp"
+        android:textColor="#5c5c5c"
         tools:text="Jon Snow"/>
 
     <Button
         android:id="@+id/invite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="35dp"
         android:layout_marginRight="15dp"
         android:layout_marginEnd="15dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
+        android:background="@drawable/shape_simple_button"
+        android:textColor="@android:color/white"
         android:text="@string/chat_contact_invite_button"/>
 
 </RelativeLayout>

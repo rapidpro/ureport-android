@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="notification_message1">\@Eddie Sent a message for you</string>
+    <string name="notification_message1">\@%1$s Sent a message for you</string>
     <string name="notification_message2">New poll available of the story you participated</string>
     <string name="notification_message3">See the campaign of UNICEF in Nepal</string>
 

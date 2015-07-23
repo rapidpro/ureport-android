@@ -11,6 +11,8 @@ public class Notification {
 
     private Date date;
 
+    private User user;
+
     public String getMessage() {
         return message;
     }
@@ -27,4 +29,11 @@ public class Notification {
         this.date = date;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
