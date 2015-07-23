@@ -14,6 +14,8 @@ public class ChatGroup implements Parcelable {
 
     private String description;
 
+    private String picture;
+
     private Date creationDate;
 
     public String getTitle() {
@@ -30,6 +32,14 @@ public class ChatGroup implements Parcelable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 
     public Date getCreationDate() {
@@ -49,6 +59,7 @@ public class ChatGroup implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.title);
         dest.writeString(this.description);
+        dest.writeString(this.picture);
         dest.writeLong(creationDate != null ? creationDate.getTime() : -1);
     }
 
@@ -58,6 +69,7 @@ public class ChatGroup implements Parcelable {
     protected ChatGroup(Parcel in) {
         this.title = in.readString();
         this.description = in.readString();
+        this.picture = in.readString();
         long tmpCreationDate = in.readLong();
         this.creationDate = tmpCreationDate == -1 ? null : new Date(tmpCreationDate);
     }

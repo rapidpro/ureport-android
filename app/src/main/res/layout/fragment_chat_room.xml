@@ -21,33 +21,15 @@
             android:clickable="true"
             android:background="?attr/selectableItemBackground">
 
-            <FrameLayout
-                android:id="@+id/mark"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:visibility="gone"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/picture"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerVertical="true"
-                tools:visibility="visible">
-
-                <br.com.ilhasoft.support.widget.Pacman
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:pacmanBackgroundColor="#ddd"
-                    app:pacmanForegroundColor="#aaa"
-                    app:pacmanProgress="20"/>
-
-                <TextView
-                    android:id="@+id/firstLetter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxLength="1"
-                    android:layout_gravity="center"
-                    android:textColor="@android:color/black"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    tools:text="J"/>
-
-            </FrameLayout>
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:visibility="gone"
+                tools:src="@drawable/gloria" />
 
             <TextView
                 android:id="@+id/name"
@@ -55,9 +37,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_toRightOf="@+id/mark"
-                android:layout_toEndOf="@+id/mark"
+                android:layout_toRightOf="@+id/picture"
+                android:layout_toEndOf="@+id/picture"
                 android:layout_centerVertical="true"
+                android:gravity="start"
+                android:textAlignment="viewStart"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textSize="18sp"
@@ -71,34 +55,28 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/messagesList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#ebebeb"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
-        android:orientation="horizontal"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp">
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:layout_toLeftOf="@+id/send"
-            android:layout_toStartOf="@+id/send"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
+            android:minHeight="60dp"
             android:paddingLeft="35dp"
             android:paddingStart="35dp"
+            android:paddingRight="35dp"
+            android:paddingEnd="35dp"
             android:inputType="textMultiLine"
             android:maxLines="3"
-            android:background="@drawable/shape_round_edittext"
+            android:background="@android:color/white"
             android:hint="@string/chat_room_message_hint"
             tools:targetApi="17"/>
 
@@ -110,14 +88,17 @@
             android:layout_marginStart="5dp"
             android:background="@drawable/ic_keyboard_alt_black_24dp"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/send"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/ic_send_black_36dp"/>
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_send_white_24dp"
+            android:background="@drawable/shape_highlight" />
 
     </RelativeLayout>
 

@@ -18,13 +18,14 @@
             android:id="@+id/message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             tools:text="@string/poll1_description"/>
 
         <TextView
             android:id="@+id/date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:layout_gravity="end"
             android:layout_marginTop="3dp"
             tools:text="16:00"/>
 

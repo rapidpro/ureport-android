@@ -4,12 +4,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.managers.UserDataManager;
 import in.ureport.models.ChatGroup;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
@@ -50,8 +52,8 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
+        private final ImageView picture;
         private final TextView name;
-        private final TextView firstLetter;
         private final TextView lastMessage;
         private final TextView lastMessageDate;
         private final TextView unreadMessages;
@@ -60,7 +62,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
 
             name = (TextView) itemView.findViewById(R.id.name);
-            firstLetter = (TextView) itemView.findViewById(R.id.firstLetter);
+            picture = (ImageView) itemView.findViewById(R.id.picture);
             lastMessage = (TextView) itemView.findViewById(R.id.lastMessage);
             lastMessageDate = (TextView) itemView.findViewById(R.id.lastMessageDate);
             unreadMessages = (TextView) itemView.findViewById(R.id.unreadMessages);
@@ -70,12 +72,12 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private void bindView(ChatRoom chatRoom) {
             if(chatRoom instanceof IndividualChatRoom) {
                 User friend = ((IndividualChatRoom)chatRoom).getFriend();
-                name.setText("@"+friend.getUsername());
-                firstLetter.setText(friend.getUsername().toUpperCase());
+                name.setText("@" + friend.getUsername());
+                picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), friend));
             } else if(chatRoom instanceof GroupChatRoom) {
                 ChatGroup chatGroup = ((GroupChatRoom)chatRoom).getChatGroup();
                 name.setText(chatGroup.getTitle());
-                firstLetter.setText(chatGroup.getTitle());
+                picture.setImageResource(getGroupPicture(chatGroup));
             }
 
             if(chatRoom.getLastMessage() != null) {
@@ -90,6 +92,11 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             lastMessageDate.setText(hourFormatter.format(chatRoom.getLastMessageDate()));
+        }
+
+        private int getGroupPicture(ChatGroup chatGroup) {
+            return itemView.getContext().getResources().getIdentifier(chatGroup.getPicture(), "drawable"
+                                , itemView.getContext().getPackageName());
         }
 
         private View.OnClickListener onItemClickListener = new View.OnClickListener() {

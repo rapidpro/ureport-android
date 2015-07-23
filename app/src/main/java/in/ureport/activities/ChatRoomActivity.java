@@ -37,6 +37,16 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else {
+            finish();
+        }
+        return true;
+    }
+
+    @Override
     public void onChatRoomLeave(ChatRoom chatRoom) {
         leaveGroup();
     }
@@ -61,6 +71,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, groupInfoFragment)
+                .addToBackStack(null)
                 .commit();
     }
 }

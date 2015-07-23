@@ -74,6 +74,33 @@
         android:layout_marginTop="10dp"
         android:background="@color/line" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:elevation="10dp">
+
+        <TextView
+            android:id="@+id/ureportersTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:text="@string/chat_new_invite_ureporters" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/ic_search_grey_600_36dp"/>
+
+    </RelativeLayout>
+
     <include layout="@layout/view_group_invite"/>
 
 </LinearLayout>

@@ -5,12 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.listener.ChatCreationListener;
+import in.ureport.managers.UserDataManager;
 import in.ureport.models.User;
 
 /**
@@ -54,22 +56,22 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView name;
-        private final TextView firstLetter;
+        private final ImageView picture;
         private final CheckBox selected;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             name = (TextView) itemView.findViewById(R.id.name);
-            firstLetter = (TextView) itemView.findViewById(R.id.firstLetter);
+            picture = (ImageView) itemView.findViewById(R.id.picture);
             selected = (CheckBox) itemView.findViewById(R.id.selected);
             itemView.setOnClickListener(selectionEnabled ? null : onItemClickListener);
         }
 
         public void bindView(User user) {
             name.setText(user.getUsername());
-            firstLetter.setText(user.getUsername().toUpperCase());
             selected.setVisibility(selectionEnabled ? View.VISIBLE : View.GONE);
+            picture.setImageResource(UserDataManager.getUserImage(itemView.getContext(), user));
         }
 
         private View.OnClickListener onItemClickListener = new View.OnClickListener() {

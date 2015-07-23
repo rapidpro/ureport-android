@@ -13,7 +13,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.Random;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
+import in.ureport.managers.UserDataManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
@@ -95,6 +97,10 @@ public class ChatRoomFragment extends Fragment {
                 if (chatRoomListener != null)
                     chatRoomListener.onChatRoomLeave(chatRoom);
                 return true;
+            case R.id.groupInfo:
+                if (chatRoomListener != null)
+                    chatRoomListener.onChatRoomInfoView(chatRoom);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -122,7 +128,7 @@ public class ChatRoomFragment extends Fragment {
         spaceItemDecoration.setVerticalSpaceHeight((int) new UnitConverter(getActivity()).convertDpToPx(10));
         messagesList.addItemDecoration(spaceItemDecoration);
 
-        Button send = (Button) view.findViewById(R.id.send);
+        ImageButton send = (ImageButton) view.findViewById(R.id.send);
         send.setOnClickListener(onSendClickListener);
     }
 
@@ -138,11 +144,9 @@ public class ChatRoomFragment extends Fragment {
         IndividualChatRoom individualChatRoom = (IndividualChatRoom)chatRoom;
         name.setText("@" + individualChatRoom.getFriend().getUsername());
 
-        View mark = view.findViewById(R.id.mark);
-        mark.setVisibility(View.VISIBLE);
-
-        TextView firstLetter = (TextView) view.findViewById(R.id.firstLetter);
-        firstLetter.setText(individualChatRoom.getFriend().getUsername().toUpperCase());
+        ImageView picture = (ImageView) view.findViewById(R.id.picture);
+        picture.setImageResource(UserDataManager.getUserImage(getActivity(), individualChatRoom.getFriend()));
+        picture.setVisibility(View.VISIBLE);
     }
 
     private void loadLocalUser() {

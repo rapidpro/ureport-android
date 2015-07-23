@@ -4,6 +4,7 @@
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
         <item name="colorAccent">#287ca0</item>
+        <item name="android:windowBackground">@android:color/white</item>
         <item name="android:buttonStyle">@style/AppTheme.Button</item>
     </style>
 

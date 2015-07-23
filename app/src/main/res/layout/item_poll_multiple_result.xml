@@ -13,7 +13,7 @@
         <include layout="@layout/view_poll_results_card_header"/>
 
         <ImageView
-            android:id="@+id/image"
+            android:id="@+id/picture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"

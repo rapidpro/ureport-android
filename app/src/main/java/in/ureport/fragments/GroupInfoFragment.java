@@ -3,8 +3,6 @@ package in.ureport.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,12 +14,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.text.DateFormat;
-import java.util.List;
 
 import in.ureport.R;
-import in.ureport.loader.UreportersLoader;
 import in.ureport.models.GroupChatRoom;
-import in.ureport.models.User;
 import in.ureport.views.adapters.UreportersAdapter;
 
 /**
@@ -30,9 +25,6 @@ import in.ureport.views.adapters.UreportersAdapter;
 public class GroupInfoFragment extends Fragment {
 
     private static final String EXTRA_CHAT_ROOM = "chatRoom";
-
-    private RecyclerView ureportersList;
-    private TextView ureportersCount;
 
     private ChatRoomFragment.ChatRoomListener chatRoomListener;
     private GroupChatRoom chatRoom;
@@ -69,19 +61,18 @@ public class GroupInfoFragment extends Fragment {
 
     private void setupView(View view) {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.label_group_info);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setTitle(R.string.label_group_info);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ureportersCount = (TextView) view.findViewById(R.id.ureportersCount);
-
-        ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
+        RecyclerView ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         UreportersAdapter ureportersAdapter = new UreportersAdapter(chatRoom.getParticipants());
-
         ureportersList.setAdapter(ureportersAdapter);
+
+        TextView ureportersCount = (TextView) view.findViewById(R.id.ureportersCount);
         ureportersCount.setText(getString(R.string.chat_new_invite_ureporters_count, chatRoom.getParticipants().size()));
 
         TextView title = (TextView) view.findViewById(R.id.title);

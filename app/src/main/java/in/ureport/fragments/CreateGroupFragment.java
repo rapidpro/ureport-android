@@ -36,7 +36,6 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
     public static final int MIN_SIZE_TITLE = 5;
     private EditText title;
     private EditText description;
-    private TextView ureportersCount;
     private RecyclerView ureportersList;
 
     private EditTextValidator validator;
@@ -66,7 +65,6 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
 
         title = (EditText) view.findViewById(R.id.title);
         description = (EditText) view.findViewById(R.id.description);
-        ureportersCount = (TextView) view.findViewById(R.id.ureportersCount);
 
         ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -129,8 +127,6 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<List<User>> loader, List<User> data) {
-        ureportersCount.setText(getString(R.string.chat_new_invite_ureporters_count, data.size()));
-
         UreportersAdapter ureportersAdapter = new UreportersAdapter(data);
         ureportersAdapter.setSelectionEnabled(true);
         ureportersList.setAdapter(ureportersAdapter);

@@ -91,6 +91,8 @@
                         android:layout_toRightOf="@+id/picture"
                         android:layout_toEndOf="@+id/picture"
                         android:layout_centerVertical="true"
+                        android:gravity="start"
+                        android:textAlignment="viewStart"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textSize="18sp"

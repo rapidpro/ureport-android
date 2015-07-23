@@ -39,15 +39,15 @@
     <string name="stories_list_item_contributions">%1$s contributors</string>
     <string name="story_item_read_full_story">See full story</string>
     <string name="label_new_story">New Story</string>
-    <string name="create_story_insert_cover">Insert a cover image</string>
+    <string name="create_story_insert_cover">Insert a cover picture</string>
     <string name="create_story_insert_title">Insert title</string>
     <string name="create_story_insert_story_content">Tell us your story</string>
     <string name="create_story_title_media">Media</string>
     <string name="create_story_add_markers">Add markers</string>
     <string name="media_remove">Remove</string>
     <string name="create_story_title_media_source">Choose a media source:</string>
-    <string name="create_story_insert_cover_title">Insert a cover image</string>
-    <string name="create_story_title_cover_image">Choose the cover image source:</string>
+    <string name="create_story_insert_cover_title">Insert a cover picture</string>
+    <string name="create_story_title_cover_image">Choose the cover picture source:</string>
     <string name="action_title_publish">Publish</string>
     <string name="action_label_search">Search</string>
     <string name="create_story_add_marker_title">New marker</string>
@@ -124,6 +124,8 @@
     <string name="list_stories_header_title">Hi %1$s, tell us what\'s going on</string>
     <string name="main_menu_group_institutional">Institutional</string>
     <string name="main_menu_settings">Settings</string>
+    <string name="group_info_leave_button">leave this group</string>
+    <string name="label_group_information">Information</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

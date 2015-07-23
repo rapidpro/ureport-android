@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/groupInfo"
+        android:title="@string/label_group_information"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/leaveGroup"
         android:title="@string/label_leave_group"

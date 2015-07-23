@@ -52,6 +52,7 @@ public class ChatRoomsLoader extends AsyncTaskLoader<List<ChatRoom>> {
         chatGroup1.setTitle(getContext().getString(R.string.chatgroup4_title));
         chatGroup1.setDescription(getContext().getString(R.string.chatgroup4_description));
         chatGroup1.setCreationDate(groupCreationDate.getTime());
+        chatGroup1.setPicture(getContext().getResources().getResourceEntryName(R.drawable.kampala));
 
         GroupChatRoom groupChatRoom1 = new GroupChatRoom();
         groupChatRoom1.setLastMessage(getContext().getString(R.string.chat2_lastMessage));
@@ -64,6 +65,7 @@ public class ChatRoomsLoader extends AsyncTaskLoader<List<ChatRoom>> {
         chatGroup2.setTitle(getContext().getString(R.string.chatgroup5_title));
         chatGroup2.setDescription(getContext().getString(R.string.chatgroup5_description));
         chatGroup2.setCreationDate(groupCreationDate.getTime());
+        chatGroup2.setPicture(getContext().getResources().getResourceEntryName(R.drawable.water));
 
         GroupChatRoom groupChatRoom2 = new GroupChatRoom();
         groupChatRoom2.setLastMessageDate(date2.getTime());
