@@ -11,13 +11,13 @@
 
     <string name="poll1_description">Hi, according to a recent survey (2011), about 50 million nigerians practice open defecation. In ur community do u think this is a major problem?</string>
 
-    <string name="poll1_question1">Do you think this is a major problem in Nigeria</string>
+    <string name="poll1_question1">Do you think this is a major problem in Nigeria?</string>
     <string name="poll1_question1_answer1">Yes</string>
     <string name="poll1_question1_answer2">No</string>
 
     <string name="poll1_question2">Why do you think people practice open defecation</string>
-    <string name="poll1_question2_answer1">People have no latrines or toilets people have no latrines or toilets</string>
-    <string name="poll1_question2_answer2">The latrines or toilets are dirty an</string>
+    <string name="poll1_question2_answer1">People have no latrines or toilets</string>
+    <string name="poll1_question2_answer2">The latrines or toilets are dirty</string>
     <string name="poll1_question2_answer3">People have to wait too long on a queue</string>
     <string name="poll1_question2_answer4">People do not care</string>
 

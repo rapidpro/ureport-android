@@ -117,7 +117,7 @@
         <activity
             android:name=".activities.AnswerPollActivity"
             android:screenOrientation="portrait"
-            android:label="@string/label_story_view"
+            android:label="@string/label_answer_poll"
             android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

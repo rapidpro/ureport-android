@@ -65,7 +65,7 @@
     <string name="news_statistics_gender_rate">Rate by Gender</string>
     <string name="news_statistics_most_active">4 most active regions</string>
     <string name="news_statistics_age_rate">Rate by Age</string>
-    <string name="answer_polls_respond">Respond</string>
+    <string name="answer_polls_respond">Send</string>
     <string name="answer_poll_choose_error">You need to choose an answer!</string>
     <string name="confirm_neutral_dialog_button">Ok</string>
     <string name="answer_poll_greetings_title">Congratulations!</string>
@@ -84,7 +84,7 @@
     <string name="profile_polls">Polls: %1$s</string>
     <string name="profile_stories">Stories: %1$s</string>
     <string name="menu_points">Points: %1$s</string>
-    <string name="chat_groups">Groups</string>
+    <string name="chat_groups">Open Groups</string>
     <string name="chat_groups_join">Join</string>
     <string name="chat_rooms">My chats</string>
     <string name="chat_invite_contacts_title">Send a SMS to invite your friends</string>
@@ -128,6 +128,7 @@
     <string name="label_group_information">Information</string>
     <string name="country_program_validation_error">You can\'t do this action for this country program!</string>
     <string name="label_group_edit">Edit group</string>
+    <string name="label_answer_poll">Answer Poll</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

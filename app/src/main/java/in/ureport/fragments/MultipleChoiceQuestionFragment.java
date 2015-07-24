@@ -16,6 +16,7 @@ import in.ureport.listener.PollQuestionAnswerListener;
 import in.ureport.models.MultipleChoiceQuestion;
 import in.ureport.models.PollQuestion;
 import in.ureport.util.SpaceItemDecoration;
+import in.ureport.util.WrapLinearLayoutManager;
 import in.ureport.views.adapters.MultipleChoiceQuestionAdapter;
 
 /**
@@ -67,7 +68,7 @@ public class MultipleChoiceQuestionFragment extends Fragment {
         UnitConverter unitConverter = new UnitConverter(getActivity());
 
         RecyclerView choiceList = (RecyclerView) view.findViewById(R.id.choicesList);
-        choiceList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        choiceList.setLayoutManager(new WrapLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration();
         spaceItemDecoration.setVerticalSpaceHeight((int)unitConverter.convertDpToPx(5));
