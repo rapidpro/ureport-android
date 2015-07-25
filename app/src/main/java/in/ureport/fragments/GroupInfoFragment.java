@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -87,8 +88,7 @@ public class GroupInfoFragment extends Fragment {
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        activity.getSupportActionBar().setTitle(R.string.label_group_info);
-        toolbar.setTitle(R.string.label_group_info);
+
         setHasOptionsMenu(true);
 
         RecyclerView ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);

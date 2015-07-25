@@ -1,6 +1,7 @@
 package in.ureport.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,12 +91,13 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class AddItemViewHolder extends RecyclerView.ViewHolder {
 
-        private EditText name;
+        private final EditText description;
 
         public AddItemViewHolder(View itemView) {
             super(itemView);
 
-            name = (EditText) itemView.findViewById(R.id.name);
+            description = (EditText) itemView.findViewById(R.id.description);
+            description.setOnEditorActionListener(onDescriptionEditorActionListener);
 
             Button addContribution = (Button) itemView.findViewById(R.id.addContribution);
             addContribution.setOnClickListener(onContributionClickListener);
@@ -104,12 +106,24 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private View.OnClickListener onContributionClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String nameText = name.getText().toString();
-                if(name.length() > 0) {
-                    Contribution contribution = new Contribution(nameText, user);
-                    addContribution(contribution);
-                    name.setText("");
-                }
+                addNewContribution();
+            }
+        };
+
+        private void addNewContribution() {
+            String nameText = description.getText().toString();
+            if(description.length() > 0) {
+                Contribution contribution = new Contribution(nameText, user);
+                addContribution(contribution);
+                AddItemViewHolder.this.description.setText("");
+            }
+        }
+
+        private TextView.OnEditorActionListener onDescriptionEditorActionListener = new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                addNewContribution();
+                return false;
             }
         };
     }

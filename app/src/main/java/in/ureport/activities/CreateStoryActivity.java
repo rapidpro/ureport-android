@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +11,10 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.fragments.CreateStoryFragment;
 import in.ureport.fragments.MarkersFragment;
+import in.ureport.listener.OnCloseGameficationListener;
 import in.ureport.listener.SelectionResultListener;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.GameficationManager;
 import in.ureport.models.Marker;
 import in.ureport.models.Story;
 
@@ -86,12 +87,23 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
 
     @Override
     public void storyCreated(Story story) {
-        setResult(Activity.RESULT_OK);
-        finish();
+        showPointsEarningAndClose();
+    }
+
+    private void showPointsEarningAndClose() {
+        GameficationManager gameficationManager = new GameficationManager(this);
+        gameficationManager.showGameficationAlert(new OnCloseGameficationListener() {
+            @Override
+            public void onCloseGamefication() {
+                setResult(Activity.RESULT_OK);
+                finish();
+            }
+        });
     }
 
     @Override
     public void onSelectionResult(List<Marker> markers) {
         createStoryFragment.setSelectedMarkers(markers);
     }
+
 }

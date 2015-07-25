@@ -1,10 +1,8 @@
 package in.ureport.fragments;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -14,7 +12,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import in.ureport.R;
+import in.ureport.listener.OnCloseGameficationListener;
 import in.ureport.listener.PollQuestionAnswerListener;
+import in.ureport.managers.GameficationManager;
 import in.ureport.models.Poll;
 import in.ureport.models.PollQuestion;
 import in.ureport.views.adapters.PollQuestionAdapter;
@@ -99,22 +99,15 @@ public class AnswerPollFragment extends Fragment implements PollQuestionAnswerLi
     }
 
     private void showConfirmDialog() {
-        AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.answer_poll_greetings_title)
-                .setMessage(R.string.answer_poll_greeting_message)
-                .setNeutralButton(R.string.confirm_neutral_dialog_button, onConfirmClickListener)
-                .setCancelable(false)
-                .create();
-        dialog.show();
+        GameficationManager gameficationManager = new GameficationManager(getActivity());
+        gameficationManager.showGameficationAlert(new OnCloseGameficationListener() {
+            @Override
+            public void onCloseGamefication() {
+                if (answerPollListener != null)
+                    answerPollListener.onPollAnswered(poll);
+            }
+        });
     }
-
-    private DialogInterface.OnClickListener onConfirmClickListener = new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            if (answerPollListener != null)
-                answerPollListener.onPollAnswered(poll);
-        }
-    };
 
     public void setAnswerPollListener(AnswerPollListener answerPollListener) {
         this.answerPollListener = answerPollListener;

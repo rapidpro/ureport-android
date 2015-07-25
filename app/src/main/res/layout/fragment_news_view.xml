@@ -55,6 +55,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
+            android:paddingBottom="80dp"
             android:orientation="vertical"
             android:gravity="start">
 

@@ -20,23 +20,19 @@
 
     <string name="story2_title">No water in my region</string>
     <string name="story2_content">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sit amet iaculis leo. Suspendisse non imperdiet nunc, eu fringilla massa. Morbi nec euismod dui, a bibendum mauris. In condimentum ut nulla in fermentum. Aenean lobortis quis ligula quis gravida. Aenean a neque quis nibh hendrerit feugiat facilisis nec odio. Nullam viverra congue blandit. Etiam suscipit dapibus venenatis. Proin quis aliquet arcu, a suscipit erat. Fusce interdum tristique magna, sed sodales nisl vestibulum id.\n\n
+        Despite a narrowing disparity in access to cleaner water and better sanitation between rural and urban areas, sharp inequalities still persist around the world.
 
-        Duis volutpat posuere nisi sed pulvinar. Ut ornare tellus vitae sapien iaculis vestibulum. Nam scelerisque, leo eget semper pharetra, ipsum neque ullamcorper nibh, eget pretium libero tortor ac erat. Aliquam erat volutpat. Nunc fringilla vitae magna nec mattis. Praesent quis volutpat leo. Pellentesque eu porta tortor, a tristique magna. Mauris vehicula molestie sapien sit amet efficitur. Nullam et est lectus. In risus nibh, feugiat sit amet justo id, vehicula posuere magna. Curabitur blandit pretium blandit. Donec vehicula finibus neque eget blandit. Cras a felis at metus euismod tempor non at risus.
+        Poor sanitation and contaminated water are linked to transmission of diseases such as cholera, diarrhoea, dysentery, hepatitis A, and typhoid. In addition, inadequate or absent water and sanitation services in health care facilities put already vulnerable patients at additional risk of infection and disease.
     </string>
 
     <string name="story3_title">Education issues</string>
     <string name="story3_content">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sit amet iaculis leo. Suspendisse non imperdiet nunc, eu fringilla massa. Morbi nec euismod dui, a bibendum mauris. In condimentum ut nulla in fermentum. Aenean lobortis quis ligula quis gravida. Aenean a neque quis nibh hendrerit feugiat facilisis nec odio. Nullam viverra congue blandit. Etiam suscipit dapibus venenatis. Proin quis aliquet arcu, a suscipit erat. Fusce interdum tristique magna, sed sodales nisl vestibulum id.\n\n
-
-        Duis volutpat posuere nisi sed pulvinar. Ut ornare tellus vitae sapien iaculis vestibulum. Nam scelerisque, leo eget semper pharetra, ipsum neque ullamcorper nibh, eget pretium libero tortor ac erat. Aliquam erat volutpat. Nunc fringilla vitae magna nec mattis. Praesent quis volutpat leo. Pellentesque eu porta tortor, a tristique magna. Mauris vehicula molestie sapien sit amet efficitur. Nullam et est lectus. In risus nibh, feugiat sit amet justo id, vehicula posuere magna. Curabitur blandit pretium blandit. Donec vehicula finibus neque eget blandit. Cras a felis at metus euismod tempor non at risus.
+        In many countries around the world, significantly less public resources are used to educate children in the poorest 20 per cent of society than their counterparts in the most affluent 20 per cent, according to a new report issued today by UNICEF. This difference can be as much as 18 times.
     </string>
 
     <string name="story4_title">Politics story</string>
     <string name="story4_content">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sit amet iaculis leo. Suspendisse non imperdiet nunc, eu fringilla massa. Morbi nec euismod dui, a bibendum mauris. In condimentum ut nulla in fermentum. Aenean lobortis quis ligula quis gravida. Aenean a neque quis nibh hendrerit feugiat facilisis nec odio. Nullam viverra congue blandit. Etiam suscipit dapibus venenatis. Proin quis aliquet arcu, a suscipit erat. Fusce interdum tristique magna, sed sodales nisl vestibulum id.\n\n
-
-        Duis volutpat posuere nisi sed pulvinar. Ut ornare tellus vitae sapien iaculis vestibulum. Nam scelerisque, leo eget semper pharetra, ipsum neque ullamcorper nibh, eget pretium libero tortor ac erat. Aliquam erat volutpat. Nunc fringilla vitae magna nec mattis. Praesent quis volutpat leo. Pellentesque eu porta tortor, a tristique magna. Mauris vehicula molestie sapien sit amet efficitur. Nullam et est lectus. In risus nibh, feugiat sit amet justo id, vehicula posuere magna. Curabitur blandit pretium blandit. Donec vehicula finibus neque eget blandit. Cras a felis at metus euismod tempor non at risus.
+        The government should provide a good administration for countries, cities and villages. I disagree with a lot of things in my country. What do you think about? Contribute with this story nooooow!
     </string>
 
 </resources>

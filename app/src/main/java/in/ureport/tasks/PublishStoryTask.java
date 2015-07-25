@@ -14,6 +14,8 @@ import in.ureport.pref.SystemPreferences;
  */
 public class PublishStoryTask extends AsyncTask<Story, Void, Void> {
 
+    private static final int USER_POINTS = 5;
+
     private Context context;
 
     public PublishStoryTask(Context context) {
@@ -29,10 +31,22 @@ public class PublishStoryTask extends AsyncTask<Story, Void, Void> {
         UserRepository userRepository = new UserBusiness();
         User user = userRepository.get(preferences.getUserLoggedId());
 
+        addNewPoints(user);
+
         Story story = stories[0];
         story.setUser(user);
         story.save();
 
         return null;
+    }
+
+    private void addNewPoints(User user) {
+        Integer points = user.getPoints();
+        user.setPoints(points != null ? points + USER_POINTS : USER_POINTS);
+
+        Integer storiesCount = user.getStories();
+        user.setStories(storiesCount != null ? storiesCount + 1 : 1);
+
+        user.save();
     }
 }

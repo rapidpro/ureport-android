@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="15dp"
-    android:paddingBottom="15dp">
+    android:paddingBottom="15dp"
+    android:clickable="true"
+    android:background="?attr/selectableItemBackground">
 
     <Button
         android:id="@+id/join"

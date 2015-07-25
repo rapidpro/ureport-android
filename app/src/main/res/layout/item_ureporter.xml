@@ -16,7 +16,7 @@
         android:layout_height="40dp"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
-        tools:src="@drawable/gloria" />
+        tools:src="@drawable/user8" />
 
     <TextView
         android:id="@+id/name"

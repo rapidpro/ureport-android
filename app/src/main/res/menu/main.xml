@@ -17,10 +17,6 @@
         android:checkableBehavior="single"
         android:title="@string/main_menu_group_institutional">
         <item
-            android:title="@string/main_menu_group_institutional"
-            android:checkable="false"
-            android:enabled="false" />
-        <item
             android:id="@+id/about"
             android:title="@string/label_about_ureport"/>
         <item
@@ -35,10 +31,10 @@
     </group>
 
     <group
-        android:id="@+id/settngs"
+        android:id="@+id/settings"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/settings"
+            android:id="@+id/changeSettings"
             android:title="@string/main_menu_settings"/>
     </group>
 

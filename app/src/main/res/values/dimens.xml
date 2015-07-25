@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+
     <dimen name="item_story_height">190dp</dimen>
+    <dimen name="app_bar_height">150dp</dimen>
+    <dimen name="group_info_app_bar_height">175dp</dimen>
+
     <dimen name="item_media_size">90dp</dimen>
     <dimen name="default_cover_height">120dp</dimen>
     <dimen name="poll_cover_height">80dp</dimen>

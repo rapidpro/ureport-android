@@ -54,6 +54,8 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             Button join = (Button) itemView.findViewById(R.id.join);
             join.setOnClickListener(onJoinClickListener);
+
+            itemView.setOnClickListener(onItemClickListener);
         }
 
         private void bindView(ChatGroup chatGroup) {
@@ -69,6 +71,14 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }
         };
+
+        private View.OnClickListener onItemClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (chatGroupListener != null)
+                    chatGroupListener.onViewGroupInfo(chatGroups.get(getLayoutPosition()));
+            }
+        };
     }
 
     public void setChatGroupListener(ChatGroupListener chatGroupListener) {
@@ -77,5 +87,6 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public interface ChatGroupListener {
         void onJoinChatGroup(ChatGroup chatGroup);
+        void onViewGroupInfo(ChatGroup chatGroup);
     }
 }

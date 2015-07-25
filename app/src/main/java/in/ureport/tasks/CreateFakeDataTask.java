@@ -64,7 +64,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user1.setType(User.Type.Twitter);
         user1.setBirthday(new Date());
         user1.setCountry("Uganda");
-        user1.setPicture(context.getResources().getResourceEntryName(R.drawable.gloria));
+        user1.setPicture(context.getResources().getResourceEntryName(R.drawable.user1));
         user1.setPolls(20);
         user1.setStories(10);
         user1.setPoints(user1.getPolls() + user1.getStories());
@@ -76,6 +76,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user2.setType(User.Type.Twitter);
         user2.setBirthday(new Date());
         user2.setCountry("Spain");
+        user2.setPicture(context.getResources().getResourceEntryName(R.drawable.user2));
         user2.setPolls(25);
         user2.setStories(15);
         user2.setPoints(user2.getPolls() + user2.getStories());
@@ -87,6 +88,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user3.setType(User.Type.Facebook);
         user3.setBirthday(new Date());
         user3.setCountry("Uganda");
+        user3.setPicture(context.getResources().getResourceEntryName(R.drawable.user3));
         user3.setPolls(30);
         user3.setStories(20);
         user3.setPoints(user3.getPolls() + user3.getStories());
@@ -98,6 +100,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user4.setType(User.Type.Facebook);
         user4.setBirthday(new Date());
         user4.setCountry("Brazil");
+        user4.setPicture(context.getResources().getResourceEntryName(R.drawable.user4));
         user4.setPolls(1);
         user4.setStories(2);
         user4.setPoints(user4.getPolls() + user4.getStories());
@@ -109,6 +112,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user5.setType(User.Type.Facebook);
         user5.setBirthday(new Date());
         user5.setCountry("United States");
+        user5.setPicture(context.getResources().getResourceEntryName(R.drawable.user5));
         user5.setPolls(10);
         user5.setStories(28);
         user5.setPoints(user5.getPolls() + user5.getStories());
@@ -120,6 +124,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user6.setType(User.Type.Ureport);
         user6.setBirthday(new Date());
         user6.setCountry("United States");
+        user6.setPicture(context.getResources().getResourceEntryName(R.drawable.user6));
         user6.setPolls(5);
         user6.setStories(30);
         user6.setPoints(user6.getPolls() + user6.getStories());
@@ -131,6 +136,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user7.setType(User.Type.Google);
         user7.setBirthday(new Date());
         user7.setCountry("Nigeria");
+        user7.setPicture(context.getResources().getResourceEntryName(R.drawable.user7));
         user7.setPolls(8);
         user7.setStories(16);
         user7.setPoints(user7.getPolls() + user7.getStories());
@@ -142,18 +148,19 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user8.setType(User.Type.Ureport);
         user8.setBirthday(new Date());
         user8.setCountry("Brazil");
-        user8.setPicture(context.getResources().getResourceEntryName(R.drawable.gloria));
+        user8.setPicture(context.getResources().getResourceEntryName(R.drawable.user8));
         user8.setPolls(40);
         user8.setStories(100);
         user8.setPoints(user8.getPolls() + user8.getStories());
 
         User user9 = new User();
-        user9.setUsername("carvajal");
-        user9.setEmail("carvajal@gmail.com");
+        user9.setUsername("easi");
+        user9.setEmail("easi@gmail.com");
         user9.setGender(User.Gender.Male);
         user9.setType(User.Type.Facebook);
         user9.setBirthday(new Date());
-        user9.setCountry("Spain");
+        user9.setCountry("Nigeria");
+        user9.setPicture(context.getResources().getResourceEntryName(R.drawable.user9));
         user9.setPolls(10);
         user9.setStories(1);
         user9.setPoints(user9.getPolls() + user9.getStories());
@@ -165,6 +172,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user10.setType(User.Type.Google);
         user10.setBirthday(new Date());
         user10.setCountry("Mexico");
+        user10.setPicture(context.getResources().getResourceEntryName(R.drawable.user10));
         user10.setPolls(10);
         user10.setStories(90);
         user10.setPoints(user10.getPolls() + user10.getStories());
@@ -205,6 +213,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         Story story3 = new Story();
         story3.setTitle(context.getString(R.string.story3_title));
         story3.setContent(context.getString(R.string.story3_content));
+        story2.setImage(context.getResources().getResourceEntryName(R.drawable.story3));
         story3.setCreatedDate(new Date());
         story3.setUser(users[2]);
         story3.setContributions(14);

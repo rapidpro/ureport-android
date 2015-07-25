@@ -2,6 +2,7 @@ package in.ureport.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,20 +100,33 @@ public class MarkerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             super(itemView);
 
             name = (EditText) itemView.findViewById(R.id.name);
+            name.setOnEditorActionListener(onNameEditorActionListener);
 
             Button addMarker = (Button) itemView.findViewById(R.id.addMarker);
             addMarker.setOnClickListener(onMarkerClickListener);
         }
 
+        private void addNewMarker() {
+            String nameText = name.getText().toString();
+            if(name.length() > 0) {
+                Marker marker = new Marker(nameText);
+                addMarker(marker);
+                name.setText("");
+            }
+        }
+
         private View.OnClickListener onMarkerClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String nameText = name.getText().toString();
-                if(name.length() > 0) {
-                    Marker marker = new Marker(nameText);
-                    addMarker(marker);
-                    name.setText("");
-                }
+                addNewMarker();
+            }
+        };
+
+        private TextView.OnEditorActionListener onNameEditorActionListener = new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                addNewMarker();
+                return false;
             }
         };
     }

@@ -13,7 +13,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
-        tools:src="@drawable/gloria" />
+        tools:src="@drawable/user8" />
 
     <RelativeLayout
         android:layout_width="0dp"

@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:clickable="true">
+    android:clickable="true"
+    android:paddingBottom="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/picture"
@@ -14,7 +15,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
-        tools:src="@drawable/gloria" />
+        tools:src="@drawable/user8" />
 
     <TextView
         android:id="@+id/message"
@@ -41,8 +42,7 @@
         android:layout_toEndOf="@+id/picture"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginTop="3dp"
         android:gravity="start"
         android:textAlignment="viewStart"
         android:textSize="12sp"

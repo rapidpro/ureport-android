@@ -158,8 +158,6 @@ public class PollsLoader extends AsyncTaskLoader<List<Poll>> {
     @NonNull
     private List<PollQuestion> getPollQuestionsForPoll1() {
         List<PollQuestion> multipleChoiceQuestionList = new ArrayList<>();
-        multipleChoiceQuestionList.add(getMultipleChoiceQuestion(R.string.poll1_question1
-                , R.string.poll1_question1_answer1, R.string.poll1_question1_answer2));
         multipleChoiceQuestionList.add(getMultipleChoiceQuestion(R.string.poll1_question2
                 , R.string.poll1_question2_answer1, R.string.poll1_question2_answer2
                 , R.string.poll1_question2_answer3, R.string.poll1_question2_answer4));

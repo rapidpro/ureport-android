@@ -129,6 +129,11 @@
     <string name="country_program_validation_error">You can\'t do this action for this country program!</string>
     <string name="label_group_edit">Edit group</string>
     <string name="label_answer_poll">Answer Poll</string>
+    <string name="points_earning_title">Thanks for collaborate!</string>
+    <string name="points_earning_subtitle">You went up in the ranking</string>
+    <string name="points_earning_count_title">Points:</string>
+    <string name="points_earning_ranking">Go to Ranking</string>
+    <string name="points_earning_close">Close</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>
