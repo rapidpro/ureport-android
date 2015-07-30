@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation" >
 
     <string name="story1_title">I have no idea what to do with my life: Is that a crime?</string>
     <string name="story1_content">

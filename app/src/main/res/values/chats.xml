@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation" >
 
     <string name="chatgroup1_title">Potable Water</string>
     <string name="chatgroup1_description">Water is essential for life. The amount of drinking water required is variable. It depends on physical activity, age, other health problems, and environmental conditions.</string>
