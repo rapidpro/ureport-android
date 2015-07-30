@@ -8,6 +8,7 @@
     </string>
     <drawable name="news1_cover">@drawable/news1_cover_image</drawable>
     <string name="news1_author">U-report Global</string>
+    <string name="news1_category">General</string>
 
     <string name="news2_title">Swaziland Scouts Taking U-Report Platform To Communities</string>
     <string name="news2_content">
@@ -16,6 +17,7 @@
     </string>
     <drawable name="news2_cover">@drawable/news2_cover_image</drawable>
     <string name="news2_author">Scouts</string>
+    <string name="news2_category">Social Policy</string>
 
     <string name="news3_title">U-Report is now live in Africa\'s largest country</string>
     <string name="news3_content">
@@ -32,5 +34,6 @@
     </string>
     <drawable name="news3_cover">@drawable/news3_cover_image</drawable>
     <string name="news3_author">Scouts</string>
+    <string name="news3_category">General</string>
 
 </resources>

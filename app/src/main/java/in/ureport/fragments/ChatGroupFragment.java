@@ -1,10 +1,8 @@
 package in.ureport.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,15 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.activities.GroupInfoActivity;
 import in.ureport.loader.ChatGroupsLoader;
+import in.ureport.managers.PrototypeManager;
 import in.ureport.models.ChatGroup;
-import in.ureport.models.GroupChatRoom;
-import in.ureport.models.User;
 import in.ureport.util.DividerItemDecoration;
 import in.ureport.views.adapters.ChatGroupAdapter;
 
@@ -68,13 +63,11 @@ public class ChatGroupFragment extends Fragment implements LoaderManager.LoaderC
 
     @Override
     public void onJoinChatGroup(ChatGroup chatGroup) {
-
+        PrototypeManager.showPrototypeAlert(getActivity());
     }
 
     @Override
     public void onViewGroupInfo(ChatGroup chatGroup) {
-        Intent groupInfoIntent = new Intent(getActivity(), GroupInfoActivity.class);
-        groupInfoIntent.putExtra(GroupInfoActivity.EXTRA_CHAT_GROUP, chatGroup);
-        startActivity(groupInfoIntent);
+
     }
 }

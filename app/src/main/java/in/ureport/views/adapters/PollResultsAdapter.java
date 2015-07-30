@@ -37,7 +37,7 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private boolean showResultsByRegion = true;
 
     private PollResultsAdapter() {
-        dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
+        dateFormatter = DateFormat.getDateInstance(DateFormat.LONG);
         numberFormat = NumberFormat.getIntegerInstance();
     }
 

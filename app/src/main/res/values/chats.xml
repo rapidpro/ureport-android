@@ -19,6 +19,9 @@
     <string name="chat1_lastMessage">So what?</string>
     <string name="chat2_lastMessage">Have a nice day group!</string>
 
+    <color name="group_user_color1">#0e60bc</color>
+    <color name="group_user_color2">#72bf3b</color>
+
     <string-array name="responses">
         <item>Hey</item>
         <item>Hi!</item>

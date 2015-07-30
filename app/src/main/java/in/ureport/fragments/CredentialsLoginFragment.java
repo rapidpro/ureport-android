@@ -10,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
+import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.ToolbarDesigner;
 import in.ureport.models.User;
 import in.ureport.models.holders.Login;
@@ -47,17 +49,20 @@ public class CredentialsLoginFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        resetStatusBarColor();
+        setLoginStatusBarColor();
     }
 
-    private void resetStatusBarColor() {
+    private void setLoginStatusBarColor() {
         StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
-        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.primary_dark_color);
+        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.login_primary_color_dark);
     }
 
     private void setupView(View view) {
         username = (EditText) view.findViewById(R.id.username);
         password = (EditText) view.findViewById(R.id.password);
+
+        TextView forgotPassword = (TextView) view.findViewById(R.id.forgotPassword);
+        forgotPassword.setOnClickListener(onForgotPasswordClickListener);
 
         Button login = (Button) view.findViewById(R.id.login);
         login.setOnClickListener(onLoginClickListener);
@@ -116,6 +121,13 @@ public class CredentialsLoginFragment extends Fragment {
                         , password.getText().toString());
                 login(login);
             }
+        }
+    };
+
+    private View.OnClickListener onForgotPasswordClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            PrototypeManager.showPrototypeAlert(getActivity());
         }
     };
 }

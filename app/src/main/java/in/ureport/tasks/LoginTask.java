@@ -45,7 +45,6 @@ public class LoginTask extends AsyncTask<Login, Void, User> {
             SystemPreferences systemPreferences = new SystemPreferences(context);
             systemPreferences.setUserLoggedId(user.getId());
             systemPreferences.setCountryCode(user.getCountry());
-            Log.i(TAG, "saveUserLoggedId saveUserLogged: " + user);
         }
     }
 }

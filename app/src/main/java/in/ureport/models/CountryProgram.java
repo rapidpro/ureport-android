@@ -20,6 +20,11 @@ public class CountryProgram {
         this.name = name;
     }
 
+    public CountryProgram(String code, String name) {
+        this.code = code;
+        this.name = name;
+    }
+
     public CountryProgram(String code) {
         this.code = code;
     }

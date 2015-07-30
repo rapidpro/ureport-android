@@ -17,11 +17,14 @@ public class News implements Parcelable {
 
     private @DrawableRes int cover;
 
-    public News(String title, String author, String content, @DrawableRes int cover) {
+    private String category;
+
+    public News(String title, String author, String content, @DrawableRes int cover, String category) {
         this.title = title;
         this.author = author;
         this.content = content;
         this.cover = cover;
+        this.category = category;
     }
 
     public String getTitle() {
@@ -56,6 +59,14 @@ public class News implements Parcelable {
         this.cover = cover;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -67,6 +78,7 @@ public class News implements Parcelable {
         dest.writeString(this.content);
         dest.writeString(this.author);
         dest.writeInt(this.cover);
+        dest.writeString(this.category);
     }
 
     protected News(Parcel in) {
@@ -74,6 +86,7 @@ public class News implements Parcelable {
         this.content = in.readString();
         this.author = in.readString();
         this.cover = in.readInt();
+        this.category = in.readString();
     }
 
     public static final Creator<News> CREATOR = new Creator<News>() {

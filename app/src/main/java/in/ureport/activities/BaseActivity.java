@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +29,14 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import in.ureport.R;
 import in.ureport.loader.NotificationLoader;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.SpinnerColorSwitcher;
 import in.ureport.managers.UserViewManager;
 import in.ureport.managers.UserManager;
@@ -50,7 +53,6 @@ import in.ureport.views.adapters.NotificationAdapter;
 public abstract class BaseActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Notification>> {
 
     private static final String URL_UNICEF_SHOP = "http://www.unicefusa.org/help/shop";
-    private static final String URL_UNICEF_AMBASSADORS = "http://www.unicefusa.org/supporters/celebrities/ambassadors";
 
     private AppBarLayout appBar;
     private Toolbar toolbar;
@@ -87,6 +89,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
         menuNavigation = (NavigationView) findViewById(R.id.menuNavigation);
         menuNavigation.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
+
+        MenuItem logoutItem = menuNavigation.getMenu().findItem(R.id.logout);
+        logoutItem.setVisible(UserManager.userLoggedIn);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout
@@ -167,14 +172,11 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             TextView stories = (TextView) menuHeader.findViewById(R.id.stories);
             stories.setText(getString(R.string.profile_stories, user.getStories()));
 
-            List<CountryProgram> countryProgramList = CountryProgramManager.getAvailableCountryPrograms();
-            CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
-            int indexOfCountryProgram = countryProgram != null ? countryProgramList.indexOf(countryProgram) : 0;
+            List<CountryProgram> countryProgramList = new ArrayList<>(CountryProgramManager.getAvailableCountryPrograms());
 
             countryPrograms = (Spinner) menuHeader.findViewById(R.id.countryPrograms);
             countryPrograms.setAdapter(getCountryProgramsAdapter(countryProgramList));
-            countryPrograms.setTag(R.id.country_program_position, indexOfCountryProgram);
-            countryPrograms.setSelection(indexOfCountryProgram);
+            countryPrograms.setTag(R.id.country_program_position, 0);
             countryPrograms.setOnItemSelectedListener(onCountryProgramClickListener);
 
             SpinnerColorSwitcher spinnerColorSwitcher = new SpinnerColorSwitcher(this);
@@ -186,6 +188,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
     @NonNull
     private ArrayAdapter<CountryProgram> getCountryProgramsAdapter(List<CountryProgram> countryPrograms) {
+        countryPrograms.add(0, new CountryProgram("NONE", getString(R.string.switch_country_program)));
+
         ArrayAdapter<CountryProgram> adapter = new ArrayAdapter<>(this, R.layout.view_spinner_dropdown_white
                 , countryPrograms);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -268,17 +272,25 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                     break;
                 case R.id.about:
                     navigationIntent = new Intent(BaseActivity.this, AboutActivity.class);
-                    break;
+                    startActivity(navigationIntent);
+                    return true;
                 case R.id.makeDonations:
                     navigationIntent = new Intent(BaseActivity.this, DonationActivity.class);
-                    break;
+                    startActivity(navigationIntent);
+                    return true;
                 case R.id.buyMerchandising:
                     openMerchandise(URL_UNICEF_SHOP);
                     return true;
                 case R.id.ambassadors:
-                    openMerchandise(URL_UNICEF_AMBASSADORS);
+                    navigationIntent = new Intent(BaseActivity.this, AmbassadorsActivity.class);
+                    startActivity(navigationIntent);
+                    return true;
+                case R.id.logout:
+                    UserManager.logout(BaseActivity.this);
+                    finish();
                     return true;
                 default:
+                    PrototypeManager.showPrototypeAlert(BaseActivity.this);
                     return true;
             }
 
@@ -304,7 +316,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
             Object tag = countryPrograms.getTag(R.id.country_program_position);
-            if(tag != null && !tag.equals(position)) {
+            if(tag != null && !tag.equals(position) && position > 0) {
                 view.setTag(R.id.country_program_position, position);
 
                 CountryProgram countryProgram = (CountryProgram) adapterView.getAdapter().getItem(position);

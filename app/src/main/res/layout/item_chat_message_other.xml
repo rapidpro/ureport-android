@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="left"
+    android:layout_gravity="start"
     android:background="@drawable/bubble_other">
 
     <TextView
@@ -28,8 +28,9 @@
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
         android:layout_marginTop="3dp"
+        android:layout_gravity="end"
+        android:textSize="12sp"
         tools:text="16:00"/>
 
 </LinearLayout>

@@ -15,62 +15,22 @@
         android:layout_marginLeft="10dp"
         tools:src="@drawable/user8" />
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp">
-
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            tools:text="\@JonSnow"/>
-
-        <TextView
-            android:id="@+id/polls"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/name"
-            android:layout_marginTop="5dp"
-            android:layout_toRightOf="@+id/stories"
-            android:layout_toEndOf="@+id/stories"
-            android:textColor="@android:color/black"
-            android:textSize="12sp"
-            android:text="@string/profile_polls"/>
-
-        <TextView
-            android:id="@+id/stories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/name"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginEnd="15dp"
-            android:textColor="@android:color/black"
-            android:textSize="12sp"
-            android:text="@string/profile_stories"/>
-
-    </RelativeLayout>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
-        android:src="@drawable/ic_trophy"/>
+        android:gravity="center_vertical"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="\@JonSnow"/>
 
     <TextView
         android:id="@+id/points"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
         android:textSize="18sp"
         android:textColor="@android:color/black"
         android:textStyle="bold"
@@ -80,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:src="@drawable/ic_chat_grey_600_24dp"/>
+        android:layout_marginRight="15dp"
+        android:src="@drawable/ic_trophy"/>
 
 </LinearLayout>

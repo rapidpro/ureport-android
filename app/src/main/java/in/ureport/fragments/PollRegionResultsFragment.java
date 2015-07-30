@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import in.ureport.R;
 import in.ureport.models.PollResult;
@@ -59,6 +61,12 @@ public class PollRegionResultsFragment extends Fragment {
     }
 
     private void setupView(View view) {
+        Spinner location = (Spinner) view.findViewById(R.id.location);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.poll_results_regions, R.layout.view_simple_spinner_item);
+        adapter.setDropDownViewResource(R.layout.view_simple_spinner_dropdown_item);
+        location.setAdapter(adapter);
+
         RecyclerView resultsList = (RecyclerView) view.findViewById(R.id.resultsList);
         resultsList.setLayoutManager(new LinearLayoutManager(getActivity()));
 

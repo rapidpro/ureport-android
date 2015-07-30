@@ -5,8 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +27,7 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_PAST_POLL = 1;
 
     private List<Poll> polls;
+    private boolean publicType = true;
 
     private DateFormat dateFormatter;
 
@@ -34,7 +35,7 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public PollAdapter(List<Poll> polls) {
         this.polls = polls;
-        dateFormatter = SimpleDateFormat.getDateInstance(DateFormat.SHORT);
+        dateFormatter = SimpleDateFormat.getDateInstance(DateFormat.MEDIUM);
     }
 
     @Override
@@ -75,22 +76,36 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return poll.getExpirationDate().after(new Date());
     }
 
+    public void setPublicType(boolean publicType) {
+        this.publicType = publicType;
+    }
+
     private class PastPollViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView info;
         private final TextView description;
+        private final View infoBackground;
+        private final TextView category;
 
         public PastPollViewHolder(View itemView) {
             super(itemView);
 
+
             info = (TextView) itemView.findViewById(R.id.info);
+            category = (TextView) itemView.findViewById(R.id.category);
             description = (TextView) itemView.findViewById(R.id.description);
+            infoBackground = itemView.findViewById(R.id.infoBackground);
+
+            View previousPollsTitle = itemView.findViewById(R.id.previousPollsTitle);
+            previousPollsTitle.setVisibility(publicType ? View.VISIBLE : View.GONE);
 
             Button results = (Button) itemView.findViewById(R.id.results);
             results.setOnClickListener(onSeeResultsClickListener);
         }
 
         private void bindView(Poll poll) {
+            category.setText(poll.getCategory().getName());
+            infoBackground.setBackgroundResource(poll.getCategory().getColor());
             description.setText(poll.getDescription());
             info.setText(dateFormatter.format(poll.getExpirationDate()));
         }
@@ -112,8 +127,8 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private final TextView description;
 
-        private final CheckBox checkYes;
-        private final CheckBox checkNo;
+        private final RadioButton checkYes;
+        private final RadioButton checkNo;
 
         public CurrentPollViewHolder(View itemView) {
             super(itemView);
@@ -127,9 +142,9 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             category = (TextView) itemView.findViewById(R.id.category);
             icon = (ImageView) itemView.findViewById(R.id.icon);
 
-            checkYes = (CheckBox) itemView.findViewById(R.id.checkYes);
+            checkYes = (RadioButton) itemView.findViewById(R.id.checkYes);
             checkYes.setOnClickListener(onCheckClickListener);
-            checkNo = (CheckBox) itemView.findViewById(R.id.checkNo);
+            checkNo = (RadioButton) itemView.findViewById(R.id.checkNo);
             checkNo.setOnClickListener(onCheckClickListener);
         }
 

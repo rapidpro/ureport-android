@@ -6,10 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.RadioButton;
 import android.widget.Toast;
-
-import java.util.List;
 
 import in.ureport.R;
 import in.ureport.listener.PollQuestionAnswerListener;
@@ -98,12 +96,12 @@ public class MultipleChoiceQuestionAdapter extends RecyclerView.Adapter<Recycler
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private CheckBox check;
+        private RadioButton check;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
 
-            check = (CheckBox) itemView.findViewById(R.id.check);
+            check = (RadioButton) itemView.findViewById(R.id.check);
             check.setOnClickListener(onCheckClickListener);
         }
 

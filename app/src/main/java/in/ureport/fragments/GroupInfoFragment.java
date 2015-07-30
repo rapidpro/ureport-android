@@ -22,6 +22,7 @@ import java.text.DateFormat;
 
 import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
+import in.ureport.managers.PrototypeManager;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.views.adapters.UreportersAdapter;
 
@@ -64,6 +65,7 @@ public class GroupInfoFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.editGroup:
+                PrototypeManager.showPrototypeAlert(getActivity());
                 break;
             case R.id.leaveGroup:
                 leaveGroup();
@@ -116,6 +118,9 @@ public class GroupInfoFragment extends Fragment {
 
         TextView date = (TextView) view.findViewById(R.id.date);
         date.setText(getString(R.string.chat_group_info_created_date, creationDate));
+
+        Button addUreporter = (Button) view.findViewById(R.id.addUreporter);
+        addUreporter.setOnClickListener(onAddUreporterClickListener);
     }
 
     public void setChatRoomListener(ChatRoomFragment.ChatRoomListener chatRoomListener) {
@@ -126,4 +131,11 @@ public class GroupInfoFragment extends Fragment {
         if(chatRoomListener != null)
             chatRoomListener.onChatRoomLeave(chatRoom);
     }
+
+    private View.OnClickListener onAddUreporterClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            PrototypeManager.showPrototypeAlert(getActivity());
+        }
+    };
 }

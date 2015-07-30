@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -58,6 +59,8 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     private Spinner state;
     private Spinner gender;
     private EditTextValidator validator;
+    private Toolbar toolbar;
+    private Button confirm;
 
     private DateFormat birthdayFormatter;
     private User user;
@@ -98,15 +101,29 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         setupUserIfExists();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        resetStatusBarColor();
-    }
+    private void setupView(View view) {
+        username = (EditText) view.findViewById(R.id.username);
+        email = (EditText) view.findViewById(R.id.email);
+        password = (EditText) view.findViewById(R.id.password);
 
-    private void resetStatusBarColor() {
-        StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
-        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.primary_dark_color);
+        birthday = (EditText) view.findViewById(R.id.birthday);
+        birthday.setOnClickListener(onBirthdayClickListener);
+
+        gender = (Spinner) view.findViewById(R.id.gender);
+        loadUserGenders();
+
+        country = (Spinner) view.findViewById(R.id.country);
+        loadCountryList();
+
+        state = (Spinner) view.findViewById(R.id.state);
+
+        confirm = (Button) view.findViewById(R.id.confirm);
+        confirm.setOnClickListener(onConfirmClickListener);
+
+        toolbar = (Toolbar)view.findViewById(R.id.toolbar);
+
+        ToolbarDesigner toolbarDesigner = new ToolbarDesigner();
+        toolbarDesigner.setupFragmentDefaultToolbar(toolbar, this);
     }
 
     private void setupUserIfExists() {
@@ -118,7 +135,19 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
             setEditTextDate(birthday, user.getBirthday());
             setPasswordVisibility();
             setUserGenderValue();
+
+            toolbar.setBackgroundColor(getResources().getColor(R.color.confirm_info_primary_color));
+            setSignupStatusBarColor(R.color.confirm_info_primary_color_dark);
+            confirm.setBackgroundResource(R.drawable.shape_round_simple_blue_button);
+        } else {
+            toolbar.setBackgroundColor(getResources().getColor(R.color.signup_primary_color));
+            setSignupStatusBarColor(R.color.signup_primary_color_dark);
         }
+    }
+
+    private void setSignupStatusBarColor(@ColorRes int color) {
+        StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
+        statusBarDesigner.setStatusBarColorById(getActivity(), color);
     }
 
     private void setPasswordVisibility() {
@@ -145,31 +174,6 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         if(date != null) {
             editText.setText(birthdayFormatter.format(date));
         }
-    }
-
-    private void setupView(View view) {
-        username = (EditText) view.findViewById(R.id.username);
-        email = (EditText) view.findViewById(R.id.email);
-        password = (EditText) view.findViewById(R.id.password);
-
-        birthday = (EditText) view.findViewById(R.id.birthday);
-        birthday.setOnClickListener(onBirthdayClickListener);
-
-        gender = (Spinner) view.findViewById(R.id.gender);
-        loadUserGenders();
-
-        country = (Spinner) view.findViewById(R.id.country);
-        loadCountryList();
-
-        state = (Spinner) view.findViewById(R.id.state);
-
-        Button confirm = (Button) view.findViewById(R.id.confirm);
-        confirm.setOnClickListener(onConfirmClickListener);
-
-        Toolbar toolbar = (Toolbar)view.findViewById(R.id.toolbar);
-
-        ToolbarDesigner toolbarDesigner = new ToolbarDesigner();
-        toolbarDesigner.setupFragmentDefaultToolbar(toolbar, this);
     }
 
     private void loadUserGenders() {

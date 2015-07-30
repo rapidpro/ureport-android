@@ -38,6 +38,7 @@ public class ChatActivity extends BaseActivity {
 
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager(), chatGroupItem, chatRoomsItem, inviteItem);
         pager.setAdapter(adapter);
+        pager.setCurrentItem(1);
 
         getTabLayout().setupWithViewPager(pager);
 

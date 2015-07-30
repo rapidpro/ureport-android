@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.UreportApplication;
+import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.UserViewManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
@@ -120,6 +122,9 @@ public class StoryViewFragment extends Fragment {
 
         MediaAdapter adapter = new MediaAdapter(getMediaList(), false);
         mediaList.setAdapter(adapter);
+
+        FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.share);
+        floatingActionButton.setOnClickListener(onShareClickListener);
     }
 
     @NonNull
@@ -138,6 +143,13 @@ public class StoryViewFragment extends Fragment {
                 view.setVisibility(View.GONE);
                 contributionAdapter.startContribution();
             }
+        }
+    };
+
+    private View.OnClickListener onShareClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            PrototypeManager.showPrototypeAlert(getActivity());
         }
     };
 }

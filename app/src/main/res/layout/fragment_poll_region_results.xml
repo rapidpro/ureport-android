@@ -9,16 +9,16 @@
         android:id="@+id/location"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"
-        android:entries="@array/poll_results_regions"
-        style="@style/Widget.AppCompat.Spinner.Underlined"/>
+        android:background="@android:color/white"
+        android:elevation="5dp"
+        style="@style/Widget.AppCompat.Spinner.DropDown"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/resultsList"
         android:orientation="vertical"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"/>
 
 </LinearLayout>

@@ -83,6 +83,7 @@ public class MarkerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private void addMarker(Marker marker) {
         if(!markers.contains(marker)) {
+            selectedMarkers.add(marker);
             markers.add(marker);
             notifyDataSetChanged();
         }

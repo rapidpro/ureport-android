@@ -15,8 +15,8 @@
             android:id="@+id/wordsList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginBottom="10dp"
+            android:orientation="vertical"
             android:animateLayoutChanges="true"
             style="@style/AppTheme.CardItemPadding" />
 
@@ -24,7 +24,9 @@
             android:id="@+id/resultsByRegion"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@drawable/selector_button_normal"
+            android:layout_margin="10dp"
+            android:background="@drawable/shape_simple_gray_button"
+            android:textColor="@android:color/white"
             android:text="@string/poll_results_by_region" />
 
     </LinearLayout>

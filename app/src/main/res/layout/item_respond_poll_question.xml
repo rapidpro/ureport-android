@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="center"
-        android:background="@drawable/shape_simple_gray_button"
+        android:background="@drawable/shape_simple_green_button"
         android:textColor="@android:color/white"
         android:text="@string/answer_polls_respond" />
 

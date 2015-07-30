@@ -20,7 +20,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CountryProgramManager.setThemeIfNeeded(this);
-        setContentView(R.layout.activity_generic);
+        setContentView(R.layout.activity_profile);
 
         if(savedInstanceState == null) {
             profileFragment = new ProfileFragment();

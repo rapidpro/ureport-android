@@ -12,9 +12,7 @@ import android.view.ViewGroup;
 
 import in.ureport.R;
 import in.ureport.models.Poll;
-import in.ureport.models.PollResult;
 import in.ureport.views.adapters.PollResultsAdapter;
-import in.ureport.views.widgets.ContentPager;
 
 /**
  * Created by johncordeiro on 18/07/15.

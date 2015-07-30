@@ -43,8 +43,6 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView name;
-        private final TextView polls;
-        private final TextView stories;
         private final TextView points;
         private final ImageView picture;
 
@@ -53,16 +51,12 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             name = (TextView) itemView.findViewById(R.id.name);
             picture = (ImageView) itemView.findViewById(R.id.picture);
-            polls = (TextView) itemView.findViewById(R.id.polls);
-            stories = (TextView) itemView.findViewById(R.id.stories);
             points = (TextView) itemView.findViewById(R.id.points);
         }
 
         private void bindView(User user) {
             name.setText("@"+user.getUsername());
             picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
-            polls.setText(itemView.getContext().getString(R.string.profile_polls, user.getPolls()));
-            stories.setText(itemView.getContext().getString(R.string.profile_stories, user.getStories()));
             points.setText(String.valueOf(user.getPoints()));
         }
     }

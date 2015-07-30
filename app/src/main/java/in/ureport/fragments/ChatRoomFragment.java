@@ -1,6 +1,7 @@
 package in.ureport.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -47,10 +48,11 @@ public class ChatRoomFragment extends Fragment {
     private ChatMessagesAdapter adapter;
 
     private ChatRoom chatRoom;
-
     private User user;
 
     private ChatRoomListener chatRoomListener;
+
+    private Handler handler = new Handler();
 
     public static ChatRoomFragment newInstance(ChatRoom chatRoom) {
         ChatRoomFragment chatRoomFragment = new ChatRoomFragment();
@@ -81,6 +83,12 @@ public class ChatRoomFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
         loadLocalUser();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroy();
+        handler.removeCallbacks(friendResponseRunnable);
     }
 
     @Override
@@ -163,20 +171,7 @@ public class ChatRoomFragment extends Fragment {
     }
 
     private void generateFriendResponseDelayed() {
-        messagesList.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                String[] responses = getResources().getStringArray(R.array.responses);
-
-                ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setDate(new Date());
-                chatMessage.setMessage(responses[getRandomInt(0, responses.length - 1)]);
-                chatMessage.setUser(getFriend());
-                chatMessage.setChatRoom(chatRoom);
-
-                addChatMessage(chatMessage);
-            }
-        }, 2000);
+        handler.postDelayed(friendResponseRunnable, 2000);
     }
 
     private User getFriend() {
@@ -227,6 +222,21 @@ public class ChatRoomFragment extends Fragment {
         public void onClick(View view) {
             if (chatRoomListener != null)
                 chatRoomListener.onChatRoomInfoView(chatRoom);
+        }
+    };
+
+    private Runnable friendResponseRunnable = new Runnable() {
+        @Override
+        public void run() {
+            String[] responses = getResources().getStringArray(R.array.responses);
+
+            ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setDate(new Date());
+            chatMessage.setMessage(responses[getRandomInt(0, responses.length - 1)]);
+            chatMessage.setUser(getFriend());
+            chatMessage.setChatRoom(chatRoom);
+
+            addChatMessage(chatMessage);
         }
     };
 

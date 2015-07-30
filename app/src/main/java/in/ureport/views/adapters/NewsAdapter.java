@@ -12,6 +12,7 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.PrototypeManager;
 import in.ureport.models.News;
 import in.ureport.models.User;
 
@@ -74,9 +75,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             super(itemView);
 
             countryProgram = (TextView) itemView.findViewById(R.id.countryProgram);
-
-            Button statistics = (Button) itemView.findViewById(R.id.statistics);
-            statistics.setOnClickListener(onStatisticsClickListener);
+            itemView.setOnClickListener(onStatisticsClickListener);
         }
 
         private View.OnClickListener onStatisticsClickListener = new View.OnClickListener() {
@@ -89,14 +88,15 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private void bindView() {
             if(user != null) {
-                countryProgram.setText(itemView.getContext().getString(R.string.news_ureporters
-                        , CountryProgramManager.getCurrentCountryProgram().getName()));
+                countryProgram.setText(CountryProgramManager.getCurrentCountryProgram().getName());
             }
         }
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
+        private final TextView description;
+        private final TextView category;
         private TextView title;
         private TextView author;
         private ImageView cover;
@@ -104,11 +104,16 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public ItemViewHolder(View itemView) {
             super(itemView);
 
+            category = (TextView) itemView.findViewById(R.id.category);
             cover = (ImageView) itemView.findViewById(R.id.cover);
             title = (TextView) itemView.findViewById(R.id.title);
+            description = (TextView) itemView.findViewById(R.id.description);
             author = (TextView) itemView.findViewById(R.id.author);
 
             itemView.setOnClickListener(onNewsClickListener);
+
+            Button share = (Button) itemView.findViewById(R.id.share);
+            share.setOnClickListener(onShareClickListener);
         }
 
         private View.OnClickListener onNewsClickListener = new View.OnClickListener() {
@@ -120,10 +125,19 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         };
 
         private void bindView(News news) {
+            category.setText(news.getCategory());
             title.setText(news.getTitle());
+            description.setText(news.getContent());
             author.setText(itemView.getContext().getString(R.string.stories_list_item_author, news.getAuthor()));
             cover.setImageResource(news.getCover());
         }
+
+        private View.OnClickListener onShareClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PrototypeManager.showPrototypeAlert(itemView.getContext());
+            }
+        };
     }
 
     public void setUser(User user) {

@@ -4,7 +4,7 @@
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
         <item name="colorAccent">#287ca0</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowBackground">@color/window_background</item>
         <item name="android:buttonStyle">@style/AppTheme.Button</item>
     </style>
 
@@ -51,6 +51,19 @@
         <item name="android:layout_marginLeft">25dp</item>
         <item name="android:layout_marginRight">25dp</item>
         <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.SpinnerFullItem" parent="android:Widget.TextView.SpinnerItem">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="AppTheme.SpinnerFullDropdown" parent="android:TextAppearance.Widget.TextView.SpinnerItem">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@android:color/white</item>
+        <item name="android:paddingLeft">20dp</item>
     </style>
 
 </resources>

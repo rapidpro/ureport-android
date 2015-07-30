@@ -30,13 +30,11 @@ public class CountryProgramManager {
 
     public static void setThemeIfNeeded(Activity activity) {
         CountryProgram countryProgram = getCurrentCountryProgram();
-        if(countryProgram != null) {
-            activity.setTheme(countryProgram.getTheme());
+        activity.setTheme(countryProgram.getTheme());
 
-            ResourceUtil resourceUtil = new ResourceUtil(activity);
-            StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
-            statusBarDesigner.setStatusBarColor(activity, resourceUtil.getColorByAttr(R.attr.colorPrimaryDark));
-        }
+        ResourceUtil resourceUtil = new ResourceUtil(activity);
+        StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
+        statusBarDesigner.setStatusBarColor(activity, resourceUtil.getColorByAttr(R.attr.colorPrimaryDark));
     }
 
     @NonNull

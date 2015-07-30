@@ -9,7 +9,7 @@
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="wrap_content"
         tools:background="#f00">
 
         <ImageView
@@ -19,8 +19,64 @@
             android:scaleType="centerCrop"
             android:src="@drawable/news1_cover_image"/>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/default_cover_height"
+            android:background="@color/translucent_cover"/>
+
+        <Button
+            android:id="@+id/share"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/ic_share_white_24dp"/>
+
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:background="?attr/colorPrimary"
+            android:textColor="@android:color/white"
+            tools:text="@string/news1_category"/>
+
         <TextView
             android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_above="@+id/author"
+            android:maxLines="3"
+            android:gravity="start"
+            android:textAlignment="viewStart"
+            android:ellipsize="end"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            tools:text="Boosting community development, disease control with sms-based platform"/>
+
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/cover"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:textAllCaps="true"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            tools:text="@string/stories_list_item_author"/>
+
+        <TextView
+            android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/cover"
@@ -28,19 +84,9 @@
             android:textAlignment="viewStart"
             android:maxLines="3"
             android:ellipsize="end"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:textSize="16sp"
             android:padding="10dp"
             tools:text="@string/poll1_description"/>
-
-        <TextView
-            android:id="@+id/author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:layout_below="@+id/title"
-            android:paddingLeft="10dp"
-            tools:text="@string/stories_list_item_author"/>
 
     </RelativeLayout>
 

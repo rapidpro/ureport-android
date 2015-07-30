@@ -44,6 +44,15 @@ public class GameficationManager {
                 alertDialog.cancel();
             }
         });
+
+        Button ranking = (Button) customView.findViewById(R.id.ranking);
+        ranking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+                PrototypeManager.showPrototypeAlert(context);
+            }
+        });
     }
 
 }

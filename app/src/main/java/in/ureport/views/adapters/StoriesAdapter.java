@@ -143,6 +143,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             Button readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
             readFullStory.setOnClickListener(onReadFullStoryClickListener);
+            itemView.setOnClickListener(onReadFullStoryClickListener);
         }
 
         private void bind(Story story) {

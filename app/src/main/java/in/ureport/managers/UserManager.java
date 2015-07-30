@@ -8,12 +8,16 @@ import android.util.Log;
 
 import in.ureport.R;
 import in.ureport.activities.LoginActivity;
+import in.ureport.activities.MainActivity;
 import in.ureport.models.CountryProgram;
+import in.ureport.pref.SystemPreferences;
 
 /**
  * Created by johncordeiro on 21/07/15.
  */
 public class UserManager {
+
+    private static final String TAG = "UserManager";
 
     public static boolean userLoggedIn = false;
     public static String countryCode = "";
@@ -22,16 +26,27 @@ public class UserManager {
         if(!UserManager.userLoggedIn) {
             showLoginAlertValidation(context);
             return false;
-        } else if(isUserCountryProgram()) {
+        } else if(!isUserCountryProgram()) {
             showCountryProgramAlert(context);
             return false;
         }
         return true;
     }
 
+    public static void logout(Context context) {
+        SystemPreferences systemPreferences = new SystemPreferences(context);
+        systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
+        systemPreferences.setCountryCode("");
+
+        Intent backIntent = new Intent(context, MainActivity.class);
+        backIntent.putExtra(MainActivity.EXTRA_FORCED_LOGIN, true);
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(backIntent);
+    }
+
     private static boolean isUserCountryProgram() {
         return countryCode == null || countryCode.length() == 0
-        || !CountryProgramManager.getCurrentCountryProgram().equals(CountryProgramManager.getCountryProgramForCode(countryCode));
+        || CountryProgramManager.getCurrentCountryProgram().equals(CountryProgramManager.getCountryProgramForCode(countryCode));
     }
 
     private static void showCountryProgramAlert(Context context) {

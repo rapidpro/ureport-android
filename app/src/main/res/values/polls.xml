@@ -5,8 +5,11 @@
     <color name="poll_category_child">#8471c2</color>
     <drawable name="poll_category_child">@drawable/category_child_icon</drawable>
 
+    <string name="poll_category_social">Social policy</string>
+    <color name="poll_category_social">#3d6abf</color>
+
     <string name="poll_category_water">Water and Sanation</string>
-    <color name="poll_category_water">#70ace0</color>
+    <color name="poll_category_water">#0098af</color>
     <drawable name="poll_category_water">@drawable/category_water_icon</drawable>
 
     <string name="poll1_description">Hi, according to a recent survey (2011), about 50 million nigerians practice open defecation. In ur community do u think this is a major problem?</string>

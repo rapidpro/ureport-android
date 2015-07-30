@@ -4,11 +4,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.managers.PrototypeManager;
 import in.ureport.models.Contact;
 
 /**
@@ -48,11 +50,21 @@ public class ContactsAdapter extends RecyclerView.Adapter {
 
             name = (TextView) itemView.findViewById(R.id.name);
             phone = (TextView) itemView.findViewById(R.id.phone);
+
+            Button invite = (Button) itemView.findViewById(R.id.invite);
+            invite.setOnClickListener(onInviteContactClickListener);
         }
 
         private void bindView(Contact contact) {
             name.setText(contact.getName());
             phone.setText(contact.getPhoneNumber());
         }
+
+        private View.OnClickListener onInviteContactClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PrototypeManager.showPrototypeAlert(itemView.getContext());
+            }
+        };
     }
 }

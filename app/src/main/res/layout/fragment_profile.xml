@@ -31,6 +31,8 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="20dp"
                 android:layout_centerHorizontal="true"
+                app:border_width="3dp"
+                app:border_color="#bfff"
                 tools:src="@drawable/user8" />
 
             <TextView
@@ -90,25 +92,25 @@
                 android:orientation="horizontal"
                 android:layout_below="@+id/polls"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:gravity="center_horizontal">
 
                 <Button
                     android:id="@+id/edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:background="@drawable/shape_simple_dark_button"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/shape_simple_transparent_button"
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
                     android:text="@string/label_edit" />
 
                 <Button
                     android:id="@+id/logout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginStart="10dp"
-                    android:background="@drawable/shape_simple_dark_button"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginStart="5dp"
+                    android:background="@drawable/shape_simple_transparent_button"
                     android:textColor="@android:color/white"
                     android:textSize="12sp"
                     android:text="@string/label_logout" />

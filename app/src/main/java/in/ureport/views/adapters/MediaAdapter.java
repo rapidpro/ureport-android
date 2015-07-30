@@ -54,8 +54,12 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case MEDIA_TYPE:
-                ((MediaViewHolder)holder).bindView(mediaList.get(position));
+                ((MediaViewHolder)holder).bindView(mediaList.get(getCorrectPosition(position)));
         }
+    }
+
+    private int getCorrectPosition(int position) {
+        return editMode ? position-1 : position;
     }
 
     @Override
@@ -63,13 +67,13 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(getItemViewType(position) == ADD_MEDIA_TYPE) {
             return ADD_MEDIA_ITEM_ID;
         }
-        String id = mediaList.get(position) + position;
+        String id = mediaList.get(position-1) + position;
         return id.hashCode();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(editMode && position == mediaList.size())
+        if(editMode && position == 0)
             return ADD_MEDIA_TYPE;
         return MEDIA_TYPE;
     }
@@ -117,7 +121,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             @Override
             public void onClick(View view) {
                 if(mediaListener != null)
-                    mediaListener.onMediaRemoveListener(getLayoutPosition());
+                    mediaListener.onMediaRemoveListener(getCorrectPosition(getLayoutPosition()));
             }
         };
     }

@@ -17,6 +17,8 @@ import android.widget.TextView;
 
 import in.ureport.R;
 import in.ureport.activities.MainActivity;
+import in.ureport.managers.PrototypeManager;
+import in.ureport.managers.UserManager;
 import in.ureport.managers.UserViewManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
@@ -91,6 +93,9 @@ public class ProfileFragment extends Fragment {
 
         Button logout = (Button) view.findViewById(R.id.logout);
         logout.setOnClickListener(onLogoutClickListener);
+
+        Button edit = (Button) view.findViewById(R.id.edit);
+        edit.setOnClickListener(onEditClickListener);
     }
 
     public void updateUser(User user) {
@@ -123,15 +128,15 @@ public class ProfileFragment extends Fragment {
         }
     };
 
-    private void logout() {
-        SystemPreferences systemPreferences = new SystemPreferences(getActivity());
-        systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
-        systemPreferences.setCountryCode("");
+    private View.OnClickListener onEditClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            PrototypeManager.showPrototypeAlert(getActivity());
+        }
+    };
 
-        Intent backIntent = new Intent(getActivity(), MainActivity.class);
-        backIntent.putExtra(MainActivity.EXTRA_FORCED_LOGIN, true);
-        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(backIntent);
+    private void logout() {
+        UserManager.logout(getActivity());
         getActivity().finish();
     }
 }

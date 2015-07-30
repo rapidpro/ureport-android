@@ -12,23 +12,22 @@
             android:title="@string/main_menu_chat"/>
     </group>
 
-    <group
-        android:id="@+id/headerUnicef"
-        android:checkableBehavior="single"
-        android:title="@string/main_menu_group_institutional">
-        <item
-            android:id="@+id/about"
-            android:title="@string/label_about_ureport"/>
-        <item
-            android:id="@+id/makeDonations"
-            android:title="@string/main_menu_subitem_make_donations"/>
-        <item
-            android:id="@+id/buyMerchandising"
-            android:title="@string/main_menu_subitem_buy_goods"/>
-        <item
-            android:id="@+id/ambassadors"
-            android:title="@string/main_menu_subitem_embassadors" />
-    </group>
+    <item android:title="@string/main_menu_group_institutional">
+        <menu>
+            <item
+                android:id="@+id/about"
+                android:title="@string/label_about_ureport"/>
+            <item
+                android:id="@+id/makeDonations"
+                android:title="@string/label_donation"/>
+            <item
+                android:id="@+id/buyMerchandising"
+                android:title="@string/main_menu_subitem_buy_goods"/>
+            <item
+                android:id="@+id/ambassadors"
+                android:title="@string/main_menu_subitem_embassadors" />
+        </menu>
+    </item>
 
     <group
         android:id="@+id/settings"
@@ -36,6 +35,10 @@
         <item
             android:id="@+id/changeSettings"
             android:title="@string/main_menu_settings"/>
+
+        <item
+            android:id="@+id/logout"
+            android:title="@string/label_logout"/>
     </group>
 
 </menu>

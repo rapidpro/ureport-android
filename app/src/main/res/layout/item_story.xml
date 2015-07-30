@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/card_margin">
+    android:layout_margin="@dimen/card_margin"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <RelativeLayout
         android:orientation="vertical"
@@ -54,7 +56,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
             android:maxLines="2"
             android:ellipsize="end"
             android:gravity="center_vertical|start"
@@ -65,14 +66,23 @@
             android:drawablePadding="5dp"
             tools:text="Water, Violence, Education"/>
 
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/line"
+            android:layout_below="@+id/markers"/>
+
         <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_story_height"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             android:scaleType="centerCrop"
             android:src="@drawable/story2"
-            android:layout_below="@+id/markers"
+            android:layout_below="@+id/line"
             android:visibility="visible"/>
 
         <TextView

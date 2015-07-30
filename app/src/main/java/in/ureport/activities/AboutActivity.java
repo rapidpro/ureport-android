@@ -1,6 +1,8 @@
 package in.ureport.activities;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import in.ureport.R;
@@ -8,7 +10,7 @@ import in.ureport.R;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class AboutActivity extends BaseActivity {
+public class AboutActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -18,19 +20,17 @@ public class AboutActivity extends BaseActivity {
         setupView();
     }
 
-    private void setupView() {
-        getMenuNavigation().getMenu().findItem(R.id.about).setChecked(true);
-        addHeaderToAppbar();
-    }
-
-    private void addHeaderToAppbar() {
-        TextView headerInstitutional = (TextView) getLayoutInflater().inflate(R.layout.view_header_institutional, null);
-        headerInstitutional.setText(R.string.about_subtitle);
-        getAppBar().addView(headerInstitutional);
-    }
-
     @Override
-    public boolean hasTabLayout() {
-        return false;
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
+
+    private void setupView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
 }

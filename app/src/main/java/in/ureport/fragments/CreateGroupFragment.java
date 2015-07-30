@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -24,6 +25,7 @@ import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.listener.ChatCreationListener;
 import in.ureport.loader.UreportersLoader;
+import in.ureport.managers.PrototypeManager;
 import in.ureport.models.User;
 import in.ureport.views.adapters.UreportersAdapter;
 
@@ -67,6 +69,9 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
 
         ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        FloatingActionButton addPicture = (FloatingActionButton) view.findViewById(R.id.addPicture);
+        addPicture.setOnClickListener(onAddPictureClickListener);
     }
 
     @Override
@@ -137,4 +142,11 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
     public void setChatCreationListener(ChatCreationListener chatCreationListener) {
         this.chatCreationListener = chatCreationListener;
     }
+
+    private View.OnClickListener onAddPictureClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            PrototypeManager.showPrototypeAlert(getActivity());
+        }
+    };
 }

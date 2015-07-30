@@ -30,7 +30,6 @@
     <string name="main_menu_home">Main</string>
     <string name="main_menu_chat">Chat</string>
     <string name="main_menu_group_unicef">Unicef</string>
-    <string name="main_menu_subitem_make_donations">Make Donations</string>
     <string name="main_menu_subitem_buy_goods">Buy goods</string>
     <string name="main_menu_subitem_embassadors">Ambassadors</string>
     <string name="base_menu_open_drawer">Open Menu</string>
@@ -40,9 +39,9 @@
     <string name="story_item_read_full_story">See full story</string>
     <string name="label_new_story">New Story</string>
     <string name="create_story_insert_cover">Insert a cover picture</string>
-    <string name="create_story_insert_title">Insert title</string>
-    <string name="create_story_insert_story_content">Tell us your story</string>
-    <string name="create_story_title_media">Media</string>
+    <string name="create_story_insert_title">Insert a title</string>
+    <string name="create_story_insert_story_content">Tell us what\'s going on</string>
+    <string name="create_story_title_media">Insert an media</string>
     <string name="create_story_add_markers">Add markers</string>
     <string name="media_remove">Remove</string>
     <string name="create_story_title_media_source">Choose a media source:</string>
@@ -56,11 +55,11 @@
     <string name="story_contribution_add">Add a contribution</string>
     <string name="polls_participate">Answer</string>
     <string name="polls_current">Current poll</string>
-    <string name="polls_responded_info">%1$s responded out of %2$s</string>
+    <string name="polls_responded_info">%1$s responded out of %2$s polled</string>
     <string name="polls_response_rate">%1$s%% response rate</string>
     <string name="polls_see_results">See results</string>
     <string name="news_more_statistics">More statistics</string>
-    <string name="news_ureporters">U-reporters in %1$s</string>
+    <string name="news_ureporters">U-Reporters</string>
     <string name="news_statistics_global_ureporters">Global U-reporters</string>
     <string name="news_statistics_gender_rate">Rate by Gender</string>
     <string name="news_statistics_most_active">4 most active regions</string>
@@ -105,12 +104,17 @@
     <string name="chat_create_individual_message">Do you want to create a new chat room with this u-reporter?</string>
     <string name="cancel_dialog_button">Cancel</string>
     <string name="label_action_notifications">Notifications</string>
-    <string name="about_content">U-Report is a global platform where YOU speak out on issues YOU care about and have positive change in your community anywhere in the world. U-Report is free and open to everyone. Join U-Report today and be part of the global movement for positive social change.</string>
+    <string name="about_content">
+        U-Report is a free tool for community participation, designed to address issues that the population cares about. Once a U-Reporter has registered on this app, polls and alerts are sent via Notifications and real-time responses are collected and mapped on this site. Results and ideas are shared back with the community. Issues polled include health, education, water, sanitation and hygiene, youth unemployment, HIV/AIDS, disease outbreaks and anything else people want to discuss.\n
+        \n
+        Individual messages are confidential but aggregated data is transparent.
+    </string>
     <string name="label_about_ureport">About U-Report</string>
     <string name="about_subtitle">Voice\nMatters</string>
+    <string name="donation_subtitle">When you make \na donation</string>
     <string name="label_make_donation_subtitle">Make\nDonation</string>
-    <string name="make_donations_content">Support the project by making donation to U-Report platform move forward.</string>
-    <string name="label_donation">Donation</string>
+    <string name="make_donations_content">You help UNICEF save and transform lives, working for a more just and secure world for children and adolescents in the world. You can make a difference now!</string>
+    <string name="label_donation">Make Donations</string>
     <string name="chat_room_message_hint">Write a message</string>
     <string name="label_action_search">Search</string>
     <string name="label_leave_group">Leave Group</string>
@@ -134,6 +138,18 @@
     <string name="points_earning_count_title">Points:</string>
     <string name="points_earning_ranking">Go to Ranking</string>
     <string name="points_earning_close">Close</string>
+    <string name="polls_previous_title">Previous polls</string>
+    <string name="switch_country_program">Switch Country Program</string>
+    <string name="about_title">About U-Report</string>
+    <string name="label_unicef_ambassadors">Unicef Ambassadors</string>
+    <string name="ambassadors_content">
+        What qualifies a singer, an actor or an athlete to represent UNICEF? And what good can celebrities really do?\n
+        \n
+        UNICEF’s celebrities have a wide range of talents and achievements, but they all share a commitment to improving the lives of children worldwide. And in each case a celebrity’s association with UNICEF comes about because he or she has already demonstrated that commitment.
+    </string>
+    <string name="ambassadors_subtitle">Goodwill\nAmbassador</string>
+    <string name="ambassadors_all_button">See all Unicef Ambassadors</string>
+    <string name="label_ambassadors">Ambassadors</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>
@@ -144,26 +160,6 @@
         <item>Gallery</item>
         <item>Camera</item>
         <item>Youtube</item>
-    </string-array>
-
-    <string-array name="country_programs">
-        <item>Switch Country Program</item>
-        <item>Burundi</item>
-        <item>Cameroun</item>
-        <item>Chile</item>
-        <item>Drc</item>
-        <item>Indonesia</item>
-        <item>Liberia</item>
-        <item>Mali</item>
-        <item>México</item>
-        <item>Nigeria</item>
-        <item>République Centrafricaine</item>
-        <item>Sénégal</item>
-        <item>Sierra Leone</item>
-        <item>Swaziland</item>
-        <item>Uganda</item>
-        <item>Zambia</item>
-        <item>Zimbabwe</item>
     </string-array>
 
     <string-array name="states">

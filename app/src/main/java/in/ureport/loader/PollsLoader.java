@@ -41,7 +41,7 @@ public class PollsLoader extends AsyncTaskLoader<List<Poll>> {
     @Override
     public List<Poll> loadInBackground() {
         Calendar date1 = Calendar.getInstance();
-        date1.roll(Calendar.DATE, 5);
+        date1.add(Calendar.DATE, 5);
 
         Poll poll1 = new Poll();
         poll1.setDescription(getContext().getString(R.string.poll1_description));
@@ -61,7 +61,7 @@ public class PollsLoader extends AsyncTaskLoader<List<Poll>> {
         poll1.setQuestions(questionsForPoll1);
 
         Calendar date2 = Calendar.getInstance();
-        date2.roll(Calendar.MONTH, -2);
+        date2.add(Calendar.MONTH, -2);
 
         Poll poll2 = new Poll();
         poll2.setDescription(getContext().getString(R.string.poll2_description));

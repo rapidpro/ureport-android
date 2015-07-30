@@ -11,8 +11,8 @@
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10sp"
-        android:textColor="@android:color/black"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
         android:layout_marginTop="5dp"
         tools:text="Jul 2, 2015"
         style="@style/AppTheme.CardItemPadding" />
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="5dp"
-        android:background="@color/line"
+        android:background="@color/line_strong"
         style="@style/AppTheme.CardItemPadding"/>
 
 </merge>

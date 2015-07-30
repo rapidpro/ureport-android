@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.util.List;
+import java.util.Random;
 
 import in.ureport.R;
 import in.ureport.models.ChatMessage;
@@ -21,6 +22,8 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private static final int TYPE_USER = 0;
     private static final int TYPE_OTHER = 1;
+
+    private final int [] colors = {R.color.group_user_color1, R.color.group_user_color2};
 
     private List<ChatMessage> chatMessages;
     private User user;
@@ -97,8 +100,14 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             && getItemViewType() == TYPE_OTHER) {
                 name.setVisibility(View.VISIBLE);
                 name.setText(chatMessage.getUser().getUsername());
+                name.setTextColor(itemView.getContext().getResources().getColor(colors[getRandomInt(0, colors.length-1)]));
             }
         }
+    }
+
+    private int getRandomInt(int min, int max){
+        Random random = new Random();
+        return random.nextInt(max - min + 1) + min;
     }
 
 }

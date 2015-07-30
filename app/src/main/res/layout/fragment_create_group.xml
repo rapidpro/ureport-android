@@ -39,6 +39,8 @@
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:textColor="@android:color/white"
+                    android:gravity="start"
+                    android:textAlignment="viewStart"
                     android:hint="@string/chat_group_title_hint"
                     android:maxLength="20"/>
 
@@ -138,11 +140,13 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addPicture"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:clickable="true"
         android:src="@drawable/ic_camera_white_24dp"
         android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/highlight"
         app:layout_anchorGravity="bottom|right|end"
         app:layout_anchor="@id/appbar" />
 

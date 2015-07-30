@@ -1,79 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="80dp"
     android:layout_margin="@dimen/card_margin"
     tools:background="#f00">
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp">
 
         <TextView
             android:id="@+id/countryProgram"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
+            android:textStyle="bold"
             android:textSize="18sp"
-            tools:text="@string/news_ureporters" />
+            android:textColor="@android:color/black"
+            tools:text="Uganda" />
+
+        <TextView
+            android:id="@+id/ureporters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/countryProgram"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:textSize="22sp"
+            android:text="254,235"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/countryProgram"
+            android:layout_toRightOf="@+id/ureporters"
+            android:layout_toEndOf="@+id/ureporters"
+            android:layout_alignBottom="@+id/ureporters"
+            android:paddingBottom="2dp"
+            android:gravity="bottom"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:text="@string/news_ureporters"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:id="@+id/genderStats"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp">
-
-            <TextView
-                android:id="@+id/ureporters"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:text="254,235"/>
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/gender_male"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="10dp"
+                android:gravity="center_horizontal"
+                android:drawableTop="@drawable/male"
                 android:drawablePadding="5dp"
-                android:drawableLeft="@drawable/male"
-                android:drawableStart="@drawable/male"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:textSize="24sp"
+                android:background="#85c6da"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
                 android:text="20%"/>
 
             <TextView
                 android:id="@+id/gender_female"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="15dp"
+                android:gravity="center_horizontal"
+                android:drawableTop="@drawable/female"
                 android:drawablePadding="5dp"
-                android:drawableLeft="@drawable/female"
-                android:drawableStart="@drawable/female"
-                android:layout_marginLeft="20dp"
-                android:layout_marginStart="20dp"
-                android:textSize="24sp"
+                android:background="#71b4c5"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
                 android:text="80%"/>
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/statistics"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@null"
-            android:textColor="?attr/colorPrimary"
-            android:text="@string/news_more_statistics"/>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>

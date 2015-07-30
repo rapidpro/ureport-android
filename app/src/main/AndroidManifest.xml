@@ -46,6 +46,11 @@
             android:label="@string/label_donation" />
 
         <activity
+            android:name=".activities.AmbassadorsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/label_ambassadors" />
+
+        <activity
             android:name=".activities.GroupInfoActivity"
             android:screenOrientation="portrait"
             android:label="@string/label_chat"

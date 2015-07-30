@@ -33,6 +33,7 @@
         android:layout_toEndOf="@+id/addMarker"
         android:textColor="@android:color/black"
         android:imeOptions="actionDone"
+        android:singleLine="true"
         android:gravity="start"
         android:textAlignment="viewStart"
         android:layout_marginLeft="15dp"
