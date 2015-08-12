@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.managers.ImageLoader;
 import in.ureport.managers.UserViewManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
@@ -104,7 +105,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private void bind(User user) {
             name.setHint(itemView.getContext().getString(R.string.list_stories_header_title, user.getUsername()));
-            picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
+            ImageLoader.loadToImageView(picture, user.getPicture());
         }
 
         private View.OnClickListener onPublishStoryClickListener = new View.OnClickListener() {

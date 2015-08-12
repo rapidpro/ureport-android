@@ -14,8 +14,7 @@ public class UserViewManager {
     @DrawableRes
     public static int getUserImage(Context context, User user) {
         if(user != null && user.getPicture() != null) {
-            return context.getResources().getIdentifier(user.getPicture(), "drawable"
-                    , context.getPackageName());
+            return context.getResources().getIdentifier(user.getPicture(), "drawable", context.getPackageName());
         }
         return R.drawable.face;
     }

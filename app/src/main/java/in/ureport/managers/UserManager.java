@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import in.ureport.R;
 import in.ureport.activities.LoginActivity;
 import in.ureport.activities.MainActivity;
-import in.ureport.models.CountryProgram;
 import in.ureport.pref.SystemPreferences;
 
 /**
@@ -34,6 +32,8 @@ public class UserManager {
     }
 
     public static void logout(Context context) {
+        CognitoLoginManager.logout();
+
         SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
         systemPreferences.setCountryCode("");

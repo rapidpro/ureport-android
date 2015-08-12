@@ -250,6 +250,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     private User createUser() {
         User user = new User();
         user.setType(userType);
+        user.setPicture(this.user.getPicture());
         user.setUsername(username.getText().toString());
         user.setEmail(email.getText().toString());
         user.setPassword(password.getText().toString());

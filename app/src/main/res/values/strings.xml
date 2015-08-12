@@ -153,6 +153,8 @@
     <string name="ambassadors_subtitle">Goodwill\nAmbassador</string>
     <string name="ambassadors_all_button">See all Unicef Ambassadors</string>
     <string name="label_ambassadors">Ambassadors</string>
+    <string name="login_error">An error occurred during the login process</string>
+    <string name="login_load_user_message">Loading user information...</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

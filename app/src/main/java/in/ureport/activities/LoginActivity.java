@@ -2,6 +2,7 @@ package in.ureport.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
@@ -29,6 +30,13 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
             addLoginFragment();
         }
         checkUserLoggedAndProceed();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
+        if(fragment != null) fragment.onActivityResult(requestCode, resultCode, data);
     }
 
     private void checkUserLoggedAndProceed() {
