@@ -21,9 +21,8 @@ public class UreportersLoader extends AsyncTaskLoader<List<User>> {
 
     @Override
     public List<User> loadInBackground() {
-        SystemPreferences systemPreferences = new SystemPreferences(getContext());
-
         UserRepository repository = new UserBusiness();
-        return repository.getAllExcluding(systemPreferences.getUserLoggedId());
+        User user = repository.get();
+        return repository.getAllExcluding(user.getId());
     }
 }

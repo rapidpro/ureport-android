@@ -104,7 +104,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void bind(User user) {
-            name.setHint(itemView.getContext().getString(R.string.list_stories_header_title, user.getUsername()));
+            name.setHint(itemView.getContext().getString(R.string.list_stories_header_title, user.getNickname()));
             ImageLoader.loadToImageView(picture, user.getPicture());
         }
 
@@ -179,7 +179,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private void bindAuthor(Story story) {
             picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), story.getUser()));
-            author.setText("@" + story.getUser().getUsername());
+            author.setText("@" + story.getUser().getNickname());
         }
 
         private View.OnClickListener onReadFullStoryClickListener = new View.OnClickListener() {

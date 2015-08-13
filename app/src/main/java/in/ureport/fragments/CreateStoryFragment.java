@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -125,12 +124,12 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             String markersText = markers.getText().toString();
             story.setMarkers(markersText.length() == 0 ? "" : markersText);
 
-            PublishStoryTask publishStoryTask = new PublishStoryTask(getActivity()) {
+            PublishStoryTask publishStoryTask = new PublishStoryTask() {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     super.onPostExecute(aVoid);
                     if(storyCreationListener != null)
-                        storyCreationListener.storyCreated(story);
+                        storyCreationListener.onStoryCreated(story);
                 }
             };
             publishStoryTask.execute(story);
@@ -186,7 +185,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         @Override
         public void onClick(View view) {
             if (storyCreationListener != null)
-                storyCreationListener.addMarkers(selectedMarkers);
+                storyCreationListener.onAddMarkers(selectedMarkers);
         }
     };
 
@@ -205,7 +204,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     };
 
     public interface StoryCreationListener {
-        void addMarkers(List<Marker> markers);
-        void storyCreated(Story story);
+        void onAddMarkers(List<Marker> markers);
+        void onStoryCreated(Story story);
     }
 }

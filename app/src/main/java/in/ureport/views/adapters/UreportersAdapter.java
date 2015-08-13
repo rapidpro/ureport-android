@@ -69,7 +69,7 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         public void bindView(User user) {
-            name.setText(user.getUsername());
+            name.setText(user.getNickname());
             selected.setVisibility(selectionEnabled ? View.VISIBLE : View.GONE);
             picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
         }

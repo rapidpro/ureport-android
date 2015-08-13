@@ -63,7 +63,7 @@ public class UserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private void bindView(User user) {
             check.setChecked(selectedCoauthors != null && selectedCoauthors.contains(user));
-            name.setText(user.getUsername());
+            name.setText(user.getNickname());
         }
 
         private View.OnClickListener onCheckClickListener = new View.OnClickListener() {

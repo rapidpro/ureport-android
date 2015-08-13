@@ -26,14 +26,15 @@ public class NotificationLoader extends AsyncTaskLoader<List<Notification>> {
     @Override
     public List<Notification> loadInBackground() {
         UserRepository repository = new UserBusiness();
-        List<User> user = repository.getAllExcluding(new SystemPreferences(getContext()).getUserLoggedId());
+        User user = repository.get();
+        List<User> users = repository.getAllExcluding(user.getId());
 
         List<Notification> notifications = new ArrayList<>();
 
         Notification notification = new Notification();
-        notification.setMessage(getContext().getString(R.string.notification_message1, user.get(3).getUsername()));
+        notification.setMessage(getContext().getString(R.string.notification_message1, users.get(3).getNickname()));
         notification.setDate(new Date());
-        notification.setUser(user.get(3));
+        notification.setUser(users.get(3));
 
         Notification notification2 = new Notification();
         notification2.setMessage(getContext().getString(R.string.notification_message2));

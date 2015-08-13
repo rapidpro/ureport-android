@@ -14,6 +14,8 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.pref.SystemPreferences;
+import in.ureport.tasks.CacheLoggedUserTask;
+import in.ureport.tasks.GetDbUserTask;
 import in.ureport.tasks.CreateFakeDataTask;
 
 /**
@@ -41,7 +43,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     private void checkUserLoggedAndProceed() {
         SystemPreferences systemPreferences = new SystemPreferences(this);
-        Long userLoggedId = systemPreferences.getUserLoggedId();
+        String userLoggedId = systemPreferences.getUserLoggedId();
         UserManager.userLoggedIn = !userLoggedId.equals(SystemPreferences.USER_NO_LOGGED_ID);
         UserManager.countryCode = systemPreferences.getCountryCode();
 
@@ -60,12 +62,12 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     @Override
-    public void loginWithCredentials() {
+    public void onLoginWithCredentials() {
         addCredentialsLoginFragment();
     }
 
     @Override
-    public void skipLogin() {
+    public void onSkipLogin() {
         createFakeDataAndProcced();
     }
 
@@ -73,29 +75,46 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         CredentialsLoginFragment credentialsLoginFragment = new CredentialsLoginFragment();
         credentialsLoginFragment.setLoginListener(this);
         getSupportFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, credentialsLoginFragment)
                 .addToBackStack(null)
                 .commit();
     }
 
     @Override
-    public void loginWithSocialNetwork(User user) {
-        addSignUpFragment(user);
+    public void onLoginWithSocialNetwork(final User user) {
+        new GetDbUserTask(this, R.string.user_confirmation_load_message) {
+            @Override
+            protected void onPostExecute(User dbUser) {
+                super.onPostExecute(dbUser);
+                if(dbUser != null)
+                    onUserReady(dbUser);
+                else
+                    addSignUpFragment(user);
+            }
+        }.execute();
     }
 
     @Override
-    public void signUp() {
+    public void onSignUp() {
         addSignUpFragment();
     }
 
     @Override
-    public void userReady(User user) {
-        UserManager.userLoggedIn = true;
-        UserManager.countryCode = user.getCountry();
+    public void onUserReady(final User user) {
+        CacheLoggedUserTask cacheLoggedUserTask = new CacheLoggedUserTask(this) {
+            @Override
+            protected void onPostExecute(Boolean result) {
+                super.onPostExecute(result);
 
-        CountryProgramManager.switchCountryProgram(user.getCountry());
-        createFakeDataAndProcced();
+                UserManager.userLoggedIn = true;
+                UserManager.countryCode = user.getCountry();
+
+                CountryProgramManager.switchCountryProgram(user.getCountry());
+                createFakeDataAndProcced();
+            }
+        };
+        cacheLoggedUserTask.execute(user);
     }
 
     private void createFakeDataAndProcced() {
@@ -123,7 +142,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         SignUpFragment signUpFragment = SignUpFragment.newInstance(user);
         signUpFragment.setLoginListener(this);
         getSupportFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, signUpFragment)
                 .addToBackStack(null)
                 .commit();

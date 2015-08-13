@@ -19,7 +19,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,7 +130,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         getSupportLoaderManager().initLoader(0, null, this).forceLoad();
     }
 
-    private GetUserLoggedTask loadUserTask = new GetUserLoggedTask(this) {
+    private GetUserLoggedTask loadUserTask = new GetUserLoggedTask() {
         @Override
         protected void onPostExecute(User user) {
             super.onPostExecute(user);
@@ -161,7 +160,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             picture.setImageResource(UserViewManager.getUserImage(this, user));
 
             TextView name = (TextView) menuHeader.findViewById(R.id.name);
-            name.setText("@" + user.getUsername());
+            name.setText("@" + user.getNickname());
 
             TextView points = (TextView) menuHeader.findViewById(R.id.points);
             points.setText(getString(R.string.menu_points, user.getPoints()));

@@ -2,7 +2,7 @@ package in.ureport.managers;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.webkit.CookieSyncManager;
+import android.util.Log;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.cognito.CognitoSyncManager;
@@ -17,17 +17,17 @@ import com.google.android.gms.plus.Plus;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthToken;
 
-import java.net.CookieManager;
 import java.util.HashMap;
 import java.util.Map;
 
 import in.ureport.R;
+import in.ureport.listener.OnTaskFinishedListener;
 import in.ureport.tasks.GetGoogleAuthTokenTask;
 
 /**
  * Created by johncordeiro on 11/08/15.
  */
-public class CognitoLoginManager {
+public class CognitoCredentialsLoginManager {
 
     private static final String TAG = "CognitoLoginManager";
 
@@ -36,14 +36,19 @@ public class CognitoLoginManager {
 
     private static Context context;
 
-    public static void initialize(Context context) {
-        CognitoLoginManager.context = context;
+    public static CognitoCachingCredentialsProvider initialize(Context context) {
+        CognitoCredentialsLoginManager.context = context;
         credentialsProvider = new CognitoCachingCredentialsProvider(
                 context,
                 context.getString(R.string.identity_pool_id),
                 Regions.US_EAST_1);
 
         syncClient = new CognitoSyncManager(context, Regions.US_EAST_1, credentialsProvider);
+        return credentialsProvider;
+    }
+
+    public static CognitoCachingCredentialsProvider getCredentialsProvider() {
+        return credentialsProvider;
     }
 
     public static void logout() {
@@ -86,7 +91,11 @@ public class CognitoLoginManager {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                credentialsProvider.refresh();
+                try {
+                    credentialsProvider.refresh();
+                } catch(Exception exception) {
+                    Log.e(TAG, "refresh error: " + exception);
+                }
                 return null;
             }
         }.execute();
@@ -105,15 +114,17 @@ public class CognitoLoginManager {
         credentialsProvider.setLogins(logins);
     }
 
-    public static void setGoogleLogin(GoogleApiClient googleApiClient) {
+    public static void setGoogleLogin(GoogleApiClient googleApiClient, final OnTaskFinishedListener onTaskFinishedListener) {
         GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
 
-        GetGoogleAuthTokenTask getGoogleAuthTokenTask = new GetGoogleAuthTokenTask(context){
+        GetGoogleAuthTokenTask getGoogleAuthTokenTask = new GetGoogleAuthTokenTask(context) {
             @Override
             protected void onPostExecute(String token) {
                 Map<String, String> logins = new HashMap<>();
                 logins.put("accounts.google.com", token);
                 credentialsProvider.setLogins(logins);
+
+                if(onTaskFinishedListener != null) onTaskFinishedListener.onTaskFinished();
             }
         };
         getGoogleAuthTokenTask.execute(googleApiClient);

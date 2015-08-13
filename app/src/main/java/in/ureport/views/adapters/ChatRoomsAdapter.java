@@ -77,7 +77,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private void bindView(ChatRoom chatRoom) {
             if(chatRoom instanceof IndividualChatRoom) {
                 User friend = ((IndividualChatRoom)chatRoom).getFriend();
-                name.setText("@" + friend.getUsername());
+                name.setText("@" + friend.getNickname());
                 picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), friend));
             } else if(chatRoom instanceof GroupChatRoom) {
                 ChatGroup chatGroup = ((GroupChatRoom)chatRoom).getChatGroup();

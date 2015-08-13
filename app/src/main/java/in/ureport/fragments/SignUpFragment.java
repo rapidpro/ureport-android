@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -37,7 +38,7 @@ import in.ureport.managers.ToolbarDesigner;
 import in.ureport.models.User;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
-import in.ureport.tasks.SaveUserTask;
+import in.ureport.tasks.RegisterUserTask;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -130,7 +131,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         if(user != null) {
             userType = user.getType();
 
-            setEditTextValue(username, user.getUsername());
+            setEditTextValue(username, user.getNickname());
             setEditTextValue(email, user.getEmail());
             setEditTextDate(birthday, user.getBirthday());
             setPasswordVisibility();
@@ -251,7 +252,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         User user = new User();
         user.setType(userType);
         user.setPicture(this.user.getPicture());
-        user.setUsername(username.getText().toString());
+        user.setNickname(username.getText().toString());
         user.setEmail(email.getText().toString());
         user.setPassword(password.getText().toString());
         user.setBirthday(getBirthdayDate());
@@ -321,13 +322,23 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         @Override
         public void onClick(View view) {
             if(isFieldsValid()) {
-                User user = createUser();
+                final User user = createUser();
 
-                SaveUserTask saveUserTask = new SaveUserTask(getActivity());
-                saveUserTask.execute(user);
+                RegisterUserTask registerUserTask = new RegisterUserTask(getActivity()) {
+                    @Override
+                    protected void onPostExecute(Boolean registered) {
+                        super.onPostExecute(registered);
+                        if(registered && loginListener != null)
+                            loginListener.onUserReady(user);
+                    }
 
-                if(loginListener != null)
-                    loginListener.userReady(user);
+                    @Override
+                    public void onTaskException(Exception exception) {
+                        super.onTaskException(exception);
+                        Toast.makeText(getActivity().getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                };
+                registerUserTask.execute(user);
             }
         }
     };

@@ -5,9 +5,11 @@ import android.content.Context;
 
 import com.activeandroid.ActiveAndroid;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
-import in.ureport.managers.CognitoLoginManager;
+import in.ureport.managers.CognitoCredentialsLoginManager;
+import in.ureport.managers.DynamoDBManager;
 import in.ureport.managers.UserManager;
 import io.fabric.sdk.android.Fabric;
 
@@ -21,7 +23,8 @@ public class UreportApplication extends Application {
         super.onCreate();
         initializeFabric();
         ActiveAndroid.initialize(this);
-        CognitoLoginManager.initialize(this);
+        CognitoCachingCredentialsProvider credentialsProvider = CognitoCredentialsLoginManager.initialize(this);
+        DynamoDBManager.initialize(credentialsProvider);
     }
 
     private void initializeFabric() {

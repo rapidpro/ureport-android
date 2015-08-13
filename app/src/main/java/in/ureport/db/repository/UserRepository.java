@@ -11,6 +11,8 @@ import in.ureport.models.holders.Login;
  */
 public interface UserRepository extends AbstractRepository<User> {
 
+    User get();
+
     User login(Login login);
 
     List<User> getAllOrdered();

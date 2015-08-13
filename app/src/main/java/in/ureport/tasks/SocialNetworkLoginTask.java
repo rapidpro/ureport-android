@@ -53,7 +53,7 @@ public class SocialNetworkLoginTask extends AsyncTask<User.Type, Void, User> {
 
     private void createRandomUser(User user) {
         String typeName = user.getType().toString().toLowerCase();
-        user.setUsername("user_" + typeName);
+        user.setNickname("user_" + typeName);
         user.setEmail("user@" + typeName + ".com.br");
         user.setGender(User.Gender.values()[getRandomInt(0, 1)]);
         user.setBirthday(new Date());

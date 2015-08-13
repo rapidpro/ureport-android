@@ -32,7 +32,7 @@ public class ProfileActivity extends AppCompatActivity {
         loadUserTask.execute();
     }
 
-    private GetUserLoggedTask loadUserTask = new GetUserLoggedTask(this) {
+    private GetUserLoggedTask loadUserTask = new GetUserLoggedTask() {
         @Override
         protected void onPostExecute(User user) {
             super.onPostExecute(user);

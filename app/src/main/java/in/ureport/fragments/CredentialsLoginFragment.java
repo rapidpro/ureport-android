@@ -102,7 +102,7 @@ public class CredentialsLoginFragment extends Fragment {
                 if(user == null) {
                     showLoginError();
                 } else if(loginListener != null) {
-                    loginListener.userReady(user);
+                    loginListener.onUserReady(user);
                 }
             }
         };

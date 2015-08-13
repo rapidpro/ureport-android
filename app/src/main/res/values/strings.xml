@@ -155,6 +155,11 @@
     <string name="label_ambassadors">Ambassadors</string>
     <string name="login_error">An error occurred during the login process</string>
     <string name="login_load_user_message">Loading user information...</string>
+    <string name="user_confirmation_load_message">Verifying user...</string>
+    <string name="user_registering_load_message">Registering user...</string>
+    <string name="caching_user_load_message">Caching user...</string>
+    <string name="error_email_already_exists">There is an user with this email. Choose another!</string>
+    <string name="error_nickname_already_exists">There is an user with the same nickname. Choose another!</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

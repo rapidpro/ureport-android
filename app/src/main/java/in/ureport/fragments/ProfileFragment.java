@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -16,13 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import in.ureport.R;
-import in.ureport.activities.MainActivity;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.UserManager;
 import in.ureport.managers.UserViewManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
-import in.ureport.pref.SystemPreferences;
 import in.ureport.views.adapters.NavigationAdapter;
 
 /**
@@ -102,7 +99,7 @@ public class ProfileFragment extends Fragment {
         if(user != null) {
             setupPagerWithUser(user);
 
-            name.setText("@"+user.getUsername());
+            name.setText("@"+user.getNickname());
             picture.setImageResource(UserViewManager.getUserImage(getActivity(), user));
 
             points.setText(getString(R.string.menu_points, user.getPoints()));

@@ -99,7 +99,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if(chatMessage.getChatRoom() instanceof GroupChatRoom
             && getItemViewType() == TYPE_OTHER) {
                 name.setVisibility(View.VISIBLE);
-                name.setText(chatMessage.getUser().getUsername());
+                name.setText(chatMessage.getUser().getNickname());
                 name.setTextColor(itemView.getContext().getResources().getColor(colors[getRandomInt(0, colors.length-1)]));
             }
         }

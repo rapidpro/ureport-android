@@ -9,7 +9,7 @@ import br.com.ilhasoft.support.preferences.Preferences;
  */
 public class SystemPreferences extends Preferences {
 
-    public static final Long USER_NO_LOGGED_ID = -1L;
+    public static final String USER_NO_LOGGED_ID = "NONE";
 
     private enum Fields {
         UserLoggedId,
@@ -21,11 +21,11 @@ public class SystemPreferences extends Preferences {
         super(context, SystemPreferences.class.getName());
     }
 
-    public void setUserLoggedId(Long id) {
+    public void setUserLoggedId(String id) {
         setValue(Fields.UserLoggedId, id);
     }
 
-    public Long getUserLoggedId() {
+    public String getUserLoggedId() {
         return getValue(Fields.UserLoggedId, USER_NO_LOGGED_ID);
     }
 

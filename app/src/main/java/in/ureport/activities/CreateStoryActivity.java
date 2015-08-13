@@ -71,7 +71,7 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
     }
 
     @Override
-    public void addMarkers(List<Marker> selectedMarkers) {
+    public void onAddMarkers(List<Marker> selectedMarkers) {
         MarkersFragment markersFragment;
         if(selectedMarkers != null && selectedMarkers.size() > 0)
             markersFragment = MarkersFragment.newInstance((ArrayList<Marker>)selectedMarkers);
@@ -86,7 +86,7 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
     }
 
     @Override
-    public void storyCreated(Story story) {
+    public void onStoryCreated(Story story) {
         showPointsEarningAndClose();
     }
 

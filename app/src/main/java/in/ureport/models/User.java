@@ -7,22 +7,32 @@ import android.support.annotation.StringRes;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHashKey;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMarshalling;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 
 import java.util.Date;
 
 import in.ureport.R;
+import in.ureport.util.EnumTypeConverter;
 
 /**
  * Created by johncordeiro on 7/9/15.
  */
+@DynamoDBTable(tableName = "User")
 @Table(name = "User")
 public class User extends Model implements Parcelable {
+
+    @Column(name = "identityId")
+    private String identityId;
 
     @Column(name = "email")
     private String email;
 
     @Column(name = "username")
-    private String username;
+    private String nickname;
 
     @Column(name = "password")
     private String password;
@@ -51,6 +61,16 @@ public class User extends Model implements Parcelable {
     @Column(name = "polls")
     private Integer polls;
 
+    @DynamoDBHashKey(attributeName = "id")
+    public String getIdentityId() {
+        return identityId;
+    }
+
+    public void setIdentityId(String identityId) {
+        this.identityId = identityId;
+    }
+
+    @DynamoDBIndexHashKey(attributeName="email", globalSecondaryIndexName="email-index")
     public String getEmail() {
         return email;
     }
@@ -59,14 +79,16 @@ public class User extends Model implements Parcelable {
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
+    @DynamoDBIndexHashKey(attributeName="nickname", globalSecondaryIndexName="nickname-index")
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
+    @DynamoDBAttribute(attributeName = "password")
     public String getPassword() {
         return password;
     }
@@ -75,6 +97,7 @@ public class User extends Model implements Parcelable {
         this.password = password;
     }
 
+    @DynamoDBAttribute(attributeName = "birthday")
     public Date getBirthday() {
         return birthday;
     }
@@ -83,6 +106,7 @@ public class User extends Model implements Parcelable {
         this.birthday = birthday;
     }
 
+    @DynamoDBAttribute(attributeName = "country")
     public String getCountry() {
         return country;
     }
@@ -91,6 +115,7 @@ public class User extends Model implements Parcelable {
         this.country = country;
     }
 
+    @DynamoDBAttribute(attributeName = "picture")
     public String getPicture() {
         return picture;
     }
@@ -99,6 +124,8 @@ public class User extends Model implements Parcelable {
         this.picture = picture;
     }
 
+    @DynamoDBAttribute(attributeName = "gender")
+    @DynamoDBMarshalling(marshallerClass = EnumTypeConverter.class)
     public Gender getGender() {
         return gender;
     }
@@ -107,6 +134,8 @@ public class User extends Model implements Parcelable {
         this.gender = gender;
     }
 
+    @DynamoDBAttribute(attributeName = "type")
+    @DynamoDBMarshalling(marshallerClass = EnumTypeConverter.class)
     public Type getType() {
         return type;
     }
@@ -115,6 +144,7 @@ public class User extends Model implements Parcelable {
         this.type = type;
     }
 
+    @DynamoDBAttribute(attributeName = "points")
     public Integer getPoints() {
         return points != null ? points : 0;
     }
@@ -123,6 +153,7 @@ public class User extends Model implements Parcelable {
         this.points = points;
     }
 
+    @DynamoDBAttribute(attributeName = "stories")
     public Integer getStories() {
         return stories != null ? stories : 0;
     }
@@ -131,6 +162,7 @@ public class User extends Model implements Parcelable {
         this.stories = stories;
     }
 
+    @DynamoDBAttribute(attributeName = "polls")
     public Integer getPolls() {
         return polls != null ? polls : 0;
     }
@@ -143,7 +175,7 @@ public class User extends Model implements Parcelable {
     public String toString() {
         return "User{" +
                 "email='" + email + '\'' +
-                ", username='" + username + '\'' +
+                ", nickname='" + nickname + '\'' +
                 ", password='" + password + '\'' +
                 ", birthday=" + birthday +
                 ", country='" + country + '\'' +
@@ -181,13 +213,13 @@ public class User extends Model implements Parcelable {
 
         User user = (User) o;
 
-        return username.equals(user.username);
+        return nickname.equals(user.nickname);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + username.hashCode();
+        result = 31 * result + nickname.hashCode();
         return result;
     }
 
@@ -198,8 +230,9 @@ public class User extends Model implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.identityId);
         dest.writeString(this.email);
-        dest.writeString(this.username);
+        dest.writeString(this.nickname);
         dest.writeString(this.password);
         dest.writeLong(birthday != null ? birthday.getTime() : -1);
         dest.writeString(this.country);
@@ -215,8 +248,9 @@ public class User extends Model implements Parcelable {
     }
 
     protected User(Parcel in) {
+        this.identityId = in.readString();
         this.email = in.readString();
-        this.username = in.readString();
+        this.nickname = in.readString();
         this.password = in.readString();
         long tmpBirthday = in.readLong();
         this.birthday = tmpBirthday == -1 ? null : new Date(tmpBirthday);

@@ -15,7 +15,7 @@ import in.ureport.fragments.NewsFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.listener.FloatingActionButtonListener;
-import in.ureport.managers.CognitoLoginManager;
+import in.ureport.managers.CognitoCredentialsLoginManager;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CognitoLoginManager.refresh();
+        CognitoCredentialsLoginManager.refresh();
 
         checkForcedLogin();
         setContentView(R.layout.activity_main);

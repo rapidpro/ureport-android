@@ -150,7 +150,7 @@ public class ChatRoomFragment extends Fragment {
 
     private void setupViewForIndividualChat(View view) {
         IndividualChatRoom individualChatRoom = (IndividualChatRoom)chatRoom;
-        name.setText("@" + individualChatRoom.getFriend().getUsername());
+        name.setText("@" + individualChatRoom.getFriend().getNickname());
 
         ImageView picture = (ImageView) view.findViewById(R.id.picture);
         picture.setImageResource(UserViewManager.getUserImage(getActivity(), individualChatRoom.getFriend()));
@@ -158,7 +158,7 @@ public class ChatRoomFragment extends Fragment {
     }
 
     private void loadLocalUser() {
-        new GetUserLoggedTask(getActivity()) {
+        new GetUserLoggedTask() {
             @Override
             protected void onPostExecute(User user) {
                 super.onPostExecute(user);

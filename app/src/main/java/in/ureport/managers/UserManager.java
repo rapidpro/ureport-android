@@ -32,7 +32,7 @@ public class UserManager {
     }
 
     public static void logout(Context context) {
-        CognitoLoginManager.logout();
+        CognitoCredentialsLoginManager.logout();
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);

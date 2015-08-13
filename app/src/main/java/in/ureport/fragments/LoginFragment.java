@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,8 @@ import java.util.Arrays;
 
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
-import in.ureport.managers.CognitoLoginManager;
+import in.ureport.listener.OnTaskFinishedListener;
+import in.ureport.managers.CognitoCredentialsLoginManager;
 import in.ureport.managers.UserSocialNetworkBuilder;
 import in.ureport.models.User;
 
@@ -149,7 +151,7 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         @Override
         public void onClick(View view) {
             if(loginListener != null) {
-                loginListener.loginWithCredentials();
+                loginListener.onLoginWithCredentials();
             }
         }
     };
@@ -158,14 +160,14 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         @Override
         public void onClick(View view) {
             if (loginListener != null) {
-                loginListener.signUp();
+                loginListener.onSignUp();
             }
         }
     };
 
     @Override
     public void onSuccess(LoginResult loginResult) {
-        CognitoLoginManager.setFacebookLogin(loginResult.getAccessToken());
+        CognitoCredentialsLoginManager.setFacebookLogin(loginResult.getAccessToken());
         requestFacebookUserInfo(loginResult);
     }
 
@@ -178,7 +180,7 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
                 progressDialog.dismiss();
                 if (graphResponse != null && graphResponse.getError() == null) {
                     User user = userSocialNetworkBuilder.buildUserFromFacebook(jsonObject);
-                    if (loginListener != null) loginListener.loginWithSocialNetwork(user);
+                    if (loginListener != null) loginListener.onLoginWithSocialNetwork(user);
                 } else {
                     showLoginErrorAlert();
                 }
@@ -220,8 +222,12 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         @Override
         public void onConnected(Bundle bundle) {
             shouldResolveErrors = false;
-            CognitoLoginManager.setGoogleLogin(googleApiClient);
-            requestUsetInfoGoogle();
+            CognitoCredentialsLoginManager.setGoogleLogin(googleApiClient, new OnTaskFinishedListener() {
+                @Override
+                public void onTaskFinished() {
+                    requestUsetInfoGoogle();
+                }
+            });
         }
 
         @Override
@@ -237,7 +243,7 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
             loadUserDialog.dismiss();
 
             if(loginListener != null)
-                loginListener.loginWithSocialNetwork(user);
+                loginListener.onLoginWithSocialNetwork(user);
         }
     }
 
@@ -264,7 +270,7 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
     private Callback<TwitterSession> twitterLoginCallback = new Callback<TwitterSession>() {
         @Override
         public void success(Result<TwitterSession> result) {
-            CognitoLoginManager.setTwitterLogin(result.data.getAuthToken());
+            CognitoCredentialsLoginManager.setTwitterLogin(result.data.getAuthToken());
             requestTwitterUserInfo(result.data);
         }
 
@@ -284,7 +290,7 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
                 progressDialog.dismiss();
 
                 User user = userSocialNetworkBuilder.buildUserFromTwitter(result, session);
-                if (loginListener != null) loginListener.loginWithSocialNetwork(user);
+                if (loginListener != null) loginListener.onLoginWithSocialNetwork(user);
             }
 
             @Override
@@ -294,8 +300,6 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
             }
         });
     }
-
-
 
     private View.OnClickListener onFacebookLoginClickListener = new View.OnClickListener() {
         @Override
@@ -310,7 +314,12 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         @Override
         public void onClick(View view) {
             loadUserDialog = showLoadUserProgress();
-            googleApiClient.connect();
+
+            if(!googleApiClient.isConnected()) {
+                googleApiClient.connect();
+            } else {
+                googleConnectionCallbacks.onConnected(null);
+            }
         }
     };
 
@@ -318,15 +327,15 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         @Override
         public void onClick(View v) {
             if (loginListener != null)
-                loginListener.skipLogin();
+                loginListener.onSkipLogin();
         }
     };
 
-    public static interface LoginListener {
-        void loginWithSocialNetwork(User user);
-        void loginWithCredentials();
-        void skipLogin();
-        void signUp();
-        void userReady(User user);
+    public interface LoginListener {
+        void onLoginWithSocialNetwork(User user);
+        void onLoginWithCredentials();
+        void onSkipLogin();
+        void onSignUp();
+        void onUserReady(User user);
     }
 }

@@ -43,7 +43,7 @@ public class LoginTask extends AsyncTask<Login, Void, User> {
     private void saveUserLoggedId(User user) {
         if(user != null) {
             SystemPreferences systemPreferences = new SystemPreferences(context);
-            systemPreferences.setUserLoggedId(user.getId());
+            systemPreferences.setUserLoggedId(user.getIdentityId());
             systemPreferences.setCountryCode(user.getCountry());
         }
     }

@@ -33,7 +33,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         SystemPreferences systemPreferences = new SystemPreferences(context);
         if(!systemPreferences.isFakeDataCreated()) {
             List<User> newUsers = saveFakeUsers();
-            saveFakeStories(newUsers.toArray(new User[]{}));
+//            saveFakeStories(newUsers.toArray(new User[]{}));
 
             systemPreferences.setFakeDataCreated(true);
         }
@@ -58,7 +58,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
     @NonNull
     private List<User> getNewUsers() {
         User user1 = new User();
-        user1.setUsername("esther_aiken");
+        user1.setNickname("esther_aiken");
         user1.setEmail("estheraiken@gmail.com");
         user1.setGender(User.Gender.Female);
         user1.setType(User.Type.Twitter);
@@ -70,7 +70,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user1.setPoints(user1.getPolls() + user1.getStories());
 
         User user2 = new User();
-        user2.setUsername("domingos_hailey123");
+        user2.setNickname("domingos_hailey123");
         user2.setEmail("domingoshailey@gmail.com");
         user2.setGender(User.Gender.Male);
         user2.setType(User.Type.Twitter);
@@ -82,7 +82,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user2.setPoints(user2.getPolls() + user2.getStories());
 
         User user3 = new User();
-        user3.setUsername("pauleenk12");
+        user3.setNickname("pauleenk12");
         user3.setEmail("pauleenk12@gmail.com");
         user3.setGender(User.Gender.Male);
         user3.setType(User.Type.Facebook);
@@ -94,7 +94,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user3.setPoints(user3.getPolls() + user3.getStories());
 
         User user4 = new User();
-        user4.setUsername("robertap");
+        user4.setNickname("robertap");
         user4.setEmail("robertap@gmail.com");
         user4.setGender(User.Gender.Female);
         user4.setType(User.Type.Facebook);
@@ -106,7 +106,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user4.setPoints(user4.getPolls() + user4.getStories());
 
         User user5 = new User();
-        user5.setUsername("phil89");
+        user5.setNickname("phil89");
         user5.setEmail("phil89@gmail.com");
         user5.setGender(User.Gender.Male);
         user5.setType(User.Type.Facebook);
@@ -118,7 +118,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user5.setPoints(user5.getPolls() + user5.getStories());
 
         User user6 = new User();
-        user6.setUsername("joshy");
+        user6.setNickname("joshy");
         user6.setEmail("joshy@gmail.com");
         user6.setGender(User.Gender.Male);
         user6.setType(User.Type.Ureport);
@@ -130,7 +130,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user6.setPoints(user6.getPolls() + user6.getStories());
 
         User user7 = new User();
-        user7.setUsername("tommy20");
+        user7.setNickname("tommy20");
         user7.setEmail("tommy20@gmail.com");
         user7.setGender(User.Gender.Male);
         user7.setType(User.Type.Google);
@@ -142,7 +142,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user7.setPoints(user7.getPolls() + user7.getStories());
 
         User user8 = new User();
-        user8.setUsername("maria_gloria");
+        user8.setNickname("maria_gloria");
         user8.setEmail("maria_gloria@gmail.com");
         user8.setGender(User.Gender.Female);
         user8.setType(User.Type.Ureport);
@@ -154,7 +154,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user8.setPoints(user8.getPolls() + user8.getStories());
 
         User user9 = new User();
-        user9.setUsername("easi");
+        user9.setNickname("easi");
         user9.setEmail("easi@gmail.com");
         user9.setGender(User.Gender.Male);
         user9.setType(User.Type.Facebook);
@@ -166,7 +166,7 @@ public class CreateFakeDataTask extends AsyncTask<Void, Void, Void> {
         user9.setPoints(user9.getPolls() + user9.getStories());
 
         User user10 = new User();
-        user10.setUsername("gonzalez1000");
+        user10.setNickname("gonzalez1000");
         user10.setEmail("gonzalez1000@gmail.com");
         user10.setGender(User.Gender.Male);
         user10.setType(User.Type.Google);

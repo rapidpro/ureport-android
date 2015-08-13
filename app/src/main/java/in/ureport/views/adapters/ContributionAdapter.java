@@ -145,7 +145,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private void bindView(Contribution contribution) {
             this.picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
             this.contribution.setText(contribution.getContribution());
-            this.author.setText("@"+user.getUsername());
+            this.author.setText("@"+user.getNickname());
 
         }
     }

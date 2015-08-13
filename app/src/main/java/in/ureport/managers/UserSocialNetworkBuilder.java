@@ -25,7 +25,7 @@ public class UserSocialNetworkBuilder {
     public User buildUserFromTwitter(Result<com.twitter.sdk.android.core.models.User> result, TwitterSession session) {
         User user = new User();
         user.setType(User.Type.Twitter);
-        user.setUsername(session.getUserName());
+        user.setNickname(session.getUserName());
         user.setEmail(result.data.email);
         user.setPicture(result.data.profileImageUrl);
         return user;
@@ -35,7 +35,7 @@ public class UserSocialNetworkBuilder {
         User user = new User();
         user.setType(User.Type.Google);
 
-        user.setUsername(getFormattedNickname(currentPerson.getDisplayName()));
+        user.setNickname(getFormattedNickname(currentPerson.getDisplayName()));
 
         Person.Image image = currentPerson.getImage();
         user.setPicture(image != null ? image.getUrl() : null);
@@ -66,7 +66,7 @@ public class UserSocialNetworkBuilder {
         user.setEmail(jsonObject.optString("email"));
 
         String name = jsonObject.optString("name");
-        user.setUsername(getFormattedNickname(name));
+        user.setNickname(getFormattedNickname(name));
 
         String birthday = jsonObject.optString("birthday");
         user.setBirthday(getFormattedDate(birthday, "MM/dd/yyyy"));
