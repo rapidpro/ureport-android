@@ -1,4 +1,4 @@
-package in.ureport.util;
+package in.ureport.models.converters;
 
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMarshaller;
 

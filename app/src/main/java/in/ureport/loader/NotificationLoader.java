@@ -10,6 +10,7 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.db.business.UserBusiness;
 import in.ureport.db.repository.UserRepository;
+import in.ureport.managers.UserManager;
 import in.ureport.models.Notification;
 import in.ureport.models.User;
 import in.ureport.pref.SystemPreferences;
@@ -25,10 +26,7 @@ public class NotificationLoader extends AsyncTaskLoader<List<Notification>> {
 
     @Override
     public List<Notification> loadInBackground() {
-        UserRepository repository = new UserBusiness();
-        User user = repository.get();
-        List<User> users = repository.getAllExcluding(user.getId());
-
+        List<User> users = UserManager.getFakeUsers(getContext());
         List<Notification> notifications = new ArrayList<>();
 
         Notification notification = new Notification();

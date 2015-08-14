@@ -16,7 +16,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 import java.util.Date;
 
 import in.ureport.R;
-import in.ureport.util.EnumTypeConverter;
+import in.ureport.models.converters.EnumTypeConverter;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -209,17 +209,15 @@ public class User extends Model implements Parcelable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
 
         User user = (User) o;
-
-        return nickname.equals(user.nickname);
+        return identityId.equals(user.identityId);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + nickname.hashCode();
+        result = 31 * result + identityId.hashCode();
         return result;
     }
 

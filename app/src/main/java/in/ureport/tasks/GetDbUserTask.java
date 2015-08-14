@@ -30,6 +30,8 @@ public class GetDbUserTask extends ProgressTask<Void, Void, User> {
 
             String identityId = CognitoCredentialsLoginManager.getCredentialsProvider().getIdentityId();
 
+            Log.i(TAG, "doInBackground identityId: " + identityId);
+
             User user = new User();
             user.setIdentityId(identityId);
 

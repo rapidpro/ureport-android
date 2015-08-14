@@ -45,3 +45,42 @@
 
 #twitter
 -include ../proguard-com.twitter.sdk.android.twitter.txt
+
+#Amazon AWS
+-keep class org.apache.commons.logging.**               { *; }
+-keep class com.amazonaws.services.sqs.QueueUrlHandler  { *; }
+-keep class com.amazonaws.javax.xml.transform.sax.*     { public *; }
+-keep class com.amazonaws.javax.xml.stream.**           { *; }
+-keep class com.amazonaws.services.**.model.*Exception* { *; }
+-keep class com.amazonaws.internal.** 					{ *; }
+-keep class org.codehaus.**                             { *; }
+-keep class org.joda.convert.*							{ *; }
+-keepattributes Signature,*Annotation*,EnclosingMethod
+-keepnames class com.fasterxml.jackson.** { *; }
+-keepnames class com.amazonaws.** { *; }
+
+-dontwarn com.amazonaws.auth.policy.conditions.S3ConditionFactory
+-dontwarn org.joda.time.**
+-dontwarn com.fasterxml.jackson.databind.**
+-dontwarn javax.xml.stream.events.**
+-dontwarn org.codehaus.jackson.**
+-dontwarn org.apache.commons.logging.impl.**
+-dontwarn org.apache.http.conn.scheme.**
+-dontwarn org.apache.http.annotation.**
+-dontwarn org.ietf.jgss.**
+-dontwarn org.w3c.dom.bootstrap.**
+
+-dontwarn javax.xml.stream.events.**
+-dontwarn org.codehaus.jackson.**
+-dontwarn org.apache.commons.logging.impl.**
+-dontwarn org.apache.http.conn.scheme.**
+
+-dontwarn com.amazon.**
+-keep class com.amazon.** {*;}
+-keepattributes InnerClasses,*Annotation*
+
+-keep class com.amazonaws.**
+-dontwarn com.amazonaws.**
+
+-keep class in.ureport.models.** { *; }
+-keep class com.amazonaws.** { *; }

@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import in.ureport.R;
+import in.ureport.managers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.UserManager;
 import in.ureport.managers.UserViewManager;
@@ -99,8 +100,8 @@ public class ProfileFragment extends Fragment {
         if(user != null) {
             setupPagerWithUser(user);
 
-            name.setText("@"+user.getNickname());
-            picture.setImageResource(UserViewManager.getUserImage(getActivity(), user));
+            name.setText(user.getNickname());
+            ImageLoader.loadToImageView(picture, user.getPicture());
 
             points.setText(getString(R.string.menu_points, user.getPoints()));
             polls.setText(getString(R.string.profile_polls, user.getPolls()));

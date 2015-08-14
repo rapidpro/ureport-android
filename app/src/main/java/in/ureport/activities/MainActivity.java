@@ -43,8 +43,6 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CognitoCredentialsLoginManager.refresh();
-
         checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();

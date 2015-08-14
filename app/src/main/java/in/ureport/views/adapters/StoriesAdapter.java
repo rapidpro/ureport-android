@@ -178,8 +178,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void bindAuthor(Story story) {
-            picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), story.getUser()));
-            author.setText("@" + story.getUser().getNickname());
+            ImageLoader.loadToImageView(picture, story.getUser().getPicture());
+            author.setText(story.getUser().getNickname());
         }
 
         private View.OnClickListener onReadFullStoryClickListener = new View.OnClickListener() {

@@ -16,7 +16,7 @@ android {
         release {
             keyAlias 'ureport'
             keyPassword 'htaq3XVfSucCEbS'
-            storeFile file('/Users/ilhasoft/Documents/Ilhasoft/U-report/signature/ureport.jks')
+            storeFile file('/Users/johndalton/Documents/Ilhasoft/U-report/signature/ureport.jks')
             storePassword 'htaq3XVfSucCEbS'
         }
     }
@@ -30,8 +30,12 @@ android {
         versionName "1.0"
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
         release {
             minifyEnabled true
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }

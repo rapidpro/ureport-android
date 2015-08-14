@@ -2,7 +2,6 @@ package in.ureport.managers;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import in.ureport.listener.FloatingActionButtonListener;
 
@@ -25,6 +24,7 @@ public class RecyclerScrollListener extends RecyclerView.OnScrollListener {
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
+        if(floatingActionButtonListener == null) return;
 
         if (visible && scrolled < -MINIMUM) {
             floatingActionButtonListener.hideFloatingButton();

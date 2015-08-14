@@ -29,17 +29,4 @@ public class UserBusiness extends AbstractBusiness<User> implements UserReposito
                     .where("username = ? AND password = ?", login.getUsername(), login.getPassword())
                     .executeSingle();
     }
-
-    public List<User> getAllOrdered() {
-        return new Select().from(getTypeClass())
-                .orderBy("points DESC")
-                .execute();
-    }
-
-    @Override
-    public List<User> getAllExcluding(Long id) {
-        return new Select().from(getTypeClass())
-                .where("id != ?", id)
-                .execute();
-    }
 }

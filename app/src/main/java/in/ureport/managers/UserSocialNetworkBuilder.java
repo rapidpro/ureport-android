@@ -27,8 +27,14 @@ public class UserSocialNetworkBuilder {
         user.setType(User.Type.Twitter);
         user.setNickname(session.getUserName());
         user.setEmail(result.data.email);
-        user.setPicture(result.data.profileImageUrl);
+        user.setPicture(getBiggerTwitterProfilePicture(result));
         return user;
+    }
+
+    private String getBiggerTwitterProfilePicture(Result<com.twitter.sdk.android.core.models.User> result) {
+        String profileImageUrl = result.data.profileImageUrl;
+        profileImageUrl = profileImageUrl.replace("_normal", "_bigger");
+        return profileImageUrl;
     }
 
     public User buildUserFromGoogle(Person currentPerson, String email) {

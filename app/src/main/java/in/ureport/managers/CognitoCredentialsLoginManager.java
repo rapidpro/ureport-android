@@ -1,8 +1,6 @@
 package in.ureport.managers;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.cognito.CognitoSyncManager;
@@ -53,6 +51,10 @@ public class CognitoCredentialsLoginManager {
 
     public static void logout() {
         logoutSocialNetworks();
+        clearCredentials();
+    }
+
+    private static void clearCredentials() {
         syncClient.wipeData();
 
         credentialsProvider.clear();
@@ -87,27 +89,17 @@ public class CognitoCredentialsLoginManager {
         LoginManager.getInstance().logOut();
     }
 
-    public static void refresh() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    credentialsProvider.refresh();
-                } catch(Exception exception) {
-                    Log.e(TAG, "refresh error: " + exception);
-                }
-                return null;
-            }
-        }.execute();
-    }
-
     public static void setFacebookLogin(AccessToken token) {
+        clearCredentials();
+
         Map<String, String> logins = new HashMap<>();
         logins.put("graph.facebook.com", token.getToken());
         credentialsProvider.setLogins(logins);
     }
 
     public static void setTwitterLogin(TwitterAuthToken authToken) {
+        clearCredentials();
+
         String value = authToken.token + ";" + authToken.secret;
         Map<String, String> logins = new HashMap<>();
         logins.put("api.twitter.com", value);
@@ -115,6 +107,7 @@ public class CognitoCredentialsLoginManager {
     }
 
     public static void setGoogleLogin(GoogleApiClient googleApiClient, final OnTaskFinishedListener onTaskFinishedListener) {
+        clearCredentials();
         GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
 
         GetGoogleAuthTokenTask getGoogleAuthTokenTask = new GetGoogleAuthTokenTask(context) {

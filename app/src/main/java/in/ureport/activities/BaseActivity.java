@@ -35,9 +35,9 @@ import java.util.Locale;
 import in.ureport.R;
 import in.ureport.loader.NotificationLoader;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.SpinnerColorSwitcher;
-import in.ureport.managers.UserViewManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.Notification;
@@ -157,10 +157,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             menuHeader.setOnClickListener(onMenuHeaderClickListener);
 
             ImageView picture = (ImageView) menuHeader.findViewById(R.id.picture);
-            picture.setImageResource(UserViewManager.getUserImage(this, user));
+            ImageLoader.loadToImageView(picture, user.getPicture());
 
             TextView name = (TextView) menuHeader.findViewById(R.id.name);
-            name.setText("@" + user.getNickname());
+            name.setText(user.getNickname());
 
             TextView points = (TextView) menuHeader.findViewById(R.id.points);
             points.setText(getString(R.string.menu_points, user.getPoints()));

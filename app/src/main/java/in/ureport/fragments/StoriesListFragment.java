@@ -102,16 +102,14 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<List<Story>> loader, List<Story> data) {
-        if(data != null && !data.isEmpty()) {
-            adapter = new StoriesAdapter(data);
-            if(needsUserPublish()) adapter.setUser(user);
-            adapter.setOnStoryViewListener(this);
-            adapter.setOnPublishStoryListener(onPublishStoryListener);
-            storiesList.setAdapter(adapter);
-            info.setVisibility(View.GONE);
-        } else {
-            info.setVisibility(View.VISIBLE);
-        }
+        adapter = new StoriesAdapter(data);
+        if(needsUserPublish()) adapter.setUser(user);
+        adapter.setOnStoryViewListener(this);
+        adapter.setOnPublishStoryListener(onPublishStoryListener);
+        storiesList.setAdapter(adapter);
+
+        if(!needsUserPublish())
+            info.setVisibility(data != null && !data.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     @Override

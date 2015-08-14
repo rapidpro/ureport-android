@@ -160,6 +160,7 @@
     <string name="caching_user_load_message">Caching user...</string>
     <string name="error_email_already_exists">There is an user with this email. Choose another!</string>
     <string name="error_nickname_already_exists">There is an user with the same nickname. Choose another!</string>
+    <string name="publishing_story_load_message">Publishing story...</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>

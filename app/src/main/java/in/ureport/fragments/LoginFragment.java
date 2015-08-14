@@ -54,8 +54,6 @@ import in.ureport.models.User;
  */
 public class LoginFragment extends Fragment implements FacebookCallback<LoginResult> {
 
-    private static final String TAG = "LoginFragment";
-
     public static final String [] FACEBOOK_PERMISSIONS = { "email", "user_birthday" };
     public static final int ERROR_RESOLUTION_REQUEST_CODE = 300;
 
@@ -188,7 +186,7 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         });
 
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "birthday,name,email,gender,picture");
+        parameters.putString("fields", "birthday,name,email,gender,picture.type(large)");
         request.setParameters(parameters);
         request.executeAsync();
     }

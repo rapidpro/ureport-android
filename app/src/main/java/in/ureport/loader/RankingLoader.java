@@ -7,6 +7,7 @@ import java.util.List;
 
 import in.ureport.db.business.UserBusiness;
 import in.ureport.db.repository.UserRepository;
+import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.pref.SystemPreferences;
 
@@ -21,8 +22,7 @@ public class RankingLoader extends AsyncTaskLoader<List<User>> {
 
     @Override
     public List<User> loadInBackground() {
-        UserRepository repository = new UserBusiness();
-        return repository.getAllOrdered();
+        return UserManager.getFakeUsers(getContext());
     }
 
 }

@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.support.annotation.StringRes;
 
 import in.ureport.R;
+import in.ureport.db.business.UserBusiness;
+import in.ureport.db.repository.UserRepository;
 import in.ureport.managers.CognitoCredentialsLoginManager;
 import in.ureport.managers.DynamoDBManager;
 import in.ureport.models.User;
@@ -23,6 +25,9 @@ public class CacheLoggedUserTask extends ProgressTask<User, Void, Boolean> {
     @Override
     protected Boolean doInBackground(User... users) {
         try {
+            UserRepository repository = new UserBusiness();
+            repository.deleteAll();
+
             User user = users[0];
             user.save();
 

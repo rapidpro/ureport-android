@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import in.ureport.R;
 import in.ureport.fragments.CredentialsLoginFragment;
@@ -63,12 +64,16 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onLoginWithCredentials() {
-        addCredentialsLoginFragment();
+        showDevMessage();
     }
 
     @Override
     public void onSkipLogin() {
-        createFakeDataAndProcced();
+        startMainActivity();
+    }
+
+    private void showDevMessage() {
+        Toast.makeText(this, "This function is in development! Use one of the social networks.", Toast.LENGTH_LONG).show();
     }
 
     private void addCredentialsLoginFragment() {
@@ -97,7 +102,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onSignUp() {
-        addSignUpFragment();
+        showDevMessage();
     }
 
     @Override
@@ -111,20 +116,10 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
                 UserManager.countryCode = user.getCountry();
 
                 CountryProgramManager.switchCountryProgram(user.getCountry());
-                createFakeDataAndProcced();
+                startMainActivity();
             }
         };
         cacheLoggedUserTask.execute(user);
-    }
-
-    private void createFakeDataAndProcced() {
-        new CreateFakeDataTask(this) {
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                startMainActivity();
-            }
-        }.execute();
     }
 
     private void startMainActivity() {

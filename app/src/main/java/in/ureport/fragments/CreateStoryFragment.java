@@ -124,7 +124,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             String markersText = markers.getText().toString();
             story.setMarkers(markersText.length() == 0 ? "" : markersText);
 
-            PublishStoryTask publishStoryTask = new PublishStoryTask() {
+            PublishStoryTask publishStoryTask = new PublishStoryTask(getActivity()) {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     super.onPostExecute(aVoid);
