@@ -105,9 +105,11 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="fill_vertical|top|start"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -137,7 +139,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@color/line"/>
 
-            <android.support.v7.widget.RecyclerView
+            <in.ureport.views.widgets.UntouchableRecyclerView
                 android:id="@+id/mediaList"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/item_media_size"
@@ -157,7 +159,7 @@
                 android:textSize="16sp"
                 tools:text="25 contributions" />
 
-            <android.support.v7.widget.RecyclerView
+            <in.ureport.views.widgets.UntouchableRecyclerView
                 android:id="@+id/contributionList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

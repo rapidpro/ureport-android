@@ -13,7 +13,7 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     signingConfigs {
-        release {
+        signature {
             keyAlias 'ureport'
             keyPassword 'htaq3XVfSucCEbS'
             storeFile file('/Users/johndalton/Documents/Ilhasoft/U-report/signature/ureport.jks')
@@ -31,13 +31,13 @@ android {
     }
     buildTypes {
         debug {
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.signature
         }
         release {
             minifyEnabled true
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.signature
         }
     }
 }
@@ -54,6 +54,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-plus:7.5.0'
     compile 'com.google.android.gms:play-services-identity:7.5.0'
     compile 'com.facebook.android:facebook-android-sdk:4.5.0'
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.firebase:firebase-client-android:2.3.1+'
     compile 'com.amazonaws:aws-android-sdk-core:2.+'
     compile 'com.amazonaws:aws-android-sdk-cognito:2.+'
     compile 'com.amazonaws:aws-android-sdk-ddb:2.+'

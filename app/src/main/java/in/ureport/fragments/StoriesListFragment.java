@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.listener.FloatingActionButtonListener;
@@ -28,11 +30,12 @@ import in.ureport.views.adapters.StoriesAdapter;
  * Created by johncordeiro on 7/13/15.
  */
 public class StoriesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Story>>
-        , StoriesAdapter.OnStoryViewListener {
+        , StoriesAdapter.OnStoryViewListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final int LOADER_ID_STORIES_LIST = 10;
     private static final String EXTRA_USER = "user";
 
+    private SwipeRefreshLayout swipeRefresh;
     private RecyclerView storiesList;
     private View info;
 
@@ -83,9 +86,16 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
     }
 
     private void setupView(View view) {
+        ResourceUtil resourceUtil = new ResourceUtil(getActivity());
+
+        swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
+        swipeRefresh.setColorSchemeColors(resourceUtil.getColorByAttr(R.attr.colorPrimary));
+        swipeRefresh.setOnRefreshListener(this);
+
         storiesList = (RecyclerView) view.findViewById(R.id.storiesList);
         storiesList.setLayoutManager(new LinearLayoutManager(getActivity()));
         storiesList.addOnScrollListener(new RecyclerScrollListener(floatingActionButtonListener));
+        setupStoriesAdapter();
 
         info = view.findViewById(R.id.info);
     }
@@ -102,14 +112,20 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<List<Story>> loader, List<Story> data) {
-        adapter = new StoriesAdapter(data);
+        swipeRefresh.setRefreshing(false);
+        adapter.setStories(data);
+
+        if(!needsUserPublish())
+            info.setVisibility(data != null && !data.isEmpty() ? View.GONE : View.VISIBLE);
+    }
+
+    private void setupStoriesAdapter() {
+        adapter = new StoriesAdapter();
+        adapter.setHasStableIds(true);
         if(needsUserPublish()) adapter.setUser(user);
         adapter.setOnStoryViewListener(this);
         adapter.setOnPublishStoryListener(onPublishStoryListener);
         storiesList.setAdapter(adapter);
-
-        if(!needsUserPublish())
-            info.setVisibility(data != null && !data.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -138,5 +154,10 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
 
     private boolean needsUserPublish() {
         return publicType && UserManager.userLoggedIn && user != null;
+    }
+
+    @Override
+    public void onRefresh() {
+        getLoaderManager().restartLoader(0, null, this).forceLoad();
     }
 }

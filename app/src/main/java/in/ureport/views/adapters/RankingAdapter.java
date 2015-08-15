@@ -55,7 +55,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void bindView(User user) {
-            name.setText("@"+user.getNickname());
+            name.setText(user.getNickname());
             picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
             points.setText(String.valueOf(user.getPoints()));
         }

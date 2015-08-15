@@ -10,6 +10,7 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.db.business.UserBusiness;
 import in.ureport.db.repository.UserRepository;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatGroup;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
@@ -28,9 +29,7 @@ public class ChatRoomsLoader extends AsyncTaskLoader<List<ChatRoom>> {
     @Override
     public List<ChatRoom> loadInBackground() {
         List<ChatRoom> chatRooms = new ArrayList<>();
-
-        UserRepository userRepository = new UserBusiness();
-        List<User> users = userRepository.getAll();
+        List<User> users = UserManager.getFakeUsers(getContext());
 
         Calendar date1 = Calendar.getInstance();
         date1.roll(Calendar.HOUR, -1);

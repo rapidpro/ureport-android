@@ -13,8 +13,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.DateFormatter;
 import in.ureport.R;
-import in.ureport.managers.UserViewManager;
+import in.ureport.managers.ImageLoader;
 import in.ureport.models.Contribution;
 import in.ureport.models.User;
 
@@ -31,6 +32,8 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<Contribution> contributions;
     private User user;
 
+    private OnContributionAddListener onContributionAddListener;
+
     public ContributionAdapter(User user) {
         this.user = user;
         setHasStableIds(true);
@@ -45,7 +48,6 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             default:
                 return new ItemViewHolder(inflater.inflate(R.layout.item_contribution, parent, false));
         }
-
     }
 
     @Override
@@ -60,8 +62,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if(getItemViewType(position) == TYPE_ITEM_ADD) {
             return ADD_MEDIA_ITEM_ID;
         }
-        String id = contributions.get(position).hashCode() + "" + position;
-        return id.hashCode();
+        return contributions.get(position).getId().hashCode();
     }
 
     @Override
@@ -75,7 +76,6 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public int getItemCount() {
         if(contributions == null) return 0;
-
         return contributions.size() + 1;
     }
 
@@ -84,8 +84,15 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
-    private void addContribution(Contribution contribution) {
+    public void addContribution(Contribution contribution) {
+        if(contributions == null) new ArrayList<>();
+
         contributions.add(contribution);
+        notifyDataSetChanged();
+    }
+
+    public void setContributions(List<Contribution> contributions) {
+        this.contributions = contributions;
         notifyDataSetChanged();
     }
 
@@ -111,11 +118,8 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         };
 
         private void addNewContribution() {
-            String nameText = description.getText().toString();
             if(description.length() > 0) {
-                Contribution contribution = new Contribution(nameText, user);
-                addContribution(contribution);
-                AddItemViewHolder.this.description.setText("");
+                if(onContributionAddListener != null) onContributionAddListener.onContributionAdd(description);
             }
         }
 
@@ -133,20 +137,37 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final TextView contribution;
         private final TextView author;
         private final ImageView picture;
+        private final TextView date;
+
+        private final DateFormatter dateFormatter;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
 
+            dateFormatter = new DateFormatter();
+
             picture = (ImageView) itemView.findViewById(R.id.picture);
             contribution = (TextView) itemView.findViewById(R.id.contribution);
             author = (TextView) itemView.findViewById(R.id.author);
+            date = (TextView) itemView.findViewById(R.id.date);
         }
 
         private void bindView(Contribution contribution) {
-            this.picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
-            this.contribution.setText(contribution.getContribution());
-            this.author.setText("@"+user.getNickname());
+            ImageLoader.loadToImageView(picture, contribution.getAuthor().getPicture());
+            this.contribution.setText(contribution.getContent());
+            this.author.setText(contribution.getAuthor().getNickname());
 
+            String timeElapsed = dateFormatter.getTimeElapsed(contribution.getCreatedDate().getTime()
+                    , itemView.getContext().getString(R.string.date_now));
+            this.date.setText(timeElapsed.toLowerCase());
         }
+    }
+
+    public void setOnContributionAddListener(OnContributionAddListener onContributionAddListener) {
+        this.onContributionAddListener = onContributionAddListener;
+    }
+
+    public interface OnContributionAddListener {
+        void onContributionAdd(EditText contentText);
     }
 }

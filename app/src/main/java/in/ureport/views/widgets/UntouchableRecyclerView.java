@@ -4,11 +4,13 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 
 /**
  * Created by johndalton on 14/02/15.
  */
 public class UntouchableRecyclerView extends RecyclerView {
+
     public UntouchableRecyclerView(Context context) {
         super(context);
     }
@@ -22,8 +24,19 @@ public class UntouchableRecyclerView extends RecyclerView {
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        switch (ev.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                return false;
+            default:
+                return super.onTouchEvent(ev);
+        }
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent event) {
         onTouchEvent(event);
         return false;
     }
+
 }

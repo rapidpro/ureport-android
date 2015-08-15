@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
@@ -32,8 +33,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private OnStoryViewListener onStoryViewListener;
     private OnPublishStoryListener onPublishStoryListener;
 
-    public StoriesAdapter(List<Story> stories) {
-        this.stories = stories;
+    public StoriesAdapter() {
+        this.stories = new ArrayList<>();
     }
 
     @Override
@@ -66,6 +67,12 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
+    public long getItemId(int position) {
+        return getItemViewType(position) == TYPE_HEADER
+                ? 0 : stories.get(getListPosition(position)).getStoryId().hashCode();
+    }
+
+    @Override
     public int getItemCount() {
         if(publicType) return stories.size() + 1;
         return stories.size();
@@ -83,6 +90,11 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setOnPublishStoryListener(OnPublishStoryListener onPublishStoryListener) {
         this.onPublishStoryListener = onPublishStoryListener;
+    }
+
+    public void setStories(List<Story> stories) {
+        this.stories = stories;
+        notifyDataSetChanged();
     }
 
     public void setUser(User user) {

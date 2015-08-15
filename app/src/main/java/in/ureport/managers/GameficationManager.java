@@ -49,8 +49,12 @@ public class GameficationManager {
         ranking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                alertDialog.dismiss();
-                PrototypeManager.showPrototypeAlert(context);
+                PrototypeManager.showPrototypeAlert(context, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertDialog.cancel();
+                    }
+                });
             }
         });
     }
