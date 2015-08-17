@@ -30,8 +30,7 @@ public class GroupInfoActivity extends AppCompatActivity {
             ChatGroup chatGroup = getIntent().getParcelableExtra(EXTRA_CHAT_GROUP);
 
             GroupChatRoom groupChatRoom = new GroupChatRoom();
-            groupChatRoom.setChatGroup(chatGroup);
-            groupChatRoom.setParticipants(new ArrayList<User>());
+
 
             GroupInfoFragment groupInfoFragment = GroupInfoFragment.newInstance(groupChatRoom);
             getSupportFragmentManager().beginTransaction()

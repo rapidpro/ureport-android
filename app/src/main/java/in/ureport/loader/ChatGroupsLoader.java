@@ -5,14 +5,10 @@ import android.support.v4.content.AsyncTaskLoader;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.db.business.UserBusiness;
-import in.ureport.db.repository.UserRepository;
 import in.ureport.models.ChatGroup;
-import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 19/07/15.

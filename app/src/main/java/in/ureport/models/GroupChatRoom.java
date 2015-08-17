@@ -2,31 +2,63 @@ package in.ureport.models;
 
 import android.os.Parcel;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
 public class GroupChatRoom extends ChatRoom {
 
-    private ChatGroup chatGroup;
+    private String title;
 
-    private List<User> participants;
+    private String description;
 
-    public ChatGroup getChatGroup() {
-        return chatGroup;
+    private String picture;
+
+    private Date creationDate;
+
+    private Boolean publicAccess;
+
+    private Type type = Type.Group;
+
+    public String getTitle() {
+        return title;
     }
 
-    public void setChatGroup(ChatGroup chatGroup) {
-        this.chatGroup = chatGroup;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public List<User> getParticipants() {
-        return participants;
+    public String getDescription() {
+        return description;
     }
 
-    public void setParticipants(List<User> participants) {
-        this.participants = participants;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Boolean getPublicAccess() {
+        return publicAccess;
+    }
+
+    public void setPublicAccess(Boolean publicAccess) {
+        this.publicAccess = publicAccess;
     }
 
     @Override
@@ -37,8 +69,12 @@ public class GroupChatRoom extends ChatRoom {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeParcelable(this.chatGroup, flags);
-        dest.writeTypedList(participants);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeString(this.picture);
+        dest.writeLong(creationDate != null ? creationDate.getTime() : -1);
+        dest.writeValue(this.publicAccess);
+        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
     }
 
     public GroupChatRoom() {
@@ -46,8 +82,14 @@ public class GroupChatRoom extends ChatRoom {
 
     protected GroupChatRoom(Parcel in) {
         super(in);
-        this.chatGroup = in.readParcelable(ChatGroup.class.getClassLoader());
-        this.participants = in.createTypedArrayList(User.CREATOR);
+        this.title = in.readString();
+        this.description = in.readString();
+        this.picture = in.readString();
+        long tmpCreationDate = in.readLong();
+        this.creationDate = tmpCreationDate == -1 ? null : new Date(tmpCreationDate);
+        this.publicAccess = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        int tmpType = in.readInt();
+        this.type = tmpType == -1 ? null : Type.values()[tmpType];
     }
 
     public static final Creator<GroupChatRoom> CREATOR = new Creator<GroupChatRoom>() {

@@ -18,7 +18,6 @@ import in.ureport.R;
 import in.ureport.managers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.UserManager;
-import in.ureport.managers.UserViewManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.views.adapters.NavigationAdapter;
@@ -101,7 +100,7 @@ public class ProfileFragment extends Fragment {
             setupPagerWithUser(user);
 
             name.setText(user.getNickname());
-            ImageLoader.loadToImageView(picture, user.getPicture());
+            ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
 
             points.setText(getString(R.string.menu_points, user.getPoints()));
             polls.setText(getString(R.string.profile_polls, user.getPolls()));

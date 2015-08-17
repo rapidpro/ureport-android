@@ -41,8 +41,6 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
 
     private EditTextValidator validator;
 
-    private ChatCreationListener chatCreationListener;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -110,8 +108,7 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
                 .setNeutralButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (chatCreationListener != null)
-                            chatCreationListener.onChatRoomCreated();
+
                     }
                 }).create();
         alertDialog.show();
@@ -138,10 +135,6 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoaderReset(Loader<List<User>> loader) {}
-
-    public void setChatCreationListener(ChatCreationListener chatCreationListener) {
-        this.chatCreationListener = chatCreationListener;
-    }
 
     private View.OnClickListener onAddPictureClickListener = new View.OnClickListener() {
         @Override

@@ -157,7 +157,7 @@
 
         <meta-data
             android:name="AA_MODELS"
-            android:value="in.ureport.models.User,in.ureport.models.Story,in.ureport.models.Marker" />
+            android:value="in.ureport.models.Story,in.ureport.models.Marker" />
 
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
 

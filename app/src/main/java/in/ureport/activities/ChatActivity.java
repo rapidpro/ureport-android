@@ -38,9 +38,9 @@ public class ChatActivity extends BaseActivity {
 
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager(), chatGroupItem, chatRoomsItem, inviteItem);
         pager.setAdapter(adapter);
-        pager.setCurrentItem(1);
-
         getTabLayout().setupWithViewPager(pager);
+        pager.setOffscreenPageLimit(3);
+        pager.setCurrentItem(1);
 
         getMainActionButton().setImageResource(R.drawable.ic_edit_white_24dp);
         getMainActionButton().setOnClickListener(onCreateChatClickListener);

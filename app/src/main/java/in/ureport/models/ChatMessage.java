@@ -7,13 +7,21 @@ import java.util.Date;
  */
 public class ChatMessage {
 
+    private String key;
+
     private String message;
 
     private Date date;
 
     private User user;
 
-    private ChatRoom chatRoom;
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 
     public String getMessage() {
         return message;
@@ -39,11 +47,4 @@ public class ChatMessage {
         this.user = user;
     }
 
-    public ChatRoom getChatRoom() {
-        return chatRoom;
-    }
-
-    public void setChatRoom(ChatRoom chatRoom) {
-        this.chatRoom = chatRoom;
-    }
 }

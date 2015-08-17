@@ -4,8 +4,9 @@
 
     <string name="app_name">U-Report</string>
 
-    <string name="login_username">Username</string>
+    <string name="login_email">Email</string>
     <string name="login_password">Password</string>
+    <string name="email">Email</string>
     <string name="error_required_field">Required field</string>
     <string name="login">Login</string>
     <string name="login_facebook">Facebook</string>
@@ -15,7 +16,7 @@
     <string name="login_or">Or</string>
     <string name="login_sign_up">Don\'t have an account? Sign up</string>
     <string name="sign_up_name">Name</string>
-    <string name="sign_up_username">Username</string>
+    <string name="sign_up_nickname">Nickname</string>
     <string name="sign_up_email">E-mail</string>
     <string name="sign_up_birthday">Birthday</string>
     <string name="sign_up_confirm">Confirm</string>
@@ -163,6 +164,16 @@
     <string name="publishing_story_load_message">Publishing story...</string>
     <string name="load_message_publishing_contribution">Publishing contribution...</string>
     <string name="date_now">right now</string>
+    <string name="load_registering_user">Registering user...</string>
+    <string name="load_message_logging">Logging...</string>
+    <string name="info_forgot_password">We will send a new password through email.</string>
+    <string name="send">Send</string>
+    <string name="error_forgot_password">This email doesn\'t exists.</string>
+    <string name="load_message_reset_password">Resetting password...</string>
+    <string name="error_email_check">Your password was resetted. Please check your email to get the new password.</string>
+    <string name="label_login">Login</string>
+    <string name="label_forgot_password">Forgot password</string>
+    <string name="label_data_confirmation">Dados</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>
@@ -192,5 +203,8 @@
         <item>State 14</item>
         <item>State 15</item>
     </string-array>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

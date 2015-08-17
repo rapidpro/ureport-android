@@ -8,31 +8,36 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
-import in.ureport.managers.UserViewManager;
-import in.ureport.models.ChatGroup;
+import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.ImageLoader;
+import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.models.IndividualChatRoom;
 import in.ureport.models.User;
+import in.ureport.models.holders.ChatRoomHolder;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
 public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<ChatRoom> chatRooms;
+    private List<ChatRoomHolder> chatRooms;
 
     private DateFormat hourFormatter;
 
     private OnChatRoomSelectedListener onChatRoomSelectedListener;
 
-    public ChatRoomsAdapter(List<ChatRoom> chatRooms) {
-        this.chatRooms = chatRooms;
+    public ChatRoomsAdapter() {
+        this.chatRooms = new ArrayList<>();
+
         hourFormatter = DateFormat.getTimeInstance(DateFormat.SHORT);
+        setHasStableIds(true);
     }
 
     @Override
@@ -47,67 +52,81 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
+    public long getItemId(int position) {
+        return chatRooms.get(position).chatRoom.getKey().hashCode();
+    }
+
+    @Override
     public int getItemCount() {
         return chatRooms.size();
+    }
+
+    public void addChatRoom(ChatRoomHolder chatRoom) {
+        chatRooms.add(chatRoom);
+        notifyDataSetChanged();
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView picture;
         private final TextView name;
-        private final TextView lastMessage;
+        private final TextView lastMessageText;
         private final TextView lastMessageDate;
         private final TextView unreadMessages;
-
-        private final ResourceUtil resourceUtil;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            resourceUtil = new ResourceUtil(itemView.getContext());
-
             name = (TextView) itemView.findViewById(R.id.name);
             picture = (ImageView) itemView.findViewById(R.id.picture);
-            lastMessage = (TextView) itemView.findViewById(R.id.lastMessage);
+            lastMessageText = (TextView) itemView.findViewById(R.id.lastMessage);
             lastMessageDate = (TextView) itemView.findViewById(R.id.lastMessageDate);
             unreadMessages = (TextView) itemView.findViewById(R.id.unreadMessages);
             itemView.setOnClickListener(onItemClickListener);
         }
 
-        private void bindView(ChatRoom chatRoom) {
+        private void bindView(ChatRoomHolder chatRoomHolder) {
+            ChatRoom chatRoom = chatRoomHolder.chatRoom;
+
             if(chatRoom instanceof IndividualChatRoom) {
-                User friend = ((IndividualChatRoom)chatRoom).getFriend();
+                User friend = getFriend(chatRoomHolder);
                 name.setText(friend.getNickname());
-                picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), friend));
+                ImageLoader.loadPersonPictureToImageView(picture, friend.getPicture());
             } else if(chatRoom instanceof GroupChatRoom) {
-                ChatGroup chatGroup = ((GroupChatRoom)chatRoom).getChatGroup();
+                GroupChatRoom chatGroup = ((GroupChatRoom)chatRoom);
                 name.setText(chatGroup.getTitle());
-                picture.setImageResource(getGroupPicture(chatGroup));
+                ImageLoader.loadPersonPictureToImageView(picture, chatGroup.getPicture());
             }
 
-            if(chatRoom.getLastMessage() != null) {
-                lastMessage.setVisibility(View.VISIBLE);
-                lastMessage.setText(chatRoom.getLastMessage());
+            if(chatRoomHolder.lastMessage != null) {
+                lastMessageText.setVisibility(View.VISIBLE);
+                lastMessageText.setText(chatRoomHolder.lastMessage.getMessage());
 
-                unreadMessages.setVisibility(View.VISIBLE);
-                unreadMessages.setText(String.valueOf(chatRoom.getUnreadMessages()));
+                lastMessageDate.setVisibility(View.VISIBLE);
+                lastMessageDate.setText(hourFormatter.format(chatRoomHolder.lastMessage.getDate()));
             } else {
-                lastMessage.setVisibility(View.GONE);
+                lastMessageText.setVisibility(View.GONE);
                 unreadMessages.setVisibility(View.GONE);
+                lastMessageDate.setVisibility(View.GONE);
             }
-
-            lastMessageDate.setText(hourFormatter.format(chatRoom.getLastMessageDate()));
         }
 
-        private int getGroupPicture(ChatGroup chatGroup) {
-            return resourceUtil.getDrawableId(chatGroup.getPicture(), R.drawable.face);
+        private User getFriend(ChatRoomHolder chatRoomHolder) {
+            for (User user : chatRoomHolder.members.getUsers()) {
+                if(!user.getKey().equals(FirebaseManager.getAuthUserKey())) {
+                    return user;
+                }
+            }
+            return null;
         }
 
         private View.OnClickListener onItemClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (onChatRoomSelectedListener != null)
-                    onChatRoomSelectedListener.onChatRoomSelected(chatRooms.get(getLayoutPosition()));
+                if (onChatRoomSelectedListener != null) {
+                    ChatRoomHolder chatRoomHolder = chatRooms.get(getLayoutPosition());
+                    onChatRoomSelectedListener.onChatRoomSelected(chatRoomHolder.chatRoom, chatRoomHolder.members);
+                }
             }
         };
     }
@@ -117,6 +136,6 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public interface OnChatRoomSelectedListener {
-        void onChatRoomSelected(ChatRoom chatRoom);
+        void onChatRoomSelected(ChatRoom chatRoom, ChatMembers chatMembers);
     }
 }

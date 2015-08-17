@@ -62,7 +62,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if(getItemViewType(position) == TYPE_ITEM_ADD) {
             return ADD_MEDIA_ITEM_ID;
         }
-        return contributions.get(position).getId().hashCode();
+        return contributions.get(position).getKey().hashCode();
     }
 
     @Override
@@ -85,10 +85,14 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void addContribution(Contribution contribution) {
-        if(contributions == null) new ArrayList<>();
-
-        contributions.add(contribution);
-        notifyDataSetChanged();
+        if(contributions == null) {
+            contributions = new ArrayList<>();
+            contributions.add(contribution);
+            notifyDataSetChanged();
+        } else {
+            contributions.add(contribution);
+            notifyItemInserted(contributions.size());
+        }
     }
 
     public void setContributions(List<Contribution> contributions) {
@@ -153,7 +157,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         private void bindView(Contribution contribution) {
-            ImageLoader.loadToImageView(picture, contribution.getAuthor().getPicture());
+            ImageLoader.loadPersonPictureToImageView(picture, contribution.getAuthor().getPicture());
             this.contribution.setText(contribution.getContent());
             this.author.setText(contribution.getAuthor().getNickname());
 

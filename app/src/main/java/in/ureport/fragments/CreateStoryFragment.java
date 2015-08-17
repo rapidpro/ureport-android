@@ -17,6 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +29,7 @@ import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.models.Marker;
 import in.ureport.models.Story;
-import in.ureport.tasks.PublishStoryTask;
+import in.ureport.network.StoryServices;
 import in.ureport.util.SpaceItemDecoration;
 import in.ureport.views.adapters.MediaAdapter;
 
@@ -124,15 +127,15 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             String markersText = markers.getText().toString();
             story.setMarkers(markersText.length() == 0 ? "" : markersText);
 
-            PublishStoryTask publishStoryTask = new PublishStoryTask(getActivity()) {
+            StoryServices storyServices = new StoryServices();
+            storyServices.saveStory(story, new Firebase.CompletionListener() {
                 @Override
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
-                    if(storyCreationListener != null)
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    if (firebaseError == null && storyCreationListener != null) {
                         storyCreationListener.onStoryCreated(story);
+                    }
                 }
-            };
-            publishStoryTask.execute(story);
+            });
         }
     }
 

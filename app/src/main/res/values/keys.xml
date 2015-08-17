@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="identity_pool_id">us-east-1:938eb41c-68e0-4196-b542-988fdf02e10e</string>
     <string name="facebook_app_id">1021658627874726</string>
 
     <string name="twitter_key">SKYXxzv0LeBdETT19fn2X3PkN</string>
     <string name="twitter_secret">QKCoixE3KhAXTOAI19N1SXRCKzPp2iAwqVvtbAYQbwzupmkGUp</string>
+    <string name="firebase_app">https://u-report.firebaseio.com</string>
 
 </resources>

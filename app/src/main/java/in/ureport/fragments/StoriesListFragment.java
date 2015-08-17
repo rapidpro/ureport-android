@@ -4,38 +4,39 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.List;
 
-import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.listener.FloatingActionButtonListener;
-import in.ureport.loader.StoriesLoader;
 import in.ureport.managers.RecyclerScrollListener;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.network.StoryServices;
+import in.ureport.network.UserServices;
+import in.ureport.util.ChildEventListenerAdapter;
 import in.ureport.views.adapters.StoriesAdapter;
 
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class StoriesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Story>>
-        , StoriesAdapter.OnStoryViewListener, SwipeRefreshLayout.OnRefreshListener {
+public class StoriesListFragment extends Fragment implements StoriesAdapter.OnStoryViewListener {
 
-    private static final int LOADER_ID_STORIES_LIST = 10;
     private static final String EXTRA_USER = "user";
 
-    private SwipeRefreshLayout swipeRefresh;
     private RecyclerView storiesList;
     private View info;
 
@@ -46,6 +47,9 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
 
     private FloatingActionButtonListener floatingActionButtonListener;
     private StoriesAdapter adapter;
+
+    private StoryServices storyServices;
+    private UserServices userServices;
 
     public static StoriesListFragment newInstance(User user) {
         StoriesListFragment storiesListFragment = new StoriesListFragment();
@@ -65,6 +69,7 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
             user = extras.getParcelable(EXTRA_USER);
             publicType = false;
         }
+
     }
 
     @Nullable
@@ -77,46 +82,33 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setupObjects();
         setupView(view);
         loadStories();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        storyServices.removeChildEventListener(childEventListener);
+    }
+
+    private void setupObjects() {
+        storyServices = new StoryServices();
+        userServices = new UserServices();
+    }
+
     public void loadStories() {
-        getLoaderManager().initLoader(LOADER_ID_STORIES_LIST, null, this).forceLoad();
+        storyServices.addChildEventListener(childEventListener);
     }
 
     private void setupView(View view) {
-        ResourceUtil resourceUtil = new ResourceUtil(getActivity());
-
-        swipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
-        swipeRefresh.setColorSchemeColors(resourceUtil.getColorByAttr(R.attr.colorPrimary));
-        swipeRefresh.setOnRefreshListener(this);
-
         storiesList = (RecyclerView) view.findViewById(R.id.storiesList);
         storiesList.setLayoutManager(new LinearLayoutManager(getActivity()));
         storiesList.addOnScrollListener(new RecyclerScrollListener(floatingActionButtonListener));
         setupStoriesAdapter();
 
         info = view.findViewById(R.id.info);
-    }
-
-    @Override
-    public Loader<List<Story>> onCreateLoader(int id, Bundle args) {
-        StoriesLoader loader;
-        if(publicType)
-            loader = new StoriesLoader(getActivity());
-        else
-            loader = new StoriesLoader(getActivity(), user);
-        return loader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Story>> loader, List<Story> data) {
-        swipeRefresh.setRefreshing(false);
-        adapter.setStories(data);
-
-        if(!needsUserPublish())
-            info.setVisibility(data != null && !data.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void setupStoriesAdapter() {
@@ -127,9 +119,6 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
         adapter.setOnPublishStoryListener(onPublishStoryListener);
         storiesList.setAdapter(adapter);
     }
-
-    @Override
-    public void onLoaderReset(Loader<List<Story>> loader) {}
 
     @Override
     public void onStoryViewClick(Story story) {
@@ -152,12 +141,61 @@ public class StoriesListFragment extends Fragment implements LoaderManager.Loade
         if(adapter != null && needsUserPublish()) adapter.setUser(user);
     }
 
+    private void updateStories(List<Story> stories) {
+        if(!needsUserPublish())
+            info.setVisibility(stories != null && !stories.isEmpty() ? View.GONE : View.VISIBLE);
+
+        adapter.addStories(stories);
+    }
+
     private boolean needsUserPublish() {
         return publicType && UserManager.userLoggedIn && user != null;
     }
 
-    @Override
-    public void onRefresh() {
-        getLoaderManager().restartLoader(0, null, this).forceLoad();
+    private ChildEventListener childEventListener = new ChildEventListenerAdapter() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String previous) {
+            super.onChildAdded(dataSnapshot, previous);
+            updateStoryFromSnapshot(dataSnapshot);
+        }
+    };
+
+    private void updateStoryFromSnapshot(DataSnapshot dataSnapshot) {
+        Story story = dataSnapshot.getValue(Story.class);
+        story.setKey(dataSnapshot.getKey());
+
+        List<Story> stories = new ArrayList<>();
+        stories.add(story);
+        loadUsersFromStories(stories, onAfterUsersLoadedListener);
+    }
+
+    private OnAfterUsersLoadedListener onAfterUsersLoadedListener = new OnAfterUsersLoadedListener() {
+        @Override
+        public void onAfterUsersLoaded(List<Story> stories) {
+            updateStories(stories);
+        }
+    };
+
+    private void loadUsersFromStories(final List<Story> stories, final OnAfterUsersLoadedListener onAfterUsersLoadedListener) {
+        for (int position = 0; position < stories.size(); position++) {
+            final Story story = stories.get(position);
+            final int index = position;
+
+            userServices.getUser(story.getUser().getKey(), new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    story.setUser(user);
+
+                    if(index == stories.size()-1) onAfterUsersLoadedListener.onAfterUsersLoaded(stories);
+                }
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {}
+            });
+        }
+    }
+
+    private interface OnAfterUsersLoadedListener {
+        void onAfterUsersLoaded(List<Story> stories);
     }
 }

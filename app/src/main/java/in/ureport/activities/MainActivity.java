@@ -1,6 +1,5 @@
 package in.ureport.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import in.ureport.fragments.NewsFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.listener.FloatingActionButtonListener;
-import in.ureport.managers.CognitoCredentialsLoginManager;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
@@ -92,19 +90,9 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch(requestCode) {
-            case REQUEST_CODE_CREATE_STORY:
-                if(resultCode == Activity.RESULT_OK) {
-                    storiesListFragment.loadStories();
-                }
-        }
-    }
-
     private void setupView() {
         pager = (ViewPager) findViewById(R.id.pager);
+        pager.setOffscreenPageLimit(3);
         pager.addOnPageChangeListener(onPageChangeListener);
         setupNavigationAdapter();
         hideFloatingButtonDelayed();

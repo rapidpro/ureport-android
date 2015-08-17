@@ -1,13 +1,9 @@
 package in.ureport.network;
 
-import android.support.annotation.NonNull;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.Firebase;
 
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import in.ureport.managers.DynamoDBManager;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
 import in.ureport.models.User;
@@ -17,42 +13,20 @@ import in.ureport.models.User;
  */
 public class ContributionServices {
 
-    public List<Contribution> loadContributionForStory(Story story) {
-        Contribution contribution = new Contribution();
-        contribution.setStory(story);
+    public static final String path = "contribution";
 
-        DynamoDBQueryExpression<Contribution> queryExpression = new DynamoDBQueryExpression<Contribution>()
-                .withIndexName("createdDate-index")
-                .withHashKeyValues(contribution)
-                .withConsistentRead(false);
+    public void saveContribution(Story story, Contribution contribution, Firebase.CompletionListener listener) {
+        User user = new User();
+        user.setKey(contribution.getAuthor().getKey());
+        contribution.setAuthor(user);
 
-        return new ArrayList<>(DynamoDBManager.getMapper().query(Contribution.class, queryExpression));
+        Firebase object = FirebaseManager.getReference().child(path).child(story.getKey()).push();
+        object.setValue(contribution, listener);
+        contribution.setKey(object.getKey());
     }
 
-    public void loadUsersForContributions(List<Contribution> contributions) {
-        List<Object> users = (List)getUsersFromContributions(contributions);
-
-        UserServices services = new UserServices();
-        List<User> usersLoaded = services.loadUsers(users);
-        replaceStoriesWithUsersLoaded(contributions, usersLoaded);
-    }
-
-    private void replaceStoriesWithUsersLoaded(List<Contribution> contributions, List<User> usersLoaded) {
-        for (Contribution contribution : contributions) {
-            User user = contribution.getAuthor();
-            int userIndex = usersLoaded.indexOf(user);
-            if(userIndex >= 0) contribution.setAuthor(usersLoaded.get(userIndex));
-        }
-    }
-
-    @NonNull
-    private List<User> getUsersFromContributions(List<Contribution> contributions) {
-        List<User> users = new ArrayList<>();
-        for (Contribution contribution : contributions) {
-            if(!users.contains(contribution.getAuthor()))
-                users.add(contribution.getAuthor());
-        }
-        return users;
+    public void addChildEventListener(Story story, ChildEventListener childEventListener) {
+        FirebaseManager.getReference().child(path).child(story.getKey()).addChildEventListener(childEventListener);
     }
     
 }

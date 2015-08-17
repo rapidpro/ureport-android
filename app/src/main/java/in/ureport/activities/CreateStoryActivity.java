@@ -17,11 +17,14 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.GameficationManager;
 import in.ureport.models.Marker;
 import in.ureport.models.Story;
+import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 7/14/15.
  */
 public class CreateStoryActivity extends AppCompatActivity implements CreateStoryFragment.StoryCreationListener, SelectionResultListener<Marker> {
+
+    public static final String EXTRA_USER = "user";
 
     private CreateStoryFragment createStoryFragment;
 

@@ -1,21 +1,19 @@
 package in.ureport.activities;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import in.ureport.R;
-import in.ureport.fragments.CreateGroupFragment;
 import in.ureport.fragments.NewChatFragment;
-import in.ureport.listener.ChatCreationListener;
+import in.ureport.listener.OnChatRoomCreatedListener;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.models.ChatRoom;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class ChatCreationActivity extends AppCompatActivity implements ChatCreationListener {
+public class ChatCreationActivity extends AppCompatActivity implements OnChatRoomCreatedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +39,7 @@ public class ChatCreationActivity extends AppCompatActivity implements ChatCreat
 
     private void addNewChatFragment() {
         NewChatFragment newChatFragment = new NewChatFragment();
-        newChatFragment.setChatCreationListener(this);
+        newChatFragment.setOnChatRoomCreatedListener(this);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content, newChatFragment)
                 .commit();
@@ -54,31 +52,7 @@ public class ChatCreationActivity extends AppCompatActivity implements ChatCreat
     }
 
     @Override
-    public void onCreateGroupChatCalled() {
-        CreateGroupFragment createGroupFragment = new CreateGroupFragment();
-        createGroupFragment.setChatCreationListener(this);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content, createGroupFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    @Override
-    public void onCreateIndividualChatCalled() {
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setMessage(R.string.chat_create_individual_message)
-                .setNegativeButton(R.string.cancel_dialog_button, null)
-                .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        onChatRoomCreated();
-                    }
-                }).create();
-        alertDialog.show();
-    }
-
-    @Override
-    public void onChatRoomCreated() {
+    public void onChatRoomCreated(ChatRoom chatRoom) {
         finish();
     }
 }

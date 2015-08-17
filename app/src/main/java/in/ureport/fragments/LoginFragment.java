@@ -20,46 +20,41 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.firebase.client.AuthData;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterApiClient;
-import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterAuthClient;
-
-import org.json.JSONObject;
 
 import java.util.Arrays;
 
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
-import in.ureport.listener.OnTaskFinishedListener;
-import in.ureport.managers.CognitoCredentialsLoginManager;
-import in.ureport.managers.UserSocialNetworkBuilder;
+import in.ureport.managers.UserSocialAuthBuilder;
 import in.ureport.models.User;
+import in.ureport.managers.FirebaseManager;
 
 /**
  * Created by johncordeiro on 7/7/15.
  */
-public class LoginFragment extends Fragment implements FacebookCallback<LoginResult> {
+public class LoginFragment extends Fragment implements Firebase.AuthResultHandler {
 
     public static final String [] FACEBOOK_PERMISSIONS = { "email", "user_birthday" };
     public static final int ERROR_RESOLUTION_REQUEST_CODE = 300;
 
     private LoginListener loginListener;
     private StatusBarDesigner statusBarDesigner;
-    private UserSocialNetworkBuilder userSocialNetworkBuilder;
+    private UserSocialAuthBuilder userSocialAuthBuilder;
 
     private CallbackManager callbackManager;
     private TwitterAuthClient twitterAuthClient;
@@ -103,7 +98,7 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         FacebookSdk.sdkInitialize(getActivity());
 
         statusBarDesigner = new StatusBarDesigner();
-        userSocialNetworkBuilder = new UserSocialNetworkBuilder();
+        userSocialAuthBuilder = new UserSocialAuthBuilder();
         callbackManager = CallbackManager.Factory.create();
         twitterAuthClient = new TwitterAuthClient();
 
@@ -163,46 +158,27 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         }
     };
 
-    @Override
-    public void onSuccess(LoginResult loginResult) {
-        CognitoCredentialsLoginManager.setFacebookLogin(loginResult.getAccessToken());
-        requestFacebookUserInfo(loginResult);
-    }
+    private FacebookCallback<LoginResult> onFacebookLoginCallback = new FacebookCallback<LoginResult>() {
 
-    private void requestFacebookUserInfo(LoginResult loginResult) {
-        final ProgressDialog progressDialog = showLoadUserProgress();
+        @Override
+        public void onSuccess(LoginResult loginResult) {
+            loadUserDialog = showLoadUserProgress();
+            FirebaseManager.authenticateWithFacebook(loginResult.getAccessToken(), LoginFragment.this);
+        }
 
-        GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-            @Override
-            public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
-                progressDialog.dismiss();
-                if (graphResponse != null && graphResponse.getError() == null) {
-                    User user = userSocialNetworkBuilder.buildUserFromFacebook(jsonObject);
-                    if (loginListener != null) loginListener.onLoginWithSocialNetwork(user);
-                } else {
-                    showLoginErrorAlert();
-                }
-            }
-        });
+        @Override
+        public void onCancel() {}
 
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "birthday,name,email,gender,picture.type(large)");
-        request.setParameters(parameters);
-        request.executeAsync();
-    }
+        @Override
+        public void onError(FacebookException exception) {
+            showLoginErrorAlert();
+        }
+    };
 
     @NonNull
     private ProgressDialog showLoadUserProgress() {
         return ProgressDialog.show(getActivity()
                     , null, getString(R.string.login_load_user_message), true, false);
-    }
-
-    @Override
-    public void onCancel() {}
-
-    @Override
-    public void onError(FacebookException exception) {
-        showLoginErrorAlert();
     }
 
     private void showLoginErrorAlert() {
@@ -220,30 +196,13 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         @Override
         public void onConnected(Bundle bundle) {
             shouldResolveErrors = false;
-            CognitoCredentialsLoginManager.setGoogleLogin(googleApiClient, new OnTaskFinishedListener() {
-                @Override
-                public void onTaskFinished() {
-                    requestUsetInfoGoogle();
-                }
-            });
+            loadUserDialog = showLoadUserProgress();
+            FirebaseManager.authenticateWithGoogle(googleApiClient, LoginFragment.this);
         }
 
         @Override
         public void onConnectionSuspended(int connectionSuspended) {}
     };
-
-    private void requestUsetInfoGoogle() {
-        if (Plus.PeopleApi.getCurrentPerson(googleApiClient) != null) {
-            Person currentPerson = Plus.PeopleApi.getCurrentPerson(googleApiClient);
-            String email = Plus.AccountApi.getAccountName(googleApiClient);
-
-            User user = userSocialNetworkBuilder.buildUserFromGoogle(currentPerson, email);
-            loadUserDialog.dismiss();
-
-            if(loginListener != null)
-                loginListener.onLoginWithSocialNetwork(user);
-        }
-    }
 
     private GoogleApiClient.OnConnectionFailedListener googleConnectionFailedListener = new GoogleApiClient.OnConnectionFailedListener() {
         @Override
@@ -268,8 +227,8 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
     private Callback<TwitterSession> twitterLoginCallback = new Callback<TwitterSession>() {
         @Override
         public void success(Result<TwitterSession> result) {
-            CognitoCredentialsLoginManager.setTwitterLogin(result.data.getAuthToken());
-            requestTwitterUserInfo(result.data);
+            loadUserDialog = showLoadUserProgress();
+            FirebaseManager.authenticateWithTwitter(result.data, LoginFragment.this);
         }
 
         @Override
@@ -278,32 +237,11 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         }
     };
 
-    private void requestTwitterUserInfo(final TwitterSession session) {
-        final ProgressDialog progressDialog = showLoadUserProgress();
-
-        TwitterApiClient apiClient = TwitterCore.getInstance().getApiClient();
-        apiClient.getAccountService().verifyCredentials(false, false, new Callback<com.twitter.sdk.android.core.models.User>() {
-            @Override
-            public void success(Result<com.twitter.sdk.android.core.models.User> result) {
-                progressDialog.dismiss();
-
-                User user = userSocialNetworkBuilder.buildUserFromTwitter(result, session);
-                if (loginListener != null) loginListener.onLoginWithSocialNetwork(user);
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                progressDialog.dismiss();
-                showLoginErrorAlert();
-            }
-        });
-    }
-
     private View.OnClickListener onFacebookLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             LoginManager loginManager = LoginManager.getInstance();
-            loginManager.registerCallback(callbackManager, LoginFragment.this);
+            loginManager.registerCallback(callbackManager, onFacebookLoginCallback);
             loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
         }
     };
@@ -329,11 +267,29 @@ public class LoginFragment extends Fragment implements FacebookCallback<LoginRes
         }
     };
 
+    @Override
+    public void onAuthenticated(AuthData authData) {
+        loadUserDialog.dismiss();
+
+        User user = userSocialAuthBuilder.build(authData);
+        if(loginListener != null) {
+            loginListener.onLoginWithSocialNetwork(user);
+        }
+    }
+
+    @Override
+    public void onAuthenticationError(FirebaseError firebaseError) {
+        loadUserDialog.dismiss();
+        showLoginErrorAlert();
+    }
+
     public interface LoginListener {
         void onLoginWithSocialNetwork(User user);
         void onLoginWithCredentials();
         void onSkipLogin();
         void onSignUp();
         void onUserReady(User user);
+        void onForgotPassword();
+        void onPasswordReset();
     }
 }

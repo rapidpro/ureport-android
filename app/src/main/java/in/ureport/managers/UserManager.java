@@ -13,10 +13,8 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.activities.LoginActivity;
 import in.ureport.activities.MainActivity;
-import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.pref.SystemPreferences;
-import in.ureport.tasks.LogoutTask;
 
 /**
  * Created by johncordeiro on 21/07/15.
@@ -40,8 +38,7 @@ public class UserManager {
     }
 
     public static void logout(Context context) {
-        new LogoutTask().execute();
-        CognitoCredentialsLoginManager.logout();
+        FirebaseManager.logout();
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
@@ -86,7 +83,7 @@ public class UserManager {
         user1.setNickname("esther_aiken");
         user1.setEmail("estheraiken@gmail.com");
         user1.setGender(User.Gender.Female);
-        user1.setType(User.Type.Twitter);
+        user1.setType(User.Type.twitter);
         user1.setBirthday(new Date());
         user1.setCountry("Uganda");
         user1.setPicture(context.getResources().getResourceEntryName(R.drawable.user1));
@@ -98,7 +95,7 @@ public class UserManager {
         user2.setNickname("domingos_hailey123");
         user2.setEmail("domingoshailey@gmail.com");
         user2.setGender(User.Gender.Male);
-        user2.setType(User.Type.Twitter);
+        user2.setType(User.Type.twitter);
         user2.setBirthday(new Date());
         user2.setCountry("Spain");
         user2.setPicture(context.getResources().getResourceEntryName(R.drawable.user2));
@@ -110,7 +107,7 @@ public class UserManager {
         user3.setNickname("pauleenk12");
         user3.setEmail("pauleenk12@gmail.com");
         user3.setGender(User.Gender.Male);
-        user3.setType(User.Type.Facebook);
+        user3.setType(User.Type.facebook);
         user3.setBirthday(new Date());
         user3.setCountry("Uganda");
         user3.setPicture(context.getResources().getResourceEntryName(R.drawable.user3));
@@ -122,7 +119,7 @@ public class UserManager {
         user4.setNickname("robertap");
         user4.setEmail("robertap@gmail.com");
         user4.setGender(User.Gender.Female);
-        user4.setType(User.Type.Facebook);
+        user4.setType(User.Type.facebook);
         user4.setBirthday(new Date());
         user4.setCountry("Brazil");
         user4.setPicture(context.getResources().getResourceEntryName(R.drawable.user4));
@@ -134,7 +131,7 @@ public class UserManager {
         user5.setNickname("phil89");
         user5.setEmail("phil89@gmail.com");
         user5.setGender(User.Gender.Male);
-        user5.setType(User.Type.Facebook);
+        user5.setType(User.Type.facebook);
         user5.setBirthday(new Date());
         user5.setCountry("United States");
         user5.setPicture(context.getResources().getResourceEntryName(R.drawable.user5));
@@ -146,7 +143,7 @@ public class UserManager {
         user6.setNickname("joshy");
         user6.setEmail("joshy@gmail.com");
         user6.setGender(User.Gender.Male);
-        user6.setType(User.Type.Ureport);
+        user6.setType(User.Type.ureport);
         user6.setBirthday(new Date());
         user6.setCountry("United States");
         user6.setPicture(context.getResources().getResourceEntryName(R.drawable.user6));
@@ -158,7 +155,7 @@ public class UserManager {
         user7.setNickname("tommy20");
         user7.setEmail("tommy20@gmail.com");
         user7.setGender(User.Gender.Male);
-        user7.setType(User.Type.Google);
+        user7.setType(User.Type.google);
         user7.setBirthday(new Date());
         user7.setCountry("Nigeria");
         user7.setPicture(context.getResources().getResourceEntryName(R.drawable.user7));
@@ -170,7 +167,7 @@ public class UserManager {
         user8.setNickname("maria_gloria");
         user8.setEmail("maria_gloria@gmail.com");
         user8.setGender(User.Gender.Female);
-        user8.setType(User.Type.Ureport);
+        user8.setType(User.Type.ureport);
         user8.setBirthday(new Date());
         user8.setCountry("Brazil");
         user8.setPicture(context.getResources().getResourceEntryName(R.drawable.user8));
@@ -182,7 +179,7 @@ public class UserManager {
         user9.setNickname("easi");
         user9.setEmail("easi@gmail.com");
         user9.setGender(User.Gender.Male);
-        user9.setType(User.Type.Facebook);
+        user9.setType(User.Type.facebook);
         user9.setBirthday(new Date());
         user9.setCountry("Nigeria");
         user9.setPicture(context.getResources().getResourceEntryName(R.drawable.user9));
@@ -194,7 +191,7 @@ public class UserManager {
         user10.setNickname("gonzalez1000");
         user10.setEmail("gonzalez1000@gmail.com");
         user10.setGender(User.Gender.Male);
-        user10.setType(User.Type.Google);
+        user10.setType(User.Type.google);
         user10.setBirthday(new Date());
         user10.setCountry("Mexico");
         user10.setPicture(context.getResources().getResourceEntryName(R.drawable.user10));

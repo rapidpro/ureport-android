@@ -37,6 +37,11 @@ public class ChatGroupFragment extends Fragment implements LoaderManager.LoaderC
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         getLoaderManager().initLoader(0, null, this).forceLoad();
     }
 

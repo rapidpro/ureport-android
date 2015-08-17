@@ -1,13 +1,10 @@
 package in.ureport.network;
 
-import android.support.annotation.NonNull;
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.Firebase;
+import com.firebase.client.ValueEventListener;
 
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import in.ureport.managers.DynamoDBManager;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 
@@ -16,34 +13,25 @@ import in.ureport.models.User;
  */
 public class StoryServices {
 
-    public List<Story> loadAll() {
-        DynamoDBScanExpression expression = new DynamoDBScanExpression();
-        return new ArrayList<>(DynamoDBManager.getMapper().scan(Story.class, expression));
+    public static final String path = "story";
+
+    public void saveStory(Story story, Firebase.CompletionListener listener) {
+        User user = new User();
+        user.setKey(FirebaseManager.getReference().getAuth().getUid());
+        story.setUser(user);
+
+        FirebaseManager.getReference().child(path).push().setValue(story, listener);
     }
 
-    public void loadUsersForStories(List<Story> stories) {
-        List<Object> users = (List)getUsersFromStories(stories);
-
-        UserServices services = new UserServices();
-        List<User> usersLoaded = services.loadUsers(users);
-        replaceStoriesWithUsersLoaded(stories, usersLoaded);
+    public void addChildEventListener(ChildEventListener childEventListener) {
+        FirebaseManager.getReference().child(path).addChildEventListener(childEventListener);
     }
 
-    private void replaceStoriesWithUsersLoaded(List<Story> stories, List<User> usersLoaded) {
-        for (Story story : stories) {
-            User user = story.getUser();
-            int userIndex = usersLoaded.indexOf(user);
-            if(userIndex >= 0) story.setUser(usersLoaded.get(userIndex));
-        }
+    public void removeChildEventListener(ChildEventListener childEventListener) {
+        FirebaseManager.getReference().removeEventListener(childEventListener);
     }
 
-    @NonNull
-    private List<User> getUsersFromStories(List<Story> stories) {
-        List<User> users = new ArrayList<>();
-        for (Story story : stories) {
-            if(!users.contains(story.getUser()))
-                users.add(story.getUser());
-        }
-        return users;
+    public void loadAll(ValueEventListener listener) {
+        FirebaseManager.getReference().child(path).addListenerForSingleValueEvent(listener);
     }
 }

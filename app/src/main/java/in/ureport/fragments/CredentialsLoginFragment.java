@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,21 +14,27 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
-import in.ureport.managers.PrototypeManager;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ToolbarDesigner;
 import in.ureport.models.User;
 import in.ureport.models.holders.Login;
-import in.ureport.tasks.LoginTask;
+import in.ureport.network.UserServices;
+import in.ureport.util.ValueEventListenerAdapter;
 
 /**
  * Created by johncordeiro on 7/7/15.
  */
 public class CredentialsLoginFragment extends Fragment {
 
-    private EditText username;
+    private EditText email;
     private EditText password;
 
     private EditTextValidator validator = new EditTextValidator();
@@ -58,7 +65,7 @@ public class CredentialsLoginFragment extends Fragment {
     }
 
     private void setupView(View view) {
-        username = (EditText) view.findViewById(R.id.username);
+        email = (EditText) view.findViewById(R.id.email);
         password = (EditText) view.findViewById(R.id.password);
 
         TextView forgotPassword = (TextView) view.findViewById(R.id.forgotPassword);
@@ -70,7 +77,7 @@ public class CredentialsLoginFragment extends Fragment {
         Toolbar toolbar = (Toolbar)view.findViewById(R.id.toolbar);
 
         ToolbarDesigner toolbarDesigner = new ToolbarDesigner();
-        toolbarDesigner.setupFragmentDefaultToolbar(toolbar, this);
+        toolbarDesigner.setupFragmentDefaultToolbar(toolbar, R.string.label_login, this);
     }
 
     @Override
@@ -84,10 +91,10 @@ public class CredentialsLoginFragment extends Fragment {
     }
 
     private boolean validateFields() {
-        boolean validUsername = validator.validateEmpty(username, getString(R.string.error_required_field));
+        boolean validEmail = validator.validateEmpty(email, getString(R.string.error_required_field));
         boolean validPassword = validator.validateEmpty(password, getString(R.string.error_required_field));
 
-        return validUsername && validPassword;
+        return validEmail && validPassword;
     }
 
     public void setLoginListener(LoginFragment.LoginListener loginListener) {
@@ -95,29 +102,45 @@ public class CredentialsLoginFragment extends Fragment {
     }
 
     private void login(Login login) {
-        LoginTask loginTask = new LoginTask(getActivity()) {
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_logging), true, false);
+
+        FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
             @Override
-            protected void onPostExecute(User user) {
-                super.onPostExecute(user);
-                if(user == null) {
-                    showLoginError();
-                } else if(loginListener != null) {
-                    loginListener.onUserReady(user);
-                }
+            public void onAuthenticated(AuthData authData) {
+                getUserInfoAndContinue(authData, progressDialog);
             }
-        };
-        loginTask.execute(login);
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                progressDialog.dismiss();
+                showLoginError();
+            }
+        });
+    }
+
+    private void getUserInfoAndContinue(AuthData authData, final ProgressDialog progressDialog) {
+        UserServices userServices = new UserServices();
+        userServices.getUser(authData.getUid(), new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                progressDialog.dismiss();
+
+                User user = dataSnapshot.getValue(User.class);
+                loginListener.onUserReady(user);
+            }
+        });
     }
 
     private void showLoginError() {
-        Toast.makeText(getActivity(), "Username/password not found", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "Email/password not found", Toast.LENGTH_LONG).show();
     }
 
     private View.OnClickListener onLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (validateFields()) {
-                Login login = new Login(username.getText().toString()
+                Login login = new Login(email.getText().toString()
                         , password.getText().toString());
                 login(login);
             }
@@ -127,7 +150,8 @@ public class CredentialsLoginFragment extends Fragment {
     private View.OnClickListener onForgotPasswordClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            PrototypeManager.showPrototypeAlert(getActivity());
+            if(loginListener != null)
+                loginListener.onForgotPassword();
         }
     };
 }

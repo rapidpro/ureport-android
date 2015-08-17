@@ -28,6 +28,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +40,7 @@ import java.util.Locale;
 import in.ureport.R;
 import in.ureport.loader.NotificationLoader;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.SpinnerColorSwitcher;
@@ -42,7 +48,7 @@ import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.Notification;
 import in.ureport.models.User;
-import in.ureport.tasks.GetUserLoggedTask;
+import in.ureport.network.UserServices;
 import in.ureport.util.DividerItemDecoration;
 import in.ureport.views.adapters.NotificationAdapter;
 
@@ -126,20 +132,26 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     }
 
     private void loadData() {
-        loadUserTask.execute();
         getSupportLoaderManager().initLoader(0, null, this).forceLoad();
-    }
 
-    private GetUserLoggedTask loadUserTask = new GetUserLoggedTask() {
-        @Override
-        protected void onPostExecute(User user) {
-            super.onPostExecute(user);
+        AuthData authData = FirebaseManager.getReference().getAuth();
+        if(authData != null) {
+            UserServices userServices = new UserServices();
+            userServices.getUser(authData.getUid(), new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
 
-            updateUserInfo(user);
-            user = refreshUserCountry(user);
-            setUser(user);
+                    updateUserInfo(user);
+                    user = refreshUserCountry(user);
+                    setUser(user);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {}
+            });
         }
-    };
+    }
 
     @NonNull
     private User refreshUserCountry(User user) {
@@ -157,19 +169,19 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             menuHeader.setOnClickListener(onMenuHeaderClickListener);
 
             ImageView picture = (ImageView) menuHeader.findViewById(R.id.picture);
-            ImageLoader.loadToImageView(picture, user.getPicture());
+            ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
 
             TextView name = (TextView) menuHeader.findViewById(R.id.name);
             name.setText(user.getNickname());
 
             TextView points = (TextView) menuHeader.findViewById(R.id.points);
-            points.setText(getString(R.string.menu_points, user.getPoints()));
+            points.setText(getString(R.string.menu_points, getIntegerValue(user.getPoints())));
 
             TextView polls = (TextView) menuHeader.findViewById(R.id.polls);
-            polls.setText(getString(R.string.profile_polls, user.getPolls()));
+            polls.setText(getString(R.string.profile_polls, getIntegerValue(user.getPolls())));
 
             TextView stories = (TextView) menuHeader.findViewById(R.id.stories);
-            stories.setText(getString(R.string.profile_stories, user.getStories()));
+            stories.setText(getString(R.string.profile_stories, getIntegerValue(user.getStories())));
 
             List<CountryProgram> countryProgramList = new ArrayList<>(CountryProgramManager.getAvailableCountryPrograms());
 
@@ -183,6 +195,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
             menuNavigation.addHeaderView(menuHeader);
         }
+    }
+
+    private int getIntegerValue(Integer value) {
+        return value != null ? value : 0;
     }
 
     @NonNull

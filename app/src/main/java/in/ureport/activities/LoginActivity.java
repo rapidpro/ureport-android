@@ -5,19 +5,24 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import in.ureport.R;
 import in.ureport.fragments.CredentialsLoginFragment;
+import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
-import in.ureport.pref.SystemPreferences;
-import in.ureport.tasks.CacheLoggedUserTask;
-import in.ureport.tasks.GetDbUserTask;
-import in.ureport.tasks.CreateFakeDataTask;
+import in.ureport.network.UserServices;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -43,15 +48,32 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     private void checkUserLoggedAndProceed() {
-        SystemPreferences systemPreferences = new SystemPreferences(this);
-        String userLoggedId = systemPreferences.getUserLoggedId();
-        UserManager.userLoggedIn = !userLoggedId.equals(SystemPreferences.USER_NO_LOGGED_ID);
-        UserManager.countryCode = systemPreferences.getCountryCode();
+        AuthData authData = FirebaseManager.getReference().getAuth();
+        UserManager.userLoggedIn = authData != null;
 
         if(UserManager.userLoggedIn) {
-            CountryProgramManager.switchCountryProgram(UserManager.countryCode);
-            startMainActivity();
+            loadUserAndContinue(authData);
         }
+    }
+
+    private void loadUserAndContinue(AuthData authData) {
+        UserServices userServices = new UserServices();
+        userServices.getUser(authData.getUid(), new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    User user = dataSnapshot.getValue(User.class);
+
+                    UserManager.countryCode = user.getCountry();
+                    CountryProgramManager.switchCountryProgram(UserManager.countryCode);
+                    startMainActivity();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
     }
 
     private void addLoginFragment() {
@@ -64,16 +86,12 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onLoginWithCredentials() {
-        showDevMessage();
+        addCredentialsLoginFragment();
     }
 
     @Override
     public void onSkipLogin() {
         startMainActivity();
-    }
-
-    private void showDevMessage() {
-        Toast.makeText(this, "This function is in development! Use one of the social networks.", Toast.LENGTH_LONG).show();
     }
 
     private void addCredentialsLoginFragment() {
@@ -88,38 +106,55 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onLoginWithSocialNetwork(final User user) {
-        new GetDbUserTask(this, R.string.user_confirmation_load_message) {
+        UserServices userServices = new UserServices();
+        userServices.getUser(user.getKey(), new ValueEventListener() {
             @Override
-            protected void onPostExecute(User dbUser) {
-                super.onPostExecute(dbUser);
-                if(dbUser != null)
-                    onUserReady(dbUser);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("LoginActivity", "onComplete childrenCount: " + dataSnapshot.getChildrenCount());
+
+                if(dataSnapshot.exists())
+                    onUserReady(dataSnapshot.getValue(User.class));
                 else
                     addSignUpFragment(user);
             }
-        }.execute();
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {}
+        });
     }
 
     @Override
     public void onSignUp() {
-        showDevMessage();
+        addSignUpFragment();
     }
 
     @Override
     public void onUserReady(final User user) {
-        CacheLoggedUserTask cacheLoggedUserTask = new CacheLoggedUserTask(this) {
-            @Override
-            protected void onPostExecute(Boolean result) {
-                super.onPostExecute(result);
+        UserServices userServices = new UserServices();
+        userServices.keepUserOffline(user);
 
-                UserManager.userLoggedIn = true;
-                UserManager.countryCode = user.getCountry();
+        UserManager.userLoggedIn = true;
+        UserManager.countryCode = user.getCountry();
 
-                CountryProgramManager.switchCountryProgram(user.getCountry());
-                startMainActivity();
-            }
-        };
-        cacheLoggedUserTask.execute(user);
+        CountryProgramManager.switchCountryProgram(user.getCountry());
+        startMainActivity();
+    }
+
+    @Override
+    public void onForgotPassword() {
+        ForgotPasswordFragment forgotPasswordFragment = new ForgotPasswordFragment();
+        forgotPasswordFragment.setLoginListener(this);
+        getSupportFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(R.id.content, forgotPasswordFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onPasswordReset() {
+        getSupportFragmentManager().popBackStack();
+        Toast.makeText(this, R.string.error_email_check, Toast.LENGTH_LONG).show();
     }
 
     private void startMainActivity() {

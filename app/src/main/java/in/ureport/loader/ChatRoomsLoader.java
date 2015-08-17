@@ -8,8 +8,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.db.business.UserBusiness;
-import in.ureport.db.repository.UserRepository;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatGroup;
 import in.ureport.models.ChatRoom;
@@ -35,10 +33,7 @@ public class ChatRoomsLoader extends AsyncTaskLoader<List<ChatRoom>> {
         date1.roll(Calendar.HOUR, -1);
 
         IndividualChatRoom individualChatRoom1 = new IndividualChatRoom();
-        individualChatRoom1.setLastMessage(getContext().getString(R.string.chat1_lastMessage));
-        individualChatRoom1.setLastMessageDate(date1.getTime());
         individualChatRoom1.setUnreadMessages(12);
-        individualChatRoom1.setFriend(users.get(3));
 
         Calendar date2 = Calendar.getInstance();
         date2.roll(Calendar.HOUR, -2);
@@ -54,11 +49,7 @@ public class ChatRoomsLoader extends AsyncTaskLoader<List<ChatRoom>> {
         chatGroup1.setPicture(getContext().getResources().getResourceEntryName(R.drawable.kampala));
 
         GroupChatRoom groupChatRoom1 = new GroupChatRoom();
-        groupChatRoom1.setLastMessage(getContext().getString(R.string.chat2_lastMessage));
-        groupChatRoom1.setLastMessageDate(date2.getTime());
         groupChatRoom1.setUnreadMessages(2);
-        groupChatRoom1.setParticipants(users.subList(0, 4));
-        groupChatRoom1.setChatGroup(chatGroup1);
 
         ChatGroup chatGroup2 = new ChatGroup();
         chatGroup2.setTitle(getContext().getString(R.string.chatgroup5_title));
@@ -67,17 +58,12 @@ public class ChatRoomsLoader extends AsyncTaskLoader<List<ChatRoom>> {
         chatGroup2.setPicture(getContext().getResources().getResourceEntryName(R.drawable.water));
 
         GroupChatRoom groupChatRoom2 = new GroupChatRoom();
-        groupChatRoom2.setLastMessageDate(date2.getTime());
-        groupChatRoom2.setParticipants(users.subList(3, 9));
-        groupChatRoom2.setChatGroup(chatGroup2);
 
         Calendar date3 = Calendar.getInstance();
         date3.roll(Calendar.HOUR, -6);
         date3.roll(Calendar.MINUTE, -36);
 
         IndividualChatRoom individualChatRoom2 = new IndividualChatRoom();
-        individualChatRoom2.setLastMessageDate(date1.getTime());
-        individualChatRoom2.setFriend(users.get(5));
 
         chatRooms.add(individualChatRoom1);
         chatRooms.add(groupChatRoom1);

@@ -15,7 +15,7 @@ import in.ureport.R;
  */
 public class ImageLoader {
 
-    public static void loadToImageView(ImageView imageView, String url) {
+    public static void loadPersonPictureToImageView(ImageView imageView, String url) {
         Context context = imageView.getContext();
         Drawable placeholder = ContextCompat.getDrawable(context, R.drawable.face);
 

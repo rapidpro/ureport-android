@@ -6,8 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import in.ureport.R;
 import in.ureport.fragments.ProfileFragment;
 import in.ureport.managers.CountryProgramManager;
-import in.ureport.models.User;
-import in.ureport.tasks.GetUserLoggedTask;
 
 /**
  * Created by johncordeiro on 18/07/15.
@@ -29,15 +27,8 @@ public class ProfileActivity extends AppCompatActivity {
                     .commit();
         }
 
-        loadUserTask.execute();
+        // TODO: 17/08/15
+//        profileFragment.updateUser(user);
     }
-
-    private GetUserLoggedTask loadUserTask = new GetUserLoggedTask() {
-        @Override
-        protected void onPostExecute(User user) {
-            super.onPostExecute(user);
-            profileFragment.updateUser(user);
-        }
-    };
 
 }

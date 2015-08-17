@@ -5,13 +5,10 @@ import android.content.Context;
 
 import com.activeandroid.ActiveAndroid;
 
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
-import com.firebase.client.Firebase;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
-import in.ureport.managers.CognitoCredentialsLoginManager;
-import in.ureport.managers.DynamoDBManager;
 import in.ureport.managers.UserManager;
+import in.ureport.managers.FirebaseManager;
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -22,11 +19,10 @@ public class UreportApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Firebase.setAndroidContext(this);
+
+        FirebaseManager.init(this);
         initializeFabric();
         ActiveAndroid.initialize(this);
-        CognitoCachingCredentialsProvider credentialsProvider = CognitoCredentialsLoginManager.initialize(this);
-        DynamoDBManager.initialize(credentialsProvider);
     }
 
     private void initializeFabric() {

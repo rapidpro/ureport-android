@@ -2,7 +2,6 @@ package in.ureport.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +22,7 @@ import java.text.DateFormat;
 import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.managers.PrototypeManager;
+import in.ureport.models.ChatMembers;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.views.adapters.UreportersAdapter;
 
@@ -34,7 +34,9 @@ public class GroupInfoFragment extends Fragment {
     private static final String EXTRA_CHAT_ROOM = "chatRoom";
 
     private ChatRoomFragment.ChatRoomListener chatRoomListener;
+
     private GroupChatRoom chatRoom;
+    private ChatMembers chatMembers;
 
     public static GroupInfoFragment newInstance(GroupChatRoom chatRoom) {
         GroupInfoFragment groupInfoFragment = new GroupInfoFragment();
@@ -96,25 +98,25 @@ public class GroupInfoFragment extends Fragment {
         RecyclerView ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        UreportersAdapter ureportersAdapter = new UreportersAdapter(chatRoom.getParticipants());
+        UreportersAdapter ureportersAdapter = new UreportersAdapter(chatMembers.getUsers());
         ureportersList.setAdapter(ureportersAdapter);
 
         TextView ureportersCount = (TextView) view.findViewById(R.id.ureportersCount);
-        ureportersCount.setText(getString(R.string.chat_new_invite_ureporters_count, chatRoom.getParticipants().size()));
+        ureportersCount.setText(getString(R.string.chat_new_invite_ureporters_count, chatMembers.getUsers().size()));
 
         ResourceUtil resourceUtil = new ResourceUtil(getActivity());
 
         ImageView picture = (ImageView) view.findViewById(R.id.picture);
-        picture.setImageResource(resourceUtil.getDrawableId(chatRoom.getChatGroup().getPicture(), R.drawable.face));
+        picture.setImageResource(resourceUtil.getDrawableId(chatRoom.getPicture(), R.drawable.face));
 
         TextView title = (TextView) view.findViewById(R.id.title);
-        title.setText(chatRoom.getChatGroup().getTitle());
+        title.setText(chatRoom.getTitle());
 
         TextView description = (TextView) view.findViewById(R.id.description);
-        description.setText(chatRoom.getChatGroup().getDescription());
+        description.setText(chatRoom.getDescription());
 
         DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
-        String creationDate = dateFormatter.format(chatRoom.getChatGroup().getCreationDate());
+        String creationDate = dateFormatter.format(chatRoom.getCreationDate());
 
         TextView date = (TextView) view.findViewById(R.id.date);
         date.setText(getString(R.string.chat_group_info_created_date, creationDate));

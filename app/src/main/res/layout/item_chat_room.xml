@@ -82,6 +82,8 @@
         android:gravity="center"
         android:textColor="@android:color/white"
         android:background="@drawable/shape_highlight"
+        android:visibility="gone"
+        tools:visibility="visible"
         tools:text="2"/>
 
 </RelativeLayout>

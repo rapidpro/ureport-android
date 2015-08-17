@@ -10,26 +10,31 @@ import java.util.Date;
  */
 public abstract class ChatRoom implements Parcelable {
 
-    private String lastMessage;
+    public enum Type {
+        Individual,
+        Group
+    }
 
-    private Date lastMessageDate;
+    private String key;
 
     private Integer unreadMessages;
 
-    public String getLastMessage() {
-        return lastMessage;
+    private Type type;
+
+    public Type getType() {
+        return type;
     }
 
-    public void setLastMessage(String lastMessage) {
-        this.lastMessage = lastMessage;
+    public void setType(Type type) {
+        this.type = type;
     }
 
-    public Date getLastMessageDate() {
-        return lastMessageDate;
+    public String getKey() {
+        return key;
     }
 
-    public void setLastMessageDate(Date lastMessageDate) {
-        this.lastMessageDate = lastMessageDate;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Integer getUnreadMessages() {
@@ -41,20 +46,24 @@ public abstract class ChatRoom implements Parcelable {
     }
 
     @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.lastMessage);
-        dest.writeLong(lastMessageDate != null ? lastMessageDate.getTime() : -1);
+        dest.writeString(this.key);
         dest.writeValue(this.unreadMessages);
+        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
     }
 
     public ChatRoom() {
     }
 
     protected ChatRoom(Parcel in) {
-        this.lastMessage = in.readString();
-        long tmpLastMessageDate = in.readLong();
-        this.lastMessageDate = tmpLastMessageDate == -1 ? null : new Date(tmpLastMessageDate);
+        this.key = in.readString();
         this.unreadMessages = (Integer) in.readValue(Integer.class.getClassLoader());
+        int tmpType = in.readInt();
+        this.type = tmpType == -1 ? null : ChatRoom.Type.values()[tmpType];
     }
-
 }

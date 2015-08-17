@@ -13,7 +13,6 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.managers.ImageLoader;
-import in.ureport.managers.UserViewManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 
@@ -34,6 +33,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private OnPublishStoryListener onPublishStoryListener;
 
     public StoriesAdapter() {
+        setHasStableIds(true);
         this.stories = new ArrayList<>();
     }
 
@@ -69,7 +69,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public long getItemId(int position) {
         return getItemViewType(position) == TYPE_HEADER
-                ? 0 : stories.get(getListPosition(position)).getStoryId().hashCode();
+                ? 0 : stories.get(getListPosition(position)).getKey().hashCode();
     }
 
     @Override
@@ -97,6 +97,17 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
+    public List<Story> getStories() {
+        return stories;
+    }
+
+    public void addStories(List<Story> stories) {
+        this.stories.addAll(0, stories);
+
+        int firstStoryIndex = publicType ? 1 : 0;
+        notifyItemInserted(firstStoryIndex);
+    }
+
     public void setUser(User user) {
         this.user = user;
         this.publicType = true;
@@ -117,7 +128,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private void bind(User user) {
             name.setHint(itemView.getContext().getString(R.string.list_stories_header_title, user.getNickname()));
-            ImageLoader.loadToImageView(picture, user.getPicture());
+            ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
         }
 
         private View.OnClickListener onPublishStoryClickListener = new View.OnClickListener() {
@@ -190,7 +201,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void bindAuthor(Story story) {
-            ImageLoader.loadToImageView(picture, story.getUser().getPicture());
+            ImageLoader.loadPersonPictureToImageView(picture, story.getUser().getPicture());
             author.setText(story.getUser().getNickname());
         }
 

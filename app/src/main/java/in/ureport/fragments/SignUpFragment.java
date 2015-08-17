@@ -1,6 +1,7 @@
 package in.ureport.fragments;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
@@ -21,6 +22,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.firebase.client.AuthData;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -28,17 +33,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import br.com.ilhasoft.support.widget.DatePickerFragment;
 import in.ureport.R;
 import in.ureport.loader.CountryListLoader;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ToolbarDesigner;
 import in.ureport.models.User;
+import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
-import in.ureport.tasks.RegisterUserTask;
+import in.ureport.network.UserServices;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -65,8 +73,10 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
 
     private DateFormat birthdayFormatter;
     private User user;
-    private User.Type userType = User.Type.Ureport;
+    private User.Type userType = User.Type.ureport;
     private LoginFragment.LoginListener loginListener;
+
+    private ProgressDialog progressDialog;
 
     public static SignUpFragment newInstance(User user) {
         SignUpFragment signUpFragment = new SignUpFragment();
@@ -124,7 +134,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         toolbar = (Toolbar)view.findViewById(R.id.toolbar);
 
         ToolbarDesigner toolbarDesigner = new ToolbarDesigner();
-        toolbarDesigner.setupFragmentDefaultToolbar(toolbar, this);
+        toolbarDesigner.setupFragmentDefaultToolbar(toolbar, R.string.label_data_confirmation, this);
     }
 
     private void setupUserIfExists() {
@@ -152,7 +162,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     private void setPasswordVisibility() {
-        if(userType != User.Type.Ureport) {
+        if(userType != User.Type.ureport) {
             password.setVisibility(View.GONE);
         }
     }
@@ -235,8 +245,8 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     private boolean validatePasswordIfNeeded(String messageNameValidation) {
-        return (userType == User.Type.Ureport && validator.validateSize(password, FIELDS_MINIMUM_SIZE, messageNameValidation)
-                || userType != User.Type.Ureport);
+        return (userType == User.Type.ureport && validator.validateSize(password, FIELDS_MINIMUM_SIZE, messageNameValidation)
+                || userType != User.Type.ureport);
     }
 
     private boolean isSpinnerValid(Spinner spinner) {
@@ -251,11 +261,14 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     private User createUser() {
         User user = new User();
         user.setType(userType);
-        user.setPicture(this.user.getPicture());
         user.setNickname(username.getText().toString());
         user.setEmail(email.getText().toString());
-        user.setPassword(password.getText().toString());
         user.setBirthday(getBirthdayDate());
+
+        if(userType != User.Type.ureport) {
+            user.setKey(this.user.getKey());
+            user.setPicture(this.user.getPicture());
+        }
 
         UserLocale userLocale = (UserLocale) country.getAdapter().getItem(country.getSelectedItemPosition());
         String displayCountry = userLocale.getLocale().getISO3Country();
@@ -322,24 +335,83 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         @Override
         public void onClick(View view) {
             if(isFieldsValid()) {
+                showDialog();
+
                 final User user = createUser();
+                Login login = getLoginData(user);
 
-                RegisterUserTask registerUserTask = new RegisterUserTask(getActivity()) {
-                    @Override
-                    protected void onPostExecute(Boolean registered) {
-                        super.onPostExecute(registered);
-                        if(registered && loginListener != null)
-                            loginListener.onUserReady(user);
-                    }
-
-                    @Override
-                    public void onTaskException(Exception exception) {
-                        super.onTaskException(exception);
-                        Toast.makeText(getActivity().getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                };
-                registerUserTask.execute(user);
+                switch (user.getType()) {
+                    case ureport:
+                        createUserAndAuthenticate(login, user);
+                        break;
+                    default:
+                        storeUserAndFinish(user);
+                }
             }
         }
     };
+
+    private void createUserAndAuthenticate(final Login login, final User user) {
+        FirebaseManager.getReference().createUser(login.getEmail(), login.getPassword(), new Firebase.ValueResultHandler<Map<String, Object>>() {
+            @Override
+            public void onSuccess(Map<String, Object> result) {
+                user.setKey(result.get("uid").toString());
+                authenticateUserAndStore(login, user);
+            }
+
+            @Override
+            public void onError(FirebaseError firebaseError) {
+                dismissDialog();
+                Toast.makeText(getActivity(), R.string.error_email_already_exists, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void authenticateUserAndStore(Login login, final User user) {
+        FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                storeUserAndFinish(user);
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                dismissDialog();
+                Toast.makeText(getActivity(), R.string.error_valid_email, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void storeUserAndFinish(final User user) {
+        UserServices userServices = new UserServices();
+        userServices.saveUser(user, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                dismissDialog();
+
+                if (firebaseError != null)
+                    Toast.makeText(getActivity().getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+                else
+                    loginListener.onUserReady(user);
+            }
+        });
+    }
+
+    @NonNull
+    private Login getLoginData(User user) {
+        String email = user.getEmail();
+        String password = SignUpFragment.this.password.getText().toString();
+
+        return new Login(email, password);
+    }
+
+    private void showDialog() {
+        progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_registering_user)
+                , true, false);
+    }
+
+    private void dismissDialog() {
+        if(progressDialog != null && progressDialog.isShowing())
+            progressDialog.dismiss();
+    }
 }

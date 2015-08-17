@@ -12,7 +12,7 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.listener.ChatCreationListener;
-import in.ureport.managers.UserViewManager;
+import in.ureport.managers.ImageLoader;
 import in.ureport.models.User;
 
 /**
@@ -71,14 +71,14 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public void bindView(User user) {
             name.setText(user.getNickname());
             selected.setVisibility(selectionEnabled ? View.VISIBLE : View.GONE);
-            picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), user));
+            ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
         }
 
         private View.OnClickListener onItemClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(chatCreationListener != null)
-                    chatCreationListener.onCreateIndividualChatCalled();
+                    chatCreationListener.onCreateIndividualChatCalled(ureportersList.get(getLayoutPosition()));
             }
         };
     }

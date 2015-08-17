@@ -12,6 +12,7 @@ import in.ureport.R;
 import in.ureport.fragments.ChatRoomFragment;
 import in.ureport.fragments.GroupInfoFragment;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
 
@@ -21,6 +22,7 @@ import in.ureport.models.GroupChatRoom;
 public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragment.ChatRoomListener {
 
     public static final String EXTRA_CHAT_ROOM = "chatRoom";
+    public static final String EXTRA_CHAT_MEMBERS = "chatMembers";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,9 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
 
         if(savedInstanceState == null) {
             ChatRoom chatRoom = getIntent().getParcelableExtra(EXTRA_CHAT_ROOM);
-            ChatRoomFragment chatRoomFragment = ChatRoomFragment.newInstance(chatRoom);
+            ChatMembers chatMembers = getIntent().getParcelableExtra(EXTRA_CHAT_MEMBERS);
+
+            ChatRoomFragment chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, chatMembers);
             chatRoomFragment.setChatRoomListener(this);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.content, chatRoomFragment)

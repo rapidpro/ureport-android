@@ -4,73 +4,48 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.StringRes;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHashKey;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMarshalling;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
-
 import java.util.Date;
+import java.util.Map;
 
 import in.ureport.R;
-import in.ureport.models.converters.EnumTypeConverter;
 
 /**
  * Created by johncordeiro on 7/9/15.
  */
-@DynamoDBTable(tableName = "User")
-@Table(name = "User")
-public class User extends Model implements Parcelable {
+public class User implements Parcelable {
 
-    @Column(name = "identityId")
-    private String identityId;
+    private String key;
 
-    @Column(name = "email")
     private String email;
 
-    @Column(name = "username")
     private String nickname;
 
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "birthday")
     private Date birthday;
 
-    @Column(name = "country")
     private String country;
 
-    @Column(name = "picture")
     private String picture;
 
-    @Column(name = "gender")
     private Gender gender;
 
-    @Column(name = "type")
     private Type type;
 
-    @Column(name = "points")
     private Integer points;
 
-    @Column(name = "stories")
     private Integer stories;
 
-    @Column(name = "polls")
     private Integer polls;
 
-    @DynamoDBHashKey(attributeName = "id")
-    public String getIdentityId() {
-        return identityId;
+    private Map<String, Boolean> chatRooms;
+
+    public String getKey() {
+        return key;
     }
 
-    public void setIdentityId(String identityId) {
-        this.identityId = identityId;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    @DynamoDBIndexHashKey(attributeName="email", globalSecondaryIndexName="email-index")
     public String getEmail() {
         return email;
     }
@@ -79,7 +54,6 @@ public class User extends Model implements Parcelable {
         this.email = email;
     }
 
-    @DynamoDBIndexHashKey(attributeName="nickname", globalSecondaryIndexName="nickname-index")
     public String getNickname() {
         return nickname;
     }
@@ -88,16 +62,6 @@ public class User extends Model implements Parcelable {
         this.nickname = nickname;
     }
 
-    @DynamoDBAttribute(attributeName = "password")
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @DynamoDBAttribute(attributeName = "birthday")
     public Date getBirthday() {
         return birthday;
     }
@@ -106,7 +70,6 @@ public class User extends Model implements Parcelable {
         this.birthday = birthday;
     }
 
-    @DynamoDBAttribute(attributeName = "country")
     public String getCountry() {
         return country;
     }
@@ -115,7 +78,6 @@ public class User extends Model implements Parcelable {
         this.country = country;
     }
 
-    @DynamoDBAttribute(attributeName = "picture")
     public String getPicture() {
         return picture;
     }
@@ -124,8 +86,6 @@ public class User extends Model implements Parcelable {
         this.picture = picture;
     }
 
-    @DynamoDBAttribute(attributeName = "gender")
-    @DynamoDBMarshalling(marshallerClass = EnumTypeConverter.class)
     public Gender getGender() {
         return gender;
     }
@@ -134,8 +94,6 @@ public class User extends Model implements Parcelable {
         this.gender = gender;
     }
 
-    @DynamoDBAttribute(attributeName = "type")
-    @DynamoDBMarshalling(marshallerClass = EnumTypeConverter.class)
     public Type getType() {
         return type;
     }
@@ -144,31 +102,36 @@ public class User extends Model implements Parcelable {
         this.type = type;
     }
 
-    @DynamoDBAttribute(attributeName = "points")
     public Integer getPoints() {
-        return points != null ? points : 0;
+        return points;
     }
 
     public void setPoints(Integer points) {
         this.points = points;
     }
 
-    @DynamoDBAttribute(attributeName = "stories")
     public Integer getStories() {
-        return stories != null ? stories : 0;
+        return stories;
     }
 
     public void setStories(Integer stories) {
         this.stories = stories;
     }
 
-    @DynamoDBAttribute(attributeName = "polls")
     public Integer getPolls() {
-        return polls != null ? polls : 0;
+        return polls;
     }
 
     public void setPolls(Integer polls) {
         this.polls = polls;
+    }
+
+    public Map<String, Boolean> getChatRooms() {
+        return chatRooms;
+    }
+
+    public void setChatRooms(Map<String, Boolean> chatRooms) {
+        this.chatRooms = chatRooms;
     }
 
     @Override
@@ -176,7 +139,6 @@ public class User extends Model implements Parcelable {
         return "User{" +
                 "email='" + email + '\'' +
                 ", nickname='" + nickname + '\'' +
-                ", password='" + password + '\'' +
                 ", birthday=" + birthday +
                 ", country='" + country + '\'' +
                 ", gender=" + gender +
@@ -199,10 +161,10 @@ public class User extends Model implements Parcelable {
     }
 
     public enum Type {
-        Ureport,
-        Facebook,
-        Twitter,
-        Google
+        ureport,
+        facebook,
+        twitter,
+        google
     }
 
     @Override
@@ -211,13 +173,13 @@ public class User extends Model implements Parcelable {
         if (o == null || getClass() != o.getClass()) return false;
 
         User user = (User) o;
-        return identityId.equals(user.identityId);
+        return key.equals(user.key);
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + identityId.hashCode();
+        result = 31 * result + key.hashCode();
         return result;
     }
 
@@ -228,10 +190,9 @@ public class User extends Model implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.identityId);
+        dest.writeString(this.key);
         dest.writeString(this.email);
         dest.writeString(this.nickname);
-        dest.writeString(this.password);
         dest.writeLong(birthday != null ? birthday.getTime() : -1);
         dest.writeString(this.country);
         dest.writeString(this.picture);
@@ -246,10 +207,9 @@ public class User extends Model implements Parcelable {
     }
 
     protected User(Parcel in) {
-        this.identityId = in.readString();
+        this.key = in.readString();
         this.email = in.readString();
         this.nickname = in.readString();
-        this.password = in.readString();
         long tmpBirthday = in.readLong();
         this.birthday = tmpBirthday == -1 ? null : new Date(tmpBirthday);
         this.country = in.readString();

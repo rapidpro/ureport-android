@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +17,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,13 +29,14 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.UreportApplication;
-import in.ureport.loader.ContributionsLoader;
 import in.ureport.managers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
 import in.ureport.models.User;
-import in.ureport.tasks.PublishContributionTask;
+import in.ureport.network.ContributionServices;
+import in.ureport.network.UserServices;
+import in.ureport.util.ChildEventListenerAdapter;
 import in.ureport.util.SpaceItemDecoration;
 import in.ureport.util.WrapLinearLayoutManager;
 import in.ureport.views.adapters.ContributionAdapter;
@@ -41,8 +45,7 @@ import in.ureport.views.adapters.MediaAdapter;
 /**
  * Created by johncordeiro on 7/16/15.
  */
-public class StoryViewFragment extends Fragment implements ContributionAdapter.OnContributionAddListener
-        , LoaderManager.LoaderCallbacks<List<Contribution>> {
+public class StoryViewFragment extends Fragment implements ContributionAdapter.OnContributionAddListener {
 
     private static final String EXTRA_STORY = "story";
     private static final String EXTRA_USER = "user";
@@ -53,6 +56,9 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private ContributionAdapter contributionAdapter;
     private TextView contributions;
     private Button contribute;
+
+    private ContributionServices contributionServices;
+    private UserServices userServices;
 
     public static StoryViewFragment newInstance(Story story, User user) {
         StoryViewFragment storyViewFragment = new StoryViewFragment();
@@ -84,12 +90,19 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        setupObjects();
         setupView(view);
         loadData();
     }
 
     private void loadData() {
-        getLoaderManager().initLoader(0, null, this).forceLoad();
+        contributionServices.addChildEventListener(story, contributionChildEventListener);
+    }
+
+    private void setupObjects() {
+        contributionServices = new ContributionServices();
+        userServices = new UserServices();
     }
 
     private void setupView(View view) {
@@ -112,7 +125,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         author.setText(story.getUser().getNickname());
 
         ImageView picture = (ImageView) view.findViewById(R.id.picture);
-        ImageLoader.loadToImageView(picture, story.getUser().getPicture());
+        ImageLoader.loadPersonPictureToImageView(picture, story.getUser().getPicture());
 
         contributions = (TextView) view.findViewById(R.id.contributors);
         contributions.setText(getContributionsText(story));
@@ -178,34 +191,63 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         String content = contentText.getText().toString();
 
         final Contribution contribution = new Contribution(content, user);
-        contribution.setStory(story);
         contribution.setCreatedDate(new Date());
 
-        PublishContributionTask publishContributionTask = new PublishContributionTask(getActivity()) {
+        contributionServices.saveContribution(story, contribution, new Firebase.CompletionListener() {
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                contentText.setText(null);
-                contributionAdapter.addContribution(contribution);
-                contributions.setText(getContributionsText(contribution.getStory()));
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(firebaseError == null) {
+                    contentText.setText(null);
+                    refreshContribution(contribution);
+                }
             }
-        };
-        publishContributionTask.execute(contribution);
+        });
     }
 
-    @Override
-    public Loader<List<Contribution>> onCreateLoader(int id, Bundle args) {
-        return new ContributionsLoader(getActivity(), story);
-    }
+    private ChildEventListenerAdapter contributionChildEventListener = new ChildEventListenerAdapter() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
+            super.onChildAdded(dataSnapshot, previousChild);
 
-    @Override
-    public void onLoadFinished(Loader<List<Contribution>> loader, List<Contribution> data) {
-        if(data != null && data.size() > 0) {
-            contributionAdapter.setContributions(data);
-            contribute.setVisibility(View.GONE);
+            final Contribution contribution = dataSnapshot.getValue(Contribution.class);
+            contribution.setKey(dataSnapshot.getKey());
+            loadUserFromContribution(contribution, onAfterLoadUserListener);
         }
+    };
+
+    private OnAfterLoadUserListener onAfterLoadUserListener = new OnAfterLoadUserListener() {
+        @Override
+        public void onAfterLoadUser(Contribution contribution) {
+            updateViewForContribution();
+            contributionAdapter.addContribution(contribution);
+        }
+    };
+
+    private void updateViewForContribution() {
+        if(contribute.getVisibility() == View.VISIBLE)
+            contribute.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onLoaderReset(Loader<List<Contribution>> loader) {}
+    private void loadUserFromContribution(final Contribution contribution, final OnAfterLoadUserListener listener) {
+        userServices.getUser(contribution.getAuthor().getKey(), new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                contribution.setAuthor(user);
+
+                if(listener != null) listener.onAfterLoadUser(contribution);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {}
+        });
+    }
+
+    private void refreshContribution(Contribution contribution) {
+        contributions.setText(getContributionsText(story));
+    }
+
+    public interface OnAfterLoadUserListener {
+        void onAfterLoadUser(Contribution contribution);
+    }
 }

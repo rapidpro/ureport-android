@@ -33,7 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:hint="@string/sign_up_username"/>
+                    android:hint="@string/sign_up_nickname"/>
 
             </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
