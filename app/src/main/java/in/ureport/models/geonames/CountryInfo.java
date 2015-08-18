@@ -14,4 +14,11 @@ public class CountryInfo {
     public void setGeonameId(Long geonameId) {
         this.geonameId = geonameId;
     }
+
+    @Override
+    public String toString() {
+        return "CountryInfo{" +
+                "geonameId=" + geonameId +
+                '}';
+    }
 }

@@ -26,6 +26,9 @@ public class LoadStatesTask extends AsyncTask<Locale, Void, List<State>> {
             GeonamesServices services = new GeonamesServices();
             List<CountryInfo> countryInfos = services.getCountryInfo(locale.getCountry());
 
+            Log.i(TAG, "doInBackground countryInfos: " + countryInfos);
+            Log.i(TAG, "doInBackground locale: " + locale.getCountry());
+
             if (countryInfos.size() > 0) {
                 CountryInfo countryInfo = countryInfos.get(0);
                 return services.getStates(countryInfo.getGeonameId());
