@@ -14,9 +14,8 @@ import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.listener.PollQuestionAnswerListener;
 import in.ureport.models.MultipleChoiceQuestion;
-import in.ureport.models.PollQuestion;
-import in.ureport.util.SpaceItemDecoration;
-import in.ureport.util.WrapLinearLayoutManager;
+import in.ureport.helpers.SpaceItemDecoration;
+import in.ureport.helpers.WrapLinearLayoutManager;
 import in.ureport.views.adapters.MultipleChoiceQuestionAdapter;
 
 /**

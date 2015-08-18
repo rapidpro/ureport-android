@@ -17,7 +17,7 @@ import in.ureport.R;
 import in.ureport.loader.ChatGroupsLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.models.ChatGroup;
-import in.ureport.util.DividerItemDecoration;
+import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.views.adapters.ChatGroupAdapter;
 
 /**

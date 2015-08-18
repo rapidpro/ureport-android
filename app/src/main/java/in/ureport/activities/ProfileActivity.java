@@ -26,9 +26,6 @@ public class ProfileActivity extends AppCompatActivity {
                     .add(R.id.content, profileFragment)
                     .commit();
         }
-
-        // TODO: 17/08/15
-//        profileFragment.updateUser(user);
     }
 
 }

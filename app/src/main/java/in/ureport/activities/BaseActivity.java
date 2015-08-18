@@ -49,7 +49,7 @@ import in.ureport.models.CountryProgram;
 import in.ureport.models.Notification;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
-import in.ureport.util.DividerItemDecoration;
+import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.views.adapters.NotificationAdapter;
 
 /**

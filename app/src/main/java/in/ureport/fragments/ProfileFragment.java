@@ -14,12 +14,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+
 import in.ureport.R;
+import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
+import in.ureport.network.UserServices;
 import in.ureport.views.adapters.NavigationAdapter;
 
 /**
@@ -68,7 +73,23 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
-        updateUser(user);
+        loadUser();
+    }
+
+    private void loadUser() {
+        if(user != null) {
+            updateUser(user);
+        } else {
+            UserServices userServices = new UserServices();
+            userServices.getUser(FirebaseManager.getAuthUserKey(), new ValueEventListenerAdapter() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    super.onDataChange(dataSnapshot);
+                    user = dataSnapshot.getValue(User.class);
+                    updateUser(user);
+                }
+            });
+        }
     }
 
     private void setupView(View view) {
@@ -95,17 +116,19 @@ public class ProfileFragment extends Fragment {
         edit.setOnClickListener(onEditClickListener);
     }
 
-    public void updateUser(User user) {
-        if(user != null) {
-            setupPagerWithUser(user);
+    private void updateUser(User user) {
+        setupPagerWithUser(user);
 
-            name.setText(user.getNickname());
-            ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
+        name.setText(user.getNickname());
+        ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
 
-            points.setText(getString(R.string.menu_points, user.getPoints()));
-            polls.setText(getString(R.string.profile_polls, user.getPolls()));
-            stories.setText(getString(R.string.profile_stories, user.getStories()));
-        }
+        points.setText(getString(R.string.menu_points, getIntegerValue(user.getPoints())));
+        polls.setText(getString(R.string.profile_polls, getIntegerValue(user.getPoints())));
+        stories.setText(getString(R.string.profile_stories, getIntegerValue(user.getPoints())));
+    }
+
+    private int getIntegerValue(Integer value) {
+        return value != null ? value : 0;
     }
 
     private void setupPagerWithUser(User user) {
@@ -115,6 +138,7 @@ public class ProfileFragment extends Fragment {
 
         NavigationAdapter navigationAdapter = new NavigationAdapter(getFragmentManager(), storiesItem, pollsItem, rankingItem);
         pager.setAdapter(navigationAdapter);
+        pager.setOffscreenPageLimit(3);
         tabs.setupWithViewPager(pager);
     }
 

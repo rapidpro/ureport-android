@@ -1,4 +1,4 @@
-package in.ureport.util;
+package in.ureport.helpers;
 
 import android.content.Context;
 import android.content.res.TypedArray;

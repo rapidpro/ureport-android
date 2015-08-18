@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,8 +22,8 @@ import in.ureport.models.ChatRoom;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
-import in.ureport.util.ChildEventListenerAdapter;
-import in.ureport.util.DividerItemDecoration;
+import in.ureport.helpers.ChildEventListenerAdapter;
+import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.views.adapters.ChatRoomsAdapter;
 
 /**

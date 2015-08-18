@@ -30,7 +30,7 @@ import in.ureport.R;
 import in.ureport.models.Marker;
 import in.ureport.models.Story;
 import in.ureport.network.StoryServices;
-import in.ureport.util.SpaceItemDecoration;
+import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.views.adapters.MediaAdapter;
 
 /**

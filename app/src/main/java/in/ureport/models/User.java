@@ -24,6 +24,8 @@ public class User implements Parcelable {
 
     private String country;
 
+    private String state;
+
     private String picture;
 
     private Gender gender;
@@ -76,6 +78,14 @@ public class User implements Parcelable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getPicture() {

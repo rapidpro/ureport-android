@@ -100,7 +100,6 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:entries="@array/states"
                 android:paddingLeft="@dimen/spinner_padding_left"
                 android:paddingStart="@dimen/spinner_padding_left"
                 style="@style/Widget.AppCompat.Spinner.Underlined"/>

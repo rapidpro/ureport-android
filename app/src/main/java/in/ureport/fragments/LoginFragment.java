@@ -136,8 +136,12 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         signUp.setOnClickListener(onSignUpClickListener);
     }
 
-    public void setLoginListener(LoginListener loginListener) {
-        this.loginListener = loginListener;
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof LoginListener) {
+            loginListener = (LoginListener)activity;
+        }
     }
 
     private View.OnClickListener onLoginWithCredentialsClickListener = new View.OnClickListener() {

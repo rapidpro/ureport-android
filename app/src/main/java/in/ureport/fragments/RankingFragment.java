@@ -16,7 +16,7 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.loader.RankingLoader;
 import in.ureport.models.User;
-import in.ureport.util.DividerItemDecoration;
+import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.views.adapters.RankingAdapter;
 
 /**
@@ -62,10 +62,13 @@ public class RankingFragment extends Fragment implements LoaderManager.LoaderCal
         rankingList = (RecyclerView) view.findViewById(R.id.rankingList);
         rankingList.setLayoutManager(new LinearLayoutManager(getActivity()));
         rankingList.addItemDecoration(new DividerItemDecoration(getActivity()));
-
-        getLoaderManager().initLoader(0, null, this).forceLoad();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().initLoader(0, null, this).forceLoad();
+    }
 
     @Override
     public Loader<List<User>> onCreateLoader(int id, Bundle args) {

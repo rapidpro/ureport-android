@@ -27,7 +27,7 @@ import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.network.StoryServices;
 import in.ureport.network.UserServices;
-import in.ureport.util.ChildEventListenerAdapter;
+import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.views.adapters.StoriesAdapter;
 
 /**

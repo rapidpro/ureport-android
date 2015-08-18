@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -43,10 +45,13 @@ import in.ureport.loader.CountryListLoader;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ToolbarDesigner;
 import in.ureport.models.User;
+import in.ureport.models.geonames.State;
 import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
 import in.ureport.network.UserServices;
+import in.ureport.tasks.LoadStatesTask;
+import in.ureport.tasks.SaveContactTask;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -98,6 +103,14 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         return inflater.inflate(R.layout.fragment_sign_up, container, false);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof LoginFragment.LoginListener) {
+            loginListener = (LoginFragment.LoginListener)activity;
+        }
+    }
+
     private void getUserFromArguments() {
         Bundle args = getArguments();
         if(args != null && args.containsKey(EXTRA_USER)) {
@@ -124,6 +137,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         loadUserGenders();
 
         country = (Spinner) view.findViewById(R.id.country);
+        country.setOnItemSelectedListener(onCountrySelectedListener);
         loadCountryList();
 
         state = (Spinner) view.findViewById(R.id.state);
@@ -239,9 +253,15 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         boolean validEmail = validator.validateEmail(email, getString(R.string.error_valid_email));
         boolean validBirthday = validator.validateEmpty(birthday, getString(R.string.error_required_field));
 
-        return validTextFields && validEmail && validBirthday &&
+        return validTextFields && validEmail && validBirthday && isStateValid() &&
                 isSpinnerValid(country) && isSpinnerValid(gender) && isSpinnerValid(state) &&
                 validatePasswordIfNeeded(messageNameValidation);
+    }
+
+    private boolean isStateValid() {
+        boolean validState = state.getSelectedItem() != null;
+        if(!validState) Toast.makeText(getActivity(), "Choose the state of the country!", Toast.LENGTH_LONG).show();
+        return validState;
     }
 
     private boolean validatePasswordIfNeeded(String messageNameValidation) {
@@ -253,10 +273,6 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         return spinner.getSelectedItemPosition() != Spinner.INVALID_POSITION;
     }
 
-    public void setLoginListener(LoginFragment.LoginListener loginListener) {
-        this.loginListener = loginListener;
-    }
-
     @NonNull
     private User createUser() {
         User user = new User();
@@ -264,6 +280,9 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         user.setNickname(username.getText().toString());
         user.setEmail(email.getText().toString());
         user.setBirthday(getBirthdayDate());
+
+        State state = (State)this.state.getSelectedItem();
+        user.setState(state.getToponymName());
 
         if(userType != User.Type.ureport) {
             user.setKey(this.user.getKey());
@@ -388,13 +407,23 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 dismissDialog();
-
                 if (firebaseError != null)
                     Toast.makeText(getActivity().getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                 else
-                    loginListener.onUserReady(user);
+                    finishRegistration(user);
             }
         });
+    }
+
+    private void finishRegistration(final User user) {
+        SaveContactTask saveContactTask = new SaveContactTask(getActivity()) {
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                loginListener.onUserReady(user);
+            }
+        };
+        saveContactTask.execute(user);
     }
 
     @NonNull
@@ -413,5 +442,44 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     private void dismissDialog() {
         if(progressDialog != null && progressDialog.isShowing())
             progressDialog.dismiss();
+    }
+
+    private AdapterView.OnItemSelectedListener onCountrySelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            UserLocale userLocale = (UserLocale)country.getSelectedItem();
+            resetStateSpinner();
+            loadStatesForUserLocale(userLocale);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            resetStateSpinner();
+        }
+    };
+
+    private void resetStateSpinner() {
+        state.setAdapter(null);
+        state.setEnabled(false);
+    }
+
+    private void loadStatesForUserLocale(UserLocale userLocale) {
+        LoadStatesTask loadStatesTask = new LoadStatesTask() {
+            @Override
+            protected void onPostExecute(List<State> states) {
+                super.onPostExecute(states);
+
+                if(states != null) {
+                    ArrayAdapter<State> statesAdapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, states);
+                    statesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                    state.setEnabled(true);
+                    state.setAdapter(statesAdapter);
+                } else {
+                    Toast.makeText(getActivity(), R.string.error_no_internet, Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+        loadStatesTask.execute(userLocale.getLocale());
     }
 }

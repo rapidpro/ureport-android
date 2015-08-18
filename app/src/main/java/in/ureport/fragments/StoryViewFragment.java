@@ -36,9 +36,9 @@ import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.network.ContributionServices;
 import in.ureport.network.UserServices;
-import in.ureport.util.ChildEventListenerAdapter;
-import in.ureport.util.SpaceItemDecoration;
-import in.ureport.util.WrapLinearLayoutManager;
+import in.ureport.helpers.ChildEventListenerAdapter;
+import in.ureport.helpers.SpaceItemDecoration;
+import in.ureport.helpers.WrapLinearLayoutManager;
 import in.ureport.views.adapters.ContributionAdapter;
 import in.ureport.views.adapters.MediaAdapter;
 

@@ -1,4 +1,4 @@
-package in.ureport.util;
+package in.ureport.helpers;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;

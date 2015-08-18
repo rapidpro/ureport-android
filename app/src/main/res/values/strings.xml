@@ -173,7 +173,7 @@
     <string name="error_email_check">Your password was resetted. Please check your email to get the new password.</string>
     <string name="label_login">Login</string>
     <string name="label_forgot_password">Forgot password</string>
-    <string name="label_data_confirmation">Dados</string>
+    <string name="label_data_confirmation">Data confirmation</string>
 
     <string-array name="create_story_cover_sources">
         <item>Gallery</item>
@@ -186,25 +186,9 @@
         <item>Youtube</item>
     </string-array>
 
-    <string-array name="states">
-        <item>State 1</item>
-        <item>State 2</item>
-        <item>State 3</item>
-        <item>State 4</item>
-        <item>State 5</item>
-        <item>State 6</item>
-        <item>State 7</item>
-        <item>State 8</item>
-        <item>State 9</item>
-        <item>State 10</item>
-        <item>State 11</item>
-        <item>State 12</item>
-        <item>State 13</item>
-        <item>State 14</item>
-        <item>State 15</item>
-    </string-array>
-
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="load_message_save_user">Saving user...</string>
+    <string name="error_no_internet">Please, connect to the internet before continue.</string>
 
 </resources>

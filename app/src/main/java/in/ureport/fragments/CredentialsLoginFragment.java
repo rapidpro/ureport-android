@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -27,7 +28,7 @@ import in.ureport.managers.ToolbarDesigner;
 import in.ureport.models.User;
 import in.ureport.models.holders.Login;
 import in.ureport.network.UserServices;
-import in.ureport.util.ValueEventListenerAdapter;
+import in.ureport.helpers.ValueEventListenerAdapter;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -81,6 +82,14 @@ public class CredentialsLoginFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof LoginFragment.LoginListener) {
+            loginListener = (LoginFragment.LoginListener)activity;
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case android.R.id.home:
@@ -95,10 +104,6 @@ public class CredentialsLoginFragment extends Fragment {
         boolean validPassword = validator.validateEmpty(password, getString(R.string.error_required_field));
 
         return validEmail && validPassword;
-    }
-
-    public void setLoginListener(LoginFragment.LoginListener loginListener) {
-        this.loginListener = loginListener;
     }
 
     private void login(Login login) {

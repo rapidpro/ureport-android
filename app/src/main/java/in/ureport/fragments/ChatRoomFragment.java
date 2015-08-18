@@ -32,8 +32,8 @@ import in.ureport.models.GroupChatRoom;
 import in.ureport.models.IndividualChatRoom;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
-import in.ureport.util.ChildEventListenerAdapter;
-import in.ureport.util.SpaceItemDecoration;
+import in.ureport.helpers.ChildEventListenerAdapter;
+import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.views.adapters.ChatMessagesAdapter;
 
 /**

@@ -21,7 +21,7 @@ import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.models.IndividualChatRoom;
 import in.ureport.models.User;
-import in.ureport.util.ValueEventListenerAdapter;
+import in.ureport.helpers.ValueEventListenerAdapter;
 
 /**
  * Created by johncordeiro on 16/08/15.

@@ -1,10 +1,8 @@
-package in.ureport.util;
+package in.ureport.helpers;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * Created by johncordeiro on 7/16/15.
@@ -77,12 +75,9 @@ import android.view.ViewGroup;
 //        }
 //    }
 //}
-import android.content.Context;
 import android.graphics.Rect;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
 
 import java.lang.reflect.Field;
 

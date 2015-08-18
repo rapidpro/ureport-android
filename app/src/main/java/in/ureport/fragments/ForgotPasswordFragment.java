@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -33,6 +34,14 @@ public class ForgotPasswordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_forgot_password, container, false);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof LoginFragment.LoginListener) {
+            loginListener = (LoginFragment.LoginListener)activity;
+        }
     }
 
     @Override
@@ -83,9 +92,5 @@ public class ForgotPasswordFragment extends Fragment {
     private boolean validateFields() {
         EditTextValidator validator = new EditTextValidator();
         return validator.validateEmail(email, getString(R.string.error_valid_email));
-    }
-
-    public void setLoginListener(LoginFragment.LoginListener loginListener) {
-        this.loginListener = loginListener;
     }
 }

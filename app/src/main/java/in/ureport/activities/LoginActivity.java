@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
@@ -78,7 +77,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     private void addLoginFragment() {
         LoginFragment loginFragment = new LoginFragment();
-        loginFragment.setLoginListener(this);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content, loginFragment)
                 .commit();
@@ -96,7 +94,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     private void addCredentialsLoginFragment() {
         CredentialsLoginFragment credentialsLoginFragment = new CredentialsLoginFragment();
-        credentialsLoginFragment.setLoginListener(this);
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, credentialsLoginFragment)
@@ -110,8 +107,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         userServices.getUser(user.getKey(), new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i("LoginActivity", "onComplete childrenCount: " + dataSnapshot.getChildrenCount());
-
                 if(dataSnapshot.exists())
                     onUserReady(dataSnapshot.getValue(User.class));
                 else
@@ -143,7 +138,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     @Override
     public void onForgotPassword() {
         ForgotPasswordFragment forgotPasswordFragment = new ForgotPasswordFragment();
-        forgotPasswordFragment.setLoginListener(this);
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.content, forgotPasswordFragment)
@@ -170,7 +164,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     private void addSignUpFragment(User user) {
         SignUpFragment signUpFragment = SignUpFragment.newInstance(user);
-        signUpFragment.setLoginListener(this);
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, signUpFragment)
