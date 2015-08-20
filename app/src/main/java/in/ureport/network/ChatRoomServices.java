@@ -49,6 +49,8 @@ public class ChatRoomServices {
         FirebaseManager.getReference().child(chatRoomPath).child(key).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
+
                 final ChatRoom chatRoom = getChatRoomInstance(dataSnapshot);
                 chatRoom.setKey(key);
                 loadExtraDataForChatRoom(chatRoom, key, listener);
@@ -144,6 +146,27 @@ public class ChatRoomServices {
                 }
             });
         }
+    }
+
+    public void saveGroupChatRoom(final GroupChatRoom groupChatRoom, final List<User> members, final OnChatRoomCreatedListener onChatRoomCreatedListener) {
+        final User me = new User();
+        me.setKey(FirebaseManager.getReference().getAuth().getUid());
+        groupChatRoom.setAdministrator(me);
+
+        FirebaseManager.getReference().child(chatRoomPath).push().setValue(groupChatRoom, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError == null) {
+                    addChatMember(me, firebase);
+                    for (User member : members) {
+                        addChatMember(member, firebase);
+                    }
+
+                    groupChatRoom.setKey(firebase.getKey());
+                    onChatRoomCreatedListener.onChatRoomCreated(groupChatRoom);
+                }
+            }
+        });
     }
 
     public void saveIndividualChatRoom(final User friend, final OnChatRoomCreatedListener onChatRoomCreatedListener) {

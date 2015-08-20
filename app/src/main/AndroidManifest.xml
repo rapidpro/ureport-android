@@ -54,16 +54,6 @@
             android:label="@string/label_ambassadors" />
 
         <activity
-            android:name=".activities.GroupInfoActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/label_chat"
-            android:parentActivityName=".activities.ChatActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.ChatActivity" />
-        </activity>
-
-        <activity
             android:name=".activities.ProfileActivity"
             android:screenOrientation="portrait"
             android:label="@string/label_profile"

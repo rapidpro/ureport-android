@@ -124,7 +124,7 @@ public class ChatRoomFragment extends Fragment {
                 return true;
             case R.id.groupInfo:
                 if (chatRoomListener != null)
-                    chatRoomListener.onChatRoomInfoView(chatRoom);
+                    chatRoomListener.onChatRoomInfoView(chatRoom, chatMembers);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -224,7 +224,7 @@ public class ChatRoomFragment extends Fragment {
         @Override
         public void onClick(View view) {
             if (chatRoomListener != null)
-                chatRoomListener.onChatRoomInfoView(chatRoom);
+                chatRoomListener.onChatRoomInfoView(chatRoom, chatMembers);
         }
     };
 
@@ -243,6 +243,6 @@ public class ChatRoomFragment extends Fragment {
 
     public interface ChatRoomListener {
         void onChatRoomLeave(ChatRoom chatRoom);
-        void onChatRoomInfoView(ChatRoom chatRoom);
+        void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers);
     }
 }

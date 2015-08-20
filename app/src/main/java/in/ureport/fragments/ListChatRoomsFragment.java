@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,7 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
             chatRoomServices.getChatRoom(chatRoomKey, new OnChatRoomLoadedListener() {
                 @Override
                 public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage) {
+                    Log.i(TAG, "onChatRoomLoaded chatMembers: " + chatMembers);
                     chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, lastMessage));
                 }
             });

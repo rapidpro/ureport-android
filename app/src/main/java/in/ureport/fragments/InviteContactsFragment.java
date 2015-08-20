@@ -1,6 +1,8 @@
 package in.ureport.fragments;
 
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.support.annotation.NonNull;
@@ -25,7 +27,8 @@ import in.ureport.views.adapters.ContactsAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class InviteContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class InviteContactsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>
+    , ContactsAdapter.OnContactInvitedListener{
 
     private static final String[] PROJECTION = {Phone._ID, Phone.DISPLAY_NAME, Phone.NUMBER};
     private RecyclerView contactsList;
@@ -61,6 +64,7 @@ public class InviteContactsFragment extends Fragment implements LoaderManager.Lo
         List<Contact> contacts = getContactsFromCursor(data);
 
         ContactsAdapter adapter = new ContactsAdapter(contacts);
+        adapter.setOnContactInvitedListener(this);
         contactsList.setAdapter(adapter);
     }
 
@@ -76,7 +80,13 @@ public class InviteContactsFragment extends Fragment implements LoaderManager.Lo
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(Loader<Cursor> loader) {}
 
+    @Override
+    public void onContactInvited(Contact contact) {
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+        sendIntent.setData(Uri.parse("sms:" + contact.getPhoneNumber()));
+        sendIntent.putExtra("sms_body", getString(R.string.invite_contact_text));
+        startActivityForResult(sendIntent, 0);
     }
 }

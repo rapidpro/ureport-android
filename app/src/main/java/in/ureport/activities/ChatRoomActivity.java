@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import in.ureport.R;
 import in.ureport.fragments.ChatRoomFragment;
@@ -71,8 +69,8 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     }
 
     @Override
-    public void onChatRoomInfoView(ChatRoom chatRoom) {
-        GroupInfoFragment groupInfoFragment = GroupInfoFragment.newInstance((GroupChatRoom)chatRoom);
+    public void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers) {
+        GroupInfoFragment groupInfoFragment = GroupInfoFragment.newInstance((GroupChatRoom)chatRoom, chatMembers);
         groupInfoFragment.setChatRoomListener(this);
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)

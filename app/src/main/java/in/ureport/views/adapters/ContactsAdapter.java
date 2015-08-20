@@ -20,6 +20,8 @@ public class ContactsAdapter extends RecyclerView.Adapter {
 
     private List<Contact> contacts;
 
+    private OnContactInvitedListener onContactInvitedListener;
+
     public ContactsAdapter(List<Contact> contacts) {
         this.contacts = contacts;
     }
@@ -63,8 +65,17 @@ public class ContactsAdapter extends RecyclerView.Adapter {
         private View.OnClickListener onInviteContactClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PrototypeManager.showPrototypeAlert(itemView.getContext());
+                if(onContactInvitedListener != null)
+                    onContactInvitedListener.onContactInvited(contacts.get(getLayoutPosition()));
             }
         };
+    }
+
+    public void setOnContactInvitedListener(OnContactInvitedListener onContactInvitedListener) {
+        this.onContactInvitedListener = onContactInvitedListener;
+    }
+
+    public interface OnContactInvitedListener {
+        void onContactInvited(Contact contact);
     }
 }

@@ -42,7 +42,7 @@ public class ChatActivity extends BaseActivity {
         pager.setOffscreenPageLimit(3);
         pager.setCurrentItem(1);
 
-        getMainActionButton().setImageResource(R.drawable.ic_edit_white_24dp);
+        getMainActionButton().setImageResource(R.drawable.ic_add_white_24dp);
         getMainActionButton().setOnClickListener(onCreateChatClickListener);
         getMenuNavigation().getMenu().findItem(R.id.chat).setChecked(true);
     }

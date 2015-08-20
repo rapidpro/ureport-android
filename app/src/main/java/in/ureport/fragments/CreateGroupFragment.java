@@ -1,16 +1,16 @@
 package in.ureport.fragments;
 
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,27 +19,41 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
-import in.ureport.listener.ChatCreationListener;
+import in.ureport.listener.OnChatRoomCreatedListener;
 import in.ureport.loader.UreportersLoader;
 import in.ureport.managers.PrototypeManager;
+import in.ureport.models.GroupChatRoom;
 import in.ureport.models.User;
+import in.ureport.network.ChatRoomServices;
+import in.ureport.network.UserServices;
 import in.ureport.views.adapters.UreportersAdapter;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class CreateGroupFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<User>> {
+public class CreateGroupFragment extends Fragment {
 
-    public static final int MIN_SIZE_TITLE = 5;
+    private static final int MIN_SIZE_TITLE = 5;
+    private static final int MAX_UREPORTERS_SELECTION_COUNT = 20;
+
     private EditText title;
     private EditText description;
+    private SwitchCompat privateGroup;
+    private SwitchCompat mediaAllowed;
     private RecyclerView ureportersList;
 
     private EditTextValidator validator;
+
+    private UreportersAdapter ureportersAdapter;
+
+    private OnChatRoomCreatedListener onChatRoomCreatedListener;
 
     @Nullable
     @Override
@@ -52,7 +66,26 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
         super.onViewCreated(view, savedInstanceState);
         setupObjects();
         setupView(view);
-        getLoaderManager().initLoader(0, null, this).forceLoad();
+        loadUsers();
+    }
+
+    private void loadUsers() {
+        UserServices userServices = new UserServices();
+        userServices.loadAll(new UserServices.OnLoadAllUsersListener() {
+            @Override
+            public void onLoadAllUsers(List<User> users) {
+                ureportersAdapter = new UreportersAdapter(users);
+                ureportersAdapter.setSelectionEnabled(true, MAX_UREPORTERS_SELECTION_COUNT);
+                ureportersList.setAdapter(ureportersAdapter);
+            }
+        });
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof OnChatRoomCreatedListener)
+            onChatRoomCreatedListener = (OnChatRoomCreatedListener)activity;
     }
 
     private void setupObjects() {
@@ -64,6 +97,8 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
 
         title = (EditText) view.findViewById(R.id.title);
         description = (EditText) view.findViewById(R.id.description);
+        privateGroup = (SwitchCompat) view.findViewById(R.id.privateGroup);
+        mediaAllowed = (SwitchCompat) view.findViewById(R.id.mediaAllowed);
 
         ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -97,21 +132,18 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
 
     private void createGroup() {
         if(validateFields()) {
-            showSuccessAlert();
+            GroupChatRoom groupChatRoom = new GroupChatRoom();
+            groupChatRoom.setCreationDate(new Date());
+            groupChatRoom.setTitle(title.getText().toString());
+            groupChatRoom.setDescription(description.getText().toString());
+            groupChatRoom.setPrivateAccess(privateGroup.isChecked());
+            groupChatRoom.setMediaAllowed(mediaAllowed.isChecked());
+
+            List<User> members = new ArrayList<>(ureportersAdapter.getSelectedUreporters());
+
+            ChatRoomServices chatRoomServices = new ChatRoomServices();
+            chatRoomServices.saveGroupChatRoom(groupChatRoom, members, onChatRoomCreatedListener);
         }
-    }
-
-    private void showSuccessAlert() {
-        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.chat_create_result_title)
-                .setMessage(R.string.chat_create_group_result_message)
-                .setNeutralButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).create();
-        alertDialog.show();
     }
 
     private boolean validateFields() {
@@ -120,21 +152,6 @@ public class CreateGroupFragment extends Fragment implements LoaderManager.Loade
 
         return titleValid && descriptionValid;
     }
-
-    @Override
-    public Loader<List<User>> onCreateLoader(int id, Bundle args) {
-        return new UreportersLoader(getActivity());
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<User>> loader, List<User> data) {
-        UreportersAdapter ureportersAdapter = new UreportersAdapter(data);
-        ureportersAdapter.setSelectionEnabled(true);
-        ureportersList.setAdapter(ureportersAdapter);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<User>> loader) {}
 
     private View.OnClickListener onAddPictureClickListener = new View.OnClickListener() {
         @Override

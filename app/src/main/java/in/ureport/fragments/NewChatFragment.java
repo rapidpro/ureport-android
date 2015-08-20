@@ -1,11 +1,10 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,20 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.listener.ChatCreationListener;
+import in.ureport.listener.OnCreateGroupListener;
+import in.ureport.listener.OnCreateIndividualChatListener;
 import in.ureport.listener.OnChatRoomCreatedListener;
-import in.ureport.loader.UreportersLoader;
-import in.ureport.managers.FirebaseManager;
-import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
@@ -37,7 +28,7 @@ import in.ureport.views.adapters.UreportersAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class NewChatFragment extends Fragment implements ChatCreationListener {
+public class NewChatFragment extends Fragment implements OnCreateIndividualChatListener {
 
     private RecyclerView ureportersList;
 
@@ -45,6 +36,7 @@ public class NewChatFragment extends Fragment implements ChatCreationListener {
     private ChatRoomServices chatRoomServices;
 
     private OnChatRoomCreatedListener onChatRoomCreatedListener;
+    private OnCreateGroupListener onCreateGroupListener;
 
     @Nullable
     @Override
@@ -59,6 +51,15 @@ public class NewChatFragment extends Fragment implements ChatCreationListener {
         setupObject();
         setupView(view);
         loadData();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof OnChatRoomCreatedListener)
+            onChatRoomCreatedListener = (OnChatRoomCreatedListener)activity;
+        if(activity instanceof OnCreateGroupListener)
+            onCreateGroupListener = (OnCreateGroupListener)activity;
     }
 
     private void setupObject() {
@@ -81,7 +82,7 @@ public class NewChatFragment extends Fragment implements ChatCreationListener {
             @Override
             public void onLoadAllUsers(List<User> users) {
                 UreportersAdapter adapter = new UreportersAdapter(users);
-                adapter.setChatCreationListener(NewChatFragment.this);
+                adapter.setOnCreateIndividualChatListener(NewChatFragment.this);
                 ureportersList.setAdapter(adapter);
             }
         });
@@ -96,16 +97,13 @@ public class NewChatFragment extends Fragment implements ChatCreationListener {
     private View.OnClickListener onCreateGroupClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            if(onCreateGroupListener != null)
+                onCreateGroupListener.onCreateGroup();
         }
     };
 
     @Override
-    public void onCreateGroupChatCalled() {
-    }
-
-    @Override
-    public void onCreateIndividualChatCalled(final User user) {
+    public void onCreateIndividualChat(final User user) {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setMessage(R.string.chat_create_individual_message)
                 .setNegativeButton(R.string.cancel_dialog_button, null)
@@ -116,9 +114,5 @@ public class NewChatFragment extends Fragment implements ChatCreationListener {
                     }
                 }).create();
         alertDialog.show();
-    }
-
-    public void setOnChatRoomCreatedListener(OnChatRoomCreatedListener onChatRoomCreatedListener) {
-        this.onChatRoomCreatedListener = onChatRoomCreatedListener;
     }
 }

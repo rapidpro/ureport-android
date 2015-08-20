@@ -5,13 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import in.ureport.R;
-import in.ureport.listener.ChatCreationListener;
+import in.ureport.listener.OnCreateIndividualChatListener;
 import in.ureport.managers.ImageLoader;
 import in.ureport.models.User;
 
@@ -21,9 +25,12 @@ import in.ureport.models.User;
 public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<User> ureportersList;
-    private Boolean selectionEnabled = false;
 
-    private ChatCreationListener chatCreationListener;
+    private Set<User> selectedUreporters;
+    private Boolean selectionEnabled = false;
+    private Integer maxSelectionCount;
+
+    private OnCreateIndividualChatListener onCreateIndividualChatListener;
 
     public UreportersAdapter(List<User> ureportersList) {
         this.ureportersList = ureportersList;
@@ -45,12 +52,18 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return ureportersList.size();
     }
 
-    public void setChatCreationListener(ChatCreationListener chatCreationListener) {
-        this.chatCreationListener = chatCreationListener;
+    public void setOnCreateIndividualChatListener(OnCreateIndividualChatListener onCreateIndividualChatListener) {
+        this.onCreateIndividualChatListener = onCreateIndividualChatListener;
     }
 
-    public void setSelectionEnabled(Boolean selectionEnabled) {
+    public void setSelectionEnabled(Boolean selectionEnabled, Integer maxSelectionCount) {
+        this.maxSelectionCount = maxSelectionCount;
         this.selectionEnabled = selectionEnabled;
+        this.selectedUreporters = new HashSet<>();
+    }
+
+    public Set<User> getSelectedUreporters() {
+        return selectedUreporters;
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
@@ -66,20 +79,43 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             picture = (ImageView) itemView.findViewById(R.id.picture);
             selected = (CheckBox) itemView.findViewById(R.id.selected);
             itemView.setOnClickListener(selectionEnabled ? null : onItemClickListener);
+            selected.setOnCheckedChangeListener(selectionEnabled ? onUserCheckedListener : null);
         }
 
         public void bindView(User user) {
             name.setText(user.getNickname());
-            selected.setVisibility(selectionEnabled ? View.VISIBLE : View.GONE);
             ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
+
+            selected.setVisibility(selectionEnabled ? View.VISIBLE : View.GONE);
+            if(selectionEnabled) selected.setChecked(selectedUreporters.contains(user));
         }
 
         private View.OnClickListener onItemClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(chatCreationListener != null)
-                    chatCreationListener.onCreateIndividualChatCalled(ureportersList.get(getLayoutPosition()));
+                if(onCreateIndividualChatListener != null)
+                    onCreateIndividualChatListener.onCreateIndividualChat(ureportersList.get(getLayoutPosition()));
             }
         };
+
+        private CompoundButton.OnCheckedChangeListener onUserCheckedListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    if(ureportersList.size() <= maxSelectionCount)
+                        selectedUreporters.add(ureportersList.get(getLayoutPosition()));
+                    else
+                        showMaximumNumberLimitError();
+                } else {
+                    selectedUreporters.remove(ureportersList.get(getLayoutPosition()));
+                }
+            }
+        };
+
+        private void showMaximumNumberLimitError() {
+            Toast.makeText(itemView.getContext()
+                    , itemView.getContext().getString(R.string.ureporters_selected_maximum, maxSelectionCount)
+                    , Toast.LENGTH_LONG).show();
+        }
     }
 }

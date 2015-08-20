@@ -17,9 +17,11 @@ public class GroupChatRoom extends ChatRoom {
 
     private Date creationDate;
 
-    private Boolean publicAccess;
+    private Boolean privateAccess;
 
-    private Type type = Type.Group;
+    private Boolean mediaAllowed;
+
+    private User administrator;
 
     public String getTitle() {
         return title;
@@ -53,12 +55,28 @@ public class GroupChatRoom extends ChatRoom {
         this.creationDate = creationDate;
     }
 
-    public Boolean getPublicAccess() {
-        return publicAccess;
+    public Boolean getPrivateAccess() {
+        return privateAccess;
     }
 
-    public void setPublicAccess(Boolean publicAccess) {
-        this.publicAccess = publicAccess;
+    public void setPrivateAccess(Boolean privateAccess) {
+        this.privateAccess = privateAccess;
+    }
+
+    public User getAdministrator() {
+        return administrator;
+    }
+
+    public void setAdministrator(User administrator) {
+        this.administrator = administrator;
+    }
+
+    public Boolean getMediaAllowed() {
+        return mediaAllowed;
+    }
+
+    public void setMediaAllowed(Boolean mediaAllowed) {
+        this.mediaAllowed = mediaAllowed;
     }
 
     @Override
@@ -73,11 +91,13 @@ public class GroupChatRoom extends ChatRoom {
         dest.writeString(this.description);
         dest.writeString(this.picture);
         dest.writeLong(creationDate != null ? creationDate.getTime() : -1);
-        dest.writeValue(this.publicAccess);
-        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
+        dest.writeValue(this.privateAccess);
+        dest.writeValue(this.mediaAllowed);
+        dest.writeParcelable(this.administrator, 0);
     }
 
     public GroupChatRoom() {
+        setType(Type.Group);
     }
 
     protected GroupChatRoom(Parcel in) {
@@ -87,9 +107,9 @@ public class GroupChatRoom extends ChatRoom {
         this.picture = in.readString();
         long tmpCreationDate = in.readLong();
         this.creationDate = tmpCreationDate == -1 ? null : new Date(tmpCreationDate);
-        this.publicAccess = (Boolean) in.readValue(Boolean.class.getClassLoader());
-        int tmpType = in.readInt();
-        this.type = tmpType == -1 ? null : Type.values()[tmpType];
+        this.privateAccess = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.mediaAllowed = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.administrator = in.readParcelable(User.class.getClassLoader());
     }
 
     public static final Creator<GroupChatRoom> CREATOR = new Creator<GroupChatRoom>() {

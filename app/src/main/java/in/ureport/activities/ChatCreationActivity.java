@@ -5,15 +5,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import in.ureport.R;
+import in.ureport.fragments.CreateGroupFragment;
 import in.ureport.fragments.NewChatFragment;
 import in.ureport.listener.OnChatRoomCreatedListener;
+import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.ChatRoom;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class ChatCreationActivity extends AppCompatActivity implements OnChatRoomCreatedListener {
+public class ChatCreationActivity extends AppCompatActivity implements OnChatRoomCreatedListener
+    , OnCreateGroupListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +42,6 @@ public class ChatCreationActivity extends AppCompatActivity implements OnChatRoo
 
     private void addNewChatFragment() {
         NewChatFragment newChatFragment = new NewChatFragment();
-        newChatFragment.setOnChatRoomCreatedListener(this);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content, newChatFragment)
                 .commit();
@@ -54,5 +56,18 @@ public class ChatCreationActivity extends AppCompatActivity implements OnChatRoo
     @Override
     public void onChatRoomCreated(ChatRoom chatRoom) {
         finish();
+    }
+
+    @Override
+    public void onCreateGroup() {
+        addCreateGroupFragment();
+    }
+
+    private void addCreateGroupFragment() {
+        CreateGroupFragment createGroupFragment = new CreateGroupFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content, createGroupFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

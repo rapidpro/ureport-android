@@ -42,7 +42,8 @@
                     android:gravity="start"
                     android:textAlignment="viewStart"
                     android:hint="@string/chat_group_title_hint"
-                    android:maxLength="20"/>
+                    android:maxLength="20"
+                    tools:text="Group title"/>
 
             </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
@@ -59,30 +60,31 @@
                     android:id="@+id/description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
                     android:hint="@string/chat_group_description_hint"
                     android:maxLength="200"
                     android:singleLine="true"
+                    android:inputType="text"
                     android:textColor="@android:color/white"
                     tools:text="@string/chat_group_description_hint"/>
 
             </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
             <RelativeLayout
+                android:id="@+id/privacyContent"
                 android:layout_below="@+id/inputDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="30dp"
                 style="@style/AppTheme.FormMargin">
 
                 <TextView
                     android:id="@+id/privateGroupTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginEnd="20dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
                     android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
@@ -96,7 +98,29 @@
                     android:layout_toRightOf="@+id/privateGroupTitle"
                     android:layout_toEndOf="@+id/privateGroupTitle"/>
 
+                <TextView
+                    android:id="@+id/mediaAllowedTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/privateGroup"
+                    android:layout_toEndOf="@+id/privateGroup"
+                    android:text="@string/chat_private_media_permission_title"
+                    android:textColor="@android:color/white"/>
+
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/mediaAllowed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/mediaAllowedTitle"
+                    android:layout_toEndOf="@+id/mediaAllowedTitle"/>
+
             </RelativeLayout>
+
         </RelativeLayout>
     </android.support.design.widget.AppBarLayout>
 
@@ -113,25 +137,21 @@
             android:paddingBottom="10dp"
             android:elevation="10dp">
 
-            <TextView
+            <EditText
                 android:id="@+id/ureportersTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:drawableStart="@drawable/ic_search_grey_600_36dp"
+                android:drawableLeft="@drawable/ic_search_grey_600_36dp"
+                android:drawablePadding="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:textSize="16sp"
-                android:text="@string/chat_new_invite_ureporters" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/ureportersTitle"
-                android:layout_toEndOf="@+id/ureportersTitle"
-                android:src="@drawable/ic_search_grey_600_36dp"/>
+                android:background="@null"
+                android:hint="@string/chat_new_invite_ureporters" />
 
         </RelativeLayout>
 

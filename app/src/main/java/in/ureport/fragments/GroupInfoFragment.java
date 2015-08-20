@@ -32,17 +32,19 @@ import in.ureport.views.adapters.UreportersAdapter;
 public class GroupInfoFragment extends Fragment {
 
     private static final String EXTRA_CHAT_ROOM = "chatRoom";
+    private static final String EXTRA_CHAT_MEMBERS = "chatMembers";
 
     private ChatRoomFragment.ChatRoomListener chatRoomListener;
 
     private GroupChatRoom chatRoom;
     private ChatMembers chatMembers;
 
-    public static GroupInfoFragment newInstance(GroupChatRoom chatRoom) {
+    public static GroupInfoFragment newInstance(GroupChatRoom chatRoom, ChatMembers chatMembers) {
         GroupInfoFragment groupInfoFragment = new GroupInfoFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_CHAT_ROOM, chatRoom);
+        args.putParcelable(EXTRA_CHAT_MEMBERS, chatMembers);
         groupInfoFragment.setArguments(args);
 
         return groupInfoFragment;
@@ -53,6 +55,7 @@ public class GroupInfoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if(getArguments() != null && getArguments().containsKey(EXTRA_CHAT_ROOM)) {
             chatRoom = getArguments().getParcelable(EXTRA_CHAT_ROOM);
+            chatMembers = getArguments().getParcelable(EXTRA_CHAT_MEMBERS);
         }
     }
 

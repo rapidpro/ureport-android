@@ -46,4 +46,11 @@ public class ChatMembers implements Parcelable {
             return new ChatMembers[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "ChatMembers{" +
+                "users=" + users +
+                '}';
+    }
 }
