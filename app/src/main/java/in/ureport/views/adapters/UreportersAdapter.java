@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,8 @@ import in.ureport.models.User;
  */
 public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = "UreportersAdapter";
+
     private List<User> ureportersList;
 
     private Set<User> selectedUreporters;
@@ -34,6 +37,10 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public UreportersAdapter(List<User> ureportersList) {
         this.ureportersList = ureportersList;
+    }
+
+    public UreportersAdapter() {
+        this.ureportersList = new ArrayList<>();
     }
 
     @Override
@@ -48,18 +55,36 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @Override
+    public long getItemId(int position) {
+        return ureportersList.get(position).hashCode();
+    }
+
+    @Override
     public int getItemCount() {
         return ureportersList.size();
+    }
+
+    public void update(List<User> ureportersList) {
+        this.ureportersList = ureportersList != null ? ureportersList : new ArrayList<User>();
+        notifyDataSetChanged();
     }
 
     public void setOnCreateIndividualChatListener(OnCreateIndividualChatListener onCreateIndividualChatListener) {
         this.onCreateIndividualChatListener = onCreateIndividualChatListener;
     }
 
-    public void setSelectionEnabled(Boolean selectionEnabled, Integer maxSelectionCount) {
+    public void setSelectionEnabled(Boolean selectionEnabled, Integer maxSelectionCount, List<User> users) {
         this.maxSelectionCount = maxSelectionCount;
         this.selectionEnabled = selectionEnabled;
-        this.selectedUreporters = new HashSet<>();
+
+        if(users != null)
+            this.selectedUreporters = new HashSet<>(users);
+        else
+            this.selectedUreporters = new HashSet<>();
+    }
+
+    public void setSelectionEnabled(Boolean selectionEnabled, Integer maxSelectionCount) {
+        setSelectionEnabled(selectionEnabled, maxSelectionCount, null);
     }
 
     public Set<User> getSelectedUreporters() {
@@ -88,6 +113,7 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             selected.setVisibility(selectionEnabled ? View.VISIBLE : View.GONE);
             if(selectionEnabled) selected.setChecked(selectedUreporters.contains(user));
+
         }
 
         private View.OnClickListener onItemClickListener = new View.OnClickListener() {

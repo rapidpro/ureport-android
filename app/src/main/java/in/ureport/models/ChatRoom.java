@@ -66,4 +66,19 @@ public abstract class ChatRoom implements Parcelable {
         int tmpType = in.readInt();
         this.type = tmpType == -1 ? null : ChatRoom.Type.values()[tmpType];
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+
+        ChatRoom chatRoom = (ChatRoom) o;
+        return key.equals(chatRoom.key);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
+    }
 }

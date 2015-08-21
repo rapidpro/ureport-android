@@ -7,22 +7,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.models.ChatGroup;
+import in.ureport.models.GroupChatRoom;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
 public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<ChatGroup> chatGroups;
+    private List<GroupChatRoom> groupChats;
 
     private ChatGroupListener chatGroupListener;
 
-    public ChatGroupAdapter(List<ChatGroup> chatGroups) {
-        this.chatGroups = chatGroups;
+    public ChatGroupAdapter() {
+        this.groupChats = new ArrayList<>();
     }
 
     @Override
@@ -33,12 +34,22 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder)holder).bindView(chatGroups.get(position));
+        ((ViewHolder)holder).bindView(groupChats.get(position));
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return groupChats.get(position).getKey().hashCode();
     }
 
     @Override
     public int getItemCount() {
-        return chatGroups.size();
+        return groupChats.size();
+    }
+
+    public void addGroupChatRoom(GroupChatRoom groupChatRoom) {
+        groupChats.add(groupChatRoom);
+        notifyDataSetChanged();
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
@@ -58,16 +69,16 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             itemView.setOnClickListener(onItemClickListener);
         }
 
-        private void bindView(ChatGroup chatGroup) {
-            title.setText(chatGroup.getTitle());
-            description.setText(chatGroup.getDescription());
+        private void bindView(GroupChatRoom groupChatRoom) {
+            title.setText(groupChatRoom.getTitle());
+            description.setText(groupChatRoom.getDescription());
         }
 
         private View.OnClickListener onJoinClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (chatGroupListener != null) {
-                    chatGroupListener.onJoinChatGroup(chatGroups.get(getLayoutPosition()));
+                    chatGroupListener.onJoinChatGroup(groupChats.get(getLayoutPosition()));
                 }
             }
         };
@@ -76,7 +87,7 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             @Override
             public void onClick(View view) {
                 if (chatGroupListener != null)
-                    chatGroupListener.onViewGroupInfo(chatGroups.get(getLayoutPosition()));
+                    chatGroupListener.onViewGroupInfo(groupChats.get(getLayoutPosition()));
             }
         };
     }
@@ -86,7 +97,7 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public interface ChatGroupListener {
-        void onJoinChatGroup(ChatGroup chatGroup);
-        void onViewGroupInfo(ChatGroup chatGroup);
+        void onJoinChatGroup(GroupChatRoom groupChatRoom);
+        void onViewGroupInfo(GroupChatRoom groupChatRoom);
     }
 }

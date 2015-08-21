@@ -9,6 +9,7 @@ import com.firebase.client.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 
@@ -24,6 +25,11 @@ public class UserServices {
                 .child(userKey).child("chatRooms").child(chatRoomKey).setValue(true);
     }
 
+    public void removeUserChatRoom(String userKey, String chatRoomKey) {
+        FirebaseManager.getReference().child(path)
+                .child(userKey).child("chatRooms").child(chatRoomKey).removeValue();
+    }
+
     public void addChildEventListenerForChatRooms(String key, ChildEventListener childEventListener) {
         FirebaseManager.getReference().child(path).child(key)
                 .child("chatRooms").addChildEventListener(childEventListener);
@@ -33,21 +39,36 @@ public class UserServices {
         FirebaseManager.getReference().child(path).child(key).addListenerForSingleValueEvent(valueEventListener);
     }
 
+    public void loadByName(String nickname, final OnLoadAllUsersListener onLoadAllUsersListener) {
+        FirebaseManager.getReference().child(path).orderByChild("nickname").equalTo(nickname)
+                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                handleDataResponse(dataSnapshot, onLoadAllUsersListener);
+            }
+        });
+    }
+
+    private void handleDataResponse(DataSnapshot dataSnapshot, OnLoadAllUsersListener onLoadAllUsersListener) {
+        String currentUserKey = FirebaseManager.getReference().getAuth().getUid();
+
+        List<User> users = new ArrayList<User>();
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            User user = snapshot.getValue(User.class);
+            if(!snapshot.getKey().equals(currentUserKey)) {
+                users.add(user);
+            }
+        }
+
+        if(onLoadAllUsersListener != null) onLoadAllUsersListener.onLoadAllUsers(users);
+    }
+
     public void loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {
         FirebaseManager.getReference().child(path).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String currentUserKey = FirebaseManager.getReference().getAuth().getUid();
-
-                List<User> users = new ArrayList<User>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    User user = snapshot.getValue(User.class);
-                    if(!snapshot.getKey().equals(currentUserKey)) {
-                        users.add(user);
-                    }
-                }
-
-                if(onLoadAllUsersListener != null) onLoadAllUsersListener.onLoadAllUsers(users);
+                handleDataResponse(dataSnapshot, onLoadAllUsersListener);
             }
 
             @Override

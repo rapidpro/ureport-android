@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import in.ureport.managers.FirebaseManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.IndividualChatRoom;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
@@ -83,16 +83,25 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
             super.onChildAdded(dataSnapshot, previousChild);
-
             String chatRoomKey = dataSnapshot.getKey();
 
             chatRoomServices.getChatRoom(chatRoomKey, new OnChatRoomLoadedListener() {
                 @Override
                 public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage) {
-                    Log.i(TAG, "onChatRoomLoaded chatMembers: " + chatMembers);
                     chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, lastMessage));
                 }
             });
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            super.onChildRemoved(dataSnapshot);
+            String chatRoomKey = dataSnapshot.getKey();
+
+            IndividualChatRoom chatRoom = new IndividualChatRoom();
+            chatRoom.setKey(chatRoomKey);
+
+            chatRoomsAdapter.removeChatRoom(new ChatRoomHolder(chatRoom));
         }
     };
 

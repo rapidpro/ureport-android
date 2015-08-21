@@ -147,10 +147,13 @@ public class User implements Parcelable {
     @Override
     public String toString() {
         return "User{" +
-                "email='" + email + '\'' +
+                "key='" + key + '\'' +
+                ", email='" + email + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", birthday=" + birthday +
                 ", country='" + country + '\'' +
+                ", picture='" + picture + '\'' +
+                ", type=" + type +
                 ", gender=" + gender +
                 '}';
     }
@@ -188,9 +191,7 @@ public class User implements Parcelable {
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + key.hashCode();
-        return result;
+        return key.hashCode();
     }
 
     @Override

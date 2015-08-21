@@ -9,7 +9,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,7 +22,8 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
-import in.ureport.listener.OnChatRoomCreatedListener;
+import in.ureport.listener.OnChatRoomSavedListener;
+import in.ureport.managers.SearchManager;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
@@ -28,15 +32,20 @@ import in.ureport.views.adapters.UreportersAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class NewChatFragment extends Fragment implements OnCreateIndividualChatListener {
+public class NewChatFragment extends Fragment implements OnCreateIndividualChatListener
+        , SearchView.OnQueryTextListener, SearchView.OnCloseListener {
+
+    private static final String TAG = "NewChatFragment";
 
     private RecyclerView ureportersList;
 
     private UserServices userServices;
     private ChatRoomServices chatRoomServices;
 
-    private OnChatRoomCreatedListener onChatRoomCreatedListener;
+    private OnChatRoomSavedListener onChatRoomSavedListener;
     private OnCreateGroupListener onCreateGroupListener;
+
+    private UreportersAdapter adapter;
 
     @Nullable
     @Override
@@ -56,8 +65,8 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if(activity instanceof OnChatRoomCreatedListener)
-            onChatRoomCreatedListener = (OnChatRoomCreatedListener)activity;
+        if(activity instanceof OnChatRoomSavedListener)
+            onChatRoomSavedListener = (OnChatRoomSavedListener)activity;
         if(activity instanceof OnCreateGroupListener)
             onCreateGroupListener = (OnCreateGroupListener)activity;
     }
@@ -68,30 +77,46 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     }
 
     private void setupView(View view) {
-        TextView createGroup = (TextView) view.findViewById(R.id.createGroup);
+        setHasOptionsMenu(true);
+
+        TextView createGroup = (TextView) view.findViewById(R.id.saveGroup);
         createGroup.setOnClickListener(onCreateGroupClickListener);
 
         ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        loadData();
     }
 
     private void loadData() {
         userServices.loadAll(new UserServices.OnLoadAllUsersListener() {
             @Override
             public void onLoadAllUsers(List<User> users) {
-                UreportersAdapter adapter = new UreportersAdapter(users);
-                adapter.setOnCreateIndividualChatListener(NewChatFragment.this);
-                ureportersList.setAdapter(adapter);
+                if(adapter != null) {
+                    adapter.update(users);
+                } else {
+                    setupAdapter(users);
+                }
             }
         });
+    }
+
+    private void setupAdapter(List<User> users) {
+        adapter = new UreportersAdapter(users);
+        adapter.setOnCreateIndividualChatListener(NewChatFragment.this);
+        ureportersList.setAdapter(adapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.label_new_chat);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        SearchManager searchManager = new SearchManager(getActivity());
+        searchManager.addSearchView(menu, R.string.search_hint_users, this, this);
     }
 
     private View.OnClickListener onCreateGroupClickListener = new View.OnClickListener() {
@@ -110,9 +135,32 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        chatRoomServices.saveIndividualChatRoom(user, onChatRoomCreatedListener);
+                        chatRoomServices.saveIndividualChatRoom(user, onChatRoomSavedListener);
                     }
                 }).create();
         alertDialog.show();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        userServices.loadByName(query, new UserServices.OnLoadAllUsersListener() {
+            @Override
+            public void onLoadAllUsers(List<User> users) {
+                if(adapter != null)
+                    adapter.update(users);
+            }
+        });
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public boolean onClose() {
+        loadData();
+        return false;
     }
 }

@@ -1,5 +1,7 @@
 package in.ureport.network;
 
+import android.support.annotation.NonNull;
+
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -12,7 +14,7 @@ import java.util.Map;
 
 import in.ureport.listener.OnChatLastMessageLoadedListener;
 import in.ureport.listener.OnChatMembersLoadedListener;
-import in.ureport.listener.OnChatRoomCreatedListener;
+import in.ureport.listener.OnChatRoomSavedListener;
 import in.ureport.listener.OnChatRoomLoadedListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.models.ChatMembers;
@@ -32,8 +34,17 @@ public class ChatRoomServices {
     public static final String membersPath = "chat_members";
     public static final String messagesPath = "chat_messages";
 
+    public void addChildEventListenerForPublicGroups(ChildEventListener listener) {
+        FirebaseManager.getReference().child(chatRoomPath).orderByChild("privateAccess")
+                .equalTo(false).addChildEventListener(listener);
+    }
+
     public void addChildEventListenerForChatMessages(String key, ChildEventListener listener) {
         FirebaseManager.getReference().child(messagesPath).child(key).orderByKey().addChildEventListener(listener);
+    }
+
+    public void removeEventListener(ChildEventListener listener) {
+        FirebaseManager.getReference().child(messagesPath).removeEventListener(listener);
     }
 
     public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
@@ -49,7 +60,7 @@ public class ChatRoomServices {
         FirebaseManager.getReference().child(chatRoomPath).child(key).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists()) return;
+                if (!dataSnapshot.exists()) return;
 
                 final ChatRoom chatRoom = getChatRoomInstance(dataSnapshot);
                 chatRoom.setKey(key);
@@ -109,25 +120,26 @@ public class ChatRoomServices {
         });
     }
 
-    private void loadChatRoomMembers(String key, final OnChatMembersLoadedListener listener) {
-        FirebaseManager.getReference().child(membersPath).child(key).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<User> users = new ArrayList<>();
+    public void loadChatRoomMembers(String key, final OnChatMembersLoadedListener listener) {
+        FirebaseManager.getReference().child(membersPath).child(key)
+                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<User> users = new ArrayList<>();
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    User user = new User();
-                    user.setKey(snapshot.getKey());
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            User user = new User();
+                            user.setKey(snapshot.getKey());
 
-                    users.add(user);
-                }
+                            users.add(user);
+                        }
 
-                ChatMembers chatMembers = new ChatMembers();
-                chatMembers.setUsers(users);
+                        ChatMembers chatMembers = new ChatMembers();
+                        chatMembers.setUsers(users);
 
-                loadUsersFromChatRooms(chatMembers, listener);
-            }
-        });
+                        loadUsersFromChatRooms(chatMembers, listener);
+                    }
+                });
     }
 
     private void loadUsersFromChatRooms(final ChatMembers chatMembers, final OnChatMembersLoadedListener listener) {
@@ -148,54 +160,83 @@ public class ChatRoomServices {
         }
     }
 
-    public void saveGroupChatRoom(final GroupChatRoom groupChatRoom, final List<User> members, final OnChatRoomCreatedListener onChatRoomCreatedListener) {
-        final User me = new User();
-        me.setKey(FirebaseManager.getReference().getAuth().getUid());
-        groupChatRoom.setAdministrator(me);
+    public void updateGroupChatRoom(final GroupChatRoom groupChatRoom) {
+        FirebaseManager.getReference().child(chatRoomPath).child(groupChatRoom.getKey()).setValue(groupChatRoom);
+    }
 
-        FirebaseManager.getReference().child(chatRoomPath).push().setValue(groupChatRoom, new Firebase.CompletionListener() {
+    public void saveGroupChatRoom(final GroupChatRoom groupChatRoom, final List<User> members
+            , final OnChatRoomSavedListener onChatRoomSavedListener) {
+        FirebaseManager.getReference().child(chatRoomPath).push().setValue(groupChatRoom
+                , new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
-                    addChatMember(me, firebase);
+                    addChatMember(groupChatRoom.getAdministrator(), firebase.getKey());
                     for (User member : members) {
-                        addChatMember(member, firebase);
+                        addChatMember(member, firebase.getKey());
                     }
 
                     groupChatRoom.setKey(firebase.getKey());
-                    onChatRoomCreatedListener.onChatRoomCreated(groupChatRoom);
+
+                    ChatMembers chatMembers = new ChatMembers();
+                    chatMembers.setUsers(members);
+
+                    onChatRoomSavedListener.onChatRoomSaved(groupChatRoom, chatMembers);
                 }
             }
         });
     }
 
-    public void saveIndividualChatRoom(final User friend, final OnChatRoomCreatedListener onChatRoomCreatedListener) {
+    public void saveIndividualChatRoom(final User friend, final OnChatRoomSavedListener onChatRoomSavedListener) {
         final IndividualChatRoom chatRoom = new IndividualChatRoom();
         chatRoom.setCreatedDate(new Date());
 
-        FirebaseManager.getReference().child(chatRoomPath).push().setValue(chatRoom, new Firebase.CompletionListener() {
+        FirebaseManager.getReference().child(chatRoomPath).push().setValue(chatRoom
+                , new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
                     User me = new User();
                     me.setKey(FirebaseManager.getReference().getAuth().getUid());
 
-                    addChatMember(me, firebase);
-                    addChatMember(friend, firebase);
+                    addChatMember(me, firebase.getKey());
+                    addChatMember(friend, firebase.getKey());
 
                     chatRoom.setKey(firebase.getKey());
-                    onChatRoomCreatedListener.onChatRoomCreated(chatRoom);
+
+                    ChatMembers chatMembers = createChatMembers(me, friend);
+                    onChatRoomSavedListener.onChatRoomSaved(chatRoom, chatMembers);
                 }
             }
         });
     }
 
-    private void addChatMember(User user, Firebase firebase) {
+    @NonNull
+    private ChatMembers createChatMembers(User me, User friend) {
+        ChatMembers chatMembers = new ChatMembers();
+        List<User> users = new ArrayList<>();
+        users.add(me);
+        users.add(friend);
+        chatMembers.setUsers(users);
+        return chatMembers;
+    }
+
+    public void removeChatMember(User user, String chatRoomKey) {
         UserServices userServices = new UserServices();
-        userServices.addUserChatRoom(user.getKey(), firebase.getKey());
+        userServices.removeUserChatRoom(user.getKey(), chatRoomKey);
 
         FirebaseManager.getReference().child(membersPath)
-                .child(firebase.getKey())
+                .child(chatRoomKey)
+                .child(user.getKey())
+                .removeValue();
+    }
+
+    public void addChatMember(User user, String chatRoomKey) {
+        UserServices userServices = new UserServices();
+        userServices.addUserChatRoom(user.getKey(), chatRoomKey);
+
+        FirebaseManager.getReference().child(membersPath)
+                .child(chatRoomKey)
                 .child(user.getKey())
                 .setValue(true);
     }

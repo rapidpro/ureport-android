@@ -47,17 +47,16 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     private void checkUserLoggedAndProceed() {
-        AuthData authData = FirebaseManager.getReference().getAuth();
-        UserManager.userLoggedIn = authData != null;
+        UserManager.userLoggedIn = FirebaseManager.getAuthUserKey() != null;
 
         if(UserManager.userLoggedIn) {
-            loadUserAndContinue(authData);
+            loadUserAndContinue(FirebaseManager.getAuthUserKey());
         }
     }
 
-    private void loadUserAndContinue(AuthData authData) {
+    private void loadUserAndContinue(String authUserKey) {
         UserServices userServices = new UserServices();
-        userServices.getUser(authData.getUid(), new ValueEventListener() {
+        userServices.getUser(authUserKey, new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {

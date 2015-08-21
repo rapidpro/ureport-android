@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -41,11 +42,15 @@ import in.ureport.views.adapters.ChatMessagesAdapter;
  */
 public class ChatRoomFragment extends Fragment {
 
+    private static final String TAG = "ChatRoomFragment";
+
     private static final String EXTRA_CHAT_ROOM = "chatRoom";
     private static final String EXTRA_CHAT_MEMBERS = "chatMembers";
 
     private TextView name;
     private TextView message;
+    private ImageView picture;
+    private View info;
     private RecyclerView messagesList;
 
     private ChatMessagesAdapter adapter;
@@ -91,12 +96,13 @@ public class ChatRoomFragment extends Fragment {
         setupView(view);
 
         loadData();
+        updateViewForChatRoom();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        FirebaseManager.getReference().removeEventListener(onChildEventListener);
+        chatRoomServices.removeEventListener(onChildEventListener);
     }
 
     private void loadData() {
@@ -111,8 +117,20 @@ public class ChatRoomFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if(chatRoom != null && chatRoom instanceof GroupChatRoom)
+        if(chatRoom != null && chatRoom.getType() == ChatRoom.Type.Group) {
             inflater.inflate(R.menu.menu_chat_group, menu);
+            setupMenuItemVisibility(menu);
+        }
+    }
+
+    private void setupMenuItemVisibility(Menu menu) {
+        MenuItem leaveGroupItem = menu.findItem(R.id.leaveGroup);
+        leaveGroupItem.setVisible(!isCurrentUserAdministrator());
+    }
+
+    private boolean isCurrentUserAdministrator() {
+        GroupChatRoom groupChatRoom = (GroupChatRoom)chatRoom;
+        return groupChatRoom.getAdministrator().getKey().equals(FirebaseManager.getAuthUserKey());
     }
 
     @Override
@@ -130,6 +148,14 @@ public class ChatRoomFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof ChatRoomListener) {
+            chatRoomListener = (ChatRoomListener) activity;
+        }
+    }
+
     private void setupView(View view) {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
@@ -139,12 +165,9 @@ public class ChatRoomFragment extends Fragment {
 
         name = (TextView) view.findViewById(R.id.name);
         message = (TextView) view.findViewById(R.id.message);
+        info = view.findViewById(R.id.info);
 
-        if(chatRoom instanceof IndividualChatRoom) {
-            setupViewForIndividualChat(view);
-        } else if(chatRoom instanceof GroupChatRoom) {
-            setupViewForGroupChat(view);
-        }
+        picture = (ImageView) view.findViewById(R.id.picture);
 
         messagesList = (RecyclerView) view.findViewById(R.id.messagesList);
         messagesList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, true));
@@ -160,29 +183,43 @@ public class ChatRoomFragment extends Fragment {
         send.setOnClickListener(onSendClickListener);
     }
 
+    public void updateChatRoom(ChatRoom chatRoom, ChatMembers chatMembers) {
+        this.chatRoom = chatRoom;
+        this.chatMembers = chatMembers;
+
+        updateViewForChatRoom();
+    }
+
+    private void updateViewForChatRoom() {
+        if(chatRoom instanceof IndividualChatRoom) {
+            setupViewForIndividualChat();
+        } else if(chatRoom instanceof GroupChatRoom) {
+            setupViewForGroupChat();
+        }
+    }
+
     private User getMemberUserByKey(String key) {
         User memberUser = new User();
         memberUser.setKey(key);
+        memberUser.setNickname(getString(R.string.chat_room_removed_user_name));
 
         int authUserIndex = chatMembers.getUsers().indexOf(memberUser);
-        return chatMembers.getUsers().get(authUserIndex);
+        return authUserIndex >= 0 ? chatMembers.getUsers().get(authUserIndex) : memberUser;
     }
 
-    private void setupViewForGroupChat(View view) {
+    private void setupViewForGroupChat() {
         GroupChatRoom groupChatRoom = (GroupChatRoom)chatRoom;
         name.setText(groupChatRoom.getTitle());
 
-        View info = view.findViewById(R.id.info);
         info.setOnClickListener(onInfoClickListener);
+        ImageLoader.loadMediaToImageView(picture, groupChatRoom.getPicture());
     }
 
-    private void setupViewForIndividualChat(View view) {
+    private void setupViewForIndividualChat() {
         User friend = getFriend(chatMembers);
         name.setText(friend.getNickname());
 
-        ImageView picture = (ImageView) view.findViewById(R.id.picture);
         ImageLoader.loadPersonPictureToImageView(picture, friend.getPicture());
-        picture.setVisibility(View.VISIBLE);
     }
 
     private User getFriend(ChatMembers members) {
@@ -197,10 +234,6 @@ public class ChatRoomFragment extends Fragment {
     private void addChatMessage(ChatMessage chatMessage) {
         adapter.addChatMessage(chatMessage);
         messagesList.scrollToPosition(0);
-    }
-
-    public void setChatRoomListener(ChatRoomListener chatRoomListener) {
-        this.chatRoomListener = chatRoomListener;
     }
 
     private View.OnClickListener onSendClickListener = new View.OnClickListener() {
@@ -242,6 +275,7 @@ public class ChatRoomFragment extends Fragment {
     };
 
     public interface ChatRoomListener {
+        void onEditGroupChat(ChatRoom chatRoom, ChatMembers members);
         void onChatRoomLeave(ChatRoom chatRoom);
         void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers);
     }

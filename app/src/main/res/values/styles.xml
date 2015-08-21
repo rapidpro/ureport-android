@@ -4,8 +4,14 @@
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_dark_color</item>
         <item name="colorAccent">#287ca0</item>
+        <item name="searchViewStyle">@style/AppTheme.SearchView</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="android:buttonStyle">@style/AppTheme.Button</item>
+    </style>
+
+    <style name="AppTheme.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_search_white_24dp</item>
+        <item name="closeIcon">@drawable/ic_close_white_24dp</item>
     </style>
 
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button">

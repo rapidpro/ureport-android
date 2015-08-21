@@ -7,6 +7,8 @@ import com.activeandroid.ActiveAndroid;
 
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
+
+import in.ureport.managers.AmazonServicesManager;
 import in.ureport.managers.UserManager;
 import in.ureport.managers.FirebaseManager;
 import io.fabric.sdk.android.Fabric;
@@ -23,6 +25,7 @@ public class UreportApplication extends Application {
         FirebaseManager.init(this);
         initializeFabric();
         ActiveAndroid.initialize(this);
+        AmazonServicesManager.init(this);
     }
 
     private void initializeFabric() {

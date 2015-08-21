@@ -128,6 +128,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@android:color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
@@ -159,15 +160,31 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/addPicture"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:clickable="true"
-        android:src="@drawable/ic_camera_white_24dp"
+    <FrameLayout
+        android:layout_width="55dp"
+        android:layout_height="55dp"
         android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@color/highlight"
+        android:elevation="5dp"
         app:layout_anchorGravity="bottom|right|end"
-        app:layout_anchor="@id/appbar" />
+        app:layout_anchor="@id/appbar">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/addPicture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:scaleType="centerCrop"
+            android:src="@color/highlight"
+            app:layout_anchorGravity="bottom|right|end"
+            app:layout_anchor="@id/appbar"/>
+
+        <ImageView
+            android:id="@+id/cameraIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_camera_white_24dp"/>
+
+    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

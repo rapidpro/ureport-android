@@ -1,6 +1,7 @@
 package in.ureport.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,13 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return chatRooms.size();
     }
 
+    public void removeChatRoom(ChatRoomHolder chatRoom) {
+        boolean removed = chatRooms.remove(chatRoom);
+        Log.i("ChatRoomsAdapter", "removeChatRoom removed: " + removed);
+
+        notifyDataSetChanged();
+    }
+
     public void addChatRoom(ChatRoomHolder chatRoom) {
         chatRooms.add(chatRoom);
         notifyDataSetChanged();
@@ -95,7 +103,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             } else if(chatRoom instanceof GroupChatRoom) {
                 GroupChatRoom chatGroup = ((GroupChatRoom)chatRoom);
                 name.setText(chatGroup.getTitle());
-                ImageLoader.loadPersonPictureToImageView(picture, chatGroup.getPicture());
+                ImageLoader.loadMediaToImageView(picture, chatGroup.getPicture());
             }
 
             if(chatRoomHolder.lastMessage != null) {

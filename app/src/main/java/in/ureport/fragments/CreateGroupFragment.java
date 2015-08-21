@@ -1,16 +1,17 @@
 package in.ureport.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,18 +19,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
-import in.ureport.listener.OnChatRoomCreatedListener;
-import in.ureport.loader.UreportersLoader;
-import in.ureport.managers.PrototypeManager;
+import in.ureport.helpers.TransferListenerAdapter;
+import in.ureport.listener.OnChatRoomSavedListener;
+import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.ImageLoader;
+import in.ureport.managers.ImagePicker;
+import in.ureport.managers.TransferManager;
+import in.ureport.models.ChatMembers;
 import in.ureport.models.GroupChatRoom;
+import in.ureport.models.Media;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
@@ -40,20 +49,59 @@ import in.ureport.views.adapters.UreportersAdapter;
  */
 public class CreateGroupFragment extends Fragment {
 
+    private static final String TAG = "CreateGroupFragment";
+
     private static final int MIN_SIZE_TITLE = 5;
     private static final int MAX_UREPORTERS_SELECTION_COUNT = 20;
+
+    private static final String GROUP_CHAT_FOLDER = "chat_group";
+
+    private static final String EXTRA_CHAT_ROOM = "chatRoom";
+    private static final String EXTRA_CHAT_MEMBERS = "chatMembers";
 
     private EditText title;
     private EditText description;
     private SwitchCompat privateGroup;
     private SwitchCompat mediaAllowed;
     private RecyclerView ureportersList;
+    private ImageView addPicture;
 
     private EditTextValidator validator;
 
     private UreportersAdapter ureportersAdapter;
 
-    private OnChatRoomCreatedListener onChatRoomCreatedListener;
+    private OnChatRoomSavedListener onChatRoomSavedListener;
+    private Uri pictureUri;
+
+    private boolean editMode = false;
+
+    private GroupChatRoom groupChatRoom;
+    private ChatMembers members;
+
+    private ChatRoomServices chatRoomServices;
+
+    public static CreateGroupFragment newInstance(GroupChatRoom chatRoom, ChatMembers members) {
+        CreateGroupFragment createGroupFragment = new CreateGroupFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable(EXTRA_CHAT_ROOM, chatRoom);
+        args.putParcelable(EXTRA_CHAT_MEMBERS, members);
+        createGroupFragment.setArguments(args);
+
+        return createGroupFragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        if(args != null && args.containsKey(EXTRA_CHAT_ROOM)) {
+            editMode = true;
+            groupChatRoom = args.getParcelable(EXTRA_CHAT_ROOM);
+            members = args.getParcelable(EXTRA_CHAT_MEMBERS);
+        }
+    }
 
     @Nullable
     @Override
@@ -66,7 +114,39 @@ public class CreateGroupFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setupObjects();
         setupView(view);
+
+        setupViewWhenEditMode();
         loadUsers();
+    }
+
+    private void setupViewWhenEditMode() {
+        if(editMode) {
+            title.setText(groupChatRoom.getTitle());
+            description.setText(groupChatRoom.getDescription());
+            privateGroup.setChecked(groupChatRoom.getPrivateAccess());
+            mediaAllowed.setChecked(groupChatRoom.getMediaAllowed());
+
+            if(groupChatRoom.getPicture() != null)
+                ImageLoader.loadMediaToImageView(addPicture, groupChatRoom.getPicture());
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK) {
+            switch(requestCode) {
+                case ImagePicker.REQUEST_CODE:
+                    saveChoosenPicture(data);
+            }
+        }
+    }
+
+    private void saveChoosenPicture(Intent data) {
+        pictureUri = data.getData();
+
+        if(pictureUri != null)
+            addPicture.setImageURI(pictureUri);
     }
 
     private void loadUsers() {
@@ -75,7 +155,10 @@ public class CreateGroupFragment extends Fragment {
             @Override
             public void onLoadAllUsers(List<User> users) {
                 ureportersAdapter = new UreportersAdapter(users);
-                ureportersAdapter.setSelectionEnabled(true, MAX_UREPORTERS_SELECTION_COUNT);
+                if (editMode)
+                    ureportersAdapter.setSelectionEnabled(true, MAX_UREPORTERS_SELECTION_COUNT, members.getUsers());
+                else
+                    ureportersAdapter.setSelectionEnabled(true, MAX_UREPORTERS_SELECTION_COUNT);
                 ureportersList.setAdapter(ureportersAdapter);
             }
         });
@@ -84,12 +167,13 @@ public class CreateGroupFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if(activity instanceof OnChatRoomCreatedListener)
-            onChatRoomCreatedListener = (OnChatRoomCreatedListener)activity;
+        if(activity instanceof OnChatRoomSavedListener)
+            onChatRoomSavedListener = (OnChatRoomSavedListener)activity;
     }
 
     private void setupObjects() {
         validator = new EditTextValidator();
+        chatRoomServices = new ChatRoomServices();
     }
 
     private void setupView(View view) {
@@ -103,7 +187,7 @@ public class CreateGroupFragment extends Fragment {
         ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        FloatingActionButton addPicture = (FloatingActionButton) view.findViewById(R.id.addPicture);
+        addPicture = (ImageView) view.findViewById(R.id.addPicture);
         addPicture.setOnClickListener(onAddPictureClickListener);
     }
 
@@ -115,35 +199,134 @@ public class CreateGroupFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_new_group, menu);
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.createGroup:
-                createGroup();
+            case R.id.saveGroup:
+                if(editMode) {
+                    editGroup();
+                } else {
+                    createGroup();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    private void editGroup() {
+        if(validateFields()) {
+            groupChatRoom.setTitle(title.getText().toString());
+            groupChatRoom.setDescription(description.getText().toString());
+            groupChatRoom.setPrivateAccess(privateGroup.isChecked());
+            groupChatRoom.setMediaAllowed(mediaAllowed.isChecked());
+
+            List<User> selectedUreporters = new ArrayList<>(ureportersAdapter.getSelectedUreporters());
+
+            removeUreportersFromGroup(selectedUreporters);
+            addUreportersToGroup(selectedUreporters);
+
+            if(pictureUri != null) {
+                uploadPictureAndSaveRoom(groupChatRoom);
+            } else {
+                saveGroupChatRoom(groupChatRoom);
+            }
+        }
+    }
+
+    private void addUreportersToGroup(List<User> selectedUreporters) {
+        if(members.getUsers() != null) {
+            List<User> addedUsers = new ArrayList<>();
+            for (User selectedUreporter : selectedUreporters) {
+                if(!members.getUsers().contains(selectedUreporter)) {
+                    addedUsers.add(selectedUreporter);
+                    chatRoomServices.addChatMember(selectedUreporter, groupChatRoom.getKey());
+                }
+            }
+            members.getUsers().addAll(addedUsers);
+        }
+    }
+
+    private void removeUreportersFromGroup(List<User> selectedUreporters) {
+        if(members.getUsers() != null) {
+            List<User> removedUsers = new ArrayList<>();
+            for (User user : members.getUsers()) {
+                if(!selectedUreporters.contains(user)) {
+                    removedUsers.add(user);
+                    chatRoomServices.removeChatMember(user, groupChatRoom.getKey());
+                }
+            }
+            members.getUsers().removeAll(removedUsers);
+        }
+    }
+
     private void createGroup() {
         if(validateFields()) {
-            GroupChatRoom groupChatRoom = new GroupChatRoom();
+            final GroupChatRoom groupChatRoom = new GroupChatRoom();
             groupChatRoom.setCreationDate(new Date());
             groupChatRoom.setTitle(title.getText().toString());
             groupChatRoom.setDescription(description.getText().toString());
             groupChatRoom.setPrivateAccess(privateGroup.isChecked());
             groupChatRoom.setMediaAllowed(mediaAllowed.isChecked());
 
-            List<User> members = new ArrayList<>(ureportersAdapter.getSelectedUreporters());
+            User me = new User();
+            me.setKey(FirebaseManager.getReference().getAuth().getUid());
+            groupChatRoom.setAdministrator(me);
 
-            ChatRoomServices chatRoomServices = new ChatRoomServices();
-            chatRoomServices.saveGroupChatRoom(groupChatRoom, members, onChatRoomCreatedListener);
+            if(pictureUri != null) {
+                uploadPictureAndSaveRoom(groupChatRoom);
+            } else {
+                saveGroupChatRoom(groupChatRoom);
+            }
         }
+    }
+
+    private void uploadPictureAndSaveRoom(final GroupChatRoom groupChatRoom) {
+        try {
+            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_uploading_image)
+                    , true, false);
+
+            TransferManager transferManager = new TransferManager(getActivity());
+            transferManager.transferFile(pictureUri, GROUP_CHAT_FOLDER, new TransferListenerAdapter() {
+                @Override
+                public void onStateChanged(int id, TransferState state) {
+                    if(state == TransferState.COMPLETED) {
+                        progressDialog.dismiss();
+
+                        groupChatRoom.setPicture(new Media(id, getUrl()));
+                        saveGroupChatRoom(groupChatRoom);
+                    }
+                }
+
+                @Override
+                public void onError(int id, Exception exception) {
+                    Log.e(TAG, "onError ", exception);
+                    progressDialog.dismiss();
+                    showUploadError();
+                }
+            });
+        } catch(Exception exception) {
+            exception.printStackTrace();
+            showUploadError();
+        }
+    }
+
+    private void saveGroupChatRoom(GroupChatRoom groupChatRoom) {
+        if(editMode) {
+            chatRoomServices.updateGroupChatRoom(groupChatRoom);
+            onChatRoomSavedListener.onChatRoomSaved(groupChatRoom, members);
+        } else {
+            List<User> members = new ArrayList<>(ureportersAdapter.getSelectedUreporters());
+            chatRoomServices.saveGroupChatRoom(groupChatRoom, members, onChatRoomSavedListener);
+        }
+    }
+
+    private void showUploadError() {
+        Toast.makeText(getActivity(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
     }
 
     private boolean validateFields() {
@@ -156,7 +339,8 @@ public class CreateGroupFragment extends Fragment {
     private View.OnClickListener onAddPictureClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            PrototypeManager.showPrototypeAlert(getActivity());
+            ImagePicker imagePicker = new ImagePicker();
+            imagePicker.pickImageFromGallery(CreateGroupFragment.this);
         }
     };
 }

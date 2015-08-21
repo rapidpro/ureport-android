@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,13 +18,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+
 import java.text.DateFormat;
 
-import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
-import in.ureport.managers.PrototypeManager;
+import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.ImageLoader;
 import in.ureport.models.ChatMembers;
+import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
+import in.ureport.models.User;
+import in.ureport.network.UserServices;
 import in.ureport.views.adapters.UreportersAdapter;
 
 /**
@@ -38,6 +45,13 @@ public class GroupInfoFragment extends Fragment {
 
     private GroupChatRoom chatRoom;
     private ChatMembers chatMembers;
+
+    private TextView date;
+    private TextView description;
+    private TextView title;
+    private ImageView picture;
+
+    private UreportersAdapter ureportersAdapter;
 
     public static GroupInfoFragment newInstance(GroupChatRoom chatRoom, ChatMembers chatMembers) {
         GroupInfoFragment groupInfoFragment = new GroupInfoFragment();
@@ -64,13 +78,24 @@ public class GroupInfoFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.menu_group_info, menu);
+        setupMenuItemVisibility(menu);
+    }
+
+    private void setupMenuItemVisibility(Menu menu) {
+        boolean currentUserAdministrator = isCurrentUserAdministrator();
+
+        MenuItem editGroup = menu.findItem(R.id.editGroup);
+        editGroup.setVisible(currentUserAdministrator);
+
+        MenuItem leaveGroup = menu.findItem(R.id.leaveGroup);
+        leaveGroup.setVisible(!currentUserAdministrator);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.editGroup:
-                PrototypeManager.showPrototypeAlert(getActivity());
+                chatRoomListener.onEditGroupChat(chatRoom, chatMembers);
                 break;
             case R.id.leaveGroup:
                 leaveGroup();
@@ -88,6 +113,16 @@ public class GroupInfoFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
+        loadAdministratorInfo();
+        updateViewForChatRoom(chatRoom, chatMembers);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof ChatRoomFragment.ChatRoomListener) {
+            chatRoomListener = (ChatRoomFragment.ChatRoomListener) activity;
+        }
     }
 
     private void setupView(View view) {
@@ -101,35 +136,53 @@ public class GroupInfoFragment extends Fragment {
         RecyclerView ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        UreportersAdapter ureportersAdapter = new UreportersAdapter(chatMembers.getUsers());
+        ureportersAdapter = new UreportersAdapter();
         ureportersList.setAdapter(ureportersAdapter);
 
         TextView ureportersCount = (TextView) view.findViewById(R.id.ureportersCount);
         ureportersCount.setText(getString(R.string.chat_new_invite_ureporters_count, chatMembers.getUsers().size()));
 
-        ResourceUtil resourceUtil = new ResourceUtil(getActivity());
-
-        ImageView picture = (ImageView) view.findViewById(R.id.picture);
-        picture.setImageResource(resourceUtil.getDrawableId(chatRoom.getPicture(), R.drawable.face));
-
-        TextView title = (TextView) view.findViewById(R.id.title);
-        title.setText(chatRoom.getTitle());
-
-        TextView description = (TextView) view.findViewById(R.id.description);
-        description.setText(chatRoom.getDescription());
-
-        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
-        String creationDate = dateFormatter.format(chatRoom.getCreationDate());
-
-        TextView date = (TextView) view.findViewById(R.id.date);
-        date.setText(getString(R.string.chat_group_info_created_date, creationDate));
+        picture = (ImageView) view.findViewById(R.id.picture);
+        title = (TextView) view.findViewById(R.id.title);
+        description = (TextView) view.findViewById(R.id.description);
+        date = (TextView) view.findViewById(R.id.date);
 
         Button addUreporter = (Button) view.findViewById(R.id.addUreporter);
         addUreporter.setOnClickListener(onAddUreporterClickListener);
+        addUreporter.setVisibility(isCurrentUserAdministrator() ? View.VISIBLE : View.GONE);
     }
 
-    public void setChatRoomListener(ChatRoomFragment.ChatRoomListener chatRoomListener) {
-        this.chatRoomListener = chatRoomListener;
+    public void updateViewForChatRoom(ChatRoom chatRoom, ChatMembers chatMembers) {
+        if(chatRoom instanceof GroupChatRoom) {
+            GroupChatRoom groupChatRoom = (GroupChatRoom)chatRoom;
+
+            this.chatRoom = groupChatRoom;
+            this.chatMembers = chatMembers;
+
+            title.setText(groupChatRoom.getTitle());
+            description.setText(groupChatRoom.getDescription());
+
+            ImageLoader.loadMediaToImageView(picture, groupChatRoom.getPicture());
+            ureportersAdapter.update(chatMembers.getUsers());
+        }
+    }
+
+    private void loadAdministratorInfo() {
+        UserServices userServices = new UserServices();
+        userServices.getUser(chatRoom.getAdministrator().getKey(), new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+
+                if (dataSnapshot.exists()) {
+                    User administrator = dataSnapshot.getValue(User.class);
+                    DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
+                    String creationDate = dateFormatter.format(chatRoom.getCreationDate());
+
+                    date.setText(getString(R.string.chat_group_info_created_date, administrator.getNickname(), creationDate));
+                }
+            }
+        });
     }
 
     private void leaveGroup() {
@@ -140,7 +193,11 @@ public class GroupInfoFragment extends Fragment {
     private View.OnClickListener onAddUreporterClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            PrototypeManager.showPrototypeAlert(getActivity());
+            chatRoomListener.onEditGroupChat(chatRoom, chatMembers);
         }
     };
+
+    private boolean isCurrentUserAdministrator() {
+        return chatRoom.getAdministrator().getKey().equals(FirebaseManager.getAuthUserKey());
+    }
 }
