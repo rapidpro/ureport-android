@@ -1,33 +1,30 @@
 package in.ureport.activities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import in.ureport.R;
 import in.ureport.fragments.ChatRoomFragment;
-import in.ureport.fragments.GroupInfoFragment;
+import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.managers.CountryProgramManager;
-import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
-import in.ureport.models.GroupChatRoom;
-import in.ureport.models.User;
-import in.ureport.network.ChatRoomServices;
 
 /**
  * Created by johncordeiro on 7/21/15.
  */
-public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragment.ChatRoomListener {
+public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragment.ChatRoomListener
+    , InfoGroupChatListener {
+
+    private static final String TAG = "ChatRoomActivity";
 
     public static final String EXTRA_CHAT_ROOM = "chatRoom";
     public static final String EXTRA_CHAT_MEMBERS = "chatMembers";
 
-    private static final int REQUEST_CODE_CHAT_EDITION = 200;
+    private static final int REQUEST_CODE_GROUP_INFO = 500;
 
     private ChatRoomFragment chatRoomFragment;
 
@@ -53,7 +50,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK) {
             switch (requestCode) {
-                case REQUEST_CODE_CHAT_EDITION:
+                case REQUEST_CODE_GROUP_INFO:
                     updateChatData(data);
             }
         }
@@ -65,12 +62,6 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
 
         if(chatRoomFragment != null)
             chatRoomFragment.updateChatRoom(chatRoom, chatMembers);
-
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
-        if(fragment instanceof GroupInfoFragment) {
-            GroupInfoFragment groupInfoFragment = (GroupInfoFragment)fragment;
-            groupInfoFragment.updateViewForChatRoom(chatRoom, chatMembers);
-        }
     }
 
     @Override
@@ -84,44 +75,18 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     }
 
     @Override
-    public void onEditGroupChat(ChatRoom chatRoom, ChatMembers members) {
-        Intent chatCreationIntent = new Intent(this, ChatCreationActivity.class);
-        chatCreationIntent.putExtra(EXTRA_CHAT_ROOM, chatRoom);
-        chatCreationIntent.putExtra(EXTRA_CHAT_MEMBERS, members);
-        startActivityForResult(chatCreationIntent, REQUEST_CODE_CHAT_EDITION);
-    }
+    public void onEditGroupChat(ChatRoom chatRoom, ChatMembers members) {}
 
     @Override
     public void onChatRoomLeave(ChatRoom chatRoom) {
-        leaveGroup(chatRoom);
-    }
-
-    private void leaveGroup(final ChatRoom chatRoom) {
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setMessage(R.string.chat_group_leave)
-                .setNegativeButton(R.string.cancel_dialog_button, null)
-                .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        User user = new User();
-                        user.setKey(FirebaseManager.getAuthUserKey());
-
-                        ChatRoomServices chatRoomServices = new ChatRoomServices();
-                        chatRoomServices.removeChatMember(user, chatRoom.getKey());
-
-                        finish();
-                    }
-                }).create();
-        alertDialog.show();
+        UserManager.leaveFromGroup(this, chatRoom);
     }
 
     @Override
     public void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers) {
-        GroupInfoFragment groupInfoFragment = GroupInfoFragment.newInstance((GroupChatRoom)chatRoom, chatMembers);
-        getSupportFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(R.id.content, groupInfoFragment)
-                .addToBackStack(null)
-                .commit();
+        Intent groupInfoIntent = new Intent(this, GroupInfoActivity.class);
+        groupInfoIntent.putExtra(GroupInfoActivity.EXTRA_CHAT_ROOM, chatRoom);
+        groupInfoIntent.putExtra(GroupInfoActivity.EXTRA_CHAT_MEMBERS, chatMembers);
+        startActivityForResult(groupInfoIntent, REQUEST_CODE_GROUP_INFO);
     }
 }

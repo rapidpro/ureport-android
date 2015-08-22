@@ -12,6 +12,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission android:name="in.ureport.permission.C2D_MESSAGE"
+                android:protectionLevel="signature" />
+    <uses-permission android:name="in.ureport.permission.C2D_MESSAGE" />
+
     <application
         android:allowBackup="true"
         android:label="@string/app_name"
@@ -54,6 +61,11 @@
             android:name=".activities.AmbassadorsActivity"
             android:screenOrientation="portrait"
             android:label="@string/label_ambassadors" />
+
+        <activity
+            android:name=".activities.GroupInfoActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/label_group_info" />
 
         <activity
             android:name=".activities.ProfileActivity"
@@ -149,7 +161,7 @@
 
         <meta-data
             android:name="AA_MODELS"
-            android:value="in.ureport.models.Story,in.ureport.models.Marker" />
+            android:value="in.ureport.models.Story,in.ureport.models.Marker,in.ureport.models.db.ChatNotification" />
 
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
 
@@ -165,6 +177,37 @@
         <service
             android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
             android:enabled="true" />
+
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="in.ureport" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="in.ureport.services.GcmListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".services.InstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".services.GcmRegistrationIntentService"
+            android:exported="false">
+        </service>
 
     </application>
 

@@ -1,0 +1,26 @@
+package in.ureport.db.business;
+
+import com.activeandroid.query.Select;
+
+import java.util.List;
+
+import br.com.ilhasoft.support.db.business.AbstractBusiness;
+import in.ureport.db.repository.ChatNotificationRepository;
+import in.ureport.models.db.ChatNotification;
+
+/**
+ * Created by johncordeiro on 21/08/15.
+ */
+public class ChatNotificationBusiness extends AbstractBusiness<ChatNotification> implements ChatNotificationRepository {
+
+    public ChatNotificationBusiness() {
+        super(ChatNotification.class);
+    }
+
+    @Override
+    public List<ChatNotification> getAllOrderedByDate() {
+        return new Select().from(getTypeClass())
+                .orderBy("date DESC")
+                .execute();
+    }
+}

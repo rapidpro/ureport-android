@@ -4,6 +4,8 @@ import android.os.Parcel;
 
 import java.util.Date;
 
+import in.ureport.models.rapidpro.Group;
+
 /**
  * Created by johncordeiro on 19/07/15.
  */

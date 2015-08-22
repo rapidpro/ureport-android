@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,13 +25,15 @@ import in.ureport.views.adapters.ChatGroupAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class ChatGroupFragment extends Fragment implements ChatGroupAdapter.ChatGroupListener {
+public class ChatGroupFragment extends Fragment  {
 
     private RecyclerView groupsList;
 
     private ChatGroupAdapter adapter;
 
     private ChatRoomServices chatRoomServices;
+
+    private ChatGroupAdapter.ChatGroupListener chatGroupListener;
 
     @Nullable
     @Override
@@ -57,6 +60,14 @@ public class ChatGroupFragment extends Fragment implements ChatGroupAdapter.Chat
         chatRoomServices.removeEventListener(onChildEventForGroupChatListener);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if(activity instanceof ChatGroupAdapter.ChatGroupListener) {
+            chatGroupListener = (ChatGroupAdapter.ChatGroupListener) activity;
+        }
+    }
+
     private void addEventListenerForGroupChats() {
         chatRoomServices.addChildEventListenerForPublicGroups(onChildEventForGroupChatListener);
     }
@@ -67,33 +78,8 @@ public class ChatGroupFragment extends Fragment implements ChatGroupAdapter.Chat
         groupsList.addItemDecoration(new DividerItemDecoration(getActivity()));
 
         adapter = new ChatGroupAdapter();
-        adapter.setChatGroupListener(this);
+        adapter.setChatGroupListener(chatGroupListener);
         groupsList.setAdapter(adapter);
-    }
-
-    @Override
-    public void onJoinChatGroup(GroupChatRoom groupChatRoom) {
-
-    }
-
-    @Override
-    public void onViewGroupInfo(final GroupChatRoom groupChatRoom) {
-        ChatRoomServices chatRoomServices = new ChatRoomServices();
-        chatRoomServices.loadChatRoomMembers(groupChatRoom.getKey(), new OnChatMembersLoadedListener() {
-            @Override
-            public void onChatMembersLoaded(ChatMembers chatMembers) {
-                addGroupInfoFragment(chatMembers, groupChatRoom);
-            }
-        });
-    }
-
-    private void addGroupInfoFragment(ChatMembers chatMembers, GroupChatRoom groupChatRoom) {
-        GroupInfoFragment groupInfoFragment = GroupInfoFragment.newInstance(groupChatRoom, chatMembers);
-        getFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(R.id.content, groupInfoFragment)
-                .addToBackStack(null)
-                .commit();
     }
 
     private ChildEventListenerAdapter onChildEventForGroupChatListener = new ChildEventListenerAdapter() {

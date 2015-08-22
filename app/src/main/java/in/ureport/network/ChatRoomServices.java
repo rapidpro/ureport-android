@@ -48,12 +48,17 @@ public class ChatRoomServices {
     }
 
     public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
-        User user = new User();
-        user.setKey(chatMessage.getUser().getKey());
-        chatMessage.setUser(user);
-
+        setUserIfNeeded(chatMessage);
         FirebaseManager.getReference().child(messagesPath).child(chatRoom.getKey())
                 .push().setValue(chatMessage);
+    }
+
+    private void setUserIfNeeded(ChatMessage chatMessage) {
+        if(chatMessage.getUser() == null || chatMessage.getUser().getKey() == null) {
+            User user = new User();
+            user.setKey(chatMessage.getUser().getKey());
+            chatMessage.setUser(user);
+        }
     }
 
     public void getChatRoom(final String key, final OnChatRoomLoadedListener listener) {

@@ -22,7 +22,7 @@ import in.ureport.tasks.common.ProgressTask;
 /**
  * Created by johncordeiro on 18/08/15.
  */
-public class SaveContactTask extends ProgressTask<User, Void, Void> {
+public class SaveContactTask extends ProgressTask<User, Void, Contact> {
 
     private static final String TAG = "SaveContactTask";
 
@@ -31,16 +31,17 @@ public class SaveContactTask extends ProgressTask<User, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(User... params) {
-        if(params.length == 0) return null;
-        User user = params[0];
+    protected Contact doInBackground(User... params) {
+        try {
+            User user = params[0];
 
-        RapidProServices rapidProServices = new RapidProServices();
-        Contact contact = buildContact(user);
+            RapidProServices rapidProServices = new RapidProServices();
+            Contact contact = buildContact(user);
 
-        Contact contactResponse = rapidProServices.saveContact(contact);
-        Log.i(TAG, "doInBackground " + contactResponse);
-
+            return rapidProServices.saveContact(contact);
+        } catch (Exception exception) {
+            Log.e(TAG, "doInBackground ", exception);
+        }
         return null;
     }
 

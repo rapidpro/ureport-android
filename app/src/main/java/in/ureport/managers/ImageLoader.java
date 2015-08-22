@@ -2,6 +2,7 @@ package in.ureport.managers;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
@@ -24,16 +25,20 @@ public class ImageLoader {
                 .into(imageView);
     }
 
-    public static void loadMediaToImageView(ImageView imageView, Media media) {
+    public static void loadGroupPictureToImageView(ImageView imageView, Media media) {
+        loadMedia(imageView, media, R.drawable.default_group);
+    }
+
+    private static void loadMedia(ImageView imageView, Media media, @DrawableRes int placeholderDrawableId) {
         if(media != null) {
             Context context = imageView.getContext();
-            Drawable placeholder = ContextCompat.getDrawable(context, R.drawable.face);
+            Drawable placeholder = ContextCompat.getDrawable(context, placeholderDrawableId);
 
             Picasso.with(imageView.getContext()).load(media.getUrl())
                     .placeholder(placeholder)
                     .into(imageView);
         } else {
-            imageView.setImageResource(R.drawable.face);
+            imageView.setImageResource(placeholderDrawableId);
         }
     }
 

@@ -24,6 +24,7 @@ import java.text.DateFormat;
 
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ImageLoader;
 import in.ureport.models.ChatMembers;
@@ -41,7 +42,7 @@ public class GroupInfoFragment extends Fragment {
     private static final String EXTRA_CHAT_ROOM = "chatRoom";
     private static final String EXTRA_CHAT_MEMBERS = "chatMembers";
 
-    private ChatRoomFragment.ChatRoomListener chatRoomListener;
+    private InfoGroupChatListener infoGroupChatListener;
 
     private GroupChatRoom chatRoom;
     private ChatMembers chatMembers;
@@ -95,7 +96,7 @@ public class GroupInfoFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.editGroup:
-                chatRoomListener.onEditGroupChat(chatRoom, chatMembers);
+                infoGroupChatListener.onEditGroupChat(chatRoom, chatMembers);
                 break;
             case R.id.leaveGroup:
                 leaveGroup();
@@ -120,8 +121,8 @@ public class GroupInfoFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if(activity instanceof ChatRoomFragment.ChatRoomListener) {
-            chatRoomListener = (ChatRoomFragment.ChatRoomListener) activity;
+        if(activity instanceof InfoGroupChatListener) {
+            infoGroupChatListener = (InfoGroupChatListener) activity;
         }
     }
 
@@ -162,7 +163,7 @@ public class GroupInfoFragment extends Fragment {
             title.setText(groupChatRoom.getTitle());
             description.setText(groupChatRoom.getDescription());
 
-            ImageLoader.loadMediaToImageView(picture, groupChatRoom.getPicture());
+            ImageLoader.loadGroupPictureToImageView(picture, groupChatRoom.getPicture());
             ureportersAdapter.update(chatMembers.getUsers());
         }
     }
@@ -186,14 +187,15 @@ public class GroupInfoFragment extends Fragment {
     }
 
     private void leaveGroup() {
-        if(chatRoomListener != null)
-            chatRoomListener.onChatRoomLeave(chatRoom);
+        if(infoGroupChatListener != null)
+            infoGroupChatListener.onChatRoomLeave(chatRoom);
     }
 
     private View.OnClickListener onAddUreporterClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            chatRoomListener.onEditGroupChat(chatRoom, chatMembers);
+        if(infoGroupChatListener != null)
+            infoGroupChatListener.onEditGroupChat(chatRoom, chatMembers);
         }
     };
 

@@ -11,17 +11,24 @@ import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.gcm.GcmPubSub;
+
+import java.util.Set;
 
 import in.ureport.R;
 import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
+import in.ureport.services.GcmRegistrationIntentService;
+import in.ureport.tasks.LoadPushIdentityTask;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -106,14 +113,15 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         userServices.getUser(user.getKey(), new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
+                if (dataSnapshot.exists())
                     onUserReady(dataSnapshot.getValue(User.class));
                 else
                     addSignUpFragment(user);
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {}
+            public void onCancelled(FirebaseError firebaseError) {
+            }
         });
     }
 
@@ -132,6 +140,9 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
         CountryProgramManager.switchCountryProgram(user.getCountry());
         startMainActivity();
+
+        Intent gcmRegisterIntent = new Intent(this, GcmRegistrationIntentService.class);
+        startService(gcmRegisterIntent);
     }
 
     @Override

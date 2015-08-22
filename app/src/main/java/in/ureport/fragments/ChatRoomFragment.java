@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +25,7 @@ import java.util.Date;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
+import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ImageLoader;
 import in.ureport.models.ChatMembers;
@@ -35,6 +37,7 @@ import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.SpaceItemDecoration;
+import in.ureport.tasks.SendGcmChatTask;
 import in.ureport.views.adapters.ChatMessagesAdapter;
 
 /**
@@ -60,6 +63,8 @@ public class ChatRoomFragment extends Fragment {
     private User user;
 
     private ChatRoomListener chatRoomListener;
+    private InfoGroupChatListener infoGroupChatListener;
+
     private ChatRoomServices chatRoomServices;
 
     public static ChatRoomFragment newInstance(ChatRoom chatRoom, ChatMembers chatMembers) {
@@ -138,7 +143,7 @@ public class ChatRoomFragment extends Fragment {
         switch(item.getItemId()) {
             case R.id.leaveGroup:
                 if (chatRoomListener != null)
-                    chatRoomListener.onChatRoomLeave(chatRoom);
+                    infoGroupChatListener.onChatRoomLeave(chatRoom);
                 return true;
             case R.id.groupInfo:
                 if (chatRoomListener != null)
@@ -153,6 +158,10 @@ public class ChatRoomFragment extends Fragment {
         super.onAttach(activity);
         if(activity instanceof ChatRoomListener) {
             chatRoomListener = (ChatRoomListener) activity;
+        }
+
+        if(activity instanceof InfoGroupChatListener) {
+            infoGroupChatListener = (InfoGroupChatListener) activity;
         }
     }
 
@@ -212,7 +221,7 @@ public class ChatRoomFragment extends Fragment {
         name.setText(groupChatRoom.getTitle());
 
         info.setOnClickListener(onInfoClickListener);
-        ImageLoader.loadMediaToImageView(picture, groupChatRoom.getPicture());
+        ImageLoader.loadGroupPictureToImageView(picture, groupChatRoom.getPicture());
     }
 
     private void setupViewForIndividualChat() {
@@ -248,10 +257,17 @@ public class ChatRoomFragment extends Fragment {
                 chatMessage.setMessage(messageText);
                 chatMessage.setUser(user);
 
-                chatRoomServices.saveChatMessage(chatRoom, chatMessage);
+                saveChatMessage(chatMessage);
             }
         }
     };
+
+    private void saveChatMessage(ChatMessage chatMessage) {
+        SendGcmChatTask sendGcmChatTask = new SendGcmChatTask(getActivity(), chatRoom);
+        sendGcmChatTask.execute(chatMessage);
+
+        chatRoomServices.saveChatMessage(chatRoom, chatMessage);
+    }
 
     private View.OnClickListener onInfoClickListener = new View.OnClickListener() {
         @Override
@@ -275,8 +291,6 @@ public class ChatRoomFragment extends Fragment {
     };
 
     public interface ChatRoomListener {
-        void onEditGroupChat(ChatRoom chatRoom, ChatMembers members);
-        void onChatRoomLeave(ChatRoom chatRoom);
         void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers);
     }
 }

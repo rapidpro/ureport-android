@@ -52,7 +52,7 @@ public class CreateGroupFragment extends Fragment {
     private static final String TAG = "CreateGroupFragment";
 
     private static final int MIN_SIZE_TITLE = 5;
-    private static final int MAX_UREPORTERS_SELECTION_COUNT = 20;
+    public static final int MAX_UREPORTERS_GROUP_COUNT = 20;
 
     private static final String GROUP_CHAT_FOLDER = "chat_group";
 
@@ -127,7 +127,7 @@ public class CreateGroupFragment extends Fragment {
             mediaAllowed.setChecked(groupChatRoom.getMediaAllowed());
 
             if(groupChatRoom.getPicture() != null)
-                ImageLoader.loadMediaToImageView(addPicture, groupChatRoom.getPicture());
+                ImageLoader.loadGroupPictureToImageView(addPicture, groupChatRoom.getPicture());
         }
     }
 
@@ -156,9 +156,9 @@ public class CreateGroupFragment extends Fragment {
             public void onLoadAllUsers(List<User> users) {
                 ureportersAdapter = new UreportersAdapter(users);
                 if (editMode)
-                    ureportersAdapter.setSelectionEnabled(true, MAX_UREPORTERS_SELECTION_COUNT, members.getUsers());
+                    ureportersAdapter.setSelectionEnabled(true, MAX_UREPORTERS_GROUP_COUNT, members.getUsers());
                 else
-                    ureportersAdapter.setSelectionEnabled(true, MAX_UREPORTERS_SELECTION_COUNT);
+                    ureportersAdapter.setSelectionEnabled(true, MAX_UREPORTERS_GROUP_COUNT);
                 ureportersList.setAdapter(ureportersAdapter);
             }
         });

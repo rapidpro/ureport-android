@@ -5,9 +5,11 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.gcm.GcmPubSub;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.FirebaseManager;
@@ -19,6 +21,11 @@ import in.ureport.models.User;
 public class UserServices {
 
     public static final String path = "user";
+
+    public void updatePushIdentity(String userKey, String identityId) {
+        FirebaseManager.getReference().child(path).child(userKey)
+                .child("pushIdentity").setValue(identityId);
+    }
 
     public void addUserChatRoom(String userKey, String chatRoomKey) {
         FirebaseManager.getReference().child(path)

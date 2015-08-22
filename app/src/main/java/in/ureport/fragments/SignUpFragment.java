@@ -49,6 +49,7 @@ import in.ureport.models.geonames.State;
 import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
+import in.ureport.models.rapidpro.Contact;
 import in.ureport.network.UserServices;
 import in.ureport.tasks.LoadStatesTask;
 import in.ureport.tasks.SaveContactTask;
@@ -260,7 +261,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
 
     private boolean isStateValid() {
         boolean validState = state.getSelectedItem() != null;
-        if(!validState) Toast.makeText(getActivity(), "Choose the state of the country!", Toast.LENGTH_LONG).show();
+        if(!validState) Toast.makeText(getActivity(), R.string.error_choose_state, Toast.LENGTH_LONG).show();
         return validState;
     }
 
@@ -418,9 +419,13 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     private void finishRegistration(final User user) {
         SaveContactTask saveContactTask = new SaveContactTask(getActivity()) {
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                loginListener.onUserReady(user);
+            protected void onPostExecute(Contact contact) {
+                super.onPostExecute(contact);
+                if(contact != null) {
+                    loginListener.onUserReady(user);
+                } else {
+                    Toast.makeText(getActivity(), R.string.error_rapidpro, Toast.LENGTH_SHORT).show();
+                }
             }
         };
         saveContactTask.execute(user);

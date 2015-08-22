@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.StringRes;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -14,10 +16,12 @@ import in.ureport.R;
  */
 public class User implements Parcelable {
 
+    @Expose
     private String key;
 
     private String email;
 
+    @Expose
     private String nickname;
 
     private Date birthday;
@@ -37,6 +41,8 @@ public class User implements Parcelable {
     private Integer stories;
 
     private Integer polls;
+
+    private String pushIdentity;
 
     private Map<String, Boolean> chatRooms;
 
@@ -136,6 +142,14 @@ public class User implements Parcelable {
         this.polls = polls;
     }
 
+    public String getPushIdentity() {
+        return pushIdentity;
+    }
+
+    public void setPushIdentity(String pushIdentity) {
+        this.pushIdentity = pushIdentity;
+    }
+
     public Map<String, Boolean> getChatRooms() {
         return chatRooms;
     }
@@ -206,12 +220,14 @@ public class User implements Parcelable {
         dest.writeString(this.nickname);
         dest.writeLong(birthday != null ? birthday.getTime() : -1);
         dest.writeString(this.country);
+        dest.writeString(this.state);
         dest.writeString(this.picture);
         dest.writeInt(this.gender == null ? -1 : this.gender.ordinal());
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
         dest.writeValue(this.points);
         dest.writeValue(this.stories);
         dest.writeValue(this.polls);
+        dest.writeString(this.pushIdentity);
     }
 
     public User() {
@@ -224,6 +240,7 @@ public class User implements Parcelable {
         long tmpBirthday = in.readLong();
         this.birthday = tmpBirthday == -1 ? null : new Date(tmpBirthday);
         this.country = in.readString();
+        this.state = in.readString();
         this.picture = in.readString();
         int tmpGender = in.readInt();
         this.gender = tmpGender == -1 ? null : User.Gender.values()[tmpGender];
@@ -232,6 +249,7 @@ public class User implements Parcelable {
         this.points = (Integer) in.readValue(Integer.class.getClassLoader());
         this.stories = (Integer) in.readValue(Integer.class.getClassLoader());
         this.polls = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.pushIdentity = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

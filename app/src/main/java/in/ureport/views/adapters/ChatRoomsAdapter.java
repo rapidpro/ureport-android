@@ -12,7 +12,6 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ImageLoader;
@@ -103,7 +102,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             } else if(chatRoom instanceof GroupChatRoom) {
                 GroupChatRoom chatGroup = ((GroupChatRoom)chatRoom);
                 name.setText(chatGroup.getTitle());
-                ImageLoader.loadMediaToImageView(picture, chatGroup.getPicture());
+                ImageLoader.loadGroupPictureToImageView(picture, chatGroup.getPicture());
             }
 
             if(chatRoomHolder.lastMessage != null) {

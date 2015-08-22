@@ -1,11 +1,9 @@
 package in.ureport.managers;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.firebase.client.AuthData;
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.twitter.sdk.android.core.TwitterSession;
@@ -25,10 +23,12 @@ public class FirebaseManager {
     private static Context context;
 
     public static void init(Context context) {
-        Firebase.setAndroidContext(context);
-        Firebase.getDefaultConfig().setPersistenceEnabled(true);
-        FirebaseManager.context = context;
-        reference = new Firebase(context.getString(R.string.firebase_app));
+        if(reference == null) {
+            Firebase.setAndroidContext(context);
+            Firebase.getDefaultConfig().setPersistenceEnabled(true);
+            FirebaseManager.context = context;
+            reference = new Firebase(context.getString(R.string.firebase_app));
+        }
     }
 
     public static String getAuthUserKey() {

@@ -1,5 +1,6 @@
 package in.ureport.managers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +14,10 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.activities.LoginActivity;
 import in.ureport.activities.MainActivity;
+import in.ureport.models.ChatRoom;
+import in.ureport.models.GroupChatRoom;
 import in.ureport.models.User;
+import in.ureport.network.ChatRoomServices;
 import in.ureport.pref.SystemPreferences;
 
 /**
@@ -35,6 +39,25 @@ public class UserManager {
             return false;
         }
         return true;
+    }
+
+    public static void leaveFromGroup(final Activity activity, final ChatRoom chatRoom) {
+        AlertDialog alertDialog = new AlertDialog.Builder(activity)
+                .setMessage(R.string.chat_group_leave)
+                .setNegativeButton(R.string.cancel_dialog_button, null)
+                .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        User user = new User();
+                        user.setKey(FirebaseManager.getAuthUserKey());
+
+                        ChatRoomServices chatRoomServices = new ChatRoomServices();
+                        chatRoomServices.removeChatMember(user, chatRoom.getKey());
+
+                        activity.finish();
+                    }
+                }).create();
+        alertDialog.show();
     }
 
     public static void logout(Context context) {

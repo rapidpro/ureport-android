@@ -198,5 +198,17 @@
     <string name="error_image_upload">It was not possible to upload this image, choose another!</string>
     <string name="load_message_uploading_image">Uploading image...</string>
     <string name="chat_room_removed_user_name">Removed user</string>
+    <string name="error_full_group">This group is full of users! Join another.</string>
+    <string name="error_already_join_group">You already are member of this group.</string>
+    <string name="success_message_join_group">Now you are member of this group! See in the your chat rooms.</string>
+    <string name="error_choose_state">Choose the state of the country!</string>
+    <string name="error_rapidpro">An error occured during the registration process. Try again later.</string>
+    <string name="load_message_user_data">Loading user data...</string>
+    <string name="summary_notification">U-Report</string>
+
+    <plurals name="title_new_message">
+        <item quantity="one">%1%s new message</item>
+        <item quantity="other">%1%s new messages</item>
+    </plurals>
 
 </resources>
