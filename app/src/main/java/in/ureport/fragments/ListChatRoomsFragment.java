@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,10 +13,13 @@ import android.view.ViewGroup;
 
 import com.firebase.client.DataSnapshot;
 
+import java.util.Map;
+
 import in.ureport.R;
 import in.ureport.activities.ChatRoomActivity;
 import in.ureport.listener.OnChatRoomLoadedListener;
 import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.LocalNotificationManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
@@ -25,6 +29,7 @@ import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.DividerItemDecoration;
+import in.ureport.tasks.GetUnreadMessagesTask;
 import in.ureport.views.adapters.ChatRoomsAdapter;
 
 /**
@@ -32,12 +37,15 @@ import in.ureport.views.adapters.ChatRoomsAdapter;
  */
 public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.OnChatRoomSelectedListener {
 
-    private static final String TAG = "ListChatRoomsFragment";
+    private static final int REQUEST_CODE_CHAT_ROOM = 100;
+    public static final String EXTRA_RESULT_CHAT_ROOM = "chatRoom";
 
     private ChatRoomServices chatRoomServices;
     private ChatRoomsAdapter chatRoomsAdapter;
 
     private UserServices userServices;
+
+    private Map<ChatRoom, Integer> chatNotifications;
 
     @Nullable
     @Override
@@ -52,6 +60,38 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         setupObjects();
         setupView(view);
         loadData();
+        cancelChatNotifications();
+    }
+
+    private void cancelChatNotifications() {
+        LocalNotificationManager notifcationManager = new LocalNotificationManager(getActivity());
+        notifcationManager.cancelChatNotification();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK) {
+            switch(requestCode) {
+                case REQUEST_CODE_CHAT_ROOM:
+                    updateUnreadMessages(data);
+            }
+        }
+    }
+
+    private void updateUnreadMessages(Intent data) {
+        ChatRoom chatRoom = data.getParcelableExtra(EXTRA_RESULT_CHAT_ROOM);
+        if(chatRoom != null && chatRoomsAdapter != null && chatRoomsAdapter.getChatRooms() != null) {
+            ChatRoomHolder holder = new ChatRoomHolder(chatRoom);
+            int chatRoomIndex = chatRoomsAdapter.getChatRooms().indexOf(holder);
+
+            if(chatRoomIndex >= 0) {
+                ChatRoomHolder chatRoomForUpdate = chatRoomsAdapter.getChatRooms().get(chatRoomIndex);
+                chatRoomForUpdate.chatRoom.setUnreadMessages(0);
+
+                chatRoomsAdapter.notifyItemChanged(chatRoomIndex);
+            }
+        }
     }
 
     @Override
@@ -76,7 +116,15 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     }
 
     private void loadData() {
-        userServices.addChildEventListenerForChatRooms(FirebaseManager.getAuthUserKey(), childEventListener);
+        GetUnreadMessagesTask getUnreadMessagesTask = new GetUnreadMessagesTask() {
+            @Override
+            protected void onPostExecute(Map<ChatRoom, Integer> chatNotifications) {
+                super.onPostExecute(chatNotifications);
+                ListChatRoomsFragment.this.chatNotifications = chatNotifications;
+                userServices.addChildEventListenerForChatRooms(FirebaseManager.getAuthUserKey(), childEventListener);
+            }
+        };
+        getUnreadMessagesTask.execute();
     }
 
     private ChildEventListenerAdapter childEventListener = new ChildEventListenerAdapter() {
@@ -88,6 +136,7 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
             chatRoomServices.getChatRoom(chatRoomKey, new OnChatRoomLoadedListener() {
                 @Override
                 public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage) {
+                    chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
                     chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, lastMessage));
                 }
             });
@@ -110,6 +159,6 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         Intent chatRoomIntent = new Intent(getActivity(), ChatRoomActivity.class);
         chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM, chatRoom);
         chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_MEMBERS, members);
-        startActivity(chatRoomIntent);
+        startActivityForResult(chatRoomIntent, REQUEST_CODE_CHAT_ROOM);
     }
 }

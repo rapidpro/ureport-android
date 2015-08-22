@@ -1,7 +1,10 @@
 package in.ureport.tasks;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -9,6 +12,7 @@ import java.util.List;
 
 import in.ureport.db.business.ChatNotificationBusiness;
 import in.ureport.db.repository.ChatNotificationRepository;
+import in.ureport.helpers.SystemHelper;
 import in.ureport.managers.LocalNotificationManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
@@ -43,8 +47,11 @@ public class ChatNotificationTask extends AsyncTask<ChatMessage, Void, Void> {
 
             chatNotificationList.add(0, chatNotification);
 
-            LocalNotificationManager localNotificationManager = new LocalNotificationManager(context);
-            localNotificationManager.sendChatListNotification(chatNotificationList);
+            SystemHelper systemHelper = new SystemHelper();
+            if(!systemHelper.isAppRunning(context)) {
+                LocalNotificationManager localNotificationManager = new LocalNotificationManager(context);
+                localNotificationManager.sendChatListNotification(chatNotificationList);
+            }
         } catch(Exception exception) {
             Log.e(TAG, "doInBackground ", exception);
         }

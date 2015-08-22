@@ -37,6 +37,7 @@ import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.SpaceItemDecoration;
+import in.ureport.tasks.CleanUnreadByRoomTask;
 import in.ureport.tasks.SendGcmChatTask;
 import in.ureport.views.adapters.ChatMessagesAdapter;
 
@@ -107,10 +108,19 @@ public class ChatRoomFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        cleanUnreadMessages();
+
         chatRoomServices.removeEventListener(onChildEventListener);
     }
 
+    private void cleanUnreadMessages() {
+        CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask();
+        cleanUnreadByRoomTask.execute(chatRoom);
+    }
+
     private void loadData() {
+        cleanUnreadMessages();
+
         chatRoomServices.addChildEventListenerForChatMessages(chatRoom.getKey(), onChildEventListener);
     }
 

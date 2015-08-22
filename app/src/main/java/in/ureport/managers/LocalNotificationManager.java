@@ -37,6 +37,11 @@ public class LocalNotificationManager {
         }
     }
 
+    public void cancelChatNotification() {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.cancel(Type.Chat.id);
+    }
+
     public void sendChatListNotification(List<ChatNotification> chatNotificationList) {
         Type type = LocalNotificationManager.Type.Chat;
         ChatNotification lastNotification = chatNotificationList.get(0);

@@ -207,8 +207,8 @@
     <string name="summary_notification">U-Report</string>
 
     <plurals name="title_new_message">
-        <item quantity="one">%1%s new message</item>
-        <item quantity="other">%1%s new messages</item>
+        <item quantity="one">%1$s new message</item>
+        <item quantity="other">%1$s new messages</item>
     </plurals>
 
 </resources>

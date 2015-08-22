@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import br.com.ilhasoft.support.json.JsonDeserializer;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
@@ -33,11 +34,19 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
             ChatRoom chatRoom = getChatRoom(data);
             ChatMessage chatMessage = getChatMessage(data);
 
-            ChatNotificationTask chatNotificationTask = new ChatNotificationTask(this, chatRoom);
-            chatNotificationTask.execute(chatMessage);
+            if(isUserAllowedForMessageNotification(chatMessage)) {
+                ChatNotificationTask chatNotificationTask = new ChatNotificationTask(this, chatRoom);
+                chatNotificationTask.execute(chatMessage);
+            }
         } catch(Exception exception) {
             Log.e(TAG, "sendChatMessageNotification ", exception);
         }
+    }
+
+    private boolean isUserAllowedForMessageNotification(ChatMessage chatMessage) {
+        FirebaseManager.init(this);
+        String authUserKey = FirebaseManager.getAuthUserKey();
+        return authUserKey != null && !chatMessage.getUser().getKey().equals(authUserKey);
     }
 
     private ChatMessage getChatMessage(Bundle data) {

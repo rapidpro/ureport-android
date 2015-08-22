@@ -1,5 +1,6 @@
 package in.ureport.db.business;
 
+import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 
 import java.util.List;
@@ -21,6 +22,13 @@ public class ChatNotificationBusiness extends AbstractBusiness<ChatNotification>
     public List<ChatNotification> getAllOrderedByDate() {
         return new Select().from(getTypeClass())
                 .orderBy("date DESC")
+                .execute();
+    }
+
+    @Override
+    public List<ChatNotification> deleteByChatRoomId(String chatRoomId) {
+        return new Delete().from(getTypeClass())
+                .where("chatRoomId=?", chatRoomId)
                 .execute();
     }
 }

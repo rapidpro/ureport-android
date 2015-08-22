@@ -33,6 +33,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         super.onCreate(savedInstanceState);
         CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_generic);
+        setResult(RESULT_OK, getIntent());
 
         if(savedInstanceState == null) {
             ChatRoom chatRoom = getIntent().getParcelableExtra(EXTRA_CHAT_ROOM);

@@ -62,15 +62,17 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public void removeChatRoom(ChatRoomHolder chatRoom) {
-        boolean removed = chatRooms.remove(chatRoom);
-        Log.i("ChatRoomsAdapter", "removeChatRoom removed: " + removed);
-
+        chatRooms.remove(chatRoom);
         notifyDataSetChanged();
     }
 
     public void addChatRoom(ChatRoomHolder chatRoom) {
         chatRooms.add(chatRoom);
         notifyDataSetChanged();
+    }
+
+    public List<ChatRoomHolder> getChatRooms() {
+        return chatRooms;
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
@@ -105,6 +107,20 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 ImageLoader.loadGroupPictureToImageView(picture, chatGroup.getPicture());
             }
 
+            bindLastMessage(chatRoomHolder);
+            bindUnreadMessages(chatRoom);
+        }
+
+        private void bindUnreadMessages(ChatRoom chatRoom) {
+            if(chatRoom.getUnreadMessages() != null && chatRoom.getUnreadMessages() > 0) {
+                unreadMessages.setVisibility(View.VISIBLE);
+                unreadMessages.setText(String.valueOf(chatRoom.getUnreadMessages()));
+            } else {
+                unreadMessages.setVisibility(View.GONE);
+            }
+        }
+
+        private void bindLastMessage(ChatRoomHolder chatRoomHolder) {
             if(chatRoomHolder.lastMessage != null) {
                 lastMessageText.setVisibility(View.VISIBLE);
                 lastMessageText.setText(chatRoomHolder.lastMessage.getMessage());
@@ -113,7 +129,6 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 lastMessageDate.setText(hourFormatter.format(chatRoomHolder.lastMessage.getDate()));
             } else {
                 lastMessageText.setVisibility(View.GONE);
-                unreadMessages.setVisibility(View.GONE);
                 lastMessageDate.setVisibility(View.GONE);
             }
         }

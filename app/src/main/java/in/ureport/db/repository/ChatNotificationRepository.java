@@ -12,4 +12,6 @@ public interface ChatNotificationRepository extends AbstractRepository<ChatNotif
 
     List<ChatNotification> getAllOrderedByDate();
 
+    List<ChatNotification> deleteByChatRoomId(String chatRoomId);
+
 }

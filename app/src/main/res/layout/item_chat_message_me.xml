@@ -14,7 +14,10 @@
         android:layout_gravity="end"
         android:layout_marginLeft="40dp"
         android:layout_marginStart="40dp"
-        android:background="@drawable/bubble_me">
+        android:background="@drawable/bubble_me"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:elevation="3dp">
 
         <TextView
             android:id="@+id/message"
