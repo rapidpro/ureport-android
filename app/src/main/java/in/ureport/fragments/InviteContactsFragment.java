@@ -14,6 +14,8 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.managers.SearchManager;
 import in.ureport.models.Contact;
 import in.ureport.views.adapters.ContactsAdapter;
 
@@ -45,6 +48,12 @@ public class InviteContactsFragment extends Fragment implements LoaderManager.Lo
 
         contactsList = (RecyclerView) view.findViewById(R.id.contactsList);
         contactsList.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
     }
 
     @Override

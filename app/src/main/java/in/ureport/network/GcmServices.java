@@ -3,12 +3,21 @@ package in.ureport.network;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.text.DateFormat;
+import java.util.Date;
+
 import in.ureport.BuildConfig;
 import in.ureport.R;
+import in.ureport.helpers.GsonDateDeserializer;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import retrofit.RestAdapter;
+import retrofit.converter.GsonConverter;
 
 /**
  * Created by johncordeiro on 21/08/15.
@@ -16,6 +25,7 @@ import retrofit.RestAdapter;
 public class GcmServices {
 
     private static final String ENDPOINT = "https://gcm-http.googleapis.com";
+    public static final String DATE_STYLE = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     private final GcmApi gcmApi;
     private Context context;
@@ -42,8 +52,12 @@ public class GcmServices {
     }
 
     private RestAdapter buildRestAdapter() {
+        Gson gson = new GsonBuilder()
+                .setDateFormat(DATE_STYLE).create();
+
         return new RestAdapter.Builder()
                 .setEndpoint(ENDPOINT)
+                .setConverter(new GsonConverter(gson))
                 .build();
     }
 

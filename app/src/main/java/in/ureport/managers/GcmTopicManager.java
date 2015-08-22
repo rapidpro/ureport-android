@@ -1,6 +1,8 @@
 package in.ureport.managers;
 
 import android.content.Context;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmPubSub;
@@ -31,10 +33,49 @@ public class GcmTopicManager {
 
             for (String chatRoom : chatRooms) {
                 GcmPubSub gcmPubSub = GcmPubSub.getInstance(context);
-                gcmPubSub.subscribe(pushIdentity, TOPICS_PATH + chatRoom, null);
+                gcmPubSub.subscribe(pushIdentity, getChatRoomTopic(chatRoom), null);
             }
-        } catch (IOException exception) {
+        } catch (Exception exception) {
             Log.e(TAG, "registerUserTopics ", exception);
         }
+    }
+
+    @NonNull
+    private String getChatRoomTopic(String chatRoom) {
+        return TOPICS_PATH + chatRoom;
+    }
+
+    public void registerUserTopic(final User user, final String chatRoomKey) {
+        new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    if(user.getPushIdentity() != null) {
+                        GcmPubSub gcmPubStub = GcmPubSub.getInstance(context);
+                        gcmPubStub.subscribe(user.getPushIdentity(), getChatRoomTopic(chatRoomKey), null);
+                    }
+                } catch(Exception exception) {
+                    Log.e(TAG, "registerUserTopic ", exception);
+                }
+                return null;
+            }
+        }.execute();
+    }
+
+    public void unregisterUserTopic(final User user, final String chatRoomKey) {
+        new AsyncTask<Void,Void,Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    if (user.getPushIdentity() != null) {
+                        GcmPubSub gcmPubStub = GcmPubSub.getInstance(context);
+                        gcmPubStub.unsubscribe(user.getPushIdentity(), getChatRoomTopic(chatRoomKey));
+                    }
+                } catch (Exception exception) {
+                    Log.e(TAG, "unregisterUserTopic ", exception);
+                }
+                return null;
+            }
+        }.execute();
     }
 }

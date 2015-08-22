@@ -7,12 +7,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.client.DataSnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import in.ureport.R;
@@ -20,10 +26,13 @@ import in.ureport.activities.ChatRoomActivity;
 import in.ureport.listener.OnChatRoomLoadedListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.LocalNotificationManager;
+import in.ureport.managers.SearchManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.GroupChatRoom;
 import in.ureport.models.IndividualChatRoom;
+import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
@@ -35,7 +44,10 @@ import in.ureport.views.adapters.ChatRoomsAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.OnChatRoomSelectedListener {
+public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.OnChatRoomSelectedListener
+    , SearchView.OnQueryTextListener, SearchView.OnCloseListener {
+
+    private static final String TAG = "ListChatRoomsFragment";
 
     private static final int REQUEST_CODE_CHAT_ROOM = 100;
     public static final String EXTRA_RESULT_CHAT_ROOM = "chatRoom";
@@ -46,6 +58,7 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     private UserServices userServices;
 
     private Map<ChatRoom, Integer> chatNotifications;
+    private RecyclerView chatsList;
 
     @Nullable
     @Override
@@ -56,11 +69,27 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setHasOptionsMenu(true);
 
         setupObjects();
         setupView(view);
         loadData();
         cancelChatNotifications();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser && chatsList != null) chatsList.setAdapter(chatRoomsAdapter);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+
+        SearchManager searchManager = new SearchManager(getActivity());
+        searchManager.addSearchView(menu, R.string.hint_search_chat_rooms, this, this);
     }
 
     private void cancelChatNotifications() {
@@ -106,7 +135,7 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     }
 
     private void setupView(View view) {
-        RecyclerView chatsList = (RecyclerView) view.findViewById(R.id.chatsList);
+        chatsList = (RecyclerView) view.findViewById(R.id.chatsList);
         chatsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         chatsList.addItemDecoration(new DividerItemDecoration(getActivity()));
 
@@ -160,5 +189,51 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM, chatRoom);
         chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_MEMBERS, members);
         startActivityForResult(chatRoomIntent, REQUEST_CODE_CHAT_ROOM);
+    }
+
+    @Override
+    public boolean onClose() {
+        chatsList.setAdapter(chatRoomsAdapter);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        updateRoomsForQuery(query);
+        return false;
+    }
+
+    private void updateRoomsForQuery(String query) {
+        try {
+            List<ChatRoomHolder> chatRooms = new ArrayList<>();
+
+            query = query.toLowerCase();
+            for (ChatRoomHolder chatRoomHolder : chatRoomsAdapter.getChatRooms()) {
+                if (chatRoomHolder.chatRoom.getType() == ChatRoom.Type.Group) {
+                    GroupChatRoom groupChatRoom = (GroupChatRoom) chatRoomHolder.chatRoom;
+                    if (groupChatRoom.getTitle().toLowerCase().contains(query)) {
+                        chatRooms.add(chatRoomHolder);
+                    }
+                } else {
+                    for (User user : chatRoomHolder.members.getUsers()) {
+                        if (user.getNickname().toLowerCase().contains(query)) {
+                            chatRooms.add(chatRoomHolder);
+                        }
+                    }
+                }
+            }
+
+            ChatRoomsAdapter chatRoomsAdapter = new ChatRoomsAdapter();
+            chatRoomsAdapter.updateData(chatRooms);
+            chatRoomsAdapter.setOnChatRoomSelectedListener(this);
+            chatsList.setAdapter(chatRoomsAdapter);
+        } catch(Exception exception) {
+            Log.e(TAG, "updateRoomsForQuery ", exception);
+        }
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 }

@@ -1,7 +1,9 @@
 package in.ureport.managers;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
@@ -10,6 +12,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.activities.ChatActivity;
 import in.ureport.models.db.ChatNotification;
 
 /**
@@ -55,9 +58,12 @@ public class LocalNotificationManager {
                 , lastNotification.getMessage());
         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon);
 
+        PendingIntent pendingIntent = getPendingIntent();
+
         Notification summaryNotification = new NotificationCompat.Builder(context)
                 .setContentTitle(summaryText)
                 .setContentText(notificationLine)
+                .setContentIntent(pendingIntent)
                 .setSmallIcon(R.mipmap.icon)
                 .setLargeIcon(largeIcon)
                 .setStyle(notificationInboxStyle)
@@ -67,6 +73,11 @@ public class LocalNotificationManager {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(type.id, summaryNotification);
+    }
+
+    private PendingIntent getPendingIntent() {
+        Intent chatIntent = new Intent(context, ChatActivity.class);
+        return PendingIntent.getActivity(context, ChatActivity.REQUEST_CODE_CHAT_NOTIFICATION, chatIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     private NotificationCompat.InboxStyle buildInboxStyle(List<ChatNotification> chatNotificationList

@@ -1,5 +1,6 @@
 package in.ureport.network;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.firebase.client.ChildEventListener;
@@ -17,6 +18,7 @@ import in.ureport.listener.OnChatMembersLoadedListener;
 import in.ureport.listener.OnChatRoomSavedListener;
 import in.ureport.listener.OnChatRoomLoadedListener;
 import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.GcmTopicManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
@@ -39,12 +41,17 @@ public class ChatRoomServices {
                 .equalTo(false).addChildEventListener(listener);
     }
 
-    public void addChildEventListenerForChatMessages(String key, ChildEventListener listener) {
-        FirebaseManager.getReference().child(messagesPath).child(key).orderByKey().addChildEventListener(listener);
+    public void removeChildEventListenerForPublicGroups(ChildEventListener listener) {
+        FirebaseManager.getReference().child(chatRoomPath).orderByChild("privateAccess")
+                .equalTo(false).removeEventListener(listener);
     }
 
-    public void removeEventListener(ChildEventListener listener) {
-        FirebaseManager.getReference().child(messagesPath).removeEventListener(listener);
+    public void addChildEventListenerForChatMessages(String key, ChildEventListener listener) {
+        FirebaseManager.getReference().child(messagesPath).child(key).orderByChild("date").addChildEventListener(listener);
+    }
+
+    public void removeEventListenerForChatMessages(String key, ChildEventListener listener) {
+        FirebaseManager.getReference().child(messagesPath).child(key).orderByChild("date").removeEventListener(listener);
     }
 
     public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
@@ -103,26 +110,26 @@ public class ChatRoomServices {
     private void loadLastChatMessage(String key, final ChatMembers chatMembers
             , final OnChatLastMessageLoadedListener onChatLastMessageLoadedListener) {
         FirebaseManager.getReference().child(messagesPath).child(key).limitToLast(1)
-        .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                super.onDataChange(dataSnapshot);
+                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        super.onDataChange(dataSnapshot);
 
-                ChatMessage lastChatMessage = null;
+                        ChatMessage lastChatMessage = null;
 
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    lastChatMessage = snapshot.getValue(ChatMessage.class);
-                    if (lastChatMessage != null) {
-                        int indexOfUser = chatMembers.getUsers().indexOf(lastChatMessage.getUser());
-                        if (indexOfUser >= 0)
-                            lastChatMessage.setUser(chatMembers.getUsers().get(indexOfUser));
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            lastChatMessage = snapshot.getValue(ChatMessage.class);
+                            if (lastChatMessage != null) {
+                                int indexOfUser = chatMembers.getUsers().indexOf(lastChatMessage.getUser());
+                                if (indexOfUser >= 0)
+                                    lastChatMessage.setUser(chatMembers.getUsers().get(indexOfUser));
+                            }
+                            break;
+                        }
+
+                        onChatLastMessageLoadedListener.onChatLastMessageLoaded(lastChatMessage);
                     }
-                    break;
-                }
-
-                onChatLastMessageLoadedListener.onChatLastMessageLoaded(lastChatMessage);
-            }
-        });
+                });
     }
 
     public void loadChatRoomMembers(String key, final OnChatMembersLoadedListener listener) {
@@ -169,16 +176,16 @@ public class ChatRoomServices {
         FirebaseManager.getReference().child(chatRoomPath).child(groupChatRoom.getKey()).setValue(groupChatRoom);
     }
 
-    public void saveGroupChatRoom(final GroupChatRoom groupChatRoom, final List<User> members
+    public void saveGroupChatRoom(final Context context, final GroupChatRoom groupChatRoom, final List<User> members
             , final OnChatRoomSavedListener onChatRoomSavedListener) {
         FirebaseManager.getReference().child(chatRoomPath).push().setValue(groupChatRoom
                 , new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
-                    addChatMember(groupChatRoom.getAdministrator(), firebase.getKey());
+                    addChatMember(context, groupChatRoom.getAdministrator(), firebase.getKey());
                     for (User member : members) {
-                        addChatMember(member, firebase.getKey());
+                        addChatMember(context, member, firebase.getKey());
                     }
 
                     groupChatRoom.setKey(firebase.getKey());
@@ -192,7 +199,7 @@ public class ChatRoomServices {
         });
     }
 
-    public void saveIndividualChatRoom(final User friend, final OnChatRoomSavedListener onChatRoomSavedListener) {
+    public void saveIndividualChatRoom(final Context context, final User friend, final OnChatRoomSavedListener onChatRoomSavedListener) {
         final IndividualChatRoom chatRoom = new IndividualChatRoom();
         chatRoom.setCreatedDate(new Date());
 
@@ -204,8 +211,8 @@ public class ChatRoomServices {
                     User me = new User();
                     me.setKey(FirebaseManager.getReference().getAuth().getUid());
 
-                    addChatMember(me, firebase.getKey());
-                    addChatMember(friend, firebase.getKey());
+                    addChatMember(context, me, firebase.getKey());
+                    addChatMember(context, friend, firebase.getKey());
 
                     chatRoom.setKey(firebase.getKey());
 
@@ -226,9 +233,12 @@ public class ChatRoomServices {
         return chatMembers;
     }
 
-    public void removeChatMember(User user, String chatRoomKey) {
+    public void removeChatMember(Context context, User user, String chatRoomKey) {
         UserServices userServices = new UserServices();
         userServices.removeUserChatRoom(user.getKey(), chatRoomKey);
+
+        GcmTopicManager gcmTopicManager = new GcmTopicManager(context);
+        gcmTopicManager.unregisterUserTopic(user, chatRoomKey);
 
         FirebaseManager.getReference().child(membersPath)
                 .child(chatRoomKey)
@@ -236,9 +246,12 @@ public class ChatRoomServices {
                 .removeValue();
     }
 
-    public void addChatMember(User user, String chatRoomKey) {
+    public void addChatMember(Context context, User user, String chatRoomKey) {
         UserServices userServices = new UserServices();
         userServices.addUserChatRoom(user.getKey(), chatRoomKey);
+
+        GcmTopicManager gcmTopicManager = new GcmTopicManager(context);
+        gcmTopicManager.registerUserTopic(user, chatRoomKey);
 
         FirebaseManager.getReference().child(membersPath)
                 .child(chatRoomKey)

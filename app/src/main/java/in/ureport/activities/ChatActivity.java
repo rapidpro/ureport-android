@@ -15,7 +15,9 @@ import in.ureport.fragments.ListChatRoomsFragment;
 import in.ureport.fragments.InviteContactsFragment;
 import in.ureport.listener.OnChatMembersLoadedListener;
 import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
+import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
@@ -31,6 +33,9 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
     private static final int PAGE_POSITION_MY_CHATS = 1;
     private static final int PAGE_POSITION_GROUPS = 0;
 
+    public static final int REQUEST_CODE_CHAT_NOTIFICATION = 100;
+    public static final int REQUEST_CODE_CHAT_CREATION = 200;
+
     private ChatRoomServices chatRoomServices;
 
     @Override
@@ -39,6 +44,37 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
         setContentView(R.layout.activity_chat);
         setupObjects();
         setupView();
+        checkUserLogin();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE_CHAT_CREATION:
+                    startChatRoom(data);
+            }
+        }
+    }
+
+    private void startChatRoom(Intent data) {
+        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_ROOM);
+        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_MEMBERS);
+
+        if(chatRoom != null && chatMembers != null) {
+            Intent chatRoomIntent = new Intent(this, ChatRoomActivity.class);
+            chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM, chatRoom);
+            chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_MEMBERS, chatMembers);
+            startActivity(chatRoomIntent);
+        }
+    }
+
+    private void checkUserLogin() {
+        if(FirebaseManager.getAuthUserKey() == null) {
+            UserManager.startLoginFlow(this);
+            finish();
+        }
     }
 
     private void setupObjects() {
@@ -62,12 +98,6 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
         getMainActionButton().setImageResource(R.drawable.ic_add_white_24dp);
         getMainActionButton().setOnClickListener(onCreateChatClickListener);
         getMenuNavigation().getMenu().findItem(R.id.chat).setChecked(true);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_chat, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -99,7 +129,7 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
         @Override
         public void onClick(View v) {
             Intent newChatIntent = new Intent(ChatActivity.this, ChatCreationActivity.class);
-            startActivity(newChatIntent);
+            startActivityForResult(newChatIntent, REQUEST_CODE_CHAT_CREATION);
         }
     };
 
@@ -120,7 +150,7 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
         if(chatMembers.getUsers().contains(me)) {
             showMessage(R.string.error_already_join_group);
         } else if(chatMembers.getUsers().size() < CreateGroupFragment.MAX_UREPORTERS_GROUP_COUNT) {
-            chatRoomServices.addChatMember(me, groupChatRoom.getKey());
+            chatRoomServices.addChatMember(this, me, groupChatRoom.getKey());
             showMessage(R.string.success_message_join_group);
         } else {
             showMessage(R.string.error_full_group);

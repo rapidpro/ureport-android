@@ -66,6 +66,11 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyDataSetChanged();
     }
 
+    public void updateData(List<ChatRoomHolder> chatRooms) {
+        this.chatRooms = chatRooms;
+        notifyDataSetChanged();
+    }
+
     public void addChatRoom(ChatRoomHolder chatRoom) {
         chatRooms.add(chatRoom);
         notifyDataSetChanged();

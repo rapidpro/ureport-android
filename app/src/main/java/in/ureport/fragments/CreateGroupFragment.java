@@ -244,7 +244,7 @@ public class CreateGroupFragment extends Fragment {
             for (User selectedUreporter : selectedUreporters) {
                 if(!members.getUsers().contains(selectedUreporter)) {
                     addedUsers.add(selectedUreporter);
-                    chatRoomServices.addChatMember(selectedUreporter, groupChatRoom.getKey());
+                    chatRoomServices.addChatMember(getActivity(), selectedUreporter, groupChatRoom.getKey());
                 }
             }
             members.getUsers().addAll(addedUsers);
@@ -257,7 +257,7 @@ public class CreateGroupFragment extends Fragment {
             for (User user : members.getUsers()) {
                 if(!selectedUreporters.contains(user)) {
                     removedUsers.add(user);
-                    chatRoomServices.removeChatMember(user, groupChatRoom.getKey());
+                    chatRoomServices.removeChatMember(getActivity(), user, groupChatRoom.getKey());
                 }
             }
             members.getUsers().removeAll(removedUsers);
@@ -321,7 +321,7 @@ public class CreateGroupFragment extends Fragment {
             onChatRoomSavedListener.onChatRoomSaved(groupChatRoom, members);
         } else {
             List<User> members = new ArrayList<>(ureportersAdapter.getSelectedUreporters());
-            chatRoomServices.saveGroupChatRoom(groupChatRoom, members, onChatRoomSavedListener);
+            chatRoomServices.saveGroupChatRoom(getActivity(), groupChatRoom, members, onChatRoomSavedListener);
         }
     }
 

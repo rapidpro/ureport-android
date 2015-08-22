@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +24,7 @@ import java.util.Date;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ImageLoader;
@@ -37,6 +37,7 @@ import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.SpaceItemDecoration;
+import in.ureport.network.UserServices;
 import in.ureport.tasks.CleanUnreadByRoomTask;
 import in.ureport.tasks.SendGcmChatTask;
 import in.ureport.views.adapters.ChatMessagesAdapter;
@@ -67,6 +68,7 @@ public class ChatRoomFragment extends Fragment {
     private InfoGroupChatListener infoGroupChatListener;
 
     private ChatRoomServices chatRoomServices;
+    private UserServices userServices;
 
     public static ChatRoomFragment newInstance(ChatRoom chatRoom, ChatMembers chatMembers) {
         ChatRoomFragment chatRoomFragment = new ChatRoomFragment();
@@ -108,23 +110,21 @@ public class ChatRoomFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        cleanUnreadMessages();
-
-        chatRoomServices.removeEventListener(onChildEventListener);
-    }
-
-    private void cleanUnreadMessages() {
         CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask();
         cleanUnreadByRoomTask.execute(chatRoom);
+
+        chatRoomServices.removeEventListenerForChatMessages(chatRoom.getKey(), onChildEventListener);
     }
 
     private void loadData() {
-        cleanUnreadMessages();
+        CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask();
+        cleanUnreadByRoomTask.execute(chatRoom);
 
         chatRoomServices.addChildEventListenerForChatMessages(chatRoom.getKey(), onChildEventListener);
     }
 
     private void setupObjects() {
+        userServices = new UserServices();
         chatRoomServices = new ChatRoomServices();
         user = getMemberUserByKey(FirebaseManager.getAuthUserKey());
     }
@@ -218,12 +218,13 @@ public class ChatRoomFragment extends Fragment {
     }
 
     private User getMemberUserByKey(String key) {
+        if(chatMembers == null || chatMembers.getUsers() == null) return null;
+
         User memberUser = new User();
         memberUser.setKey(key);
-        memberUser.setNickname(getString(R.string.chat_room_removed_user_name));
 
         int authUserIndex = chatMembers.getUsers().indexOf(memberUser);
-        return authUserIndex >= 0 ? chatMembers.getUsers().get(authUserIndex) : memberUser;
+        return authUserIndex >= 0 ? chatMembers.getUsers().get(authUserIndex) : null;
     }
 
     private void setupViewForGroupChat() {
@@ -292,13 +293,32 @@ public class ChatRoomFragment extends Fragment {
         public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
             super.onChildAdded(dataSnapshot, previousChild);
 
-            ChatMessage message = dataSnapshot.getValue(ChatMessage.class);
-            message.setUser(getMemberUserByKey(message.getUser().getKey()));
+            final ChatMessage message = dataSnapshot.getValue(ChatMessage.class);
             message.setKey(dataSnapshot.getKey());
 
-            addChatMessage(message);
+            User memberUser = getMemberUserByKey(message.getUser().getKey());
+            if(memberUser != null) {
+                message.setUser(getMemberUserByKey(message.getUser().getKey()));
+                addChatMessage(message);
+            } else {
+                loadUserAndAddChatMessage(message);
+            }
         }
     };
+
+    private void loadUserAndAddChatMessage(final ChatMessage message) {
+        userServices.getUser(message.getUser().getKey(), new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                User user = dataSnapshot.getValue(User.class);
+                chatMembers.getUsers().add(user);
+
+                message.setUser(user);
+                addChatMessage(message);
+            }
+        });
+    }
 
     public interface ChatRoomListener {
         void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers);

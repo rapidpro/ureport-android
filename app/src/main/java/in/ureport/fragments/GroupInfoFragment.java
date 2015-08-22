@@ -89,7 +89,7 @@ public class GroupInfoFragment extends Fragment {
         editGroup.setVisible(currentUserAdministrator);
 
         MenuItem leaveGroup = menu.findItem(R.id.leaveGroup);
-        leaveGroup.setVisible(!currentUserAdministrator);
+        leaveGroup.setVisible(!currentUserAdministrator && isCurrentUserMember());
     }
 
     @Override
@@ -201,5 +201,12 @@ public class GroupInfoFragment extends Fragment {
 
     private boolean isCurrentUserAdministrator() {
         return chatRoom.getAdministrator().getKey().equals(FirebaseManager.getAuthUserKey());
+    }
+
+    private boolean isCurrentUserMember() {
+        User user = new User();
+        user.setKey(FirebaseManager.getAuthUserKey());
+
+        return chatMembers.getUsers() != null && chatMembers.getUsers().contains(user);
     }
 }

@@ -52,7 +52,7 @@ public class UserManager {
                         user.setKey(FirebaseManager.getAuthUserKey());
 
                         ChatRoomServices chatRoomServices = new ChatRoomServices();
-                        chatRoomServices.removeChatMember(user, chatRoom.getKey());
+                        chatRoomServices.removeChatMember(activity, user, chatRoom.getKey());
 
                         activity.finish();
                     }
@@ -67,6 +67,10 @@ public class UserManager {
         systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
         systemPreferences.setCountryCode("");
 
+        startLoginFlow(context);
+    }
+
+    public static void startLoginFlow(Context context) {
         Intent backIntent = new Intent(context, MainActivity.class);
         backIntent.putExtra(MainActivity.EXTRA_FORCED_LOGIN, true);
         backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

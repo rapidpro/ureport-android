@@ -7,28 +7,22 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.google.android.gms.gcm.GcmPubSub;
-
-import java.util.Set;
 
 import in.ureport.R;
 import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
-import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.CountryProgramManager;
+
 import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
 import in.ureport.services.GcmRegistrationIntentService;
-import in.ureport.tasks.LoadPushIdentityTask;
 
 /**
  * Created by johncordeiro on 7/7/15.

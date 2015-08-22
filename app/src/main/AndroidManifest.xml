@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
@@ -157,7 +158,7 @@
         </activity>
 
         <meta-data android:name="AA_DB_NAME" android:value="Ureport.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="2" />
+        <meta-data android:name="AA_DB_VERSION" android:value="3" />
 
         <meta-data
             android:name="AA_MODELS"

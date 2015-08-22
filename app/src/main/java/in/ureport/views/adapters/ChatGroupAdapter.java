@@ -42,6 +42,15 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return groupChats.get(position).getKey().hashCode();
     }
 
+    public void updateData(List<GroupChatRoom> groupChatRooms) {
+        this.groupChats = groupChatRooms;
+        notifyDataSetChanged();
+    }
+
+    public List<GroupChatRoom> getGroupChats() {
+        return groupChats;
+    }
+
     @Override
     public int getItemCount() {
         return groupChats.size();

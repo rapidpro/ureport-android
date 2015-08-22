@@ -1,13 +1,11 @@
 package in.ureport.tasks;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.Date;
 import java.util.List;
 
 import in.ureport.db.business.ChatNotificationBusiness;
@@ -62,6 +60,6 @@ public class ChatNotificationTask extends AsyncTask<ChatMessage, Void, Void> {
     private ChatNotification buildNotification(ChatMessage chatMessage) {
         User user = chatMessage.getUser();
         return new ChatNotification(chatRoom.getKey(), user.getNickname()
-                    , chatMessage.getMessage(), chatMessage.getDate());
+                    , chatMessage.getMessage(), new Date());
     }
 }

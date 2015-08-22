@@ -9,6 +9,7 @@ import in.ureport.managers.GcmTopicManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
+import in.ureport.network.GcmServices;
 import in.ureport.tasks.ChatNotificationTask;
 
 /**
@@ -52,6 +53,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     private ChatMessage getChatMessage(Bundle data) {
         String chatMessageJson = data.getString(EXTRA_CHAT_MESSAGE);
         JsonDeserializer<ChatMessage> chatMessageDeserializer = new JsonDeserializer<>(chatMessageJson);
+        chatMessageDeserializer.setDateFormat(GcmServices.DATE_STYLE);
         return chatMessageDeserializer.get(ChatMessage.class);
     }
 
@@ -59,6 +61,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
         String chatRoomJson = data.getString(EXTRA_CHAT_ROOM);
 
         JsonDeserializer<GroupChatRoom> chatRoomDeserializer = new JsonDeserializer<>(chatRoomJson);
+        chatRoomDeserializer.setDateFormat(GcmServices.DATE_STYLE);
         return chatRoomDeserializer.get(GroupChatRoom.class);
     }
 }

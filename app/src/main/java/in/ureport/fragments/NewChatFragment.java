@@ -135,7 +135,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        chatRoomServices.saveIndividualChatRoom(user, onChatRoomSavedListener);
+                        chatRoomServices.saveIndividualChatRoom(getActivity(), user, onChatRoomSavedListener);
                     }
                 }).create();
         alertDialog.show();
