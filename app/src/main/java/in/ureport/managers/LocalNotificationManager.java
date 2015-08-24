@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -59,6 +61,7 @@ public class LocalNotificationManager {
         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.icon);
 
         PendingIntent pendingIntent = getPendingIntent();
+        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         Notification summaryNotification = new NotificationCompat.Builder(context)
                 .setContentTitle(summaryText)
@@ -69,6 +72,7 @@ public class LocalNotificationManager {
                 .setStyle(notificationInboxStyle)
                 .setGroup(type.group)
                 .setGroupSummary(true)
+                .setSound(soundUri)
                 .build();
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);

@@ -90,6 +90,9 @@ public class GroupInfoFragment extends Fragment {
 
         MenuItem leaveGroup = menu.findItem(R.id.leaveGroup);
         leaveGroup.setVisible(!currentUserAdministrator && isCurrentUserMember());
+
+        MenuItem closeGroup = menu.findItem(R.id.closeGroup);
+        closeGroup.setVisible(currentUserAdministrator);
     }
 
     @Override
@@ -98,8 +101,11 @@ public class GroupInfoFragment extends Fragment {
             case R.id.editGroup:
                 infoGroupChatListener.onEditGroupChat(chatRoom, chatMembers);
                 break;
+            case R.id.closeGroup:
+                infoGroupChatListener.onChatRoomClose(chatRoom, chatMembers);
+                break;
             case R.id.leaveGroup:
-                leaveGroup();
+                infoGroupChatListener.onChatRoomLeave(chatRoom);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -184,11 +190,6 @@ public class GroupInfoFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private void leaveGroup() {
-        if(infoGroupChatListener != null)
-            infoGroupChatListener.onChatRoomLeave(chatRoom);
     }
 
     private View.OnClickListener onAddUreporterClickListener = new View.OnClickListener() {

@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.firebase.client.DataSnapshot;
 
@@ -59,6 +61,7 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
 
     private Map<ChatRoom, Integer> chatNotifications;
     private RecyclerView chatsList;
+    private ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -116,6 +119,8 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
 
             if(chatRoomIndex >= 0) {
                 ChatRoomHolder chatRoomForUpdate = chatRoomsAdapter.getChatRooms().get(chatRoomIndex);
+                chatRoomForUpdate.chatRoom = data.getParcelableExtra(ChatRoomActivity.EXTRA_CHAT_ROOM);
+                chatRoomForUpdate.members = data.getParcelableExtra(ChatRoomActivity.EXTRA_CHAT_MEMBERS);
                 chatRoomForUpdate.chatRoom.setUnreadMessages(0);
 
                 chatRoomsAdapter.notifyItemChanged(chatRoomIndex);
@@ -135,6 +140,8 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     }
 
     private void setupView(View view) {
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
         chatsList = (RecyclerView) view.findViewById(R.id.chatsList);
         chatsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         chatsList.addItemDecoration(new DividerItemDecoration(getActivity()));
@@ -160,11 +167,13 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
             super.onChildAdded(dataSnapshot, previousChild);
-            String chatRoomKey = dataSnapshot.getKey();
 
+            String chatRoomKey = dataSnapshot.getKey();
             chatRoomServices.getChatRoom(chatRoomKey, new OnChatRoomLoadedListener() {
                 @Override
                 public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage) {
+                    dismissProgressBar();
+
                     chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
                     chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, lastMessage));
                 }
@@ -174,14 +183,19 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
             super.onChildRemoved(dataSnapshot);
-            String chatRoomKey = dataSnapshot.getKey();
 
-            IndividualChatRoom chatRoom = new IndividualChatRoom();
-            chatRoom.setKey(chatRoomKey);
+            ChatRoom chatRoom = new ChatRoom(){};
+            chatRoom.setKey(dataSnapshot.getKey());
 
             chatRoomsAdapter.removeChatRoom(new ChatRoomHolder(chatRoom));
         }
     };
+
+    private void dismissProgressBar() {
+        if(progressBar.getVisibility() == View.VISIBLE) {
+            progressBar.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void onChatRoomSelected(ChatRoom chatRoom, ChatMembers members) {
@@ -205,23 +219,7 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
 
     private void updateRoomsForQuery(String query) {
         try {
-            List<ChatRoomHolder> chatRooms = new ArrayList<>();
-
-            query = query.toLowerCase();
-            for (ChatRoomHolder chatRoomHolder : chatRoomsAdapter.getChatRooms()) {
-                if (chatRoomHolder.chatRoom.getType() == ChatRoom.Type.Group) {
-                    GroupChatRoom groupChatRoom = (GroupChatRoom) chatRoomHolder.chatRoom;
-                    if (groupChatRoom.getTitle().toLowerCase().contains(query)) {
-                        chatRooms.add(chatRoomHolder);
-                    }
-                } else {
-                    for (User user : chatRoomHolder.members.getUsers()) {
-                        if (user.getNickname().toLowerCase().contains(query)) {
-                            chatRooms.add(chatRoomHolder);
-                        }
-                    }
-                }
-            }
+            List<ChatRoomHolder> chatRooms = getChatRoomsListForQuery(query);
 
             ChatRoomsAdapter chatRoomsAdapter = new ChatRoomsAdapter();
             chatRoomsAdapter.updateData(chatRooms);
@@ -230,6 +228,28 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         } catch(Exception exception) {
             Log.e(TAG, "updateRoomsForQuery ", exception);
         }
+    }
+
+    @NonNull
+    private List<ChatRoomHolder> getChatRoomsListForQuery(String query) {
+        List<ChatRoomHolder> chatRooms = new ArrayList<>();
+
+        query = query.toLowerCase();
+        for (ChatRoomHolder chatRoomHolder : chatRoomsAdapter.getChatRooms()) {
+            if (chatRoomHolder.chatRoom.getType() == ChatRoom.Type.Group) {
+                GroupChatRoom groupChatRoom = (GroupChatRoom) chatRoomHolder.chatRoom;
+                if (groupChatRoom.getTitle().toLowerCase().contains(query)) {
+                    chatRooms.add(chatRoomHolder);
+                }
+            } else {
+                for (User user : chatRoomHolder.members.getUsers()) {
+                    if (user.getNickname().toLowerCase().contains(query)) {
+                        chatRooms.add(chatRoomHolder);
+                    }
+                }
+            }
+        }
+        return chatRooms;
     }
 
     @Override

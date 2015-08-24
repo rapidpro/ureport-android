@@ -54,6 +54,14 @@ public class ChatRoomServices {
         FirebaseManager.getReference().child(messagesPath).child(key).orderByChild("date").removeEventListener(listener);
     }
 
+    public void closeChatRoom(Context context, ChatRoom chatRoom, ChatMembers chatMembers) {
+        for (User user : chatMembers.getUsers()) {
+            removeChatMember(context, user, chatRoom.getKey());
+        }
+        FirebaseManager.getReference().child(membersPath).child(chatRoom.getKey()).removeValue();
+        FirebaseManager.getReference().child(chatRoomPath).child(chatRoom.getKey()).removeValue();
+    }
+
     public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
         setUserIfNeeded(chatMessage);
         FirebaseManager.getReference().child(messagesPath).child(chatRoom.getKey())
@@ -61,15 +69,17 @@ public class ChatRoomServices {
     }
 
     private void setUserIfNeeded(ChatMessage chatMessage) {
-        if(chatMessage.getUser() == null || chatMessage.getUser().getKey() == null) {
+        if(chatMessage.getUser() != null && chatMessage.getUser().getKey() != null) {
             User user = new User();
             user.setKey(chatMessage.getUser().getKey());
+            user.setNickname(chatMessage.getUser().getNickname());
             chatMessage.setUser(user);
         }
     }
 
     public void getChatRoom(final String key, final OnChatRoomLoadedListener listener) {
-        FirebaseManager.getReference().child(chatRoomPath).child(key).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+        FirebaseManager.getReference().child(chatRoomPath).child(key).addListenerForSingleValueEvent(
+                new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) return;
@@ -109,7 +119,7 @@ public class ChatRoomServices {
 
     private void loadLastChatMessage(String key, final ChatMembers chatMembers
             , final OnChatLastMessageLoadedListener onChatLastMessageLoadedListener) {
-        FirebaseManager.getReference().child(messagesPath).child(key).limitToLast(1)
+        FirebaseManager.getReference().child(messagesPath).child(key).orderByKey().limitToLast(1)
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -183,7 +193,7 @@ public class ChatRoomServices {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
-                    addChatMember(context, groupChatRoom.getAdministrator(), firebase.getKey());
+                    members.add(groupChatRoom.getAdministrator());
                     for (User member : members) {
                         addChatMember(context, member, firebase.getKey());
                     }

@@ -1,10 +1,12 @@
 package in.ureport.activities;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import in.ureport.R;
@@ -15,6 +17,7 @@ import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
+import in.ureport.network.ChatRoomServices;
 
 /**
  * Created by johncordeiro on 21/08/15.
@@ -22,6 +25,7 @@ import in.ureport.models.GroupChatRoom;
 public class GroupInfoActivity extends AppCompatActivity implements InfoGroupChatListener {
 
     private static final int REQUEST_CODE_CHAT_EDITION = 200;
+    public static final int RESULT_REMOVED = 20;
 
     public static final String EXTRA_CHAT_ROOM = "chatRoom";
     public static final String EXTRA_CHAT_MEMBERS = "chatMembers";
@@ -85,6 +89,24 @@ public class GroupInfoActivity extends AppCompatActivity implements InfoGroupCha
         chatCreationIntent.putExtra(EXTRA_CHAT_ROOM, chatRoom);
         chatCreationIntent.putExtra(EXTRA_CHAT_MEMBERS, members);
         startActivityForResult(chatCreationIntent, REQUEST_CODE_CHAT_EDITION);
+    }
+
+    @Override
+    public void onChatRoomClose(final ChatRoom chatRoom, final ChatMembers members) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setMessage(R.string.message_close_group)
+                .setNegativeButton(R.string.cancel_dialog_button, null)
+                .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ChatRoomServices chatRoomServices = new ChatRoomServices();
+                        chatRoomServices.closeChatRoom(GroupInfoActivity.this, chatRoom, members);
+
+                        setResult(RESULT_REMOVED);
+                        finish();
+                    }
+                }).create();
+        alertDialog.show();
     }
 
     @Override

@@ -115,6 +115,26 @@ public class ChatGroupFragment extends Fragment implements SearchView.OnQueryTex
 
             adapter.addGroupChatRoom(groupChatRoom);
         }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            super.onChildRemoved(dataSnapshot);
+
+            GroupChatRoom groupChatRoom = dataSnapshot.getValue(GroupChatRoom.class);
+            groupChatRoom.setKey(dataSnapshot.getKey());
+
+            adapter.removeGroupChatRoom(groupChatRoom);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String previousChild) {
+            super.onChildChanged(dataSnapshot, previousChild);
+
+            GroupChatRoom groupChatRoom = dataSnapshot.getValue(GroupChatRoom.class);
+            groupChatRoom.setKey(dataSnapshot.getKey());
+
+            adapter.updateGroupChatRoom(groupChatRoom);
+        }
     };
 
     @Override

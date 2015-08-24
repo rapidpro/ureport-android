@@ -9,6 +9,7 @@ import in.ureport.models.ChatRoom;
 public interface InfoGroupChatListener {
 
     void onEditGroupChat(ChatRoom chatRoom, ChatMembers members);
+    void onChatRoomClose(ChatRoom chatRoom, ChatMembers members);
     void onChatRoomLeave(ChatRoom chatRoom);
 
 }

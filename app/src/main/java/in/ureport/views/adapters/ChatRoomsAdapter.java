@@ -71,6 +71,14 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         notifyDataSetChanged();
     }
 
+    public void updateChatRoom(ChatRoomHolder chatRoom) {
+        int chatRoomPosition = chatRooms.indexOf(chatRoom);
+        if(chatRoomPosition >= 0) {
+            chatRooms.set(chatRoomPosition, chatRoom);
+            notifyItemChanged(chatRoomPosition);
+        }
+    }
+
     public void addChatRoom(ChatRoomHolder chatRoom) {
         chatRooms.add(chatRoom);
         notifyDataSetChanged();

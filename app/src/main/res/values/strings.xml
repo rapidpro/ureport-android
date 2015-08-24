@@ -207,6 +207,8 @@
     <string name="summary_notification">U-Report</string>
     <string name="hint_search_groups">Search groups</string>
     <string name="hint_search_chat_rooms">Search chat rooms</string>
+    <string name="label_close_group">Close Group</string>
+    <string name="message_close_group">Do you really want to close this group?</string>
 
     <plurals name="title_new_message">
         <item quantity="one">%1$s new message</item>

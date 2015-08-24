@@ -56,6 +56,19 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         return groupChats.size();
     }
 
+    public void updateGroupChatRoom(GroupChatRoom groupChatRoom) {
+        int groupPosition = groupChats.indexOf(groupChatRoom);
+        if(groupPosition >= 0) {
+            groupChats.set(groupPosition, groupChatRoom);
+            notifyItemChanged(groupPosition);
+        }
+    }
+
+    public void removeGroupChatRoom(GroupChatRoom groupChatRoom) {
+        groupChats.remove(groupChatRoom);
+        notifyDataSetChanged();
+    }
+
     public void addGroupChatRoom(GroupChatRoom groupChatRoom) {
         groupChats.add(groupChatRoom);
         notifyDataSetChanged();

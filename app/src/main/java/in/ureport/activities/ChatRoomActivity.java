@@ -54,6 +54,8 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
                 case REQUEST_CODE_GROUP_INFO:
                     updateChatData(data);
             }
+        } else if(resultCode == GroupInfoActivity.RESULT_REMOVED) {
+            finish();
         }
     }
 
@@ -61,8 +63,16 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_ROOM);
         ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_MEMBERS);
 
+        updateIntentResult(chatRoom, chatMembers);
         if(chatRoomFragment != null)
             chatRoomFragment.updateChatRoom(chatRoom, chatMembers);
+    }
+
+    private void updateIntentResult(ChatRoom chatRoom, ChatMembers chatMembers) {
+        Intent intent = getIntent();
+        intent.putExtra(EXTRA_CHAT_ROOM, chatRoom);
+        intent.putExtra(EXTRA_CHAT_MEMBERS, chatMembers);
+        setResult(RESULT_OK, intent);
     }
 
     @Override
@@ -77,6 +87,9 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
 
     @Override
     public void onEditGroupChat(ChatRoom chatRoom, ChatMembers members) {}
+
+    @Override
+    public void onChatRoomClose(ChatRoom chatRoom, ChatMembers members) {}
 
     @Override
     public void onChatRoomLeave(ChatRoom chatRoom) {

@@ -12,4 +12,9 @@
         android:title="@string/label_leave_group"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/closeGroup"
+        android:title="@string/label_close_group"
+        app:showAsAction="never" />
+
 </menu>
