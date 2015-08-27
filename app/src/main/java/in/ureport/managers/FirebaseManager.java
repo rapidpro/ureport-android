@@ -1,6 +1,7 @@
 package in.ureport.managers;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.firebase.client.AuthData;

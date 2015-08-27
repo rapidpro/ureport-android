@@ -71,7 +71,7 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
     }
 
     private void checkUserLogin() {
-        if(FirebaseManager.getAuthUserKey() == null) {
+        if(!UserManager.isUserLoggedIn()) {
             UserManager.startLoginFlow(this);
             finish();
         }

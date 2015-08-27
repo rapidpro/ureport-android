@@ -61,9 +61,7 @@ public class NewsViewFragment extends Fragment {
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        TextView category = (TextView) view.findViewById(R.id.category);
-        category.setText(news.getCategory());
+        activity.setTitle(news.getCategory());
 
         TextView title = (TextView) view.findViewById(R.id.title);
         title.setText(news.getTitle());

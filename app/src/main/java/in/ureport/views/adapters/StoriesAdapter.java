@@ -101,8 +101,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return stories;
     }
 
-    public void addStories(List<Story> stories) {
-        this.stories.addAll(0, stories);
+    public void addStory(Story story) {
+        this.stories.add(0, story);
 
         int firstStoryIndex = publicType ? 1 : 0;
         notifyItemInserted(firstStoryIndex);

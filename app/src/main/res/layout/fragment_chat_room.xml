@@ -76,6 +76,7 @@
             android:gravity="start|center_vertical"
             android:textAlignment="viewStart"
             android:inputType="textMultiLine"
+            android:imeOptions="actionSend|flagNoEnterAction"
             android:maxLines="3"
             android:background="@android:color/white"
             android:hint="@string/chat_room_message_hint"

@@ -96,7 +96,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         menuNavigation.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
 
         MenuItem logoutItem = menuNavigation.getMenu().findItem(R.id.logout);
-        logoutItem.setVisible(UserManager.userLoggedIn);
+        logoutItem.setVisible(UserManager.isUserLoggedIn());
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout

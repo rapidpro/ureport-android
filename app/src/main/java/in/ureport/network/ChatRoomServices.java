@@ -186,19 +186,24 @@ public class ChatRoomServices {
         FirebaseManager.getReference().child(chatRoomPath).child(groupChatRoom.getKey()).setValue(groupChatRoom);
     }
 
-    public void saveGroupChatRoom(final Context context, final GroupChatRoom groupChatRoom, final List<User> members
-            , final OnChatRoomSavedListener onChatRoomSavedListener) {
+    public void saveGroupChatRoom(final Context context, final User administrator, final GroupChatRoom groupChatRoom
+            , final List<User> members, final OnChatRoomSavedListener onChatRoomSavedListener) {
+        User administratorWithKey = new User();
+        administratorWithKey.setKey(administrator.getKey());
+        groupChatRoom.setAdministrator(administrator);
+
         FirebaseManager.getReference().child(chatRoomPath).push().setValue(groupChatRoom
                 , new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
-                    members.add(groupChatRoom.getAdministrator());
+                    members.add(administrator);
                     for (User member : members) {
                         addChatMember(context, member, firebase.getKey());
                     }
 
                     groupChatRoom.setKey(firebase.getKey());
+                    groupChatRoom.setAdministrator(administrator);
 
                     ChatMembers chatMembers = new ChatMembers();
                     chatMembers.setUsers(members);
@@ -209,7 +214,8 @@ public class ChatRoomServices {
         });
     }
 
-    public void saveIndividualChatRoom(final Context context, final User friend, final OnChatRoomSavedListener onChatRoomSavedListener) {
+    public void saveIndividualChatRoom(final Context context, final User me, final User friend
+            , final OnChatRoomSavedListener onChatRoomSavedListener) {
         final IndividualChatRoom chatRoom = new IndividualChatRoom();
         chatRoom.setCreatedDate(new Date());
 
@@ -218,9 +224,6 @@ public class ChatRoomServices {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
-                    User me = new User();
-                    me.setKey(FirebaseManager.getReference().getAuth().getUid());
-
                     addChatMember(context, me, firebase.getKey());
                     addChatMember(context, friend, firebase.getKey());
 

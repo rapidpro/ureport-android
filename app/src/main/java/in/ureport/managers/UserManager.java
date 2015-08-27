@@ -27,11 +27,10 @@ public class UserManager {
 
     private static final String TAG = "UserManager";
 
-    public static boolean userLoggedIn = false;
     public static String countryCode = "";
 
     public static boolean validateKeyAction(Context context) {
-        if(!UserManager.userLoggedIn) {
+        if(!isUserLoggedIn()) {
             showLoginAlertValidation(context);
             return false;
         } else if(!isUserCountryProgram()) {
@@ -39,6 +38,10 @@ public class UserManager {
             return false;
         }
         return true;
+    }
+
+    public static boolean isUserLoggedIn() {
+        return FirebaseManager.getAuthUserKey() != null;
     }
 
     public static void leaveFromGroup(final Activity activity, final ChatRoom chatRoom) {

@@ -12,14 +12,10 @@ import android.view.ViewGroup;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.managers.RecyclerScrollListener;
 import in.ureport.managers.UserManager;
@@ -141,15 +137,15 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         if(adapter != null && needsUserPublish()) adapter.setUser(user);
     }
 
-    private void updateStories(List<Story> stories) {
+    private void updateStory(Story story) {
         if(!needsUserPublish())
-            info.setVisibility(stories != null && !stories.isEmpty() ? View.GONE : View.VISIBLE);
+            info.setVisibility(story != null ? View.GONE : View.VISIBLE);
 
-        adapter.addStories(stories);
+        adapter.addStory(story);
     }
 
     private boolean needsUserPublish() {
-        return publicType && UserManager.userLoggedIn && user != null;
+        return publicType && UserManager.isUserLoggedIn() && user != null;
     }
 
     private ChildEventListener childEventListener = new ChildEventListenerAdapter() {
@@ -164,38 +160,30 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         Story story = dataSnapshot.getValue(Story.class);
         story.setKey(dataSnapshot.getKey());
 
-        List<Story> stories = new ArrayList<>();
-        stories.add(story);
-        loadUsersFromStories(stories, onAfterUsersLoadedListener);
+        loadUsersFromStories(story, onAfterUsersLoadedListener);
     }
 
     private OnAfterUsersLoadedListener onAfterUsersLoadedListener = new OnAfterUsersLoadedListener() {
         @Override
-        public void onAfterUsersLoaded(List<Story> stories) {
-            updateStories(stories);
+        public void onAfterUsersLoaded(Story story) {
+            updateStory(story);
         }
     };
 
-    private void loadUsersFromStories(final List<Story> stories, final OnAfterUsersLoadedListener onAfterUsersLoadedListener) {
-        for (int position = 0; position < stories.size(); position++) {
-            final Story story = stories.get(position);
-            final int index = position;
-
-            userServices.getUser(story.getUser().getKey(), new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
+    private void loadUsersFromStories(final Story story, final OnAfterUsersLoadedListener onAfterUsersLoadedListener) {
+        userServices.getUser(story.getUser().getKey(), new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user != null) {
                     story.setUser(user);
-
-                    if(index == stories.size()-1) onAfterUsersLoadedListener.onAfterUsersLoaded(stories);
+                    onAfterUsersLoadedListener.onAfterUsersLoaded(story);
                 }
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {}
-            });
-        }
+            }
+        });
     }
 
     private interface OnAfterUsersLoadedListener {
-        void onAfterUsersLoaded(List<Story> stories);
+        void onAfterUsersLoaded(Story story);
     }
 }

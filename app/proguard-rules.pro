@@ -125,6 +125,10 @@
 -keep class in.ureport.models.** { *; }
 -keep class com.amazonaws.** { *; }
 
+-dontwarn org.apache.commons.**
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
+
 #SDK split into multiple jars so certain classes may be referenced but not used
 -dontwarn com.amazonaws.services.s3.**
 -dontwarn com.amazonaws.services.sqs.**

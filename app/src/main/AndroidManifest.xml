@@ -91,7 +91,8 @@
         <activity
             android:name=".activities.ChatRoomActivity"
             android:screenOrientation="portrait"
-            android:parentActivityName=".activities.ChatActivity">
+            android:parentActivityName=".activities.ChatActivity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ChatActivity" />

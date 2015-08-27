@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
+import com.firebase.client.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,7 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.helpers.TransferListenerAdapter;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnChatRoomSavedListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.ImageLoader;
@@ -79,6 +81,7 @@ public class CreateGroupFragment extends Fragment {
     private ChatMembers members;
 
     private ChatRoomServices chatRoomServices;
+    private UserServices userServices;
 
     public static CreateGroupFragment newInstance(GroupChatRoom chatRoom, ChatMembers members) {
         CreateGroupFragment createGroupFragment = new CreateGroupFragment();
@@ -174,6 +177,7 @@ public class CreateGroupFragment extends Fragment {
     private void setupObjects() {
         validator = new EditTextValidator();
         chatRoomServices = new ChatRoomServices();
+        userServices = new UserServices();
     }
 
     private void setupView(View view) {
@@ -273,10 +277,6 @@ public class CreateGroupFragment extends Fragment {
             groupChatRoom.setPrivateAccess(privateGroup.isChecked());
             groupChatRoom.setMediaAllowed(mediaAllowed.isChecked());
 
-            User me = new User();
-            me.setKey(FirebaseManager.getReference().getAuth().getUid());
-            groupChatRoom.setAdministrator(me);
-
             if(pictureUri != null) {
                 uploadPictureAndSaveRoom(groupChatRoom);
             } else {
@@ -315,14 +315,26 @@ public class CreateGroupFragment extends Fragment {
         }
     }
 
-    private void saveGroupChatRoom(GroupChatRoom groupChatRoom) {
+    private void saveGroupChatRoom(final GroupChatRoom groupChatRoom) {
         if(editMode) {
             chatRoomServices.updateGroupChatRoom(groupChatRoom);
             onChatRoomSavedListener.onChatRoomSaved(groupChatRoom, members);
         } else {
-            List<User> members = new ArrayList<>(ureportersAdapter.getSelectedUreporters());
-            chatRoomServices.saveGroupChatRoom(getActivity(), groupChatRoom, members, onChatRoomSavedListener);
+            loadUserAndSaveChat(groupChatRoom);
         }
+    }
+
+    private void loadUserAndSaveChat(final GroupChatRoom groupChatRoom) {
+        userServices.getUser(FirebaseManager.getAuthUserKey(), new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                User user = dataSnapshot.getValue(User.class);
+
+                List<User> members = new ArrayList<>(ureportersAdapter.getSelectedUreporters());
+                chatRoomServices.saveGroupChatRoom(getActivity(), user, groupChatRoom, members, onChatRoomSavedListener);
+            }
+        });
     }
 
     private void showUploadError() {

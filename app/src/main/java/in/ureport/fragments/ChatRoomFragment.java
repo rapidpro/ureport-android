@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -292,19 +293,26 @@ public class ChatRoomFragment extends Fragment {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
             super.onChildAdded(dataSnapshot, previousChild);
+            addChatMessage(dataSnapshot);
+        }
+    };
 
+    private void addChatMessage(DataSnapshot dataSnapshot) {
+        try {
             final ChatMessage message = dataSnapshot.getValue(ChatMessage.class);
             message.setKey(dataSnapshot.getKey());
 
             User memberUser = getMemberUserByKey(message.getUser().getKey());
-            if(memberUser != null) {
-                message.setUser(getMemberUserByKey(message.getUser().getKey()));
+            if (memberUser != null) {
+                message.setUser(memberUser);
                 addChatMessage(message);
             } else {
                 loadUserAndAddChatMessage(message);
             }
+        } catch(Exception exception) {
+            Log.e(TAG, "onChildAdded ", exception);
         }
-    };
+    }
 
     private void loadUserAndAddChatMessage(final ChatMessage message) {
         userServices.getUser(message.getUser().getKey(), new ValueEventListenerAdapter() {

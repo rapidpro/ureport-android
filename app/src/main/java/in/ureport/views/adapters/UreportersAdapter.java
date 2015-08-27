@@ -128,7 +128,7 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    if(ureportersList.size() <= maxSelectionCount)
+                    if(selectedUreporters.size() <= maxSelectionCount)
                         selectedUreporters.add(ureportersList.get(getLayoutPosition()));
                     else
                         showMaximumNumberLimitError();

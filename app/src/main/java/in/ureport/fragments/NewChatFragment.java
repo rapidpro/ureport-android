@@ -17,12 +17,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
 import in.ureport.listener.OnChatRoomSavedListener;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.SearchManager;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
@@ -135,10 +139,22 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        chatRoomServices.saveIndividualChatRoom(getActivity(), user, onChatRoomSavedListener);
+                        getLoggedUserAndSaveChat(user);
                     }
                 }).create();
         alertDialog.show();
+    }
+
+    private void getLoggedUserAndSaveChat(final User friend) {
+        userServices.getUser(FirebaseManager.getAuthUserKey(), new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+
+                User me = dataSnapshot.getValue(User.class);
+                chatRoomServices.saveIndividualChatRoom(getActivity(), me, friend, onChatRoomSavedListener);
+            }
+        });
     }
 
     @Override

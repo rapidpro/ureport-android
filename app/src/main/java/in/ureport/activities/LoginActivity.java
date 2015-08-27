@@ -16,6 +16,7 @@ import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.CountryProgramManager;
 
 import in.ureport.managers.FirebaseManager;
@@ -48,9 +49,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     private void checkUserLoggedAndProceed() {
-        UserManager.userLoggedIn = FirebaseManager.getAuthUserKey() != null;
-
-        if(UserManager.userLoggedIn) {
+        if(UserManager.isUserLoggedIn()) {
             loadUserAndContinue(FirebaseManager.getAuthUserKey());
         }
     }
@@ -104,17 +103,13 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     @Override
     public void onLoginWithSocialNetwork(final User user) {
         UserServices userServices = new UserServices();
-        userServices.getUser(user.getKey(), new ValueEventListener() {
+        userServices.getUser(user.getKey(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists())
                     onUserReady(dataSnapshot.getValue(User.class));
                 else
                     addSignUpFragment(user);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
             }
         });
     }
@@ -129,7 +124,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         UserServices userServices = new UserServices();
         userServices.keepUserOffline(user);
 
-        UserManager.userLoggedIn = true;
         UserManager.countryCode = user.getCountry();
 
         CountryProgramManager.switchCountryProgram(user.getCountry());
