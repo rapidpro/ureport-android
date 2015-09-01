@@ -1,7 +1,8 @@
 # Created by https://www.gitignore.io
 
 ## Custom
-app/src/main/res/values/keys.xml
+app/src/debug/res/values/keys.xml
+app/src/release/res/values/keys.xml
 
 ### Android ###
 # Built application files
