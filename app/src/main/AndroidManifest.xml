@@ -41,7 +41,8 @@
         <activity
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
-            android:label="@string/label_home" />
+            android:label="@string/label_home"
+            android:windowSoftInputMode="adjustPan"/>
 
         <activity
             android:name=".activities.ChatActivity"

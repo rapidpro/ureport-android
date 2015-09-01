@@ -1,22 +1,24 @@
 package in.ureport.views.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RadioButton;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.models.Poll;
+import in.ureport.models.rapidpro.Message;
 
 /**
  * Created by johncordeiro on 7/16/15.
@@ -27,15 +29,18 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_PAST_POLL = 1;
 
     private List<Poll> polls;
-    private boolean publicType = true;
+    private Message lastMessage;
 
     private DateFormat dateFormatter;
 
     private PollParticipationListener pollParticipationListener;
 
+    private boolean changed = false;
+
     public PollAdapter(List<Poll> polls) {
         this.polls = polls;
         dateFormatter = SimpleDateFormat.getDateInstance(DateFormat.MEDIUM);
+        setHasStableIds(true);
     }
 
     @Override
@@ -52,32 +57,60 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch(getItemViewType(position)) {
             case TYPE_CURRENT_POLL:
-                ((CurrentPollViewHolder)holder).bindView(polls.get(position));
+                ((CurrentPollViewHolder)holder).bindView(lastMessage);
                 break;
             default:
             case TYPE_PAST_POLL:
-                ((PastPollViewHolder)holder).bindView(polls.get(position));
+                ((PastPollViewHolder)holder).bindView(polls.get(getPollPosition(position)));
         }
     }
 
     @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads) {
+        super.onBindViewHolder(holder, position, payloads);
+        switch(getItemViewType(position)) {
+            case TYPE_CURRENT_POLL:
+                ((CurrentPollViewHolder)holder).bindView(lastMessage);
+                break;
+        }
+    }
+
+    @Override
+    public long getItemId(int position) {
+        if(getItemViewType(position) == TYPE_CURRENT_POLL) {
+            return lastMessage.getKey().hashCode();
+        }
+        return polls.get(getPollPosition(position)).hashCode();
+    }
+
+    private int getPollPosition(int position) {
+        return hasCurrentPoll() ? position-1 : position;
+    }
+
+    private boolean hasCurrentPoll() {
+        return lastMessage != null;
+    }
+
+    @Override
     public int getItemCount() {
-        return polls.size();
+        return hasCurrentPoll() ? polls.size() + 1 : polls.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(isCurrentPoll(polls.get(position)))
-            return TYPE_CURRENT_POLL;
+        if(hasCurrentPoll() && position == 0) return TYPE_CURRENT_POLL;
         return TYPE_PAST_POLL;
     }
 
-    private boolean isCurrentPoll(Poll poll) {
-        return poll.getExpirationDate().after(new Date());
-    }
-
-    public void setPublicType(boolean publicType) {
-        this.publicType = publicType;
+    public void setLastMessage(Message lastMessage) {
+        if(!hasCurrentPoll()) {
+            this.lastMessage = lastMessage;
+            notifyDataSetChanged();
+        } else {
+            changed = true;
+            this.lastMessage = lastMessage;
+            notifyItemChanged(0, lastMessage);
+        }
     }
 
     private class PastPollViewHolder extends RecyclerView.ViewHolder {
@@ -90,14 +123,10 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public PastPollViewHolder(View itemView) {
             super(itemView);
 
-
             info = (TextView) itemView.findViewById(R.id.info);
             category = (TextView) itemView.findViewById(R.id.category);
             description = (TextView) itemView.findViewById(R.id.description);
             infoBackground = itemView.findViewById(R.id.infoBackground);
-
-            View previousPollsTitle = itemView.findViewById(R.id.previousPollsTitle);
-            previousPollsTitle.setVisibility(publicType ? View.VISIBLE : View.GONE);
 
             Button results = (Button) itemView.findViewById(R.id.results);
             results.setOnClickListener(onSeeResultsClickListener);
@@ -121,58 +150,72 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private class CurrentPollViewHolder extends RecyclerView.ViewHolder {
 
-        private final View pollCover;
-        private final TextView category;
-        private final ImageView icon;
-
         private final TextView description;
-
-        private final RadioButton checkYes;
-        private final RadioButton checkNo;
+        private final EditText message;
 
         public CurrentPollViewHolder(View itemView) {
             super(itemView);
 
             description = (TextView) itemView.findViewById(R.id.description);
 
-            Button participate = (Button) itemView.findViewById(R.id.participate);
-            participate.setOnClickListener(onParticipateClickListener);
+            Button send = (Button) itemView.findViewById(R.id.send);
+            send.setOnClickListener(onSendClickListener);
 
-            pollCover = itemView.findViewById(R.id.pollCover);
-            category = (TextView) itemView.findViewById(R.id.category);
-            icon = (ImageView) itemView.findViewById(R.id.icon);
-
-            checkYes = (RadioButton) itemView.findViewById(R.id.checkYes);
-            checkYes.setOnClickListener(onCheckClickListener);
-            checkNo = (RadioButton) itemView.findViewById(R.id.checkNo);
-            checkNo.setOnClickListener(onCheckClickListener);
+            message = (EditText) itemView.findViewById(R.id.message);
+            message.setOnEditorActionListener(onMessageEditorActionListener);
         }
 
-        private void bindView(Poll poll) {
-            pollCover.setBackgroundColor(itemView.getContext().getResources().getColor(poll.getCategory().getColor()));
-            category.setText(poll.getCategory().getName());
-            icon.setImageResource(poll.getCategory().getIcon());
+        private void bindView(Message lastMessage) {
+            description.setText(lastMessage.getText());
 
-            description.setText(poll.getDescription());
+            if(changed) {
+                showKeyboard();
+            }
         }
 
-        private View.OnClickListener onCheckClickListener = new View.OnClickListener() {
+        private void showKeyboard() {
+            message.requestFocus();
+            message.setError(null);
+
+            InputMethodManager inputMethodManager = (InputMethodManager) itemView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.showSoftInput(message, InputMethodManager.SHOW_IMPLICIT);
+        }
+
+        private View.OnClickListener onSendClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(view == checkYes)
-                    checkNo.setChecked(false);
-                else
-                    checkYes.setChecked(false);
+                sendResponse();
             }
         };
 
-        private View.OnClickListener onParticipateClickListener = new View.OnClickListener() {
+        private void sendResponse() {
+            if (isResponseValid() && pollParticipationListener != null) {
+                pollParticipationListener.onPollRespond(message.getText().toString());
+
+                message.setText(null);
+                clearError();
+            }
+        }
+
+        private void clearError() {
+            message.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    message.setError(null);
+                }
+            }, 200);
+        }
+
+        private boolean isResponseValid() {
+            EditTextValidator validator = new EditTextValidator();
+            return validator.validateEmpty(message, itemView.getContext().getString(R.string.error_empty_message));
+        }
+
+        private TextView.OnEditorActionListener onMessageEditorActionListener = new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View view) {
-                if(!checkYes.isChecked() && !checkNo.isChecked()) {
-                    Toast.makeText(itemView.getContext(), R.string.answer_poll_choose_error, Toast.LENGTH_LONG).show();
-                } else if (pollParticipationListener != null)
-                    pollParticipationListener.onParticipate(polls.get(getLayoutPosition()));
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                sendResponse();
+                return true;
             }
         };
     }
@@ -182,7 +225,7 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public interface PollParticipationListener {
-        void onParticipate(Poll poll);
+        void onPollRespond(String message);
         void onSeeResults(Poll poll);
     }
 }

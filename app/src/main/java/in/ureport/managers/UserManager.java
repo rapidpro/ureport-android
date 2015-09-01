@@ -15,7 +15,6 @@ import in.ureport.R;
 import in.ureport.activities.LoginActivity;
 import in.ureport.activities.MainActivity;
 import in.ureport.models.ChatRoom;
-import in.ureport.models.GroupChatRoom;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.pref.SystemPreferences;

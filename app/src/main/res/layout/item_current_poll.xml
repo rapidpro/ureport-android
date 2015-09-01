@@ -1,114 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/card_margin">
+    android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:orientation="vertical"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:background="#f00">
+        android:layout_margin="@dimen/card_margin">
+
+        <RelativeLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:background="#f00">
+
+            <View
+                android:id="@+id/pollCover"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:scaleType="centerCrop"
+                android:background="@color/poll_category_child"/>
+
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:textSize="18sp"
+                style="@style/AppTheme.Info"
+                android:text="@string/polls_current"/>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/pollCover"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:textAlignment="viewStart"
+                android:textSize="18sp"
+                android:padding="10dp"
+                tools:text="@string/poll1_description"/>
+
+            <EditText
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:singleLine="true"
+                android:imeOptions="actionSend"
+                android:layout_below="@+id/description" />
+
+            <Button
+                android:id="@+id/send"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@+id/message"
+                android:layout_margin="10dp"
+                android:background="@drawable/shape_simple_green_button"
+                android:textColor="@android:color/white"
+                android:text="@string/answer_polls_respond"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/previousPollsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="@dimen/card_margin"
+        android:layout_marginRight="@dimen/card_margin"
+        android:orientation="horizontal"
+        android:gravity="center">
 
         <View
-            android:id="@+id/pollCover"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/poll_cover_height"
-            android:scaleType="centerCrop"
-            tools:background="@color/poll_category_child"/>
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_weight="1"/>
 
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:scaleType="centerCrop"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="15dp"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginEnd="20dp"
-            tools:background="@drawable/poll_category_child"/>
+            android:text="@string/polls_previous_title"/>
 
-        <TextView
-            android:id="@+id/info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:textSize="18sp"
-            style="@style/AppTheme.Info"
-            android:text="@string/polls_current"/>
-
-        <TextView
-            android:id="@+id/category"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_below="@+id/info"
-            android:layout_toLeftOf="@+id/icon"
-            android:layout_toStartOf="@+id/icon"
-            android:gravity="start"
-            android:textAlignment="viewStart"
-            android:textSize="22sp"
-            android:maxLines="2"
-            style="@style/AppTheme.Info"
-            tools:text="@string/poll_category_child"/>
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_weight="1"/>
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/pollCover"
-            android:maxLines="4"
-            android:ellipsize="end"
-            android:gravity="start"
-            android:textAlignment="viewStart"
-            android:textSize="18sp"
-            android:padding="10dp"
-            tools:text="@string/poll1_description"/>
+    </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/responses"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/description"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/checkYes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="@string/poll1_question1_answer1" />
-
-            <RadioButton
-                android:id="@+id/checkNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_marginStart="50dp"
-                android:textSize="18sp"
-                android:text="@string/poll1_question1_answer2" />
-
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/participate"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@+id/responses"
-            android:layout_margin="10dp"
-            android:background="@drawable/shape_simple_green_button"
-            android:textColor="@android:color/white"
-            android:text="@string/answer_polls_respond"/>
-
-    </RelativeLayout>
-
-</android.support.v7.widget.CardView>
+</LinearLayout>
