@@ -16,16 +16,16 @@
         android:background="@drawable/ic_add_circle_grey_600_36dp"/>
 
     <EditText
-        android:id="@+id/description"
+        android:id="@+id/contribution"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black"
-        android:imeOptions="actionDone"
+        android:imeOptions="actionSend|flagNoFullscreen"
         android:ellipsize="start"
         android:singleLine="true"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:hint="@string/story_contribution_add"
-        tools:text="asuhdsahudas asdudasuhduhas asdhudasuhdas adshuadsuhadsuh saduhdasuhdasu asdhuaduhaduhs adsuhadsuhdashu"/>
+        tools:text="@string/poll1_description"/>
 
 </LinearLayout>

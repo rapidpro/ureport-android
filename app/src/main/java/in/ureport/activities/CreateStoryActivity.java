@@ -2,6 +2,7 @@ package in.ureport.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -17,7 +18,6 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.GameficationManager;
 import in.ureport.models.Marker;
 import in.ureport.models.Story;
-import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 7/14/15.
@@ -67,7 +67,6 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
 
     private void addCreateStoryFragment() {
         createStoryFragment = new CreateStoryFragment();
-        createStoryFragment.setStoryCreationListener(this);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content, createStoryFragment)
                 .commit();
@@ -83,6 +82,7 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
 
         markersFragment.setSelectionResultListener(this);
         getSupportFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.content, markersFragment)
                 .addToBackStack(null)
                 .commit();

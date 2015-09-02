@@ -1,6 +1,6 @@
 package in.ureport.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -125,7 +125,7 @@ public class GroupInfoFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if(activity instanceof InfoGroupChatListener) {
             infoGroupChatListener = (InfoGroupChatListener) activity;
@@ -167,7 +167,7 @@ public class GroupInfoFragment extends Fragment {
             this.chatMembers = chatMembers;
 
             title.setText(groupChatRoom.getTitle());
-            description.setText(groupChatRoom.getDescription());
+            description.setText(groupChatRoom.getSubject());
 
             ImageLoader.loadGroupPictureToImageView(picture, groupChatRoom.getPicture());
             ureportersAdapter.update(chatMembers.getUsers());

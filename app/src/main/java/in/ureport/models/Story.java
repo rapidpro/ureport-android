@@ -8,35 +8,32 @@ import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by johncordeiro on 7/14/15.
  */
-@Table(name = "Story")
 public class Story extends Model implements Parcelable {
 
     private String key;
 
-    @Column(name = "title")
     private String title;
 
-    @Column(name = "content")
     private String content;
 
-    @Column(name = "createdDate")
     private Date createdDate;
 
-    @Column(name = "author")
     private User user;
 
-    @Column(name = "contributions")
     private Integer contributions;
 
-    @Column(name = "markers")
     private String markers;
 
-    @Column(name = "image")
     private String image;
+
+    private List<Media> medias;
+
+    private Media cover;
 
     public Story() {
     }
@@ -105,6 +102,22 @@ public class Story extends Model implements Parcelable {
         this.image = image;
     }
 
+    public List<Media> getMedias() {
+        return medias;
+    }
+
+    public void setMedias(List<Media> medias) {
+        this.medias = medias;
+    }
+
+    public Media getCover() {
+        return cover;
+    }
+
+    public void setCover(Media cover) {
+        this.cover = cover;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -120,6 +133,8 @@ public class Story extends Model implements Parcelable {
         dest.writeValue(this.contributions);
         dest.writeString(this.markers);
         dest.writeString(this.image);
+        dest.writeTypedList(medias);
+        dest.writeParcelable(this.cover, 0);
     }
 
     protected Story(Parcel in) {
@@ -132,6 +147,8 @@ public class Story extends Model implements Parcelable {
         this.contributions = (Integer) in.readValue(Integer.class.getClassLoader());
         this.markers = in.readString();
         this.image = in.readString();
+        this.medias = in.createTypedArrayList(Media.CREATOR);
+        this.cover = in.readParcelable(Media.class.getClassLoader());
     }
 
     public static final Creator<Story> CREATOR = new Creator<Story>() {

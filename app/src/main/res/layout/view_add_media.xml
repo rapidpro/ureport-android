@@ -2,16 +2,14 @@
 <FrameLayout
     android:id="@+id/addMedia"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/item_media_size"
-    android:layout_height="@dimen/item_media_size"
+    android:layout_width="@dimen/item_media_width"
+    android:layout_height="@dimen/item_media_height"
     android:clickable="true">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginEnd="10dp"
         android:background="@drawable/shape_media">
 
         <ImageView
@@ -19,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/ic_camera_alt_grey_800_36dp"/>
+            android:src="@drawable/ic_camera_grey600_36dp"/>
 
     </FrameLayout>
 

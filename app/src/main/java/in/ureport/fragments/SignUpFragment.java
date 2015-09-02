@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
@@ -105,7 +106,7 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if(activity instanceof LoginFragment.LoginListener) {
             loginListener = (LoginFragment.LoginListener)activity;

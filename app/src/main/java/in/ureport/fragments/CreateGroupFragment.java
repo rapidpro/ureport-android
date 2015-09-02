@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.firebase.client.DataSnapshot;
 
 import java.util.ArrayList;
@@ -125,7 +125,7 @@ public class CreateGroupFragment extends Fragment {
     private void setupViewWhenEditMode() {
         if(editMode) {
             title.setText(groupChatRoom.getTitle());
-            description.setText(groupChatRoom.getDescription());
+            description.setText(groupChatRoom.getSubject());
             privateGroup.setChecked(groupChatRoom.getPrivateAccess());
             mediaAllowed.setChecked(groupChatRoom.getMediaAllowed());
 
@@ -139,7 +139,7 @@ public class CreateGroupFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
-                case ImagePicker.REQUEST_CODE:
+                case ImagePicker.REQUEST_PICK_FROM_GALLERY:
                     saveChoosenPicture(data);
             }
         }
@@ -168,7 +168,7 @@ public class CreateGroupFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if(activity instanceof OnChatRoomSavedListener)
             onChatRoomSavedListener = (OnChatRoomSavedListener)activity;
@@ -225,7 +225,7 @@ public class CreateGroupFragment extends Fragment {
     private void editGroup() {
         if(validateFields()) {
             groupChatRoom.setTitle(title.getText().toString());
-            groupChatRoom.setDescription(description.getText().toString());
+            groupChatRoom.setSubject(description.getText().toString());
             groupChatRoom.setPrivateAccess(privateGroup.isChecked());
             groupChatRoom.setMediaAllowed(mediaAllowed.isChecked());
 
@@ -273,7 +273,7 @@ public class CreateGroupFragment extends Fragment {
             final GroupChatRoom groupChatRoom = new GroupChatRoom();
             groupChatRoom.setCreationDate(new Date());
             groupChatRoom.setTitle(title.getText().toString());
-            groupChatRoom.setDescription(description.getText().toString());
+            groupChatRoom.setSubject(description.getText().toString());
             groupChatRoom.setPrivateAccess(privateGroup.isChecked());
             groupChatRoom.setMediaAllowed(mediaAllowed.isChecked());
 
@@ -293,13 +293,11 @@ public class CreateGroupFragment extends Fragment {
             TransferManager transferManager = new TransferManager(getActivity());
             transferManager.transferFile(pictureUri, GROUP_CHAT_FOLDER, new TransferListenerAdapter() {
                 @Override
-                public void onStateChanged(int id, TransferState state) {
-                    if(state == TransferState.COMPLETED) {
-                        progressDialog.dismiss();
-
-                        groupChatRoom.setPicture(new Media(id, getUrl()));
-                        saveGroupChatRoom(groupChatRoom);
-                    }
+                public void onTransferFinished(Media media) {
+                    super.onTransferFinished(media);
+                    progressDialog.dismiss();
+                    groupChatRoom.setPicture(media);
+                    saveGroupChatRoom(groupChatRoom);
                 }
 
                 @Override

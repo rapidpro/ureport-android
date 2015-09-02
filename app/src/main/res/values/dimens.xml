@@ -6,7 +6,8 @@
     <dimen name="app_bar_height">150dp</dimen>
     <dimen name="group_info_app_bar_height">175dp</dimen>
 
-    <dimen name="item_media_size">90dp</dimen>
+    <dimen name="item_media_height">90dp</dimen>
+    <dimen name="item_media_width">80dp</dimen>
     <dimen name="default_cover_height">200dp</dimen>
     <dimen name="poll_cover_height">80dp</dimen>
     <dimen name="card_margin">6dp</dimen>
@@ -14,4 +15,5 @@
     <dimen name="spinner_padding_left">0dp</dimen>
     <dimen name="button_radius">25dp</dimen>
     <dimen name="logo_container_height">180dp</dimen>
+
 </resources>

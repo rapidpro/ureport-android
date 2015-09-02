@@ -13,7 +13,7 @@ public class GroupChatRoom extends ChatRoom {
 
     private String title;
 
-    private String description;
+    private String subject;
 
     private Media picture;
 
@@ -33,12 +33,12 @@ public class GroupChatRoom extends ChatRoom {
         this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     public Media getPicture() {
@@ -90,7 +90,7 @@ public class GroupChatRoom extends ChatRoom {
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeString(this.title);
-        dest.writeString(this.description);
+        dest.writeString(this.subject);
         dest.writeParcelable(this.picture, 0);
         dest.writeLong(creationDate != null ? creationDate.getTime() : -1);
         dest.writeValue(this.privateAccess);
@@ -105,7 +105,7 @@ public class GroupChatRoom extends ChatRoom {
     protected GroupChatRoom(Parcel in) {
         super(in);
         this.title = in.readString();
-        this.description = in.readString();
+        this.subject = in.readString();
         this.picture = in.readParcelable(Media.class.getClassLoader());
         long tmpCreationDate = in.readLong();
         this.creationDate = tmpCreationDate == -1 ? null : new Date(tmpCreationDate);

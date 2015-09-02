@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -137,7 +138,7 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if(activity instanceof LoginListener) {
             loginListener = (LoginListener)activity;

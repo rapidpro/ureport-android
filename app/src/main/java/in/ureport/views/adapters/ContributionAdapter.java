@@ -25,14 +25,11 @@ import in.ureport.models.User;
 public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_ITEM = 0;
-    private static final int TYPE_ITEM_ADD = 1;
 
     private static final long ADD_MEDIA_ITEM_ID = 1000;
 
     private List<Contribution> contributions;
     private User user;
-
-    private OnContributionAddListener onContributionAddListener;
 
     public ContributionAdapter(User user) {
         this.user = user;
@@ -42,46 +39,23 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        switch(viewType) {
-            case TYPE_ITEM_ADD:
-                return new AddItemViewHolder(inflater.inflate(R.layout.item_add_contribution, parent, false));
-            default:
-                return new ItemViewHolder(inflater.inflate(R.layout.item_contribution, parent, false));
-        }
+        return new ItemViewHolder(inflater.inflate(R.layout.item_contribution, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(getItemViewType(position) == TYPE_ITEM) {
-            ((ItemViewHolder)holder).bindView(contributions.get(position));
-        }
+        ((ItemViewHolder)holder).bindView(contributions.get(position));
     }
 
     @Override
     public long getItemId(int position) {
-        if(getItemViewType(position) == TYPE_ITEM_ADD) {
-            return ADD_MEDIA_ITEM_ID;
-        }
         return contributions.get(position).getKey().hashCode();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if(position == contributions.size()) {
-            return TYPE_ITEM_ADD;
-        }
-        return TYPE_ITEM;
     }
 
     @Override
     public int getItemCount() {
         if(contributions == null) return 0;
-        return contributions.size() + 1;
-    }
-
-    public void startContribution() {
-        contributions = new ArrayList<>();
-        notifyDataSetChanged();
+        return contributions.size();
     }
 
     public void addContribution(Contribution contribution) {
@@ -93,47 +67,6 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             contributions.add(contribution);
             notifyItemInserted(contributions.size());
         }
-    }
-
-    public void setContributions(List<Contribution> contributions) {
-        this.contributions = contributions;
-        notifyDataSetChanged();
-    }
-
-    private class AddItemViewHolder extends RecyclerView.ViewHolder {
-
-        private final EditText description;
-
-        public AddItemViewHolder(View itemView) {
-            super(itemView);
-
-            description = (EditText) itemView.findViewById(R.id.description);
-            description.setOnEditorActionListener(onDescriptionEditorActionListener);
-
-            Button addContribution = (Button) itemView.findViewById(R.id.addContribution);
-            addContribution.setOnClickListener(onContributionClickListener);
-        }
-
-        private View.OnClickListener onContributionClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addNewContribution();
-            }
-        };
-
-        private void addNewContribution() {
-            if(description.length() > 0) {
-                if(onContributionAddListener != null) onContributionAddListener.onContributionAdd(description);
-            }
-        }
-
-        private TextView.OnEditorActionListener onDescriptionEditorActionListener = new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                addNewContribution();
-                return false;
-            }
-        };
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -165,13 +98,5 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     , itemView.getContext().getString(R.string.date_now));
             this.date.setText(timeElapsed.toLowerCase());
         }
-    }
-
-    public void setOnContributionAddListener(OnContributionAddListener onContributionAddListener) {
-        this.onContributionAddListener = onContributionAddListener;
-    }
-
-    public interface OnContributionAddListener {
-        void onContributionAdd(EditText contentText);
     }
 }

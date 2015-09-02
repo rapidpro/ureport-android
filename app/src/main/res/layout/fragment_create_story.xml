@@ -70,10 +70,10 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/mediaAddList"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
+            android:layout_height="110dp"
             android:orientation="horizontal"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             style="@style/AppTheme.FormMargin" />
 
     </LinearLayout>

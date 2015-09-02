@@ -1,6 +1,6 @@
 package in.ureport.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -84,7 +84,7 @@ public class ChatGroupFragment extends Fragment implements SearchView.OnQueryTex
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if(activity instanceof ChatGroupAdapter.ChatGroupListener) {
             chatGroupListener = (ChatGroupAdapter.ChatGroupListener) activity;
@@ -157,7 +157,7 @@ public class ChatGroupFragment extends Fragment implements SearchView.OnQueryTex
             query = query.toLowerCase();
             for (GroupChatRoom groupChatRoom : groupChatRooms) {
                 if(groupChatRoom.getTitle().toLowerCase().contains(query)
-                || (groupChatRoom.getDescription() != null && groupChatRoom.getDescription().toLowerCase().contains(query))) {
+                || (groupChatRoom.getSubject() != null && groupChatRoom.getSubject().toLowerCase().contains(query))) {
                     groupChatRoomsSearch.add(groupChatRoom);
                 }
             }

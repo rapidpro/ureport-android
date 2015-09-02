@@ -1,7 +1,6 @@
 package in.ureport.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +10,14 @@ import android.widget.ImageView;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.fragments.CreateStoryFragment;
+import in.ureport.managers.ImageLoader;
+import in.ureport.models.LocalMedia;
+import in.ureport.models.Media;
 
 /**
  * Created by johncordeiro on 7/15/15.
  */
 public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    public static final String MEDIA_PICTURE = "picture";
-    public static final String MEDIA_VIDEO = "video";
 
     private static final String TAG = "MediaAdapter";
 
@@ -28,12 +26,14 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private static final long ADD_MEDIA_ITEM_ID = 1000;
 
-    private List<String> mediaList;
+    private List<Media> mediaList;
+    private Media selectedMedia;
+
     private boolean editMode;
 
     private MediaListener mediaListener;
 
-    public MediaAdapter(List<String> mediaList, boolean editMode) {
+    public MediaAdapter(List<Media> mediaList, boolean editMode) {
         this.mediaList = mediaList;
         this.editMode = editMode;
     }
@@ -67,8 +67,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(getItemViewType(position) == ADD_MEDIA_TYPE) {
             return ADD_MEDIA_ITEM_ID;
         }
-        String id = mediaList.get(position-1) + position;
-        return id.hashCode();
+        return mediaList.get(position-1).hashCode();
     }
 
     @Override
@@ -90,32 +89,80 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.mediaListener = mediaListener;
     }
 
-    public void updateMediaList(List<String> mediaList) {
+    public void updateMediaList(List<Media> mediaList) {
+        selectFirstMediaIfNeeded(mediaList);
+
         this.mediaList = mediaList;
         notifyDataSetChanged();
     }
 
+    private void selectFirstMediaIfNeeded(List<Media> mediaList) {
+        if(mediaList != null && mediaList.size() > 0 && selectedMedia == null) {
+            selectedMedia = mediaList.get(0);
+        }
+    }
+
     private class MediaViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView image;
+        private final ImageView image;
+
+        private final View cover;
+        private final View coverUnselected;
 
         public MediaViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(onItemViewClickListener);
 
             image = (ImageView) itemView.findViewById(R.id.image);
+            cover = itemView.findViewById(R.id.cover);
+            coverUnselected = itemView.findViewById(R.id.coverUnselected);
 
             Button remove = (Button) itemView.findViewById(R.id.remove);
             remove.setVisibility(editMode ? View.VISIBLE : View.GONE);
             remove.setOnClickListener(onRemoveClickListener);
         }
 
-        private void bindView(String media) {
-            if (media.equals(MEDIA_VIDEO)) {
+        private void bindView(Media media) {
+            bindCoverSelection(media);
+
+            if (media.getType() == Media.Type.Video) {
                 image.setImageResource(R.drawable.ic_video_grey600_36dp);
             } else {
-                image.setImageResource(R.drawable.ic_camera_grey600_36dp);
+                bindImage(media);
             }
         }
+
+        private void bindCoverSelection(Media media) {
+            coverUnselected.setVisibility(!isMediaSelected(media) ? View.VISIBLE : View.GONE);
+            cover.setVisibility(isMediaSelected(media) ? View.VISIBLE : View.GONE);
+        }
+
+        private boolean isMediaSelected(Media media) {
+            return selectedMedia != null && media.equals(selectedMedia);
+        }
+
+        private void bindImage(Media media) {
+            if(media instanceof LocalMedia) {
+                LocalMedia localMedia = (LocalMedia) media;
+                image.setImageURI(localMedia.getPath());
+            } else {
+                ImageLoader.loadPersonPictureToImageView(image, media.getUrl());
+            }
+        }
+
+        private View.OnClickListener onItemViewClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Media selectedMedia = MediaAdapter.this.selectedMedia;
+
+                MediaAdapter.this.selectedMedia = mediaList.get(getCorrectPosition(getLayoutPosition()));
+                notifyItemChanged(getLayoutPosition());
+
+                if(selectedMedia != null && mediaList.indexOf(selectedMedia) >= 0) {
+                    notifyItemChanged(mediaList.indexOf(selectedMedia)+1);
+                }
+            }
+        };
 
         private View.OnClickListener onRemoveClickListener = new View.OnClickListener() {
             @Override
@@ -143,7 +190,11 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         };
     }
 
-    public static interface MediaListener {
+    public Media getSelectedMedia() {
+        return selectedMedia;
+    }
+
+    public interface MediaListener {
         void onMediaRemoveListener(int position);
         void onMediaAddListener();
     }

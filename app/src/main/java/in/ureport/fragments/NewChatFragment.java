@@ -1,6 +1,7 @@
 package in.ureport.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -67,7 +68,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if(activity instanceof OnChatRoomSavedListener)
             onChatRoomSavedListener = (OnChatRoomSavedListener)activity;

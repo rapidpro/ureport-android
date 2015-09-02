@@ -45,7 +45,7 @@
     <string name="create_story_insert_cover">Insert a cover picture</string>
     <string name="create_story_insert_title">Insert a title</string>
     <string name="create_story_insert_story_content">Tell us what\'s going on</string>
-    <string name="create_story_title_media">Insert an media</string>
+    <string name="create_story_title_media">Insert a media</string>
     <string name="create_story_add_markers">Add markers</string>
     <string name="media_remove">Remove</string>
     <string name="create_story_title_media_source">Choose a media source:</string>
@@ -183,7 +183,6 @@
     <string-array name="create_story_media_sources">
         <item>Gallery</item>
         <item>Camera</item>
-        <item>Youtube</item>
     </string-array>
 
 <!-- TODO: Remove or change this placeholder text -->
@@ -211,6 +210,8 @@
     <string name="message_close_group">Do you really want to close this group?</string>
     <string name="error_empty_message">The response can not be empty.</string>
     <string name="response_message">Response sent, wait for the next question</string>
+    <string name="error_take_picture">An error occurred, take another picture</string>
+    <string name="cover_title">Cover</string>
 
     <plurals name="title_new_message">
         <item quantity="one">%1$s new message</item>

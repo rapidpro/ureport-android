@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -37,7 +38,7 @@ public class ForgotPasswordFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context activity) {
         super.onAttach(activity);
         if(activity instanceof LoginFragment.LoginListener) {
             loginListener = (LoginFragment.LoginListener)activity;

@@ -5,12 +5,17 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import in.ureport.helpers.TransferListenerAdapter;
+import in.ureport.models.LocalMedia;
+import in.ureport.models.Media;
 
 /**
  * Created by johncordeiro on 20/08/15.
@@ -39,6 +44,32 @@ public class TransferManager {
         TransferObserver observer = AmazonServicesManager.getTransferUtility()
                 .upload(AmazonServicesManager.BUCKET_ID, filename, file);
         observer.setTransferListener(transferListener);
+    }
+
+    public void transferMedias(final List<Media> medias, String parent, final OnTransferMediasListener onTransferMediasListener) throws URISyntaxException, IllegalStateException {
+        final List<Media> mediasUploaded = new ArrayList<>();
+
+        for (Media media : medias) {
+            if(!(media instanceof LocalMedia)) continue;
+
+            final LocalMedia localMedia = (LocalMedia) media;
+            transferFile(localMedia.getPath(), parent, new TransferListenerAdapter() {
+                @Override
+                public void onTransferFinished(Media media) {
+                    super.onTransferFinished(media);
+                    localMedia.setId(getKey());
+                    mediasUploaded.add(media);
+
+                    if(medias.size() == mediasUploaded.size()) {
+                        onTransferMediasListener.onTransferMedias(mediasUploaded);
+                    }
+                }
+            });
+        }
+    }
+
+    public interface OnTransferMediasListener {
+        void onTransferMedias(List<Media> medias);
     }
 
 }

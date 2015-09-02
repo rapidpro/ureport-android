@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/item_media_size"
-    android:layout_height="@dimen/item_media_size">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="@dimen/item_media_width"
+        android:layout_height="80dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginEnd="10dp"
         android:background="@drawable/shape_media">
 
         <ImageView
@@ -22,12 +20,31 @@
 
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/cover"
+        android:layout_width="80dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:gravity="bottom|center_horizontal"
+        android:paddingBottom="2dp"
+        android:textColor="@android:color/white"
+        android:text="@string/cover_title"
+        android:background="@drawable/ic_selected_cover"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/coverUnselected"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/shape_cover_not_selected"/>
+
     <Button
         android:id="@+id/remove"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="end"
-        android:textSize="12sp"
         android:background="@drawable/ic_cancel_black_36dp"/>
 
 </FrameLayout>

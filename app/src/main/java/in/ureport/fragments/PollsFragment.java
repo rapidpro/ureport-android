@@ -1,10 +1,8 @@
 package in.ureport.fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -20,18 +18,13 @@ import com.firebase.client.DataSnapshot;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.UreportApplication;
 import in.ureport.activities.AnswerPollActivity;
-import in.ureport.activities.BaseActivity;
 import in.ureport.activities.PollResultsActivity;
 import in.ureport.helpers.ChildEventListenerAdapter;
-import in.ureport.listener.OnRapidproLastMessageLoadedListener;
 import in.ureport.loader.PollsLoader;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.models.Poll;
 import in.ureport.models.User;
 import in.ureport.models.rapidpro.Message;
-import in.ureport.models.rapidpro.Response;
 import in.ureport.network.RapidProServices;
 import in.ureport.views.adapters.PollAdapter;
 

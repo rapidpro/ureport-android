@@ -8,15 +8,22 @@ import android.os.Parcelable;
  */
 public class Media implements Parcelable {
 
-    private Integer id;
+    public enum Type {
+        Picture,
+        Video
+    }
+
+    private String id;
 
     private String url;
 
-    public Integer getId() {
+    private Type type;
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -28,6 +35,14 @@ public class Media implements Parcelable {
         this.url = url;
     }
 
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -35,21 +50,25 @@ public class Media implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeString(this.id);
         dest.writeString(this.url);
+        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
     }
 
     public Media() {
     }
 
-    public Media(Integer id, String url) {
+    public Media(String id, String url, Type type) {
         this.id = id;
         this.url = url;
+        this.type = type;
     }
 
     protected Media(Parcel in) {
-        this.id = in.readInt();
+        this.id = in.readString();
         this.url = in.readString();
+        int tmpType = in.readInt();
+        this.type = tmpType == -1 ? null : Media.Type.values()[tmpType];
     }
 
     public static final Creator<Media> CREATOR = new Creator<Media>() {
@@ -61,4 +80,19 @@ public class Media implements Parcelable {
             return new Media[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Media media = (Media) o;
+        return id != null ? id.equals(media.id) : super.equals(o);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : super.hashCode();
+    }
 }

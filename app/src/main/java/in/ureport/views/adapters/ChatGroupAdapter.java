@@ -93,7 +93,7 @@ public class ChatGroupAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         private void bindView(GroupChatRoom groupChatRoom) {
             title.setText(groupChatRoom.getTitle());
-            description.setText(groupChatRoom.getDescription());
+            description.setText(groupChatRoom.getSubject());
         }
 
         private View.OnClickListener onJoinClickListener = new View.OnClickListener() {
