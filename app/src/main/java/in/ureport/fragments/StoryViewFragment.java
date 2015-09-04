@@ -1,11 +1,10 @@
 package in.ureport.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,19 +16,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.UreportApplication;
@@ -68,6 +63,8 @@ public class StoryViewFragment extends Fragment {
     private ContributionServices contributionServices;
     private UserServices userServices;
 
+    private MediaAdapter.OnMediaViewListener onMediaViewListener;
+
     public static StoryViewFragment newInstance(Story story, User user) {
         StoryViewFragment storyViewFragment = new StoryViewFragment();
 
@@ -104,6 +101,15 @@ public class StoryViewFragment extends Fragment {
         loadData();
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof MediaAdapter.OnMediaViewListener) {
+            onMediaViewListener = (MediaAdapter.OnMediaViewListener) context;
+        }
+    }
+
     private void loadData() {
         contributionServices.addChildEventListener(story, contributionChildEventListener);
     }
@@ -127,7 +133,7 @@ public class StoryViewFragment extends Fragment {
         content.setText(story.getContent());
 
         TextView markers = (TextView) view.findViewById(R.id.markers);
-        markers.setText(story.getMarkers());
+        setupMarkers(markers);
 
         TextView author = (TextView) view.findViewById(R.id.author);
         author.setText(story.getUser().getNickname());
@@ -149,26 +155,45 @@ public class StoryViewFragment extends Fragment {
         contribution = (EditText) view.findViewById(R.id.contribution);
         contribution.setOnEditorActionListener(onDescriptionEditorActionListener);
 
-        UnitConverter converter = new UnitConverter(getActivity());
-
         RecyclerView contributionList = (RecyclerView) view.findViewById(R.id.contributionList);
         contributionList.setLayoutManager(new WrapLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
-        contributionAdapter = new ContributionAdapter(user);
+        contributionAdapter = new ContributionAdapter();
         contributionList.setAdapter(contributionAdapter);
 
         RecyclerView mediaList = (RecyclerView) view.findViewById(R.id.mediaList);
-        mediaList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-
-        SpaceItemDecoration mediaItemDecoration = new SpaceItemDecoration();
-        mediaItemDecoration.setHorizontalSpaceWidth((int) converter.convertDpToPx(10));
-        mediaList.addItemDecoration(mediaItemDecoration);
-
-        MediaAdapter adapter = new MediaAdapter(new ArrayList<Media>(), false);
-        mediaList.setAdapter(adapter);
+        setupMediaList(mediaList);
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.share);
         floatingActionButton.setOnClickListener(onShareClickListener);
+    }
+
+    private void setupMarkers(TextView markers) {
+        if(story.getMarkers() != null && !story.getMarkers().isEmpty()) {
+            markers.setText(story.getMarkers());
+            markers.setVisibility(View.VISIBLE);
+        } else {
+            markers.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupMediaList(RecyclerView mediaList) {
+        if(story.getMedias() != null && story.getMedias().size() > 0) {
+            mediaList.setVisibility(View.VISIBLE);
+            mediaList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+
+            UnitConverter converter = new UnitConverter(getActivity());
+
+            SpaceItemDecoration mediaItemDecoration = new SpaceItemDecoration();
+            mediaItemDecoration.setHorizontalSpaceWidth((int) converter.convertDpToPx(10));
+            mediaList.addItemDecoration(mediaItemDecoration);
+
+            MediaAdapter adapter = new MediaAdapter(story.getMedias(), false);
+            adapter.setOnMediaViewListener(onMediaViewListener);
+            mediaList.setAdapter(adapter);
+        } else {
+            mediaList.setVisibility(View.GONE);
+        }
     }
 
     private String getContributionsText(Story story) {
@@ -200,10 +225,20 @@ public class StoryViewFragment extends Fragment {
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if(firebaseError == null) {
                     StoryViewFragment.this.contribution.setText(null);
+                    incrementContributionsText();
                     refreshContribution();
                 }
             }
         });
+    }
+
+    private void incrementContributionsText() {
+        Integer contributions = story.getContributions();
+        if(contributions != null) {
+            story.setContributions(contributions + 1);
+        } else {
+            story.setContributions(1);
+        }
     }
 
     private ChildEventListenerAdapter contributionChildEventListener = new ChildEventListenerAdapter() {
@@ -258,7 +293,7 @@ public class StoryViewFragment extends Fragment {
         @Override
         public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
             onAddNewContribution();
-            return false;
+            return true;
         }
     };
 
@@ -267,7 +302,6 @@ public class StoryViewFragment extends Fragment {
             addContribution(contribution.getText().toString());
         }
     }
-
     public interface OnAfterLoadUserListener {
         void onAfterLoadUser(Contribution contribution);
     }

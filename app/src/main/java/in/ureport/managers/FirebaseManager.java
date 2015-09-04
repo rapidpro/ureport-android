@@ -1,7 +1,6 @@
 package in.ureport.managers;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.firebase.client.AuthData;
@@ -24,8 +23,9 @@ public class FirebaseManager {
     private static Context context;
 
     public static void init(Context context) {
+        Firebase.setAndroidContext(context);
+
         if(reference == null) {
-            Firebase.setAndroidContext(context);
             Firebase.getDefaultConfig().setPersistenceEnabled(true);
             FirebaseManager.context = context;
             reference = new Firebase(context.getString(R.string.firebase_app));

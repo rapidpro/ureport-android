@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.bitmap.BitmapLoader;
 import in.ureport.R;
 import in.ureport.managers.ImageLoader;
 import in.ureport.models.LocalMedia;
@@ -32,6 +33,9 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private boolean editMode;
 
     private MediaListener mediaListener;
+    private OnMediaViewListener onMediaViewListener;
+
+    private BitmapLoader bitmapLoader;
 
     public MediaAdapter(List<Media> mediaList, boolean editMode) {
         this.mediaList = mediaList;
@@ -40,6 +44,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        setupObjects(parent);
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch(viewType) {
             case MEDIA_TYPE:
@@ -50,11 +55,18 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return null;
     }
 
+    private void setupObjects(ViewGroup parent) {
+        if(bitmapLoader == null) {
+            bitmapLoader = new BitmapLoader(parent.getContext());
+        }
+    }
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case MEDIA_TYPE:
-                ((MediaViewHolder)holder).bindView(mediaList.get(getCorrectPosition(position)));
+                MediaViewHolder mediaViewHolder = ((MediaViewHolder)holder);
+                mediaViewHolder.bindView(mediaList.get(getCorrectPosition(position)));
         }
     }
 
@@ -85,6 +97,10 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             return mediaList.size();
     }
 
+    public void setOnMediaViewListener(OnMediaViewListener onMediaViewListener) {
+        this.onMediaViewListener = onMediaViewListener;
+    }
+
     public void setMediaListener(MediaListener mediaListener) {
         this.mediaListener = mediaListener;
     }
@@ -111,15 +127,14 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         public MediaViewHolder(View itemView) {
             super(itemView);
-            itemView.setOnClickListener(onItemViewClickListener);
-
             image = (ImageView) itemView.findViewById(R.id.image);
             cover = itemView.findViewById(R.id.cover);
             coverUnselected = itemView.findViewById(R.id.coverUnselected);
 
             Button remove = (Button) itemView.findViewById(R.id.remove);
             remove.setVisibility(editMode ? View.VISIBLE : View.GONE);
-            remove.setOnClickListener(onRemoveClickListener);
+            remove.setOnClickListener(editMode ? onRemoveClickListener : null);
+            itemView.setOnClickListener(editMode ? onItemSelectClickListener : onItemViewClickListener);
         }
 
         private void bindView(Media media) {
@@ -133,8 +148,13 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         private void bindCoverSelection(Media media) {
-            coverUnselected.setVisibility(!isMediaSelected(media) ? View.VISIBLE : View.GONE);
-            cover.setVisibility(isMediaSelected(media) ? View.VISIBLE : View.GONE);
+            if(editMode) {
+                coverUnselected.setVisibility(!isMediaSelected(media) ? View.VISIBLE : View.GONE);
+                cover.setVisibility(isMediaSelected(media) ? View.VISIBLE : View.GONE);
+            } else {
+                coverUnselected.setVisibility(View.GONE);
+                cover.setVisibility(View.GONE);
+            }
         }
 
         private boolean isMediaSelected(Media media) {
@@ -144,13 +164,21 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private void bindImage(Media media) {
             if(media instanceof LocalMedia) {
                 LocalMedia localMedia = (LocalMedia) media;
-                image.setImageURI(localMedia.getPath());
+                bitmapLoader.loadBitmapByUri(localMedia.getPath(), image, 100);
             } else {
-                ImageLoader.loadPersonPictureToImageView(image, media.getUrl());
+                ImageLoader.loadGenericPictureToImageView(image, media);
             }
         }
 
         private View.OnClickListener onItemViewClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onMediaViewListener != null)
+                    onMediaViewListener.onMediaView(mediaList, getLayoutPosition());
+            }
+        };
+
+        private View.OnClickListener onItemSelectClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Media selectedMedia = MediaAdapter.this.selectedMedia;
@@ -197,5 +225,9 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public interface MediaListener {
         void onMediaRemoveListener(int position);
         void onMediaAddListener();
+    }
+
+    public interface OnMediaViewListener {
+        void onMediaView(List<Media> medias, int position);
     }
 }

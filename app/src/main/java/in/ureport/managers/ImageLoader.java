@@ -25,12 +25,23 @@ public class ImageLoader {
                 .into(imageView);
     }
 
+    public static void loadPictureToImageView(ImageView imageView, Media media) {
+        if(media != null) {
+            Picasso.with(imageView.getContext()).load(media.getUrl())
+                    .into(imageView);
+        }
+    }
+
+    public static void loadGenericPictureToImageView(ImageView imageView, Media media) {
+        loadMedia(imageView, media, R.drawable.shape_loading_picture);
+    }
+
     public static void loadGroupPictureToImageView(ImageView imageView, Media media) {
         loadMedia(imageView, media, R.drawable.default_group);
     }
 
     private static void loadMedia(ImageView imageView, Media media, @DrawableRes int placeholderDrawableId) {
-        if(media != null) {
+        if(media != null && media.getUrl() != null) {
             Context context = imageView.getContext();
             Drawable placeholder = ContextCompat.getDrawable(context, placeholderDrawableId);
 

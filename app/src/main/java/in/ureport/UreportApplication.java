@@ -2,7 +2,6 @@ package in.ureport;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
 
@@ -22,8 +21,6 @@ public class UreportApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        Log.i("FirebaseManager", "init " + getString(R.string.firebase_app));
 
         FirebaseManager.init(this);
         initializeFabric();

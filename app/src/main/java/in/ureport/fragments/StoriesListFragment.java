@@ -17,10 +17,12 @@ import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
+import in.ureport.listener.OnStoryContributionCountListener;
 import in.ureport.managers.RecyclerScrollListener;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.network.ContributionServices;
 import in.ureport.network.StoryServices;
 import in.ureport.network.UserServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
@@ -46,6 +48,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
     private StoryServices storyServices;
     private UserServices userServices;
+    private ContributionServices contributionServices;
 
     public static StoriesListFragment newInstance(User user) {
         StoriesListFragment storiesListFragment = new StoriesListFragment();
@@ -92,6 +95,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     private void setupObjects() {
         storyServices = new StoryServices();
         userServices = new UserServices();
+        contributionServices = new ContributionServices();
     }
 
     public void loadStories() {
@@ -137,11 +141,15 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         if(adapter != null && needsUserPublish()) adapter.setUser(user);
     }
 
-    private void updateStory(Story story) {
+    private void addStory(Story story) {
         if(!needsUserPublish())
             info.setVisibility(story != null ? View.GONE : View.VISIBLE);
 
         adapter.addStory(story);
+    }
+
+    private void updateStory(Story story) {
+        adapter.updateStory(story);
     }
 
     private boolean needsUserPublish() {
@@ -157,33 +165,44 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     };
 
     private void updateStoryFromSnapshot(DataSnapshot dataSnapshot) {
-        Story story = dataSnapshot.getValue(Story.class);
+        final Story story = dataSnapshot.getValue(Story.class);
         story.setKey(dataSnapshot.getKey());
+        addStory(story);
 
-        loadUsersFromStories(story, onAfterUsersLoadedListener);
+        loadStoryData(story);
     }
 
-    private OnAfterUsersLoadedListener onAfterUsersLoadedListener = new OnAfterUsersLoadedListener() {
+    private void loadStoryData(final Story story) {
+        contributionServices.getContributionCount(story, new OnStoryContributionCountListener() {
+            @Override
+            public void onStoryContributionCountListener(long count) {
+                story.setContributions(Long.valueOf(count).intValue());
+                loadUsersFromStorry(story, onAfterStoryLoadedListener);
+            }
+        });
+    }
+
+    private OnAfterStoryLoadedListener onAfterStoryLoadedListener = new OnAfterStoryLoadedListener() {
         @Override
-        public void onAfterUsersLoaded(Story story) {
+        public void onAfterStoryLoaded(Story story) {
             updateStory(story);
         }
     };
 
-    private void loadUsersFromStories(final Story story, final OnAfterUsersLoadedListener onAfterUsersLoadedListener) {
+    private void loadUsersFromStorry(final Story story, final OnAfterStoryLoadedListener onAfterStoryLoadedListener) {
         userServices.getUser(story.getUser().getKey(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if(user != null) {
                     story.setUser(user);
-                    onAfterUsersLoadedListener.onAfterUsersLoaded(story);
+                    onAfterStoryLoadedListener.onAfterStoryLoaded(story);
                 }
             }
         });
     }
 
-    private interface OnAfterUsersLoadedListener {
-        void onAfterUsersLoaded(Story story);
+    private interface OnAfterStoryLoadedListener {
+        void onAfterStoryLoaded(Story story);
     }
 }

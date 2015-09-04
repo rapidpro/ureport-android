@@ -184,7 +184,7 @@ public class GroupInfoFragment extends Fragment {
                 if (dataSnapshot.exists()) {
                     User administrator = dataSnapshot.getValue(User.class);
                     DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
-                    String creationDate = dateFormatter.format(chatRoom.getCreationDate());
+                    String creationDate = dateFormatter.format(chatRoom.getCreatedDate());
 
                     date.setText(getString(R.string.chat_group_info_created_date, administrator.getNickname(), creationDate));
                 }

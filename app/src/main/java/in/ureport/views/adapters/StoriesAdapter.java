@@ -101,6 +101,14 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return stories;
     }
 
+    public void updateStory(Story story) {
+        int indexOfStory = stories.indexOf(story);
+        if(indexOfStory >= 0) {
+            stories.set(indexOfStory, story);
+            notifyItemChanged(publicType ? indexOfStory + 1 : indexOfStory);
+        }
+    }
+
     public void addStory(Story story) {
         this.stories.add(0, story);
 
@@ -190,10 +198,8 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         private void bindImage(Story story) {
-            if(story.getImage() != null) {
-                int imageId = itemView.getResources().getIdentifier(story.getImage(), "drawable"
-                        , itemView.getContext().getPackageName());
-                image.setImageResource(imageId);
+            if(story.getCover() != null) {
+                ImageLoader.loadGenericPictureToImageView(image, story.getCover());
                 image.setVisibility(View.VISIBLE);
             } else {
                 image.setVisibility(View.GONE);

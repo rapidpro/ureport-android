@@ -1,8 +1,11 @@
 package in.ureport.network;
 
 import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 
+import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.listener.OnStoryContributionCountListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
@@ -23,6 +26,16 @@ public class ContributionServices {
         Firebase object = FirebaseManager.getReference().child(path).child(story.getKey()).push();
         object.setValue(contribution, listener);
         contribution.setKey(object.getKey());
+    }
+
+    public void getContributionCount(Story story, final OnStoryContributionCountListener listener) {
+        FirebaseManager.getReference().child(path).child(story.getKey()).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                listener.onStoryContributionCountListener(dataSnapshot.getChildrenCount());
+            }
+        });
     }
 
     public void addChildEventListener(Story story, ChildEventListener childEventListener) {

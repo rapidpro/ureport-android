@@ -271,7 +271,7 @@ public class CreateGroupFragment extends Fragment {
     private void createGroup() {
         if(validateFields()) {
             final GroupChatRoom groupChatRoom = new GroupChatRoom();
-            groupChatRoom.setCreationDate(new Date());
+            groupChatRoom.setCreatedDate(new Date());
             groupChatRoom.setTitle(title.getText().toString());
             groupChatRoom.setSubject(description.getText().toString());
             groupChatRoom.setPrivateAccess(privateGroup.isChecked());

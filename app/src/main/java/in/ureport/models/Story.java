@@ -29,8 +29,6 @@ public class Story extends Model implements Parcelable {
 
     private String markers;
 
-    private String image;
-
     private List<Media> medias;
 
     private Media cover;
@@ -94,14 +92,6 @@ public class Story extends Model implements Parcelable {
         this.markers = markers;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public List<Media> getMedias() {
         return medias;
     }
@@ -132,7 +122,6 @@ public class Story extends Model implements Parcelable {
         dest.writeParcelable(this.user, 0);
         dest.writeValue(this.contributions);
         dest.writeString(this.markers);
-        dest.writeString(this.image);
         dest.writeTypedList(medias);
         dest.writeParcelable(this.cover, 0);
     }
@@ -146,7 +135,6 @@ public class Story extends Model implements Parcelable {
         this.user = in.readParcelable(User.class.getClassLoader());
         this.contributions = (Integer) in.readValue(Integer.class.getClassLoader());
         this.markers = in.readString();
-        this.image = in.readString();
         this.medias = in.createTypedArrayList(Media.CREATOR);
         this.cover = in.readParcelable(Media.class.getClassLoader());
     }

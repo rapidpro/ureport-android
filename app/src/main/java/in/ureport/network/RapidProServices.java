@@ -1,23 +1,17 @@
 package in.ureport.network;
 
 import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
-import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.GsonDateDeserializer;
-import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.listener.OnRapidproLastMessageLoadedListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.models.rapidpro.Contact;
 import in.ureport.models.rapidpro.Group;
-import in.ureport.models.rapidpro.Message;
 import in.ureport.models.rapidpro.Response;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
@@ -65,13 +59,17 @@ public class RapidProServices {
     }
 
     public void removeLastMessageChildEventListener(ChildEventListener listener) {
-        FirebaseManager.getReference().child(path).child(messagePath).child(FirebaseManager.getAuthUserKey())
-                .removeEventListener(listener);
+        if(FirebaseManager.getAuthUserKey() != null) {
+            FirebaseManager.getReference().child(path).child(messagePath).child(FirebaseManager.getAuthUserKey())
+                    .removeEventListener(listener);
+        }
     }
 
     public void addLastMessageChildEventListener(ChildEventListener listener) {
-        FirebaseManager.getReference().child(path).child(messagePath).child(FirebaseManager.getAuthUserKey()).limitToLast(1)
-                .addChildEventListener(listener);
+        if(FirebaseManager.getAuthUserKey() != null) {
+            FirebaseManager.getReference().child(path).child(messagePath).child(FirebaseManager.getAuthUserKey()).limitToLast(1)
+                    .addChildEventListener(listener);
+        }
     }
 
     public void sendMessage(String message) {

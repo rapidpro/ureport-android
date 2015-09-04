@@ -4,8 +4,6 @@ import android.os.Parcel;
 
 import java.util.Date;
 
-import in.ureport.models.rapidpro.Group;
-
 /**
  * Created by johncordeiro on 19/07/15.
  */
@@ -17,7 +15,7 @@ public class GroupChatRoom extends ChatRoom {
 
     private Media picture;
 
-    private Date creationDate;
+    private Date createdDate;
 
     private Boolean privateAccess;
 
@@ -49,12 +47,12 @@ public class GroupChatRoom extends ChatRoom {
         this.picture = picture;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
     public Boolean getPrivateAccess() {
@@ -92,7 +90,7 @@ public class GroupChatRoom extends ChatRoom {
         dest.writeString(this.title);
         dest.writeString(this.subject);
         dest.writeParcelable(this.picture, 0);
-        dest.writeLong(creationDate != null ? creationDate.getTime() : -1);
+        dest.writeLong(createdDate != null ? createdDate.getTime() : -1);
         dest.writeValue(this.privateAccess);
         dest.writeValue(this.mediaAllowed);
         dest.writeParcelable(this.administrator, 0);
@@ -108,7 +106,7 @@ public class GroupChatRoom extends ChatRoom {
         this.subject = in.readString();
         this.picture = in.readParcelable(Media.class.getClassLoader());
         long tmpCreationDate = in.readLong();
-        this.creationDate = tmpCreationDate == -1 ? null : new Date(tmpCreationDate);
+        this.createdDate = tmpCreationDate == -1 ? null : new Date(tmpCreationDate);
         this.privateAccess = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.mediaAllowed = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.administrator = in.readParcelable(User.class.getClassLoader());

@@ -212,6 +212,8 @@
     <string name="response_message">Response sent, wait for the next question</string>
     <string name="error_take_picture">An error occurred, take another picture</string>
     <string name="cover_title">Cover</string>
+    <string name="load_compressing_file">Compressing file...</string>
+    <string name="title_media">Media</string>
 
     <plurals name="title_new_message">
         <item quantity="one">%1$s new message</item>

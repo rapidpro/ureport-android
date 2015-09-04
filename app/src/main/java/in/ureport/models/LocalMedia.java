@@ -1,5 +1,6 @@
 package in.ureport.models;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 

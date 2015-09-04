@@ -24,15 +24,9 @@ import in.ureport.models.User;
  */
 public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int TYPE_ITEM = 0;
-
-    private static final long ADD_MEDIA_ITEM_ID = 1000;
-
     private List<Contribution> contributions;
-    private User user;
 
-    public ContributionAdapter(User user) {
-        this.user = user;
+    public ContributionAdapter() {
         setHasStableIds(true);
     }
 

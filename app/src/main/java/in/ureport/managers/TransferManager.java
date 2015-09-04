@@ -5,17 +5,19 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
-import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.bitmap.BitmapCompressor;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
+import in.ureport.tasks.CompressFileTask;
 
 /**
  * Created by johncordeiro on 20/08/15.
@@ -30,23 +32,33 @@ public class TransferManager {
     }
 
     @NonNull
-    public void transferFile(Uri uri, String parent, TransferListenerAdapter transferListener)
-            throws URISyntaxException, IllegalStateException {
+    public void transferFile(Uri uri, final String parent, final TransferListenerAdapter transferListener)
+            throws URISyntaxException, IllegalStateException, IOException {
         IOManager ioManager = new IOManager(context);
         String filePath = ioManager.getFilePathForUri(uri);
 
         if (filePath == null) throw new IllegalStateException("File does not exists");
 
         File file = new File(filePath);
-        String filename = String.format(FILENAME, parent, new Date().getTime(), file.getName());
-        transferListener.setFilename(filename);
 
-        TransferObserver observer = AmazonServicesManager.getTransferUtility()
-                .upload(AmazonServicesManager.BUCKET_ID, filename, file);
-        observer.setTransferListener(transferListener);
+        CompressFileTask compressFileTask = new CompressFileTask() {
+            @Override
+            protected void onPostExecute(File compressedFile) {
+                super.onPostExecute(compressedFile);
+
+                String filename = String.format(FILENAME, parent, new Date().getTime(), compressedFile.getName());
+                transferListener.setFilename(filename);
+
+                TransferObserver observer = AmazonServicesManager.getTransferUtility()
+                        .upload(AmazonServicesManager.BUCKET_ID, filename, compressedFile);
+                observer.setTransferListener(transferListener);
+            }
+        };
+        compressFileTask.execute(file);
     }
 
-    public void transferMedias(final List<Media> medias, String parent, final OnTransferMediasListener onTransferMediasListener) throws URISyntaxException, IllegalStateException {
+    public void transferMedias(final List<Media> medias, String parent, final OnTransferMediasListener onTransferMediasListener)
+            throws URISyntaxException, IllegalStateException, IOException {
         final List<Media> mediasUploaded = new ArrayList<>();
 
         for (Media media : medias) {
