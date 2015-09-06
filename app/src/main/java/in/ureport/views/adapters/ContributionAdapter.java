@@ -1,12 +1,9 @@
 package in.ureport.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,9 +12,8 @@ import java.util.List;
 
 import br.com.ilhasoft.support.tool.DateFormatter;
 import in.ureport.R;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.models.Contribution;
-import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 7/15/15.

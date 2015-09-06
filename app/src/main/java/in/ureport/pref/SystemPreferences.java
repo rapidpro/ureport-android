@@ -13,8 +13,7 @@ public class SystemPreferences extends Preferences {
 
     private enum Fields {
         UserLoggedId,
-        CountryCode,
-        FakeDateCreated
+        CountryCode
     }
 
     public SystemPreferences(Context context) {
@@ -35,13 +34,5 @@ public class SystemPreferences extends Preferences {
 
     public String getCountryCode() {
         return getValue(Fields.CountryCode, "");
-    }
-
-    public void setFakeDataCreated(Boolean created) {
-        setValue(Fields.FakeDateCreated, created);
-    }
-
-    public Boolean isFakeDataCreated() {
-        return getValue(Fields.FakeDateCreated, false);
     }
 }

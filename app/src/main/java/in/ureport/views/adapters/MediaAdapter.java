@@ -11,7 +11,7 @@ import java.util.List;
 
 import br.com.ilhasoft.support.tool.bitmap.BitmapLoader;
 import in.ureport.R;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 

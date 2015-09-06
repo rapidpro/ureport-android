@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -25,7 +24,7 @@ import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.ToolbarDesigner;
+import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.models.User;
 import in.ureport.models.holders.Login;
 import in.ureport.network.UserServices;

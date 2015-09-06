@@ -1,4 +1,4 @@
-package in.ureport.managers;
+package in.ureport.helpers;
 
 import android.content.Context;
 import android.graphics.PorterDuff;

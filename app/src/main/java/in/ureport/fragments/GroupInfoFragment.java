@@ -25,8 +25,8 @@ import java.text.DateFormat;
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.InfoGroupChatListener;
-import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
@@ -201,12 +201,12 @@ public class GroupInfoFragment extends Fragment {
     };
 
     private boolean isCurrentUserAdministrator() {
-        return chatRoom.getAdministrator().getKey().equals(FirebaseManager.getAuthUserKey());
+        return chatRoom.getAdministrator().getKey().equals(UserManager.getUserId());
     }
 
     private boolean isCurrentUserMember() {
         User user = new User();
-        user.setKey(FirebaseManager.getAuthUserKey());
+        user.setKey(UserManager.getUserId());
 
         return chatMembers.getUsers() != null && chatMembers.getUsers().contains(user);
     }

@@ -18,8 +18,7 @@ import com.firebase.client.DataSnapshot;
 
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
@@ -81,7 +80,7 @@ public class ProfileFragment extends Fragment {
             updateUser(user);
         } else {
             UserServices userServices = new UserServices();
-            userServices.getUser(FirebaseManager.getAuthUserKey(), new ValueEventListenerAdapter() {
+            userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     super.onDataChange(dataSnapshot);

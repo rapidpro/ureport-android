@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ import com.firebase.client.FirebaseError;
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.ToolbarDesigner;
+import in.ureport.helpers.ToolbarDesigner;
 
 /**
  * Created by johncordeiro on 17/08/15.

@@ -29,6 +29,7 @@ import in.ureport.listener.OnCreateIndividualChatListener;
 import in.ureport.listener.OnChatRoomSavedListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.SearchManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
@@ -147,7 +148,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     }
 
     private void getLoggedUserAndSaveChat(final User friend) {
-        userServices.getUser(FirebaseManager.getAuthUserKey(), new ValueEventListenerAdapter() {
+        userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);

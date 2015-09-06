@@ -26,7 +26,39 @@ public class UserManager {
 
     private static final String TAG = "UserManager";
 
-    public static String countryCode = "";
+    private static String userId = null;
+    private static String countryCode = null;
+
+    private static Context context;
+
+    public static void init(Context context) {
+        UserManager.context = context;
+
+        SystemPreferences systemPreferences = new SystemPreferences(context);
+        userId = systemPreferences.getUserLoggedId();
+        countryCode = systemPreferences.getCountryCode();
+
+        CountryProgramManager.switchCountryProgram(UserManager.getCountryCode());
+    }
+
+    public static String getUserId() {
+        return userId;
+    }
+
+    public static void updateUserInfo(User user) {
+        UserManager.userId = user.getKey();
+        UserManager.countryCode = user.getCountry();
+
+        CountryProgramManager.switchCountryProgram(countryCode);
+
+        SystemPreferences systemPreferences = new SystemPreferences(context);
+        systemPreferences.setCountryCode(countryCode);
+        systemPreferences.setUserLoggedId(userId);
+    }
+
+    public static String getCountryCode() {
+        return countryCode;
+    }
 
     public static boolean validateKeyAction(Context context) {
         if(!isUserLoggedIn()) {
@@ -40,7 +72,7 @@ public class UserManager {
     }
 
     public static boolean isUserLoggedIn() {
-        return FirebaseManager.getAuthUserKey() != null;
+        return userId != null && !userId.equals(SystemPreferences.USER_NO_LOGGED_ID);
     }
 
     public static void leaveFromGroup(final Activity activity, final ChatRoom chatRoom) {
@@ -51,7 +83,7 @@ public class UserManager {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         User user = new User();
-                        user.setKey(FirebaseManager.getAuthUserKey());
+                        user.setKey(userId);
 
                         ChatRoomServices chatRoomServices = new ChatRoomServices();
                         chatRoomServices.removeChatMember(activity, user, chatRoom.getKey());
@@ -63,6 +95,9 @@ public class UserManager {
     }
 
     public static void logout(Context context) {
+        UserManager.userId = null;
+        UserManager.countryCode = null;
+
         FirebaseManager.logout();
 
         SystemPreferences systemPreferences = new SystemPreferences(context);

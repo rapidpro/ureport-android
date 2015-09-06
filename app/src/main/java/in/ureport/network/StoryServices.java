@@ -5,13 +5,14 @@ import com.firebase.client.Firebase;
 import com.firebase.client.ValueEventListener;
 
 import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 14/08/15.
  */
-public class StoryServices {
+public class StoryServices extends ProgramServices {
 
     public static final String path = "story";
 
@@ -20,18 +21,14 @@ public class StoryServices {
         user.setKey(FirebaseManager.getReference().getAuth().getUid());
         story.setUser(user);
 
-        FirebaseManager.getReference().child(path).push().setValue(story, listener);
+        getDefaultRoot().child(path).push().setValue(story, listener);
     }
 
     public void addChildEventListener(ChildEventListener childEventListener) {
-        FirebaseManager.getReference().child(path).addChildEventListener(childEventListener);
+        getDefaultRoot().child(path).addChildEventListener(childEventListener);
     }
 
     public void removeChildEventListener(ChildEventListener childEventListener) {
-        FirebaseManager.getReference().removeEventListener(childEventListener);
-    }
-
-    public void loadAll(ValueEventListener listener) {
-        FirebaseManager.getReference().child(path).addListenerForSingleValueEvent(listener);
+        getDefaultRoot().child(path).removeEventListener(childEventListener);
     }
 }

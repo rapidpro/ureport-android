@@ -34,10 +34,10 @@ import in.ureport.R;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnChatRoomSavedListener;
-import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.ImageLoader;
-import in.ureport.managers.ImagePicker;
+import in.ureport.helpers.ImageLoader;
+import in.ureport.helpers.ImagePicker;
 import in.ureport.managers.TransferManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.models.Media;
@@ -323,7 +323,7 @@ public class CreateGroupFragment extends Fragment {
     }
 
     private void loadUserAndSaveChat(final GroupChatRoom groupChatRoom) {
-        userServices.getUser(FirebaseManager.getAuthUserKey(), new ValueEventListenerAdapter() {
+        userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);

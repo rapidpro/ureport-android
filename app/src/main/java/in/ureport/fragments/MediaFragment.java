@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import in.ureport.R;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.models.Media;
 
 /**

@@ -123,7 +123,7 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onPollRespond(String message) {
-        rapidProServices.sendMessage(message);
+        rapidProServices.sendMessage(getActivity(), message);
         Toast.makeText(getActivity(), R.string.response_message, Toast.LENGTH_SHORT).show();
     }
 

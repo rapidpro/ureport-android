@@ -1,5 +1,7 @@
 package in.ureport.network;
 
+import android.content.Context;
+
 import com.firebase.client.ChildEventListener;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -8,8 +10,12 @@ import com.google.gson.GsonBuilder;
 import java.util.Date;
 import java.util.List;
 
+import in.ureport.BuildConfig;
 import in.ureport.helpers.GsonDateDeserializer;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.UserManager;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.rapidpro.Contact;
 import in.ureport.models.rapidpro.Group;
 import in.ureport.models.rapidpro.Response;
@@ -24,7 +30,6 @@ public class RapidProServices {
     private static final String TAG = "RapidProServices";
 
     private static final String ENDPOINT = "https://api.rapidpro.io/api/v1";
-    public static final String API_KEY = "Token 8cbcf1080cac0455311f5fce636ab4cf7cc75eb9";
 
     private final RapidProApi service;
 
@@ -34,16 +39,17 @@ public class RapidProServices {
 
     public RapidProServices() {
         RestAdapter restAdapter = buildRestAdapter();
+        if(BuildConfig.DEBUG) restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
         service = restAdapter.create(RapidProApi.class);
     }
 
-    public List<Group> loadGroups() {
-        RapidProApi.Response<Group> response = service.listGroups(API_KEY);
+    public List<Group> loadGroups(String apiKey) {
+        RapidProApi.Response<Group> response = service.listGroups(apiKey);
         return response.getResults();
     }
 
-    public Contact saveContact(Contact contact) {
-        return service.saveContact(API_KEY, contact);
+    public Contact saveContact(String apiKey, Contact contact) {
+        return service.saveContact(apiKey, contact);
     }
 
     private RestAdapter buildRestAdapter() {
@@ -59,21 +65,28 @@ public class RapidProServices {
     }
 
     public void removeLastMessageChildEventListener(ChildEventListener listener) {
-        if(FirebaseManager.getAuthUserKey() != null) {
-            FirebaseManager.getReference().child(path).child(messagePath).child(FirebaseManager.getAuthUserKey())
+        if(UserManager.getUserId() != null) {
+            FirebaseManager.getReference().child(path).child(messagePath).child(getRapidproUserId())
                     .removeEventListener(listener);
         }
     }
 
+    private String getRapidproUserId() {
+        return UserManager.getUserId().replace(":", "").replace("-", "");
+    }
+
     public void addLastMessageChildEventListener(ChildEventListener listener) {
-        if(FirebaseManager.getAuthUserKey() != null) {
-            FirebaseManager.getReference().child(path).child(messagePath).child(FirebaseManager.getAuthUserKey()).limitToLast(1)
+        if(UserManager.getUserId() != null) {
+            FirebaseManager.getReference().child(path).child(messagePath).child(getRapidproUserId()).limitToLast(1)
                     .addChildEventListener(listener);
         }
     }
 
-    public void sendMessage(String message) {
-        Response response = new Response(FirebaseManager.getAuthUserKey(), message);
+    public void sendMessage(Context context, String message) {
+        CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
+        String channel = context.getString(countryProgram.getChannel());
+
+        Response response = new Response(channel, UserManager.getUserId(), message);
         FirebaseManager.getReference().child(path).child(responsePath).push().setValue(response);
     }
 

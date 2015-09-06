@@ -4,6 +4,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 import com.google.android.gms.gcm.GcmPubSub;
 
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 
@@ -72,14 +74,18 @@ public class UserServices {
     }
 
     public void loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {
-        FirebaseManager.getReference().child(path).addListenerForSingleValueEvent(new ValueEventListener() {
+        String countryCode = CountryProgramManager.getCurrentCountryProgram().getCode();
+
+        Query query = FirebaseManager.getReference().child(path).orderByChild("country").equalTo(countryCode);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 handleDataResponse(dataSnapshot, onLoadAllUsersListener);
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {}
+            public void onCancelled(FirebaseError firebaseError) {
+            }
         });
     }
 

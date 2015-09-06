@@ -30,41 +30,41 @@ import in.ureport.helpers.ValueEventListenerAdapter;
 /**
  * Created by johncordeiro on 16/08/15.
  */
-public class ChatRoomServices {
+public class ChatRoomServices extends ProgramServices {
 
     public static final String chatRoomPath = "chat_room";
     public static final String membersPath = "chat_members";
     public static final String messagesPath = "chat_messages";
 
     public void addChildEventListenerForPublicGroups(ChildEventListener listener) {
-        FirebaseManager.getReference().child(chatRoomPath).orderByChild("privateAccess")
+        getDefaultRoot().child(chatRoomPath).orderByChild("privateAccess")
                 .equalTo(false).addChildEventListener(listener);
     }
 
     public void removeChildEventListenerForPublicGroups(ChildEventListener listener) {
-        FirebaseManager.getReference().child(chatRoomPath).orderByChild("privateAccess")
+        getDefaultRoot().child(chatRoomPath).orderByChild("privateAccess")
                 .equalTo(false).removeEventListener(listener);
     }
 
     public void addChildEventListenerForChatMessages(String key, ChildEventListener listener) {
-        FirebaseManager.getReference().child(messagesPath).child(key).orderByChild("date").addChildEventListener(listener);
+        getDefaultRoot().child(messagesPath).child(key).orderByChild("date").addChildEventListener(listener);
     }
 
     public void removeEventListenerForChatMessages(String key, ChildEventListener listener) {
-        FirebaseManager.getReference().child(messagesPath).child(key).orderByChild("date").removeEventListener(listener);
+        getDefaultRoot().child(messagesPath).child(key).orderByChild("date").removeEventListener(listener);
     }
 
     public void closeChatRoom(Context context, ChatRoom chatRoom, ChatMembers chatMembers) {
         for (User user : chatMembers.getUsers()) {
             removeChatMember(context, user, chatRoom.getKey());
         }
-        FirebaseManager.getReference().child(membersPath).child(chatRoom.getKey()).removeValue();
-        FirebaseManager.getReference().child(chatRoomPath).child(chatRoom.getKey()).removeValue();
+        getDefaultRoot().child(membersPath).child(chatRoom.getKey()).removeValue();
+        getDefaultRoot().child(chatRoomPath).child(chatRoom.getKey()).removeValue();
     }
 
     public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
         setUserIfNeeded(chatMessage);
-        FirebaseManager.getReference().child(messagesPath).child(chatRoom.getKey())
+        getDefaultRoot().child(messagesPath).child(chatRoom.getKey())
                 .push().setValue(chatMessage);
     }
 
@@ -78,7 +78,7 @@ public class ChatRoomServices {
     }
 
     public void getChatRoom(final String key, final OnChatRoomLoadedListener listener) {
-        FirebaseManager.getReference().child(chatRoomPath).child(key).addListenerForSingleValueEvent(
+        getDefaultRoot().child(chatRoomPath).child(key).addListenerForSingleValueEvent(
                 new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -119,7 +119,7 @@ public class ChatRoomServices {
 
     private void loadLastChatMessage(String key, final ChatMembers chatMembers
             , final OnChatLastMessageLoadedListener onChatLastMessageLoadedListener) {
-        FirebaseManager.getReference().child(messagesPath).child(key).orderByKey().limitToLast(1)
+        getDefaultRoot().child(messagesPath).child(key).orderByKey().limitToLast(1)
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -143,7 +143,7 @@ public class ChatRoomServices {
     }
 
     public void loadChatRoomMembers(String key, final OnChatMembersLoadedListener listener) {
-        FirebaseManager.getReference().child(membersPath).child(key)
+        getDefaultRoot().child(membersPath).child(key)
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -183,7 +183,7 @@ public class ChatRoomServices {
     }
 
     public void updateGroupChatRoom(final GroupChatRoom groupChatRoom) {
-        FirebaseManager.getReference().child(chatRoomPath).child(groupChatRoom.getKey()).setValue(groupChatRoom);
+        getDefaultRoot().child(chatRoomPath).child(groupChatRoom.getKey()).setValue(groupChatRoom);
     }
 
     public void saveGroupChatRoom(final Context context, final User administrator, final GroupChatRoom groupChatRoom
@@ -192,7 +192,7 @@ public class ChatRoomServices {
         administratorWithKey.setKey(administrator.getKey());
         groupChatRoom.setAdministrator(administrator);
 
-        FirebaseManager.getReference().child(chatRoomPath).push().setValue(groupChatRoom
+        getDefaultRoot().child(chatRoomPath).push().setValue(groupChatRoom
                 , new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -219,7 +219,7 @@ public class ChatRoomServices {
         final IndividualChatRoom chatRoom = new IndividualChatRoom();
         chatRoom.setCreatedDate(new Date());
 
-        FirebaseManager.getReference().child(chatRoomPath).push().setValue(chatRoom
+        getDefaultRoot().child(chatRoomPath).push().setValue(chatRoom
                 , new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
@@ -253,7 +253,7 @@ public class ChatRoomServices {
         GcmTopicManager gcmTopicManager = new GcmTopicManager(context);
         gcmTopicManager.unregisterUserTopic(user, chatRoomKey);
 
-        FirebaseManager.getReference().child(membersPath)
+        getDefaultRoot().child(membersPath)
                 .child(chatRoomKey)
                 .child(user.getKey())
                 .removeValue();
@@ -266,7 +266,7 @@ public class ChatRoomServices {
         GcmTopicManager gcmTopicManager = new GcmTopicManager(context);
         gcmTopicManager.registerUserTopic(user, chatRoomKey);
 
-        FirebaseManager.getReference().child(membersPath)
+        getDefaultRoot().child(membersPath)
                 .child(chatRoomKey)
                 .child(user.getKey())
                 .setValue(true);

@@ -14,7 +14,7 @@ import in.ureport.models.User;
 /**
  * Created by johncordeiro on 14/08/15.
  */
-public class ContributionServices {
+public class ContributionServices extends ProgramServices {
 
     public static final String path = "contribution";
 
@@ -23,13 +23,13 @@ public class ContributionServices {
         user.setKey(contribution.getAuthor().getKey());
         contribution.setAuthor(user);
 
-        Firebase object = FirebaseManager.getReference().child(path).child(story.getKey()).push();
+        Firebase object = getDefaultRoot().child(path).child(story.getKey()).push();
         object.setValue(contribution, listener);
         contribution.setKey(object.getKey());
     }
 
     public void getContributionCount(Story story, final OnStoryContributionCountListener listener) {
-        FirebaseManager.getReference().child(path).child(story.getKey()).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+        getDefaultRoot().child(path).child(story.getKey()).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
@@ -39,7 +39,7 @@ public class ContributionServices {
     }
 
     public void addChildEventListener(Story story, ChildEventListener childEventListener) {
-        FirebaseManager.getReference().child(path).child(story.getKey()).addChildEventListener(childEventListener);
+        getDefaultRoot().child(path).child(story.getKey()).addChildEventListener(childEventListener);
     }
     
 }

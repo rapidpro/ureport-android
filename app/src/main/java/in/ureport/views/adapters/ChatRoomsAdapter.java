@@ -1,7 +1,6 @@
 package in.ureport.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
@@ -148,7 +147,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         private User getFriend(ChatRoomHolder chatRoomHolder) {
             for (User user : chatRoomHolder.members.getUsers()) {
-                if(!user.getKey().equals(FirebaseManager.getAuthUserKey())) {
+                if(!user.getKey().equals(UserManager.getUserId())) {
                     return user;
                 }
             }

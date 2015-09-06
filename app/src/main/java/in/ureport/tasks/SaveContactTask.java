@@ -1,21 +1,19 @@
 package in.ureport.tasks;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.UserGroupsBuilder;
+import in.ureport.managers.CountryProgramManager;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.models.rapidpro.Contact;
 import in.ureport.models.rapidpro.ContactFields;
-import in.ureport.models.rapidpro.Group;
 import in.ureport.network.RapidProServices;
 import in.ureport.tasks.common.ProgressTask;
 
@@ -38,7 +36,8 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             RapidProServices rapidProServices = new RapidProServices();
             Contact contact = buildContact(user);
 
-            return rapidProServices.saveContact(contact);
+            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(user.getCountry());
+            return rapidProServices.saveContact(context.getString(countryProgram.getApiToken()), contact);
         } catch (Exception exception) {
             Log.e(TAG, "doInBackground ", exception);
         }

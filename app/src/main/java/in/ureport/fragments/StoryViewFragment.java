@@ -23,16 +23,15 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.util.Date;
-import java.util.List;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.UreportApplication;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
-import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.network.ContributionServices;
@@ -217,19 +216,21 @@ public class StoryViewFragment extends Fragment {
     };
 
     public void addContribution(String content) {
-        final Contribution contribution = new Contribution(content, user);
-        contribution.setCreatedDate(new Date());
+        if(UserManager.validateKeyAction(getActivity())) {
+            final Contribution contribution = new Contribution(content, user);
+            contribution.setCreatedDate(new Date());
 
-        contributionServices.saveContribution(story, contribution, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if(firebaseError == null) {
-                    StoryViewFragment.this.contribution.setText(null);
-                    incrementContributionsText();
-                    refreshContribution();
+            contributionServices.saveContribution(story, contribution, new Firebase.CompletionListener() {
+                @Override
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    if(firebaseError == null) {
+                        StoryViewFragment.this.contribution.setText(null);
+                        incrementContributionsText();
+                        refreshContribution();
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void incrementContributionsText() {

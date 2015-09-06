@@ -32,11 +32,6 @@ public class FirebaseManager {
         }
     }
 
-    public static String getAuthUserKey() {
-        AuthData authData = reference.getAuth();
-        return authData != null ? authData.getUid() : null;
-    }
-
     public static void logout() {
         reference.unauth();
     }

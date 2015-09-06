@@ -6,6 +6,7 @@ import android.util.Log;
 import br.com.ilhasoft.support.json.JsonDeserializer;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
@@ -46,7 +47,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
 
     private boolean isUserAllowedForMessageNotification(ChatMessage chatMessage) {
         FirebaseManager.init(this);
-        String authUserKey = FirebaseManager.getAuthUserKey();
+        String authUserKey = UserManager.getUserId();
         return authUserKey != null && !chatMessage.getUser().getKey().equals(authUserKey);
     }
 

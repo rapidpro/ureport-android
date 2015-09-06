@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -28,8 +27,8 @@ import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.InfoGroupChatListener;
-import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
@@ -128,7 +127,7 @@ public class ChatRoomFragment extends Fragment {
     private void setupObjects() {
         userServices = new UserServices();
         chatRoomServices = new ChatRoomServices();
-        user = getMemberUserByKey(FirebaseManager.getAuthUserKey());
+        user = getMemberUserByKey(UserManager.getUserId());
     }
 
     @Override
@@ -147,7 +146,7 @@ public class ChatRoomFragment extends Fragment {
 
     private boolean isCurrentUserAdministrator() {
         GroupChatRoom groupChatRoom = (GroupChatRoom)chatRoom;
-        return groupChatRoom.getAdministrator().getKey().equals(FirebaseManager.getAuthUserKey());
+        return groupChatRoom.getAdministrator().getKey().equals(UserManager.getUserId());
     }
 
     @Override

@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
 import in.ureport.R;
 import in.ureport.fragments.CredentialsLoginFragment;
@@ -19,7 +17,6 @@ import in.ureport.fragments.SignUpFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.CountryProgramManager;
 
-import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
@@ -50,28 +47,8 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     private void checkUserLoggedAndProceed() {
         if(UserManager.isUserLoggedIn()) {
-            loadUserAndContinue(FirebaseManager.getAuthUserKey());
+            startMainActivity();
         }
-    }
-
-    private void loadUserAndContinue(String authUserKey) {
-        UserServices userServices = new UserServices();
-        userServices.getUser(authUserKey, new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    User user = dataSnapshot.getValue(User.class);
-
-                    UserManager.countryCode = user.getCountry();
-                    CountryProgramManager.switchCountryProgram(UserManager.countryCode);
-                    startMainActivity();
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
-        });
     }
 
     private void addLoginFragment() {
@@ -106,10 +83,13 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         userServices.getUser(user.getKey(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists())
-                    onUserReady(dataSnapshot.getValue(User.class));
-                else
+                if (dataSnapshot.exists()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    user.setKey(dataSnapshot.getKey());
+                    onUserReady(user);
+                } else {
                     addSignUpFragment(user);
+                }
             }
         });
     }
@@ -121,12 +101,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onUserReady(final User user) {
-        UserServices userServices = new UserServices();
-        userServices.keepUserOffline(user);
-
-        UserManager.countryCode = user.getCountry();
-
-        CountryProgramManager.switchCountryProgram(user.getCountry());
+        UserManager.updateUserInfo(user);
         startMainActivity();
 
         Intent gcmRegisterIntent = new Intent(this, GcmRegistrationIntentService.class);

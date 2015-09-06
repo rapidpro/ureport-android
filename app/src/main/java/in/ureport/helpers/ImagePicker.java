@@ -1,4 +1,4 @@
-package in.ureport.managers;
+package in.ureport.helpers;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +10,8 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
+
+import in.ureport.managers.IOManager;
 
 /**
  * Created by johncordeiro on 20/08/15.

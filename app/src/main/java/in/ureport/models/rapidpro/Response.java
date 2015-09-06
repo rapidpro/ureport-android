@@ -5,13 +5,24 @@ package in.ureport.models.rapidpro;
  */
 public class Response {
 
+    private String channel;
+
     private String from;
 
     private String text;
 
-    public Response(String from, String text) {
+    public Response(String channel, String from, String text) {
+        this.channel = channel;
         this.from = from;
         this.text = text;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 
     public String getFrom() {

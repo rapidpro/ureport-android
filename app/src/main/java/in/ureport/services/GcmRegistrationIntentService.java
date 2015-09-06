@@ -13,6 +13,7 @@ import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
 
@@ -35,7 +36,7 @@ public class GcmRegistrationIntentService extends IntentService {
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
 
             FirebaseManager.init(this);
-            String userKey = FirebaseManager.getAuthUserKey();
+            String userKey = UserManager.getUserId();
 
             if(userKey != null) {
                 updateUserInfo(pushIdentity, userKey);

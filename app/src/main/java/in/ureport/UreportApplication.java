@@ -22,6 +22,7 @@ public class UreportApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        UserManager.init(this);
         FirebaseManager.init(this);
         initializeFabric();
         ActiveAndroid.initialize(this);

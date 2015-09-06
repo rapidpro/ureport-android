@@ -17,7 +17,7 @@ import java.util.Set;
 
 import in.ureport.R;
 import in.ureport.listener.OnCreateIndividualChatListener;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.models.User;
 
 /**

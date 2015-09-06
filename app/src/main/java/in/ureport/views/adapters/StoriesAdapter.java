@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.managers.ImageLoader;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 

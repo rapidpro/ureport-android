@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -44,7 +43,7 @@ import br.com.ilhasoft.support.widget.DatePickerFragment;
 import in.ureport.R;
 import in.ureport.loader.CountryListLoader;
 import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.ToolbarDesigner;
+import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.models.User;
 import in.ureport.models.geonames.State;
 import in.ureport.models.holders.Login;

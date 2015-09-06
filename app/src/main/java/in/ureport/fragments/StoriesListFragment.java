@@ -18,7 +18,7 @@ import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.listener.OnStoryContributionCountListener;
-import in.ureport.managers.RecyclerScrollListener;
+import in.ureport.helpers.RecyclerScrollListener;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;

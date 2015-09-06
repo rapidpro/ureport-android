@@ -29,6 +29,7 @@ import in.ureport.listener.OnChatRoomLoadedListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.LocalNotificationManager;
 import in.ureport.managers.SearchManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
@@ -157,7 +158,7 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
             protected void onPostExecute(Map<ChatRoom, Integer> chatNotifications) {
                 super.onPostExecute(chatNotifications);
                 ListChatRoomsFragment.this.chatNotifications = chatNotifications;
-                userServices.addChildEventListenerForChatRooms(FirebaseManager.getAuthUserKey(), childEventListener);
+                userServices.addChildEventListenerForChatRooms(UserManager.getUserId(), childEventListener);
             }
         };
         getUnreadMessagesTask.execute();
