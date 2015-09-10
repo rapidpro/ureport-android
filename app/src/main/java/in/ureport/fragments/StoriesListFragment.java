@@ -99,7 +99,11 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     public void loadStories() {
-        storyServices.addChildEventListener(childEventListener);
+        if(publicType) {
+            storyServices.addChildEventListener(childEventListener);
+        } else {
+            storyServices.addChildEventListenerForUser(user, childEventListener);
+        }
     }
 
     private void setupView(View view) {
@@ -114,7 +118,9 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     private void setupStoriesAdapter() {
         adapter = new StoriesAdapter();
         adapter.setHasStableIds(true);
+
         if(needsUserPublish()) adapter.setUser(user);
+
         adapter.setOnStoryViewListener(this);
         adapter.setOnPublishStoryListener(onPublishStoryListener);
         storiesList.setAdapter(adapter);
@@ -190,12 +196,12 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     };
 
     private void loadUsersFromStorry(final Story story, final OnAfterStoryLoadedListener onAfterStoryLoadedListener) {
-        userServices.getUser(story.getUser().getKey(), new ValueEventListenerAdapter() {
+        userServices.getUser(story.getUser(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if(user != null) {
-                    story.setUser(user);
+                    story.setUserObject(user);
                     onAfterStoryLoadedListener.onAfterStoryLoaded(story);
                 }
             }

@@ -135,10 +135,10 @@ public class StoryViewFragment extends Fragment {
         setupMarkers(markers);
 
         TextView author = (TextView) view.findViewById(R.id.author);
-        author.setText(story.getUser().getNickname());
+        author.setText(story.getUserObject().getNickname());
 
         ImageView picture = (ImageView) view.findViewById(R.id.picture);
-        ImageLoader.loadPersonPictureToImageView(picture, story.getUser().getPicture());
+        ImageLoader.loadPersonPictureToImageView(picture, story.getUserObject().getPicture());
 
         contributions = (TextView) view.findViewById(R.id.contributors);
         contributions.setText(getContributionsText(story));

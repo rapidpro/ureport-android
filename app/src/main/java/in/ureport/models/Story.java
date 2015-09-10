@@ -23,7 +23,9 @@ public class Story extends Model implements Parcelable {
 
     private Date createdDate;
 
-    private User user;
+    private String user;
+
+    private User userObject;
 
     private Integer contributions;
 
@@ -68,12 +70,20 @@ public class Story extends Model implements Parcelable {
         this.createdDate = createdDate;
     }
 
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
+    }
+
+    public User getUserObject() {
+        return userObject;
+    }
+
+    public void setUserObject(User userObject) {
+        this.userObject = userObject;
     }
 
     public Integer getContributions() {
@@ -119,7 +129,8 @@ public class Story extends Model implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.content);
         dest.writeLong(createdDate != null ? createdDate.getTime() : -1);
-        dest.writeParcelable(this.user, 0);
+        dest.writeString(this.user);
+        dest.writeParcelable(this.userObject, 0);
         dest.writeValue(this.contributions);
         dest.writeString(this.markers);
         dest.writeTypedList(medias);
@@ -132,7 +143,8 @@ public class Story extends Model implements Parcelable {
         this.content = in.readString();
         long tmpCreatedDate = in.readLong();
         this.createdDate = tmpCreatedDate == -1 ? null : new Date(tmpCreatedDate);
-        this.user = in.readParcelable(User.class.getClassLoader());
+        this.user = in.readString();
+        this.userObject = in.readParcelable(User.class.getClassLoader());
         this.contributions = (Integer) in.readValue(Integer.class.getClassLoader());
         this.markers = in.readString();
         this.medias = in.createTypedArrayList(Media.CREATOR);

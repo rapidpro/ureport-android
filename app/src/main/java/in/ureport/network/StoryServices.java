@@ -17,11 +17,14 @@ public class StoryServices extends ProgramServices {
     public static final String path = "story";
 
     public void saveStory(Story story, Firebase.CompletionListener listener) {
-        User user = new User();
-        user.setKey(FirebaseManager.getReference().getAuth().getUid());
-        story.setUser(user);
+        story.setUser(UserManager.getUserId());
 
         getDefaultRoot().child(path).push().setValue(story, listener);
+    }
+
+    public void addChildEventListenerForUser(User user, ChildEventListener childEventListener) {
+        getCountryProgram().child(user.getCountryProgram()).child(path)
+                .orderByChild("user").equalTo(user.getKey()).addChildEventListener(childEventListener);
     }
 
     public void addChildEventListener(ChildEventListener childEventListener) {

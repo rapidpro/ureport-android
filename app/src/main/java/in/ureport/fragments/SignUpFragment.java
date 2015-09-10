@@ -42,6 +42,7 @@ import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import br.com.ilhasoft.support.widget.DatePickerFragment;
 import in.ureport.R;
 import in.ureport.loader.CountryListLoader;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.models.User;
@@ -291,8 +292,9 @@ public class SignUpFragment extends Fragment implements LoaderManager.LoaderCall
         }
 
         UserLocale userLocale = (UserLocale) country.getAdapter().getItem(country.getSelectedItemPosition());
-        String displayCountry = userLocale.getLocale().getISO3Country();
-        user.setCountry(displayCountry);
+        String countryCode = userLocale.getLocale().getISO3Country();
+        user.setCountry(countryCode);
+        user.setCountryProgram(CountryProgramManager.getCountryProgramForCode(countryCode).getCode());
 
         UserGender userGender = (UserGender)gender.getAdapter().getItem(gender.getSelectedItemPosition());
         user.setGender(userGender.getGender());

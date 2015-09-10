@@ -81,7 +81,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/story2"
+            tools:src="@drawable/news1_cover_image"
             android:layout_below="@+id/line"
             android:visibility="visible"/>
 

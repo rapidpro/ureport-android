@@ -28,6 +28,8 @@ public class User implements Parcelable {
 
     private String country;
 
+    private String countryProgram;
+
     private String state;
 
     private String picture;
@@ -84,6 +86,14 @@ public class User implements Parcelable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public String getCountryProgram() {
+        return countryProgram;
+    }
+
+    public void setCountryProgram(String countryProgram) {
+        this.countryProgram = countryProgram;
     }
 
     public String getState() {

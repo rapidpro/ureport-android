@@ -36,6 +36,7 @@ import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.helpers.ImagePicker;
+import in.ureport.helpers.KeyboardHandler;
 import in.ureport.managers.TransferManager;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Marker;
@@ -78,6 +79,11 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         super.onViewCreated(view, savedInstanceState);
         setupObjects();
         setupView(view);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override

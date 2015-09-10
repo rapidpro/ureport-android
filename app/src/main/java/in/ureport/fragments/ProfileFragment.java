@@ -2,7 +2,6 @@ package in.ureport.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +37,6 @@ public class ProfileFragment extends Fragment {
     private TextView points;
     private TextView polls;
     private TextView stories;
-    private TabLayout tabs;
     private ImageView picture;
 
     private User user;
@@ -106,7 +104,6 @@ public class ProfileFragment extends Fragment {
         stories = (TextView) view.findViewById(R.id.stories);
 
         pager = (ViewPager)view.findViewById(R.id.pager);
-        tabs = (TabLayout)view.findViewById(R.id.tabs);
 
         Button logout = (Button) view.findViewById(R.id.logout);
         logout.setOnClickListener(onLogoutClickListener);
@@ -132,13 +129,10 @@ public class ProfileFragment extends Fragment {
 
     private void setupPagerWithUser(User user) {
         NavigationItem storiesItem = new NavigationItem(StoriesListFragment.newInstance(user), getString(R.string.profile_my_stories));
-        NavigationItem pollsItem = new NavigationItem(PollsFragment.newInstance(user), getString(R.string.profile_answered_polls));
-        NavigationItem rankingItem = new NavigationItem(RankingFragment.newInstance(user), getString(R.string.profile_ranking));
 
-        NavigationAdapter navigationAdapter = new NavigationAdapter(getFragmentManager(), storiesItem, pollsItem, rankingItem);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(getFragmentManager(), storiesItem);
         pager.setAdapter(navigationAdapter);
         pager.setOffscreenPageLimit(3);
-        tabs.setupWithViewPager(pager);
     }
 
     private View.OnClickListener onLogoutClickListener = new View.OnClickListener() {
@@ -151,7 +145,7 @@ public class ProfileFragment extends Fragment {
     private View.OnClickListener onEditClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            PrototypeManager.showPrototypeAlert(getActivity());
+
         }
     };
 

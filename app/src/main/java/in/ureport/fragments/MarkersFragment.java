@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.helpers.KeyboardHandler;
 import in.ureport.listener.ItemSelectionListener;
 import in.ureport.listener.SelectionResultListener;
 import in.ureport.loader.MarkersLoader;
@@ -75,6 +76,8 @@ public class MarkersFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onResume() {
         super.onResume();
+
+        hideKeyboard();
         AppCompatActivity activity = (AppCompatActivity)getActivity();
         activity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_done_white_24dp);
     }
@@ -120,6 +123,11 @@ public class MarkersFragment extends Fragment implements LoaderManager.LoaderCal
                 }
             }
         }
+    }
+
+    private void hideKeyboard() {
+        KeyboardHandler keyboardHandler = new KeyboardHandler();
+        keyboardHandler.showSoftwareKeyboard(getActivity(), false);
     }
 
     @Override

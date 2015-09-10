@@ -15,6 +15,7 @@ import java.util.Set;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 
 /**
@@ -60,7 +61,7 @@ public class UserServices {
     }
 
     private void handleDataResponse(DataSnapshot dataSnapshot, OnLoadAllUsersListener onLoadAllUsersListener) {
-        String currentUserKey = FirebaseManager.getReference().getAuth().getUid();
+        String currentUserKey = UserManager.getUserId();
 
         List<User> users = new ArrayList<User>();
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -76,7 +77,7 @@ public class UserServices {
     public void loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {
         String countryCode = CountryProgramManager.getCurrentCountryProgram().getCode();
 
-        Query query = FirebaseManager.getReference().child(path).orderByChild("country").equalTo(countryCode);
+        Query query = FirebaseManager.getReference().child(path).orderByChild("countryProgram").equalTo(countryCode);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

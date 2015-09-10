@@ -17,7 +17,6 @@ import in.ureport.listener.OnChatLastMessageLoadedListener;
 import in.ureport.listener.OnChatMembersLoadedListener;
 import in.ureport.listener.OnChatRoomSavedListener;
 import in.ureport.listener.OnChatRoomLoadedListener;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
