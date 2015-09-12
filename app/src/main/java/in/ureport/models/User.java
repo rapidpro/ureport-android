@@ -230,6 +230,7 @@ public class User implements Parcelable {
         dest.writeString(this.nickname);
         dest.writeLong(birthday != null ? birthday.getTime() : -1);
         dest.writeString(this.country);
+        dest.writeString(this.countryProgram);
         dest.writeString(this.state);
         dest.writeString(this.picture);
         dest.writeInt(this.gender == null ? -1 : this.gender.ordinal());
@@ -250,6 +251,7 @@ public class User implements Parcelable {
         long tmpBirthday = in.readLong();
         this.birthday = tmpBirthday == -1 ? null : new Date(tmpBirthday);
         this.country = in.readString();
+        this.countryProgram = in.readString();
         this.state = in.readString();
         this.picture = in.readString();
         int tmpGender = in.readInt();

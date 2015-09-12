@@ -66,16 +66,6 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position, List<Object> payloads) {
-        super.onBindViewHolder(holder, position, payloads);
-        switch(getItemViewType(position)) {
-            case TYPE_CURRENT_POLL:
-                ((CurrentPollViewHolder)holder).bindView(lastMessage);
-                break;
-        }
-    }
-
-    @Override
     public long getItemId(int position) {
         if(getItemViewType(position) == TYPE_CURRENT_POLL) {
             return lastMessage.getKey().hashCode();
@@ -88,7 +78,7 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private boolean hasCurrentPoll() {
-        return lastMessage != null;
+        return false;
     }
 
     @Override

@@ -68,6 +68,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     private FloatingActionButton mainActionButton;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private DrawerLayout drawerLayout;
+
     private RecyclerView notificationsList;
     private Spinner countryPrograms;
 
@@ -283,12 +284,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             switch(menuItem.getItemId()) {
                 case R.id.home:
                     navigationIntent = new Intent(BaseActivity.this, MainActivity.class);
-                    break;
-                case R.id.chat:
-                    if(UserManager.validateKeyAction(BaseActivity.this))
-                        navigationIntent = new Intent(BaseActivity.this, ChatActivity.class);
-                    else
-                        return false;
                     break;
                 case R.id.about:
                     navigationIntent = new Intent(BaseActivity.this, AboutActivity.class);

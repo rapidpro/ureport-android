@@ -1,6 +1,7 @@
 package in.ureport.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,9 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.Button;
 
 import com.firebase.client.DataSnapshot;
 
@@ -25,7 +27,9 @@ import java.util.Map;
 
 import in.ureport.R;
 import in.ureport.activities.ChatRoomActivity;
+import in.ureport.activities.InviteContactsActivity;
 import in.ureport.listener.OnChatRoomLoadedListener;
+import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.LocalNotificationManager;
 import in.ureport.managers.SearchManager;
@@ -34,7 +38,6 @@ import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
-import in.ureport.models.IndividualChatRoom;
 import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.network.ChatRoomServices;
@@ -62,7 +65,8 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
 
     private Map<ChatRoom, Integer> chatNotifications;
     private RecyclerView chatsList;
-    private ProgressBar progressBar;
+
+    private OnSeeOpenGroupsListener onSeeOpenGroupsListener;
 
     @Nullable
     @Override
@@ -92,8 +96,32 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
 
+        inflater.inflate(R.menu.menu_chat_rooms, menu);
+
         SearchManager searchManager = new SearchManager(getActivity());
         searchManager.addSearchView(menu, R.string.hint_search_chat_rooms, this, this);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof OnSeeOpenGroupsListener) {
+            onSeeOpenGroupsListener = (OnSeeOpenGroupsListener) context;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.inviteContacts:
+                startInviteContacts();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void startInviteContacts() {
+        Intent inviteContactsIntent = new Intent(getActivity(), InviteContactsActivity.class);
+        startActivity(inviteContactsIntent);
     }
 
     private void cancelChatNotifications() {
@@ -141,8 +169,6 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     }
 
     private void setupView(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-
         chatsList = (RecyclerView) view.findViewById(R.id.chatsList);
         chatsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         chatsList.addItemDecoration(new DividerItemDecoration(getActivity()));
@@ -150,6 +176,9 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         chatRoomsAdapter = new ChatRoomsAdapter();
         chatRoomsAdapter.setOnChatRoomSelectedListener(this);
         chatsList.setAdapter(chatRoomsAdapter);
+
+        Button seeOpenGroups = (Button) view.findViewById(R.id.seeOpenGroups);
+        seeOpenGroups.setOnClickListener(onSeeOpenGroups);
     }
 
     private void loadData() {
@@ -164,6 +193,15 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         getUnreadMessagesTask.execute();
     }
 
+    private View.OnClickListener onSeeOpenGroups = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(onSeeOpenGroupsListener != null){
+                onSeeOpenGroupsListener.onSeeOpenGroups();
+            }
+        }
+    };
+
     private ChildEventListenerAdapter childEventListener = new ChildEventListenerAdapter() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
@@ -173,8 +211,6 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
             chatRoomServices.getChatRoom(chatRoomKey, new OnChatRoomLoadedListener() {
                 @Override
                 public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage) {
-                    dismissProgressBar();
-
                     chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
                     chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, lastMessage));
                 }
@@ -191,12 +227,6 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
             chatRoomsAdapter.removeChatRoom(new ChatRoomHolder(chatRoom));
         }
     };
-
-    private void dismissProgressBar() {
-        if(progressBar.getVisibility() == View.VISIBLE) {
-            progressBar.setVisibility(View.GONE);
-        }
-    }
 
     @Override
     public void onChatRoomSelected(ChatRoom chatRoom, ChatMembers members) {

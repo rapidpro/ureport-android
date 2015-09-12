@@ -13,7 +13,6 @@ import in.ureport.fragments.CreateGroupFragment;
 import in.ureport.fragments.ListChatRoomsFragment;
 import in.ureport.fragments.InviteContactsFragment;
 import in.ureport.listener.OnChatMembersLoadedListener;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
@@ -84,7 +83,7 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         pager.addOnPageChangeListener(onPageChangeListener);
 
-        NavigationItem chatGroupItem = new NavigationItem(new ChatGroupFragment(), getString(R.string.chat_groups));
+        NavigationItem chatGroupItem = new NavigationItem(new ChatGroupFragment(), getString(R.string.label_chat_groups));
         NavigationItem chatRoomsItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.chat_rooms));
         NavigationItem inviteItem = new NavigationItem(new InviteContactsFragment(), getString(R.string.chat_invite));
 
@@ -96,7 +95,7 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
 
         getMainActionButton().setImageResource(R.drawable.ic_add_white_24dp);
         getMainActionButton().setOnClickListener(onCreateChatClickListener);
-        getMenuNavigation().getMenu().findItem(R.id.chat).setChecked(true);
+//        getMenuNavigation().getMenu().findItem(R.id.chat).setChecked(true);
     }
 
     @Override

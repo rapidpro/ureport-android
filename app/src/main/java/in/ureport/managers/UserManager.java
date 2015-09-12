@@ -41,13 +41,18 @@ public class UserManager {
         CountryProgramManager.switchCountryProgram(UserManager.getCountryCode());
     }
 
+    public static boolean isCountryProgramEnabled() {
+        return getCountryCode() != null
+            && getCountryCode().equals(CountryProgramManager.getCurrentCountryProgram().getCode());
+    }
+
     public static String getUserId() {
         return userId;
     }
 
     public static void updateUserInfo(User user) {
         UserManager.userId = user.getKey();
-        UserManager.countryCode = user.getCountry();
+        UserManager.countryCode = user.getCountryProgram();
 
         CountryProgramManager.switchCountryProgram(countryCode);
 

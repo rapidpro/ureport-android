@@ -3,6 +3,7 @@ package in.ureport.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,11 +11,17 @@ import android.view.View;
 
 import in.ureport.R;
 import in.ureport.UreportApplication;
-import in.ureport.fragments.NewsFragment;
+import in.ureport.fragments.ListChatRoomsFragment;
+import in.ureport.fragments.PollQuestionFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.listener.FloatingActionButtonListener;
+import in.ureport.listener.OnSeeLastPollsListener;
+import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.UserManager;
+import in.ureport.models.ChatMembers;
+import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.views.adapters.NavigationAdapter;
@@ -24,10 +31,13 @@ import in.ureport.views.adapters.StoriesAdapter;
  * Created by johncordeiro on 7/9/15.
  */
 public class MainActivity extends BaseActivity implements FloatingActionButtonListener
-        , StoriesAdapter.OnPublishStoryListener {
+        , StoriesAdapter.OnPublishStoryListener, OnSeeOpenGroupsListener, OnSeeLastPollsListener {
 
-    private static final int POSITION_MAIN_ACTION_BUTTON = 0;
+    private static final int POSITION_STORIES_FRAGMENT = 0;
+    private static final int POSITION_CHAT_FRAGMENT = 2;
+
     private static final int REQUEST_CODE_CREATE_STORY = 10;
+    private static final int REQUEST_CODE_CHAT_CREATION = 200;
 
     private static final String TAG = "MainActivity";
     public static final String EXTRA_FORCED_LOGIN = "forcedLogin";
@@ -35,7 +45,6 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     private ViewPager pager;
 
     private StoriesListFragment storiesListFragment;
-    private NewsFragment newsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,17 +85,30 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
             case R.id.notifications:
                 openEndDrawer();
                 break;
-            case R.id.chat:
-                startChatActivity();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void startChatActivity() {
-        if(UreportApplication.validateUserLogin(MainActivity.this)) {
-            Intent chatIntent = new Intent(this, ChatActivity.class);
-            startActivity(chatIntent);
-            finish();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE_CHAT_CREATION:
+                    startChatRoom(data);
+            }
+        }
+    }
+
+    private void startChatRoom(Intent data) {
+        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_ROOM);
+        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_MEMBERS);
+
+        if(chatRoom != null && chatMembers != null) {
+            Intent chatRoomIntent = new Intent(this, ChatRoomActivity.class);
+            chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM, chatRoom);
+            chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_MEMBERS, chatMembers);
+            startActivity(chatRoomIntent);
         }
     }
 
@@ -98,7 +120,6 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         hideFloatingButtonDelayed();
 
         getTabLayout().setupWithViewPager(pager);
-        getMainActionButton().setOnClickListener(onCreateStoryClickListener);
         getMenuNavigation().getMenu().findItem(R.id.home).setChecked(true);
     }
 
@@ -112,7 +133,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     }
 
     private boolean containsMainActionButton(int position) {
-        return position == POSITION_MAIN_ACTION_BUTTON;
+        return position == POSITION_STORIES_FRAGMENT || position == POSITION_CHAT_FRAGMENT;
     }
 
     private void setupNavigationAdapter() {
@@ -120,10 +141,8 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         storiesListFragment.setFloatingActionButtonListener(this);
         storiesListFragment.setOnPublishStoryListener(this);
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
-        NavigationItem pollsItem = new NavigationItem(new PollsFragment(), getString(R.string.main_polls));
-
-        newsFragment = NewsFragment.newInstance(getLoggedUser());
-        NavigationItem newsItem = new NavigationItem(newsFragment, getString(R.string.main_news_feed));
+        NavigationItem pollsItem = getPollsNavigationItem();
+        NavigationItem newsItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.main_chat));
 
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager()
                 , storiesItem, pollsItem, newsItem);
@@ -131,12 +150,20 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         pager.setAdapter(adapter);
     }
 
+    @NonNull
+    private NavigationItem getPollsNavigationItem() {
+        if(UserManager.isCountryProgramEnabled()) {
+            return new NavigationItem(new PollQuestionFragment(), getString(R.string.main_polls));
+        } else {
+            return new NavigationItem(new PollsFragment(), getString(R.string.main_polls));
+        }
+    }
+
     @Override
     public void setUser(User user) {
         super.setUser(user);
 
         if(user != null) {
-            newsFragment.setUser(user);
             storiesListFragment.updateUser(user);
             getToolbar().setTitle(CountryProgramManager.getCurrentCountryProgram().getName());
         }
@@ -189,8 +216,33 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         @Override
         public void onPageSelected(int position) {
             checkFloatingButtonVisibility(position);
+            checkFloatingButtonAction(position);
         }
     };
+
+    private void checkFloatingButtonAction(int position) {
+        switch(position) {
+            case POSITION_STORIES_FRAGMENT:
+                getMainActionButton().setOnClickListener(onCreateStoryClickListener);
+                break;
+            case POSITION_CHAT_FRAGMENT:
+                getMainActionButton().setOnClickListener(onCreateChatClickListener);
+        }
+    }
+
+    private View.OnClickListener onCreateChatClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            createChat();
+        }
+    };
+
+    private void createChat() {
+        if(UreportApplication.validateUserLogin(MainActivity.this)) {
+            Intent newChatIntent = new Intent(MainActivity.this, ChatCreationActivity.class);
+            startActivityForResult(newChatIntent, REQUEST_CODE_CHAT_CREATION);
+        }
+    }
 
     private View.OnClickListener onCreateStoryClickListener = new View.OnClickListener() {
         @Override
@@ -198,4 +250,16 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
             publishStory();
         }
     };
+
+    @Override
+    public void onSeeOpenGroups() {
+        Intent openGroupsIntent = new Intent(this, OpenGroupsActivity.class);
+        startActivity(openGroupsIntent);
+    }
+
+    @Override
+    public void onSeeLastPolls() {
+        Intent seeLastPolls = new Intent(this, LastPollsActivity.class);
+        startActivity(seeLastPolls);
+    }
 }

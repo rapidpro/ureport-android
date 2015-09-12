@@ -68,7 +68,6 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
             user = extras.getParcelable(EXTRA_USER);
             publicType = false;
         }
-
     }
 
     @Nullable

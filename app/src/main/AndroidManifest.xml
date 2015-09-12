@@ -51,6 +51,48 @@
             android:label="@string/label_chat" />
 
         <activity
+            android:name=".activities.UserSettingsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/label_user_settings"
+            android:parentActivityName=".activities.ProfileActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.ProfileActivity" />
+
+        </activity>
+
+        <activity
+            android:name=".activities.InviteContactsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/label_invite_contacts"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.OpenGroupsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/label_chat_groups"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".activities.LastPollsActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/label_last_polls"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+
+        <activity
             android:name=".activities.AboutActivity"
             android:screenOrientation="portrait"
             android:label="@string/label_about_ureport" />

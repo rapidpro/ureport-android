@@ -1,11 +1,13 @@
 package in.ureport.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,7 @@ import com.firebase.client.DataSnapshot;
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
-import in.ureport.managers.PrototypeManager;
+import in.ureport.listener.OnEditProfileListener;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
@@ -41,15 +43,7 @@ public class ProfileFragment extends Fragment {
 
     private User user;
 
-    public static ProfileFragment newInstance(User user) {
-        ProfileFragment profileFragment = new ProfileFragment();
-
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_USER, user);
-        profileFragment.setArguments(args);
-
-        return profileFragment;
-    }
+    private OnEditProfileListener onEditProfileListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,20 +67,24 @@ public class ProfileFragment extends Fragment {
         loadUser();
     }
 
-    private void loadUser() {
-        if(user != null) {
-            updateUser(user);
-        } else {
-            UserServices userServices = new UserServices();
-            userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    super.onDataChange(dataSnapshot);
-                    user = dataSnapshot.getValue(User.class);
-                    updateUser(user);
-                }
-            });
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof OnEditProfileListener) {
+            onEditProfileListener = (OnEditProfileListener) context;
         }
+    }
+
+    public void loadUser() {
+        UserServices userServices = new UserServices();
+        userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                user = dataSnapshot.getValue(User.class);
+                updateUser(user);
+            }
+        });
     }
 
     private void setupView(View view) {
@@ -128,6 +126,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupPagerWithUser(User user) {
+        Log.i("ProfileFragment", "setupPagerWithUser " + user);
         NavigationItem storiesItem = new NavigationItem(StoriesListFragment.newInstance(user), getString(R.string.profile_my_stories));
 
         NavigationAdapter navigationAdapter = new NavigationAdapter(getFragmentManager(), storiesItem);
@@ -145,7 +144,9 @@ public class ProfileFragment extends Fragment {
     private View.OnClickListener onEditClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
+            if(onEditProfileListener != null) {
+                onEditProfileListener.onEditProfile(user);
+            }
         }
     };
 

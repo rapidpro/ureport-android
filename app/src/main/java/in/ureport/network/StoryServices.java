@@ -2,9 +2,7 @@ package in.ureport.network;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
-import com.firebase.client.ValueEventListener;
 
-import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;

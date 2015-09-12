@@ -11,21 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.firebase.client.DataSnapshot;
 
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.activities.AnswerPollActivity;
 import in.ureport.activities.PollResultsActivity;
-import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.loader.PollsLoader;
 import in.ureport.models.Poll;
 import in.ureport.models.User;
-import in.ureport.models.rapidpro.Message;
-import in.ureport.network.RapidProServices;
 import in.ureport.views.adapters.PollAdapter;
 
 /**
@@ -41,10 +35,6 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private User user;
     private boolean publicType = true;
-
-    private PollAdapter pollsAdapter;
-
-    private RapidProServices rapidProServices;
 
     public static PollsFragment newInstance(User user) {
         PollsFragment pollsFragment = new PollsFragment();
@@ -75,19 +65,7 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        setupObjects();
         setupView(view);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        rapidProServices.removeLastMessageChildEventListener(onLastMessageChildEventListener);
-    }
-
-    private void setupObjects() {
-        rapidProServices = new RapidProServices();
     }
 
     @Override
@@ -112,20 +90,16 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<List<Poll>> loader, List<Poll> data) {
-        pollsAdapter = new PollAdapter(data);
+        PollAdapter pollsAdapter = new PollAdapter(data);
         pollsAdapter.setPollParticipationListener(this);
         pollsList.setAdapter(pollsAdapter);
-        rapidProServices.addLastMessageChildEventListener(onLastMessageChildEventListener);
     }
 
     @Override
     public void onLoaderReset(Loader<List<Poll>> loader) {}
 
     @Override
-    public void onPollRespond(String message) {
-        rapidProServices.sendMessage(getActivity(), message);
-        Toast.makeText(getActivity(), R.string.response_message, Toast.LENGTH_SHORT).show();
-    }
+    public void onPollRespond(String message) {}
 
     @Override
     public void onSeeResults(Poll poll) {
@@ -134,24 +108,4 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
         startActivity(pollResultsIntent);
     }
 
-    private ChildEventListenerAdapter onLastMessageChildEventListener = new ChildEventListenerAdapter() {
-        @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String previousChildKey) {
-            super.onChildAdded(dataSnapshot, previousChildKey);
-            updateLastMessageBySnapshot(dataSnapshot);
-        }
-
-        @Override
-        public void onChildChanged(DataSnapshot dataSnapshot, String previousChildKey) {
-            super.onChildChanged(dataSnapshot, previousChildKey);
-            updateLastMessageBySnapshot(dataSnapshot);
-        }
-    };
-
-    private void updateLastMessageBySnapshot(DataSnapshot dataSnapshot) {
-        Message lastMessage = dataSnapshot.getValue(Message.class);
-        lastMessage.setKey(dataSnapshot.getKey());
-        pollsAdapter.setLastMessage(lastMessage);
-        pollsList.scrollToPosition(0);
-    }
 }

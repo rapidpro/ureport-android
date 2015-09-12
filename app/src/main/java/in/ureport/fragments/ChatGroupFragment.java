@@ -22,6 +22,7 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.DividerItemDecoration;
+import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.managers.SearchManager;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.network.ChatRoomServices;
@@ -84,10 +85,10 @@ public class ChatGroupFragment extends Fragment implements SearchView.OnQueryTex
     }
 
     @Override
-    public void onAttach(Context activity) {
-        super.onAttach(activity);
-        if(activity instanceof ChatGroupAdapter.ChatGroupListener) {
-            chatGroupListener = (ChatGroupAdapter.ChatGroupListener) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof ChatGroupAdapter.ChatGroupListener) {
+            chatGroupListener = (ChatGroupAdapter.ChatGroupListener) context;
         }
     }
 

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import in.ureport.R;
+import in.ureport.models.User;
 import in.ureport.tasks.GetGoogleAuthTokenTask;
 
 /**
@@ -34,6 +35,10 @@ public class FirebaseManager {
 
     public static void logout() {
         reference.unauth();
+    }
+
+    public static void changePassword(User user, String oldPassword, String newPassword, Firebase.ResultHandler resultHanlder) {
+        reference.changePassword(user.getEmail(), oldPassword, newPassword, resultHanlder);
     }
 
     public static void authenticateWithGoogle(GoogleApiClient client, final Firebase.AuthResultHandler handler) {
