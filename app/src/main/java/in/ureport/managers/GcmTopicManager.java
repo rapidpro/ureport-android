@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GcmPubSub;
 
-import java.io.IOException;
 import java.util.Set;
 
 import in.ureport.models.User;
@@ -19,7 +18,7 @@ public class GcmTopicManager {
 
     private static final String TAG = "GcmTopicManager";
 
-    public static final String TOPICS_PATH = "/topics/chats-";
+    public static final String CHAT_TOPICS_PATH = "/topics/chats-";
 
     private Context context;
 
@@ -42,7 +41,7 @@ public class GcmTopicManager {
 
     @NonNull
     private String getChatRoomTopic(String chatRoom) {
-        return TOPICS_PATH + chatRoom;
+        return CHAT_TOPICS_PATH + chatRoom;
     }
 
     public void registerUserTopic(final User user, final String chatRoomKey) {

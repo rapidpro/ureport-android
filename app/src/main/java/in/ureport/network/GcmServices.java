@@ -1,18 +1,13 @@
 package in.ureport.network;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
-import java.text.DateFormat;
-import java.util.Date;
+import com.google.gson.annotations.Expose;
 
 import in.ureport.BuildConfig;
 import in.ureport.R;
-import in.ureport.helpers.GsonDateDeserializer;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
@@ -45,14 +40,14 @@ public class GcmServices {
         chatMessageHolder.chatMessage = chatMessage;
 
         GcmApi.Input<ChatMessageHolder> chatMessageHolderInput = new GcmApi.Input<>(
-                GcmTopicManager.TOPICS_PATH + chatRoom.getKey()
-                , chatMessageHolder);
+                GcmTopicManager.CHAT_TOPICS_PATH + chatRoom.getKey(), chatMessageHolder);
 
         return gcmApi.sendChatMessage(context.getString(R.string.gcm_api_key), chatMessageHolderInput);
     }
 
     private RestAdapter buildRestAdapter() {
         Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
                 .setDateFormat(DATE_STYLE).create();
 
         return new RestAdapter.Builder()
@@ -62,7 +57,9 @@ public class GcmServices {
     }
 
     public class ChatMessageHolder {
+        @Expose
         ChatRoom chatRoom;
+        @Expose
         ChatMessage chatMessage;
     }
 }

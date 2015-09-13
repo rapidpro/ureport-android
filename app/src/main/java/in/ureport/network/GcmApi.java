@@ -1,5 +1,7 @@
 package in.ureport.network;
 
+import com.google.gson.annotations.Expose;
+
 import retrofit.http.Body;
 import retrofit.http.Header;
 import retrofit.http.POST;
@@ -18,8 +20,10 @@ public interface GcmApi {
 
     class Input<T> {
 
+        @Expose
         private String to;
 
+        @Expose
         private T data;
 
         public Input(String to, T data) {

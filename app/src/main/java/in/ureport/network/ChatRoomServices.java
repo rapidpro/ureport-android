@@ -71,7 +71,6 @@ public class ChatRoomServices extends ProgramServices {
         if(chatMessage.getUser() != null && chatMessage.getUser().getKey() != null) {
             User user = new User();
             user.setKey(chatMessage.getUser().getKey());
-            user.setNickname(chatMessage.getUser().getNickname());
             chatMessage.setUser(user);
         }
     }

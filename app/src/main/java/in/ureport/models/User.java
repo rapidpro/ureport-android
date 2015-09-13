@@ -32,6 +32,7 @@ public class User implements Parcelable {
 
     private String state;
 
+    @Expose
     private String picture;
 
     private Gender gender;

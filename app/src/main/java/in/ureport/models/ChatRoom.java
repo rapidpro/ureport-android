@@ -3,6 +3,8 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Date;
 
 /**
@@ -15,6 +17,7 @@ public abstract class ChatRoom implements Parcelable {
         Group
     }
 
+    @Expose
     private String key;
 
     private Integer unreadMessages;

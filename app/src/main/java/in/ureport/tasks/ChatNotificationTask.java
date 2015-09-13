@@ -59,7 +59,7 @@ public class ChatNotificationTask extends AsyncTask<ChatMessage, Void, Void> {
     @NonNull
     private ChatNotification buildNotification(ChatMessage chatMessage) {
         User user = chatMessage.getUser();
-        return new ChatNotification(chatRoom.getKey(), user.getNickname()
+        return new ChatNotification(chatRoom.getKey(), user.getPicture(), user.getNickname()
                     , chatMessage.getMessage(), new Date());
     }
 }

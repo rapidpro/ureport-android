@@ -4,10 +4,14 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
+import java.util.List;
 
 import in.ureport.R;
 import in.ureport.UreportApplication;
@@ -23,6 +27,7 @@ import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
+import in.ureport.models.Notification;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.views.adapters.NavigationAdapter;
 import in.ureport.views.adapters.StoriesAdapter;
@@ -38,10 +43,14 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     private static final int REQUEST_CODE_CHAT_CREATION = 200;
+    public static final int REQUEST_CODE_CHAT_NOTIFICATION = 300;
+
+    public static final String OPEN_CHAT_NOTIFICATION_ACTION = "in.ureport.ChatNotification";
 
     private static final String TAG = "MainActivity";
     public static final String EXTRA_FORCED_LOGIN = "forcedLogin";
 
+    private TextView notificationsAlert;
     private ViewPager pager;
 
     private StoriesListFragment storiesListFragment;
@@ -76,6 +85,12 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        final View notifications = MenuItemCompat.getActionView(menu.findItem(R.id.notifications));
+        notifications.setOnClickListener(onNotificationsClickListener);
+        notificationsAlert = (TextView) notifications.findViewById(R.id.notificationAlerts);
+        onNotificationsLoaded(getNotificationAlerts());
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -142,12 +157,20 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         storiesListFragment.setOnPublishStoryListener(this);
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
         NavigationItem pollsItem = getPollsNavigationItem();
-        NavigationItem newsItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.main_chat));
+        NavigationItem chatItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.main_chat));
 
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager()
-                , storiesItem, pollsItem, newsItem);
+                , storiesItem, pollsItem, chatItem);
 
         pager.setAdapter(adapter);
+        selectChatIfNeeded();
+    }
+
+    private void selectChatIfNeeded() {
+        if(getIntent().getAction() != null
+        && getIntent().getAction().equals(OPEN_CHAT_NOTIFICATION_ACTION)) {
+            pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
+        }
     }
 
     @NonNull
@@ -250,6 +273,26 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
             publishStory();
         }
     };
+
+    private View.OnClickListener onNotificationsClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            openEndDrawer();
+        }
+    };
+
+    @Override
+    protected void onNotificationsLoaded(List<Notification> notifications) {
+        super.onNotificationsLoaded(notifications);
+        if(notificationsAlert == null) return;
+
+        if(notifications != null && notifications.size() > 0) {
+            notificationsAlert.setVisibility(View.VISIBLE);
+            notificationsAlert.setText(String.valueOf(notifications.size()));
+        } else {
+            notificationsAlert.setVisibility(View.GONE);
+        }
+    }
 
     @Override
     public void onSeeOpenGroups() {

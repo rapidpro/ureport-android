@@ -73,6 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     private Spinner countryPrograms;
 
     private User user;
+    private List<Notification> notificationAlerts;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,12 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         super.setContentView(R.layout.activity_base);
         setupBaseView();
         loadData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadNotifications();
     }
 
     private void setupBaseView() {
@@ -135,8 +142,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     }
 
     private void loadData() {
-        getSupportLoaderManager().initLoader(0, null, this).forceLoad();
-
         AuthData authData = FirebaseManager.getReference().getAuth();
         if(authData != null) {
             UserServices userServices = new UserServices();
@@ -154,6 +159,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                 public void onCancelled(FirebaseError firebaseError) {}
             });
         }
+    }
+
+    private void loadNotifications() {
+        getSupportLoaderManager().initLoader(0, null, this).forceLoad();
     }
 
     @NonNull
@@ -262,6 +271,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
     @Override
     public void onLoadFinished(Loader<List<Notification>> loader, List<Notification> data) {
+        this.notificationAlerts = data;
+        onNotificationsLoaded(data);
+
         NotificationAdapter adapter = new NotificationAdapter(data);
         notificationsList.setAdapter(adapter);
     }
@@ -352,4 +364,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
     };
 
+    protected void onNotificationsLoaded(List<Notification> notifications) {}
+
+    protected List<Notification> getNotificationAlerts() {
+        return notificationAlerts;
+    }
 }

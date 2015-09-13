@@ -20,6 +20,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
 
     private static final String TAG = "ChatRoomActivity";
 
+    public static final String EXTRA_CHAT_ROOM_KEY = "chatRoomKey";
     public static final String EXTRA_CHAT_ROOM = "chatRoom";
     public static final String EXTRA_CHAT_MEMBERS = "chatMembers";
 
@@ -35,13 +36,21 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         setResult(RESULT_OK, getIntent());
 
         if(savedInstanceState == null) {
-            ChatRoom chatRoom = getIntent().getParcelableExtra(EXTRA_CHAT_ROOM);
-            ChatMembers chatMembers = getIntent().getParcelableExtra(EXTRA_CHAT_MEMBERS);
-
-            chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, chatMembers);
+            initializeChatRoomFragment();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.content, chatRoomFragment)
                     .commit();
+        }
+    }
+
+    private void initializeChatRoomFragment() {
+        if(getIntent().hasExtra(EXTRA_CHAT_ROOM_KEY)) {
+            String chatRoomKey = getIntent().getStringExtra(EXTRA_CHAT_ROOM_KEY);
+            chatRoomFragment = ChatRoomFragment.newInstance(chatRoomKey);
+        } else {
+            ChatRoom chatRoom = getIntent().getParcelableExtra(EXTRA_CHAT_ROOM);
+            ChatMembers chatMembers = getIntent().getParcelableExtra(EXTRA_CHAT_MEMBERS);
+            chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, chatMembers);
         }
     }
 

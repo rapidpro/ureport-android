@@ -11,7 +11,7 @@ import java.text.DateFormat;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.managers.UserViewManager;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.models.Notification;
 
 /**
@@ -49,6 +49,8 @@ public class NotificationAdapter extends RecyclerView.Adapter {
         private final TextView date;
         private final ImageView picture;
 
+        private Notification notification;
+
         public ViewHolder(View itemView) {
             super(itemView);
 
@@ -57,16 +59,28 @@ public class NotificationAdapter extends RecyclerView.Adapter {
             picture = (ImageView) itemView.findViewById(R.id.picture);
         }
 
-        private void bindView(Notification notification) {
+        private void bindView(final Notification notification) {
+            this.notification = notification;
+
+            itemView.setOnClickListener(onNotificationItemClickListener);
             message.setText(notification.getMessage());
             date.setText(hourFormatter.format(notification.getDate()));
 
             if(notification.getUser() != null) {
                 picture.setVisibility(View.VISIBLE);
-                picture.setImageResource(UserViewManager.getUserImage(itemView.getContext(), notification.getUser()));
+                ImageLoader.loadPersonPictureToImageView(picture, notification.getUser().getPicture());
             } else {
                 picture.setVisibility(View.GONE);
             }
         }
+
+        private View.OnClickListener onNotificationItemClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (notification.getOnNotificationSelectedListener() != null) {
+                    notification.getOnNotificationSelectedListener().onNotificationSelected(notification);
+                }
+            }
+        };
     }
 }

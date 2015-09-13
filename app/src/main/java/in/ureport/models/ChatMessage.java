@@ -3,6 +3,8 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Date;
 
 /**
@@ -10,12 +12,16 @@ import java.util.Date;
  */
 public class ChatMessage implements Parcelable {
 
+    @Expose
     private String key;
 
+    @Expose
     private String message;
 
+    @Expose
     private Date date;
 
+    @Expose
     private User user;
 
     public String getKey() {

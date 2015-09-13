@@ -26,7 +26,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
-        if(from.startsWith(GcmTopicManager.TOPICS_PATH)) {
+        if(from.startsWith(GcmTopicManager.CHAT_TOPICS_PATH)) {
             sendChatMessageNotification(data);
         }
     }

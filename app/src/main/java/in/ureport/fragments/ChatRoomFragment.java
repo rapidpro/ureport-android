@@ -28,6 +28,7 @@ import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.listener.OnChatRoomLoadedListener;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
@@ -52,6 +53,7 @@ public class ChatRoomFragment extends Fragment {
 
     private static final String EXTRA_CHAT_ROOM = "chatRoom";
     private static final String EXTRA_CHAT_MEMBERS = "chatMembers";
+    private static final String EXTRA_CHAT_ROOM_KEY = "chatRoomKey";
 
     private TextView name;
     private TextView message;
@@ -63,6 +65,8 @@ public class ChatRoomFragment extends Fragment {
 
     private ChatRoom chatRoom;
     private ChatMembers chatMembers;
+    private String chatRoomKey;
+
     private User user;
 
     private ChatRoomListener chatRoomListener;
@@ -82,12 +86,25 @@ public class ChatRoomFragment extends Fragment {
         return chatRoomFragment;
     }
 
+    public static ChatRoomFragment newInstance(String chatRoomKey) {
+        Bundle args = new Bundle();
+        args.putString(EXTRA_CHAT_ROOM_KEY, chatRoomKey);
+
+        ChatRoomFragment fragment = new ChatRoomFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null && getArguments().containsKey(EXTRA_CHAT_ROOM)) {
-            chatRoom = getArguments().getParcelable(EXTRA_CHAT_ROOM);
-            chatMembers = getArguments().getParcelable(EXTRA_CHAT_MEMBERS);
+        if(getArguments() != null) {
+            if(getArguments().containsKey(EXTRA_CHAT_ROOM_KEY)) {
+                chatRoomKey = getArguments().getString(EXTRA_CHAT_ROOM_KEY);
+            } else {
+                chatRoom = getArguments().getParcelable(EXTRA_CHAT_ROOM);
+                chatMembers = getArguments().getParcelable(EXTRA_CHAT_MEMBERS);
+            }
         }
     }
 
@@ -103,9 +120,16 @@ public class ChatRoomFragment extends Fragment {
 
         setupObjects();
         setupView(view);
+        setupData();
+    }
 
-        loadData();
-        updateViewForChatRoom();
+    private void setupData() {
+        if(chatRoom != null) {
+            loadData();
+            updateViewForChatRoom();
+        } else {
+            chatRoomServices.getChatRoom(chatRoomKey, onLoadChatRoomByKeyListener);
+        }
     }
 
     @Override
@@ -118,6 +142,9 @@ public class ChatRoomFragment extends Fragment {
     }
 
     private void loadData() {
+        user = getMemberUserByKey(UserManager.getUserId());
+        adapter.setUser(user);
+
         CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask();
         cleanUnreadByRoomTask.execute(chatRoom);
 
@@ -127,7 +154,6 @@ public class ChatRoomFragment extends Fragment {
     private void setupObjects() {
         userServices = new UserServices();
         chatRoomServices = new ChatRoomServices();
-        user = getMemberUserByKey(UserManager.getUserId());
     }
 
     @Override
@@ -264,6 +290,8 @@ public class ChatRoomFragment extends Fragment {
             if(messageText.length() > 0) {
                 message.setText("");
 
+                Log.i(TAG, "onClick user: " + user);
+
                 ChatMessage chatMessage = new ChatMessage();
                 chatMessage.setDate(new Date());
                 chatMessage.setMessage(messageText);
@@ -275,7 +303,7 @@ public class ChatRoomFragment extends Fragment {
     };
 
     private void saveChatMessage(ChatMessage chatMessage) {
-        SendGcmChatTask sendGcmChatTask = new SendGcmChatTask(getActivity(), chatRoom);
+        SendGcmChatTask sendGcmChatTask = new SendGcmChatTask(getActivity(), chatRoom, chatMessage.getUser());
         sendGcmChatTask.execute(chatMessage);
 
         chatRoomServices.saveChatMessage(chatRoom, chatMessage);
@@ -327,6 +355,17 @@ public class ChatRoomFragment extends Fragment {
             }
         });
     }
+
+    private OnChatRoomLoadedListener onLoadChatRoomByKeyListener = new OnChatRoomLoadedListener() {
+        @Override
+        public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage) {
+            ChatRoomFragment.this.chatRoom = chatRoom;
+            ChatRoomFragment.this.chatMembers = chatMembers;
+
+            loadData();
+            updateViewForChatRoom();
+        }
+    };
 
     public interface ChatRoomListener {
         void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers);
