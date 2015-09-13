@@ -7,7 +7,7 @@ import android.support.annotation.StringRes;
 import com.google.gson.annotations.Expose;
 
 import java.util.Date;
-import java.util.Map;
+import java.util.HashMap;
 
 import in.ureport.R;
 
@@ -47,7 +47,7 @@ public class User implements Parcelable {
 
     private String pushIdentity;
 
-    private Map<String, Boolean> chatRooms;
+    private HashMap<String, Boolean> chatRooms;
 
     public String getKey() {
         return key;
@@ -161,11 +161,11 @@ public class User implements Parcelable {
         this.pushIdentity = pushIdentity;
     }
 
-    public Map<String, Boolean> getChatRooms() {
+    public HashMap<String, Boolean> getChatRooms() {
         return chatRooms;
     }
 
-    public void setChatRooms(Map<String, Boolean> chatRooms) {
+    public void setChatRooms(HashMap<String, Boolean> chatRooms) {
         this.chatRooms = chatRooms;
     }
 
@@ -240,6 +240,7 @@ public class User implements Parcelable {
         dest.writeValue(this.stories);
         dest.writeValue(this.polls);
         dest.writeString(this.pushIdentity);
+        dest.writeSerializable(this.chatRooms);
     }
 
     public User() {
@@ -263,6 +264,7 @@ public class User implements Parcelable {
         this.stories = (Integer) in.readValue(Integer.class.getClassLoader());
         this.polls = (Integer) in.readValue(Integer.class.getClassLoader());
         this.pushIdentity = in.readString();
+        this.chatRooms = (HashMap<String, Boolean>) in.readSerializable();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

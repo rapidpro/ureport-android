@@ -227,11 +227,13 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
+        Log.i(TAG, "onCreateLoader OnCreateLoader: " + id);
         switch(id) {
             case LOAD_COUNTRY_LIST_ID:
                 return new CountryListLoader(getActivity());
             case LOAD_STATES_ID:
                 Locale locale = (Locale) args.getSerializable(EXTRA_LOCALE_LOADER);
+                Log.i(TAG, "onCreateLoader loadStatesId: " + locale);
                 return new StatesLoader(getActivity(), locale);
         }
         return null;
@@ -300,6 +302,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             UserLocale userLocale = (UserLocale)country.getSelectedItem();
+            Log.i(TAG, "onItemSelected onCountrySelected: " + userLocale);
             resetStateSpinner();
             loadStatesForUserLocale(userLocale);
         }
@@ -319,7 +322,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         Bundle bundle = new Bundle();
         bundle.putSerializable(EXTRA_LOCALE_LOADER, userLocale.getLocale());
 
-        getLoaderManager().initLoader(LOAD_STATES_ID, bundle, this).forceLoad();
+        getLoaderManager().restartLoader(LOAD_STATES_ID, bundle, this).forceLoad();
     }
 
     private View.OnClickListener onBirthdayClickListener = new View.OnClickListener() {

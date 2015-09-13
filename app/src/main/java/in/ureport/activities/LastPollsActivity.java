@@ -3,6 +3,7 @@ package in.ureport.activities;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import in.ureport.R;
 import in.ureport.fragments.PollsFragment;
@@ -25,6 +26,15 @@ public class LastPollsActivity extends AppCompatActivity {
                     .add(R.id.content, pollsFragment)
                     .commit();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case android.R.id.home:
+                finish();
+        }
+        return true;
     }
 
     private void setupToolbar() {

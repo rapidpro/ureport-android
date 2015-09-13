@@ -9,6 +9,7 @@ import com.firebase.client.ValueEventListener;
 import com.google.android.gms.gcm.GcmPubSub;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -52,12 +53,12 @@ public class UserServices {
     public void loadByName(String nickname, final OnLoadAllUsersListener onLoadAllUsersListener) {
         FirebaseManager.getReference().child(path).orderByChild("nickname").equalTo(nickname)
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                super.onDataChange(dataSnapshot);
-                handleDataResponse(dataSnapshot, onLoadAllUsersListener);
-            }
-        });
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        super.onDataChange(dataSnapshot);
+                        handleDataResponse(dataSnapshot, onLoadAllUsersListener);
+                    }
+                });
     }
 
     private void handleDataResponse(DataSnapshot dataSnapshot, OnLoadAllUsersListener onLoadAllUsersListener) {
@@ -88,6 +89,14 @@ public class UserServices {
             public void onCancelled(FirebaseError firebaseError) {
             }
         });
+    }
+
+    public void editUser(User user, Firebase.CompletionListener listener) {
+        Firebase userReference = FirebaseManager.getReference().child(path).child(user.getKey());
+        userReference.child("nickname").setValue(user.getNickname());
+        userReference.child("birthday").setValue(user.getBirthday());
+        userReference.child("state").setValue(user.getState());
+        userReference.child("gender").setValue(user.getGender(), listener);
     }
 
     public void saveUser(User user, Firebase.CompletionListener listener) {

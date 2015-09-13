@@ -138,7 +138,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
                 user.setGender(gender.getGender());
 
                 progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_wait), true, false);
-                userServices.saveUser(user, onUserUpdatedListener);
+                userServices.editUser(user, onUserUpdatedListener);
             }
         }
     };

@@ -57,6 +57,9 @@
 -dontwarn org.shaded.apache.**
 -dontwarn org.ietf.jgss.**
 
+#Preference Support Library
+-keep class android.support.v7.preference.** { *; }
+
 #Retrofit
 
 -keepattributes Signature
