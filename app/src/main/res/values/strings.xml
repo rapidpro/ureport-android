@@ -235,6 +235,7 @@
     <string name="label_invite_contacts">Invite contacts</string>
     <string name="title_poll_question_no_login">You need to login to answer polls</string>
     <string name="label_last_polls">Previous poll results</string>
+    <string name="choice_result_value">%1$s %%</string>
 
     <plurals name="notification_chat_message">
         <item quantity="one">%1$s sent %2$s new message to you</item>

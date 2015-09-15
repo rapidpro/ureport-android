@@ -15,7 +15,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
         android:layout_centerVertical="true"
-        tools:src="@drawable/user8" />
+        tools:src="@drawable/face" />
 
     <TextView
         android:id="@+id/name"

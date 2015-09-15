@@ -1,6 +1,7 @@
 package in.ureport.views.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -11,13 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.models.Poll;
+import in.ureport.models.PollCategory;
 import in.ureport.models.rapidpro.Message;
 
 /**
@@ -29,17 +31,19 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_PAST_POLL = 1;
 
     private List<Poll> polls;
-    private Message lastMessage;
+    private String[] categoryColors;
 
-    private DateFormat dateFormatter;
+    private Map<PollCategory, Integer> colorMap = new HashMap<>();
+
+    private Message lastMessage;
 
     private PollParticipationListener pollParticipationListener;
 
     private boolean changed = false;
 
-    public PollAdapter(List<Poll> polls) {
+    public PollAdapter(List<Poll> polls, String [] categoryColors) {
         this.polls = polls;
-        dateFormatter = SimpleDateFormat.getDateInstance(DateFormat.MEDIUM);
+        this.categoryColors = categoryColors;
         setHasStableIds(true);
     }
 
@@ -105,17 +109,17 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private class PastPollViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView info;
-        private final TextView description;
-        private final View infoBackground;
+        private final TextView title;
         private final TextView category;
+        private final TextView info;
+        private final View infoBackground;
 
         public PastPollViewHolder(View itemView) {
             super(itemView);
 
             info = (TextView) itemView.findViewById(R.id.info);
             category = (TextView) itemView.findViewById(R.id.category);
-            description = (TextView) itemView.findViewById(R.id.description);
+            title = (TextView) itemView.findViewById(R.id.description);
             infoBackground = itemView.findViewById(R.id.infoBackground);
 
             Button results = (Button) itemView.findViewById(R.id.results);
@@ -123,10 +127,29 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         private void bindView(Poll poll) {
+            title.setText(poll.getTitle());
             category.setText(poll.getCategory().getName());
-            infoBackground.setBackgroundResource(poll.getCategory().getColor());
-            description.setText(poll.getDescription());
-            info.setText(dateFormatter.format(poll.getExpirationDate()));
+
+            infoBackground.setBackgroundColor(getColorByCategory(poll.getCategory()));
+            bindInfo(poll);
+        }
+
+        private void bindInfo(Poll poll) {
+            String expirationDate = poll.getExpiration_date();
+            info.setText(expirationDate != null ? expirationDate.toLowerCase() : "");
+        }
+
+        private int getColorByCategory(PollCategory pollCategory) {
+            Integer categoryColor = colorMap.get(pollCategory);
+            if(categoryColor != null) {
+                return categoryColor;
+            } else {
+                int colorIndex = (getLayoutPosition() % categoryColors.length);
+                int color = Color.parseColor(categoryColors[colorIndex]);
+                colorMap.put(pollCategory, color);
+
+                return color;
+            }
         }
 
         private View.OnClickListener onSeeResultsClickListener = new View.OnClickListener() {

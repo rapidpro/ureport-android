@@ -12,10 +12,11 @@
 
         <include layout="@layout/view_poll_results_card_header"/>
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/choicesList"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             tools:src="@drawable/rate_gender_example"
             style="@style/AppTheme.CardItemPadding"/>
 

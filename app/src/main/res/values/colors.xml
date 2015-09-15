@@ -21,4 +21,17 @@
     <color name="confirm_info_primary_color">#01d1db</color>
     <color name="confirm_info_primary_color_dark">#00bbc2</color>
 
+    <string-array name="poll_colors">
+        <item>#78c95d</item>
+        <item>#b08f6d</item>
+        <item>#db3d38</item>
+        <item>#9896a3</item>
+        <item>#9adddd</item>
+        <item>#f7c052</item>
+        <item>#134e82</item>
+        <item>#93a8ce</item>
+        <item>#f5766e</item>
+        <item>#f6caca</item>
+    </string-array>
+
 </resources>

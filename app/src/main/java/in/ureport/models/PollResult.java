@@ -3,50 +3,73 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Date;
-
 /**
  * Created by johncordeiro on 18/07/15.
  */
 public abstract class PollResult implements Parcelable {
 
-    private PollQuestion question;
-
-    private Date date;
-
-    private int responded;
-
-    private int polled;
-
-    public PollQuestion getQuestion() {
-        return question;
+    public enum Type {
+        Choices,
+        Keywords
     }
 
-    public void setQuestion(PollQuestion question) {
-        this.question = question;
+    private Integer id;
+
+    private String date;
+
+    private String responded;
+
+    private String polled;
+
+    private String title;
+
+    private Type type;
+
+    public String getTitle() {
+        return title;
     }
 
-    public Date getDate() {
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public int getResponded() {
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public String getResponded() {
         return responded;
     }
 
-    public void setResponded(int responded) {
+    public void setResponded(String responded) {
         this.responded = responded;
     }
 
-    public int getPolled() {
+    public String getPolled() {
         return polled;
     }
 
-    public void setPolled(int polled) {
+    public void setPolled(String polled) {
         this.polled = polled;
     }
 
@@ -57,21 +80,24 @@ public abstract class PollResult implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.question, 0);
-        dest.writeLong(date != null ? date.getTime() : -1);
-        dest.writeInt(this.responded);
-        dest.writeInt(this.polled);
+        dest.writeValue(this.id);
+        dest.writeString(this.date);
+        dest.writeString(this.responded);
+        dest.writeString(this.polled);
+        dest.writeString(this.title);
+        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
     }
 
     public PollResult() {
     }
 
     protected PollResult(Parcel in) {
-        this.question = in.readParcelable(PollQuestion.class.getClassLoader());
-        long tmpDate = in.readLong();
-        this.date = tmpDate == -1 ? null : new Date(tmpDate);
-        this.responded = in.readInt();
-        this.polled = in.readInt();
+        this.id = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.date = in.readString();
+        this.responded = in.readString();
+        this.polled = in.readString();
+        this.title = in.readString();
+        int tmpType = in.readInt();
+        this.type = tmpType == -1 ? null : PollResult.Type.values()[tmpType];
     }
-
 }

@@ -4,37 +4,40 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
+import com.firebase.client.DataSnapshot;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.activities.AnswerPollActivity;
 import in.ureport.activities.PollResultsActivity;
-import in.ureport.loader.PollsLoader;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.models.Poll;
 import in.ureport.models.User;
+import in.ureport.network.PollServices;
 import in.ureport.views.adapters.PollAdapter;
 
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class PollsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<Poll>>, PollAdapter.PollParticipationListener {
+public class PollsFragment extends Fragment implements PollAdapter.PollParticipationListener {
 
+    private static final String TAG = "PollsFragment";
     private static final String EXTRA_USER = "user";
 
-    private static final int LOADER_ID_POLLS = 20;
-
     private RecyclerView pollsList;
+    private ProgressBar progressBar;
 
-    private User user;
-    private boolean publicType = true;
+    private PollServices pollServices;
 
     public static PollsFragment newInstance(User user) {
         PollsFragment pollsFragment = new PollsFragment();
@@ -46,16 +49,6 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
         return pollsFragment;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle extras = getArguments();
-        if(extras != null && extras.containsKey(EXTRA_USER)) {
-            user = extras.getParcelable(EXTRA_USER);
-            publicType = false;
-        }
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,38 +58,43 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupObjects();
         setupView(view);
+        loadData();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getLoaderManager().initLoader(LOADER_ID_POLLS, null, this).forceLoad();
+    private void loadData() {
+        pollServices.getPolls(onPollsLoadedListener);
+    }
+
+    private void setupObjects() {
+        pollServices = new PollServices();
     }
 
     private void setupView(View view) {
         pollsList = (RecyclerView) view.findViewById(R.id.pollsList);
         pollsList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
     }
 
-    @Override
-    public Loader<List<Poll>> onCreateLoader(int id, Bundle args) {
-        if(publicType) {
-            return new PollsLoader(getActivity());
-        } else {
-            return new PollsLoader(getActivity(), user);
-        }
-    }
+    private void setupPolls(List<Poll> polls) {
+        String [] pollColors = getResources().getStringArray(R.array.poll_colors);
 
-    @Override
-    public void onLoadFinished(Loader<List<Poll>> loader, List<Poll> data) {
-        PollAdapter pollsAdapter = new PollAdapter(data);
-        pollsAdapter.setPollParticipationListener(this);
+        PollAdapter pollsAdapter = new PollAdapter(polls, pollColors);
+        pollsAdapter.setPollParticipationListener(PollsFragment.this);
         pollsList.setAdapter(pollsAdapter);
     }
 
-    @Override
-    public void onLoaderReset(Loader<List<Poll>> loader) {}
+    private void addPollIfPossible(List<Poll> polls, DataSnapshot snapshot) {
+        try {
+            Poll poll = snapshot.getValue(Poll.class);
+            poll.setKey(snapshot.getKey());
+            polls.add(poll);
+        } catch(Exception exception) {
+            Log.e(TAG, "onDataChange ", exception);
+        }
+    }
 
     @Override
     public void onPollRespond(String message) {}
@@ -106,6 +104,24 @@ public class PollsFragment extends Fragment implements LoaderManager.LoaderCallb
         Intent pollResultsIntent = new Intent(getActivity(), PollResultsActivity.class);
         pollResultsIntent.putExtra(AnswerPollActivity.EXTRA_POLL, poll);
         startActivity(pollResultsIntent);
+    }
+
+    private ValueEventListenerAdapter onPollsLoadedListener = new ValueEventListenerAdapter() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            super.onDataChange(dataSnapshot);
+            updateViewForData();
+
+            List<Poll> polls = new ArrayList<>();
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                addPollIfPossible(polls, snapshot);
+            }
+            setupPolls(polls);
+        }
+    };
+
+    private void updateViewForData() {
+        progressBar.setVisibility(View.GONE);
     }
 
 }

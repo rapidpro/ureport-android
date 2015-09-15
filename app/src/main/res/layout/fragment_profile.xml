@@ -33,7 +33,7 @@
                 android:layout_centerHorizontal="true"
                 app:border_width="3dp"
                 app:border_color="#bfff"
-                tools:src="@drawable/user8" />
+                tools:src="@drawable/face" />
 
             <TextView
                 android:id="@+id/name"

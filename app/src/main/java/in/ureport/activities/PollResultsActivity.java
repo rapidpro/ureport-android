@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import in.ureport.R;
-import in.ureport.fragments.AnswerPollFragment;
 import in.ureport.fragments.PollAllResultsFragment;
 import in.ureport.fragments.PollRegionResultsFragment;
 import in.ureport.managers.CountryProgramManager;

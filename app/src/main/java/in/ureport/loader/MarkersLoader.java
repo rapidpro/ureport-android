@@ -6,8 +6,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.ilhasoft.support.db.business.AbstractBusiness;
-import br.com.ilhasoft.support.db.repository.AbstractRepository;
 import in.ureport.R;
 import in.ureport.models.Marker;
 

@@ -12,9 +12,7 @@ public class PollCategory implements Parcelable {
 
     private String name;
 
-    private @DrawableRes int icon;
-
-    private @ColorRes int color;
+    private String image_url;
 
     public String getName() {
         return name;
@@ -24,20 +22,27 @@ public class PollCategory implements Parcelable {
         this.name = name;
     }
 
-    public int getIcon() {
-        return icon;
+    public String getImage_url() {
+        return image_url;
     }
 
-    public void setIcon(int icon) {
-        this.icon = icon;
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
     }
 
-    public int getColor() {
-        return color;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PollCategory that = (PollCategory) o;
+        return name.equals(that.name);
+
     }
 
-    public void setColor(int color) {
-        this.color = color;
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 
     @Override
@@ -48,8 +53,7 @@ public class PollCategory implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
-        dest.writeInt(this.icon);
-        dest.writeInt(this.color);
+        dest.writeString(this.image_url);
     }
 
     public PollCategory() {
@@ -57,8 +61,7 @@ public class PollCategory implements Parcelable {
 
     protected PollCategory(Parcel in) {
         this.name = in.readString();
-        this.icon = in.readInt();
-        this.color = in.readInt();
+        this.image_url = in.readString();
     }
 
     public static final Creator<PollCategory> CREATOR = new Creator<PollCategory>() {

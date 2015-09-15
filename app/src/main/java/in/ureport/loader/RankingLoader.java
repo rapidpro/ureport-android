@@ -19,7 +19,7 @@ public class RankingLoader extends AsyncTaskLoader<List<User>> {
 
     @Override
     public List<User> loadInBackground() {
-        return UserManager.getFakeUsers(getContext());
+        return null;
     }
 
 }

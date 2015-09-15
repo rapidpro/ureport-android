@@ -70,7 +70,8 @@ public class PollRegionResultsFragment extends Fragment {
         RecyclerView resultsList = (RecyclerView) view.findViewById(R.id.resultsList);
         resultsList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        PollResultsAdapter pollResultsAdapter = new PollResultsAdapter(pollResult);
+        PollResultsAdapter pollResultsAdapter = new PollResultsAdapter(pollResult
+                , getResources().getStringArray(R.array.poll_colors));
         pollResultsAdapter.setShowResultsByRegion(false);
         resultsList.setAdapter(pollResultsAdapter);
     }

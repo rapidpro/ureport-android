@@ -78,7 +78,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_centerVertical="true"
-                        tools:src="@drawable/user8" />
+                        tools:src="@drawable/face" />
 
                     <TextView
                         android:id="@+id/author"

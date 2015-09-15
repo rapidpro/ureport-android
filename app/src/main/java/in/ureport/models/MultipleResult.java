@@ -1,21 +1,22 @@
 package in.ureport.models;
 
 import android.os.Parcel;
-import android.support.annotation.DrawableRes;
+
+import java.util.List;
 
 /**
  * Created by johncordeiro on 18/07/15.
  */
 public class MultipleResult extends PollResult {
 
-    private @DrawableRes int image;
+    private List<ItemChoice> results;
 
-    public int getImage() {
-        return image;
+    public List<ItemChoice> getResults() {
+        return results;
     }
 
-    public void setImage(int image) {
-        this.image = image;
+    public void setResults(List<ItemChoice> results) {
+        this.results = results;
     }
 
     @Override
@@ -26,15 +27,16 @@ public class MultipleResult extends PollResult {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeInt(this.image);
+        dest.writeTypedList(results);
     }
 
     public MultipleResult() {
+        setType(Type.Choices);
     }
 
     protected MultipleResult(Parcel in) {
         super(in);
-        this.image = in.readInt();
+        this.results = in.createTypedArrayList(ItemChoice.CREATOR);
     }
 
     public static final Creator<MultipleResult> CREATOR = new Creator<MultipleResult>() {

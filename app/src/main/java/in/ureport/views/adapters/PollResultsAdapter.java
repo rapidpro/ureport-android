@@ -1,23 +1,23 @@
 package in.ureport.views.adapters;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.helpers.HashtagBubble;
+import in.ureport.helpers.WrapLinearLayoutManager;
+import in.ureport.models.ItemKeyword;
 import in.ureport.models.MultipleResult;
 import in.ureport.models.PollResult;
-import in.ureport.models.WordsResult;
+import in.ureport.models.KeywordsResult;
 
 /**
  * Created by johncordeiro on 18/07/15.
@@ -28,26 +28,23 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int TYPE_WORDS_RESULT = 1;
 
     private List<PollResult> results;
-
-    private DateFormat dateFormatter;
-    private NumberFormat numberFormat;
+    private String [] colors;
 
     private PollResultsListener pollResultsListener;
 
-    private boolean showResultsByRegion = true;
+    private boolean showResultsByRegion = false;
 
-    private PollResultsAdapter() {
-        dateFormatter = DateFormat.getDateInstance(DateFormat.LONG);
-        numberFormat = NumberFormat.getIntegerInstance();
+    private PollResultsAdapter(String [] colors) {
+        this.colors = colors;
     }
 
-    public PollResultsAdapter(List<PollResult> results) {
-        this();
+    public PollResultsAdapter(List<PollResult> results, String [] colors) {
+        this(colors);
         this.results = results;
     }
 
-    public PollResultsAdapter(PollResult result) {
-        this();
+    public PollResultsAdapter(PollResult result, String [] colors) {
+        this(colors);
         this.results = new ArrayList<>();
         this.results.add(result);
     }
@@ -70,7 +67,7 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public int getItemViewType(int position) {
         PollResult result = results.get(position);
-        if(result instanceof WordsResult) {
+        if(result instanceof KeywordsResult) {
             return TYPE_WORDS_RESULT;
         } else {
             return TYPE_MULTIPLE_RESULT;
@@ -100,11 +97,11 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
 
         protected void bindView(PollResult pollResult) {
-            question.setText(pollResult.getQuestion().getQuestion());
-            date.setText(dateFormatter.format(pollResult.getDate()));
+            question.setText(pollResult.getTitle());
+            date.setText(pollResult.getDate());
 
             String infoText = itemView.getContext().getString(R.string.polls_responded_info
-                    , numberFormat.format(pollResult.getResponded()), numberFormat.format(pollResult.getPolled()));
+                    , pollResult.getResponded(), pollResult.getPolled());
             info.setText(infoText);
         }
 
@@ -118,45 +115,44 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private class MultipleResultViewHolder extends ResultViewHolder {
-        private final ImageView image;
+
+        private final RecyclerView choicesList;
 
         public MultipleResultViewHolder(View itemView) {
             super(itemView);
-            image = (ImageView) itemView.findViewById(R.id.image);
+            choicesList = (RecyclerView) itemView.findViewById(R.id.choicesList);
+            choicesList.setLayoutManager(new WrapLinearLayoutManager(itemView.getContext()
+                    , LinearLayoutManager.VERTICAL, false));
         }
 
         @Override
         protected void bindView(PollResult pollResult) {
             super.bindView(pollResult);
-            image.setImageResource(((MultipleResult) pollResult).getImage());
+
+            MultipleResult multipleResult = (MultipleResult) pollResult;
+            MultipleResultsAdapter adapter = new MultipleResultsAdapter(multipleResult.getResults(), colors);
+            choicesList.setAdapter(adapter);
         }
     }
 
     private class WordsResultViewHolder extends ResultViewHolder {
-        private static final String WORD_TEMPLATE = "%1$s. %2$s";
-        private final LinearLayout wordsList;
+
+        private final HashtagBubble<ItemKeyword> hashtagBubble;
 
         public WordsResultViewHolder(View itemView) {
             super(itemView);
-            wordsList = (LinearLayout) itemView.findViewById(R.id.wordsList);
+            TextView wordsList = (TextView) itemView.findViewById(R.id.wordsList);
+            hashtagBubble = new HashtagBubble<>(wordsList);
         }
 
         @Override
         protected void bindView(PollResult pollResult) {
             super.bindView(pollResult);
-            setupWordsList((WordsResult) pollResult);
+            setupWordsList((KeywordsResult) pollResult);
         }
 
-        private void setupWordsList(WordsResult wordsResult) {
-            wordsList.removeAllViews();
-            for (int position = 0; position < wordsResult.getResults().size(); position++) {
-                String result = wordsResult.getResults().get(position);
-
-                TextView textView = new TextView(itemView.getContext());
-                textView.setText(String.format(WORD_TEMPLATE, position+1, result));
-
-                wordsList.addView(textView, position);
-            }
+        private void setupWordsList(KeywordsResult keywordsResult) {
+            hashtagBubble.setList(keywordsResult.getResults());
         }
     }
 
