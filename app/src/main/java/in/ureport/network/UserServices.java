@@ -19,36 +19,47 @@ import in.ureport.models.User;
 /**
  * Created by johncordeiro on 14/08/15.
  */
-public class UserServices {
+public class UserServices extends ProgramServices {
 
-    public static final String path = "user";
+    private static final String userPath = "user";
+    private static final String userModeratorPath = "user_moderator";
+
+    public void isUserCountryModerator(User user, ValueEventListener listener) {
+        getDefaultRoot().child(userModeratorPath).child(user.getKey())
+                .addListenerForSingleValueEvent(listener);
+    }
+
+    public void isUserMaster(User user, ValueEventListener listener) {
+        FirebaseManager.getReference().child(userModeratorPath).child(user.getKey())
+                .addListenerForSingleValueEvent(listener);
+    }
 
     public void updatePushIdentity(String userKey, String identityId) {
-        FirebaseManager.getReference().child(path).child(userKey)
+        FirebaseManager.getReference().child(userPath).child(userKey)
                 .child("pushIdentity").setValue(identityId);
     }
 
     public void addUserChatRoom(String userKey, String chatRoomKey) {
-        FirebaseManager.getReference().child(path)
+        FirebaseManager.getReference().child(userPath)
                 .child(userKey).child("chatRooms").child(chatRoomKey).setValue(true);
     }
 
     public void removeUserChatRoom(String userKey, String chatRoomKey) {
-        FirebaseManager.getReference().child(path)
+        FirebaseManager.getReference().child(userPath)
                 .child(userKey).child("chatRooms").child(chatRoomKey).removeValue();
     }
 
     public void addChildEventListenerForChatRooms(String key, ChildEventListener childEventListener) {
-        FirebaseManager.getReference().child(path).child(key)
+        FirebaseManager.getReference().child(userPath).child(key)
                 .child("chatRooms").addChildEventListener(childEventListener);
     }
 
     public void getUser(String key, ValueEventListener valueEventListener) {
-        FirebaseManager.getReference().child(path).child(key).addListenerForSingleValueEvent(valueEventListener);
+        FirebaseManager.getReference().child(userPath).child(key).addListenerForSingleValueEvent(valueEventListener);
     }
 
     public void loadByName(String nickname, final OnLoadAllUsersListener onLoadAllUsersListener) {
-        FirebaseManager.getReference().child(path).orderByChild("nickname").equalTo(nickname)
+        FirebaseManager.getReference().child(userPath).orderByChild("nickname").equalTo(nickname)
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -75,7 +86,7 @@ public class UserServices {
     public void loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {
         String countryCode = CountryProgramManager.getCurrentCountryProgram().getCode();
 
-        Query query = FirebaseManager.getReference().child(path).orderByChild("countryProgram").equalTo(countryCode);
+        Query query = FirebaseManager.getReference().child(userPath).orderByChild("countryProgram").equalTo(countryCode);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -89,7 +100,7 @@ public class UserServices {
     }
 
     public void editUser(User user, Firebase.CompletionListener listener) {
-        Firebase userReference = FirebaseManager.getReference().child(path).child(user.getKey());
+        Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
         userReference.child("nickname").setValue(user.getNickname());
         userReference.child("birthday").setValue(user.getBirthday());
         userReference.child("state").setValue(user.getState());
@@ -97,11 +108,11 @@ public class UserServices {
     }
 
     public void saveUser(User user, Firebase.CompletionListener listener) {
-        FirebaseManager.getReference().child(path).child(user.getKey()).setValue(user, listener);
+        FirebaseManager.getReference().child(userPath).child(user.getKey()).setValue(user, listener);
     }
 
     public void keepUserOffline(User user) {
-        FirebaseManager.getReference().child(path).child(user.getKey()).keepSynced(true);
+        FirebaseManager.getReference().child(userPath).child(user.getKey()).keepSynced(true);
     }
 
     public interface OnLoadAllUsersListener {

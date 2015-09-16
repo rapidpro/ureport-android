@@ -27,10 +27,13 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private List<Story> stories;
 
     private boolean publicType = false;
+    private boolean moderationType = false;
+
     private User user;
 
     private OnStoryViewListener onStoryViewListener;
     private OnPublishStoryListener onPublishStoryListener;
+    private StoryModerationListener storyModerationListener;
 
     public StoriesAdapter() {
         setHasStableIds(true);
@@ -45,7 +48,11 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 return new HeaderViewHolder(inflater.inflate(R.layout.item_story_header, viewGroup, false));
             default:
             case TYPE_ITEM:
-                return new ItemViewHolder(inflater.inflate(R.layout.item_story, viewGroup, false));
+                View view = inflater.inflate(R.layout.item_story, viewGroup, false);
+                if(moderationType)
+                    return new ModeratedItemViewHolder(view);
+                else
+                    return new ItemViewHolder(view);
         }
     }
 
@@ -92,15 +99,6 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.onPublishStoryListener = onPublishStoryListener;
     }
 
-    public void setStories(List<Story> stories) {
-        this.stories = stories;
-        notifyDataSetChanged();
-    }
-
-    public List<Story> getStories() {
-        return stories;
-    }
-
     public void updateStory(Story story) {
         int indexOfStory = stories.indexOf(story);
         if(indexOfStory >= 0) {
@@ -109,11 +107,24 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
+    public void removeStory(Story story) {
+        int indexOfStory = stories.indexOf(story);
+        if(indexOfStory >= 0) {
+            stories.remove(indexOfStory);
+            notifyItemRemoved(indexOfStory);
+        }
+    }
+
     public void addStory(Story story) {
         this.stories.add(0, story);
 
         int firstStoryIndex = publicType ? 1 : 0;
         notifyItemInserted(firstStoryIndex);
+    }
+
+    public void enableModerationMode(StoryModerationListener storyModerationListener) {
+        this.storyModerationListener = storyModerationListener;
+        moderationType = true;
     }
 
     public void setUser(User user) {
@@ -144,6 +155,43 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             public void onClick(View view) {
                 if (onPublishStoryListener != null)
                     onPublishStoryListener.onPublishStory();
+            }
+        };
+    }
+
+    private class ModeratedItemViewHolder extends ItemViewHolder {
+
+        public ModeratedItemViewHolder(View itemView) {
+            super(itemView);
+
+            Button readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
+            readFullStory.setVisibility(View.GONE);
+
+            View storyModeration = itemView.findViewById(R.id.storyModeration);
+            storyModeration.setVisibility(View.VISIBLE);
+
+            Button publish = (Button) itemView.findViewById(R.id.publish);
+            publish.setOnClickListener(onApproveClickListener);
+
+            Button disapprove = (Button) itemView.findViewById(R.id.disapprove);
+            disapprove.setOnClickListener(onDisapproveClickListener);
+        }
+
+        private View.OnClickListener onApproveClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (storyModerationListener != null) {
+                    storyModerationListener.onApprove(stories.get(getLayoutPosition()));
+                }
+            }
+        };
+
+        private View.OnClickListener onDisapproveClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (storyModerationListener != null) {
+                    storyModerationListener.onDisapprove(stories.get(getLayoutPosition()));
+                }
             }
         };
     }
@@ -220,6 +268,11 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     onStoryViewListener.onStoryViewClick(stories.get(getListPosition(getLayoutPosition())));
             }
         };
+    }
+
+    public interface StoryModerationListener {
+        void onApprove(Story story);
+        void onDisapprove(Story story);
     }
 
     public interface OnStoryViewListener {

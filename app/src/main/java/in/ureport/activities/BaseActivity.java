@@ -2,7 +2,6 @@ package in.ureport.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -30,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.firebase.client.AuthData;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
@@ -42,7 +40,6 @@ import java.util.Locale;
 import in.ureport.R;
 import in.ureport.loader.NotificationLoader;
 import in.ureport.managers.CountryProgramManager;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.helpers.SpinnerColorSwitcher;
@@ -58,8 +55,6 @@ import in.ureport.views.adapters.NotificationAdapter;
  * Created by johncordeiro on 7/13/15.
  */
 public abstract class BaseActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Notification>> {
-
-    private static final String URL_UNICEF_SHOP = "http://www.unicefusa.org/help/shop";
 
     private AppBarLayout appBar;
     private Toolbar toolbar;
@@ -104,6 +99,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
         menuNavigation = (NavigationView) findViewById(R.id.menuNavigation);
         menuNavigation.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
+        setupModerationMenuItem();
 
         MenuItem logoutItem = menuNavigation.getMenu().findItem(R.id.logout);
         logoutItem.setVisible(UserManager.isUserLoggedIn());
@@ -119,6 +115,12 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
         actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setupModerationMenuItem() {
+        if(UserManager.canModerate()) {
+            getMenuNavigation().getMenu().findItem(R.id.moderation).setVisible(true);
+        }
     }
 
     @Override
@@ -142,10 +144,9 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     }
 
     private void loadData() {
-        AuthData authData = FirebaseManager.getReference().getAuth();
-        if(authData != null) {
+        if(UserManager.isUserLoggedIn()) {
             UserServices userServices = new UserServices();
-            userServices.getUser(authData.getUid(), new ValueEventListener() {
+            userServices.getUser(UserManager.getUserId(), new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
@@ -297,19 +298,11 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                 case R.id.home:
                     navigationIntent = new Intent(BaseActivity.this, MainActivity.class);
                     break;
+                case R.id.moderation:
+                    navigationIntent = new Intent(BaseActivity.this, ModerationActivity.class);
+                    break;
                 case R.id.about:
                     navigationIntent = new Intent(BaseActivity.this, AboutActivity.class);
-                    startActivity(navigationIntent);
-                    return true;
-                case R.id.makeDonations:
-                    navigationIntent = new Intent(BaseActivity.this, DonationActivity.class);
-                    startActivity(navigationIntent);
-                    return true;
-                case R.id.buyMerchandising:
-                    openMerchandise(URL_UNICEF_SHOP);
-                    return true;
-                case R.id.ambassadors:
-                    navigationIntent = new Intent(BaseActivity.this, AmbassadorsActivity.class);
                     startActivity(navigationIntent);
                     return true;
                 case R.id.logout:
@@ -328,13 +321,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         }
     };
 
-    private void openMerchandise(String url) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        startActivity(browserIntent);
-    }
-
     private void restartActivity() {
-        Intent mainIntent = new Intent(BaseActivity.this, MainActivity.class);
+        Intent mainIntent = new Intent(BaseActivity.this, getClass());
         startActivity(mainIntent);
         finish();
     }

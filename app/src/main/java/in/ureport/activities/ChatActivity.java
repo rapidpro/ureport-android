@@ -31,7 +31,6 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
     private static final int PAGE_POSITION_MY_CHATS = 1;
     private static final int PAGE_POSITION_GROUPS = 0;
 
-    public static final int REQUEST_CODE_CHAT_NOTIFICATION = 100;
     public static final int REQUEST_CODE_CHAT_CREATION = 200;
 
     private ChatRoomServices chatRoomServices;

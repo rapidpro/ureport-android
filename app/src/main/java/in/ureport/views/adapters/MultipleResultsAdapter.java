@@ -69,17 +69,19 @@ public class MultipleResultsAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         private void bindBar(ItemChoice itemChoice) {
+            ViewGroup.LayoutParams params = bar.getLayoutParams();
+            params.width = getBarWidth(itemChoice);
+
+            bar.setLayoutParams(params);
+            bar.setBackgroundColor(getColor());
+        }
+
+        private int getBarWidth(ItemChoice itemChoice) {
             UnitConverter unitConverter = new UnitConverter(itemView.getContext());
 
             int widthPixels = itemView.getContext().getResources().getDisplayMetrics().widthPixels
                     - (int)unitConverter.convertDpToPx(SCREEN_WIDTH_OFFSET);
-            int barWidth = (widthPixels * itemChoice.getValue())/100;
-
-            ViewGroup.LayoutParams params = bar.getLayoutParams();
-            params.width = barWidth;
-
-            bar.setLayoutParams(params);
-            bar.setBackgroundColor(getColor());
+            return itemChoice.getValue() > 0 ? (widthPixels * itemChoice.getValue())/100 : 1;
         }
 
         private int getColor() {

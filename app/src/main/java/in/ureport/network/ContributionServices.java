@@ -16,20 +16,21 @@ import in.ureport.models.User;
  */
 public class ContributionServices extends ProgramServices {
 
-    public static final String path = "contribution";
+    public static final String contributionPath = "contribution";
+    public static final String contributionDisapprovedPath = "contribution_disapproved";
 
     public void saveContribution(Story story, Contribution contribution, Firebase.CompletionListener listener) {
         User user = new User();
         user.setKey(contribution.getAuthor().getKey());
         contribution.setAuthor(user);
 
-        Firebase object = getDefaultRoot().child(path).child(story.getKey()).push();
+        Firebase object = getDefaultRoot().child(contributionPath).child(story.getKey()).push();
         object.setValue(contribution, listener);
         contribution.setKey(object.getKey());
     }
 
     public void getContributionCount(Story story, final OnStoryContributionCountListener listener) {
-        getDefaultRoot().child(path).child(story.getKey()).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+        getDefaultRoot().child(contributionPath).child(story.getKey()).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
@@ -37,9 +38,15 @@ public class ContributionServices extends ProgramServices {
             }
         });
     }
+    
+    public void removeContribution(Story story, Contribution contribution, Firebase.CompletionListener listener) {
+        getDefaultRoot().child(contributionPath).child(story.getKey()).child(contribution.getKey()).removeValue();
+        getDefaultRoot().child(contributionDisapprovedPath).child(story.getKey())
+                .child(contribution.getKey()).setValue(contribution, listener);
+    }
 
     public void addChildEventListener(Story story, ChildEventListener childEventListener) {
-        getDefaultRoot().child(path).child(story.getKey()).addChildEventListener(childEventListener);
+        getDefaultRoot().child(contributionPath).child(story.getKey()).addChildEventListener(childEventListener);
     }
     
 }

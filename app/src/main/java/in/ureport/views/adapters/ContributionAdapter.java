@@ -1,7 +1,10 @@
 package in.ureport.views.adapters;
 
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,6 +16,7 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.DateFormatter;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
 
 /**
@@ -21,6 +25,8 @@ import in.ureport.models.Contribution;
 public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Contribution> contributions;
+
+    private OnContributionRemoveListener onContributionRemoveListener;
 
     public ContributionAdapter() {
         setHasStableIds(true);
@@ -59,12 +65,25 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    public void removeContribution(Contribution contribution) {
+        int indexOfContribution = contributions.indexOf(contribution);
+        if(indexOfContribution >= 0) {
+            contributions.remove(indexOfContribution);
+            notifyDataSetChanged();
+        }
+    }
+
+    public void setOnContributionRemoveListener(OnContributionRemoveListener onContributionRemoveListener) {
+        this.onContributionRemoveListener = onContributionRemoveListener;
+    }
+
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView contribution;
         private final TextView author;
         private final ImageView picture;
         private final TextView date;
+        private PopupMenu popupMenu;
 
         private final DateFormatter dateFormatter;
 
@@ -77,6 +96,20 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             contribution = (TextView) itemView.findViewById(R.id.contribution);
             author = (TextView) itemView.findViewById(R.id.author);
             date = (TextView) itemView.findViewById(R.id.date);
+
+            setupViewForModeration(itemView);
+        }
+
+        private void setupViewForModeration(View itemView) {
+            if(UserManager.canModerate()) {
+                ImageView moderationOptions = (ImageView) itemView.findViewById(R.id.moderationOptions);
+                moderationOptions.setVisibility(View.VISIBLE);
+                moderationOptions.setOnClickListener(onModerationOptionsClickListener);
+
+                popupMenu = new PopupMenu(itemView.getContext(), moderationOptions, Gravity.CENTER);
+                popupMenu.inflate(R.menu.menu_contribution_moderator);
+                popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
+            }
         }
 
         private void bindView(Contribution contribution) {
@@ -88,5 +121,28 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     , itemView.getContext().getString(R.string.date_now));
             this.date.setText(timeElapsed.toLowerCase());
         }
+
+        private PopupMenu.OnMenuItemClickListener onMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.removeContribution:
+                        if(onContributionRemoveListener != null)
+                            onContributionRemoveListener.onContributionRemove(contributions.get(getLayoutPosition()));
+                }
+                return true;
+            }
+        };
+
+        private View.OnClickListener onModerationOptionsClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupMenu.show();
+            }
+        };
+    }
+
+    public interface OnContributionRemoveListener {
+        void onContributionRemove(Contribution contribution);
     }
 }

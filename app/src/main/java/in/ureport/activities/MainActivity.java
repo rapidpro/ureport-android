@@ -38,16 +38,14 @@ import in.ureport.views.adapters.StoriesAdapter;
 public class MainActivity extends BaseActivity implements FloatingActionButtonListener
         , StoriesAdapter.OnPublishStoryListener, OnSeeOpenGroupsListener, OnSeeLastPollsListener {
 
-    private static final int POSITION_STORIES_FRAGMENT = 0;
-    private static final int POSITION_CHAT_FRAGMENT = 2;
-
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     private static final int REQUEST_CODE_CHAT_CREATION = 200;
     public static final int REQUEST_CODE_CHAT_NOTIFICATION = 300;
 
-    public static final String OPEN_CHAT_NOTIFICATION_ACTION = "in.ureport.ChatNotification";
+    private static final int POSITION_STORIES_FRAGMENT = 0;
+    private static final int POSITION_CHAT_FRAGMENT = 2;
 
-    private static final String TAG = "MainActivity";
+    public static final String ACTION_OPEN_CHAT_NOTIFICATION = "in.ureport.ChatNotification";
     public static final String EXTRA_FORCED_LOGIN = "forcedLogin";
 
     private TextView notificationsAlert;
@@ -157,26 +155,29 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         storiesListFragment.setFloatingActionButtonListener(this);
         storiesListFragment.setOnPublishStoryListener(this);
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
+
         NavigationItem pollsItem = getPollsNavigationItem();
         NavigationItem chatItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.main_chat));
 
+        NavigationItem [] navigationItems = {storiesItem, pollsItem, chatItem};
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager()
-                , storiesItem, pollsItem, chatItem);
+                , navigationItems);
 
         pager.setAdapter(adapter);
+        pager.setOffscreenPageLimit(navigationItems.length);
         selectChatIfNeeded();
     }
 
     private void selectChatIfNeeded() {
         if(getIntent().getAction() != null
-        && getIntent().getAction().equals(OPEN_CHAT_NOTIFICATION_ACTION)) {
+        && getIntent().getAction().equals(ACTION_OPEN_CHAT_NOTIFICATION)) {
             pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
         }
     }
 
     @NonNull
     private NavigationItem getPollsNavigationItem() {
-        if(UserManager.isCountryProgramEnabled()) {
+        if(UserManager.isUserCountryProgramEnabled()) {
             return new NavigationItem(new PollQuestionFragment(), getString(R.string.main_polls));
         } else {
             return new NavigationItem(new PollsFragment(), getString(R.string.main_polls));

@@ -12,10 +12,11 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.fragments.CreateStoryFragment;
 import in.ureport.fragments.MarkersFragment;
-import in.ureport.listener.OnCloseGameficationListener;
+import in.ureport.listener.OnCloseDialogListener;
 import in.ureport.listener.SelectionResultListener;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.GameficationManager;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.Marker;
 import in.ureport.models.Story;
 
@@ -90,12 +91,18 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
 
     @Override
     public void onStoryCreated(Story story) {
-        showPointsEarningAndClose();
+        UserViewManager userViewManager = new UserViewManager(this);
+        userViewManager.showStoryPublishingWarning(new OnCloseDialogListener() {
+            @Override
+            public void onCloseGamefication() {
+                showPointsEarningAndClose();
+            }
+        });
     }
 
     private void showPointsEarningAndClose() {
         GameficationManager gameficationManager = new GameficationManager(this);
-        gameficationManager.showGameficationAlert(new OnCloseGameficationListener() {
+        gameficationManager.showGameficationAlert(new OnCloseDialogListener() {
             @Override
             public void onCloseGamefication() {
                 setResult(Activity.RESULT_OK);

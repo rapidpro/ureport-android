@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import com.firebase.client.DataSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import in.ureport.R;
@@ -79,6 +80,7 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     }
 
     private void setupPolls(List<Poll> polls) {
+        Collections.reverse(polls);
         String [] pollColors = getResources().getStringArray(R.array.poll_colors);
 
         PollAdapter pollsAdapter = new PollAdapter(polls, pollColors);

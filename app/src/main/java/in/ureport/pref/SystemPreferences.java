@@ -13,7 +13,9 @@ public class SystemPreferences extends Preferences {
 
     private enum Fields {
         UserLoggedId,
-        CountryCode
+        CountryCode,
+        Moderator,
+        Master
     }
 
     public SystemPreferences(Context context) {
@@ -34,5 +36,21 @@ public class SystemPreferences extends Preferences {
 
     public String getCountryCode() {
         return getValue(Fields.CountryCode, "");
+    }
+
+    public void setModerator(boolean moderator) {
+        setValue(Fields.Moderator, moderator);
+    }
+
+    public boolean isModerator() {
+        return getValue(Fields.Moderator, false);
+    }
+
+    public void setMaster(boolean master) {
+        setValue(Fields.Master, master);
+    }
+
+    public boolean isMaster() {
+        return getValue(Fields.Master, false);
     }
 }

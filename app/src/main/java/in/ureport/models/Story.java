@@ -3,17 +3,13 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.activeandroid.Model;
-import com.activeandroid.annotation.Column;
-import com.activeandroid.annotation.Table;
-
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by johncordeiro on 7/14/15.
  */
-public class Story extends Model implements Parcelable {
+public class Story implements Parcelable {
 
     private String key;
 
@@ -160,4 +156,19 @@ public class Story extends Model implements Parcelable {
             return new Story[size];
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Story story = (Story) o;
+        return key.equals(story.key);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
+    }
 }

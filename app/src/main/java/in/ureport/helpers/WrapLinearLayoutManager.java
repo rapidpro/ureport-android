@@ -302,6 +302,7 @@ public class WrapLinearLayoutManager extends android.support.v7.widget.LinearLay
     }
 
     private void measureChild(RecyclerView.Recycler recycler, int position, int widthSize, int heightSize, int[] dimensions) {
+        if(position < 0) return;
         final View child = recycler.getViewForPosition(position);
 
         final RecyclerView.LayoutParams p = (RecyclerView.LayoutParams) child.getLayoutParams();

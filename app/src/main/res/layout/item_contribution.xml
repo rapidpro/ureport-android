@@ -43,8 +43,9 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:layout_toLeftOf="@+id/moderationOptions"
+        android:layout_toStartOf="@+id/moderationOptions"
+        android:layout_alignWithParentIfMissing="true"
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
         android:ellipsize="end"
@@ -52,6 +53,17 @@
         android:textSize="12sp"
         android:textColor="@android:color/black"
         tools:text="Today"/>
+
+    <ImageView
+        android:id="@+id/moderationOptions"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="14dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_more_vert_grey_600_36dp"
+        android:visibility="gone"
+        tools:visibility="visible"/>
 
     <TextView
         android:id="@+id/contribution"

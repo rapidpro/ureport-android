@@ -121,6 +121,16 @@
             android:textColor="?attr/colorPrimary"
             android:text="@string/story_item_contribute_to_story"/>
 
+        <include
+            android:id="@+id/storyModeration"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/contributors"
+            android:visibility="gone"
+            tools:visibility="visible"
+            layout="@layout/view_moderation_story" />
+
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

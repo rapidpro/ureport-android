@@ -1,8 +1,11 @@
 package in.ureport.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -45,7 +49,7 @@ import in.ureport.views.adapters.MediaAdapter;
 /**
  * Created by johncordeiro on 7/16/15.
  */
-public class StoryViewFragment extends Fragment {
+public class StoryViewFragment extends Fragment implements ContributionAdapter.OnContributionRemoveListener {
 
     private static final String EXTRA_STORY = "story";
     private static final String EXTRA_USER = "user";
@@ -158,6 +162,7 @@ public class StoryViewFragment extends Fragment {
         contributionList.setLayoutManager(new WrapLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         contributionAdapter = new ContributionAdapter();
+        contributionAdapter.setOnContributionRemoveListener(this);
         contributionList.setAdapter(contributionAdapter);
 
         RecyclerView mediaList = (RecyclerView) view.findViewById(R.id.mediaList);
@@ -247,11 +252,25 @@ public class StoryViewFragment extends Fragment {
         public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
             super.onChildAdded(dataSnapshot, previousChild);
 
-            final Contribution contribution = dataSnapshot.getValue(Contribution.class);
-            contribution.setKey(dataSnapshot.getKey());
+            Contribution contribution = getContributionFromSnapshot(dataSnapshot);
             loadUserFromContribution(contribution, onAfterLoadUserListener);
         }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            super.onChildRemoved(dataSnapshot);
+
+            Contribution contribution = getContributionFromSnapshot(dataSnapshot);
+            contributionAdapter.removeContribution(contribution);
+        }
     };
+
+    @NonNull
+    private Contribution getContributionFromSnapshot(DataSnapshot dataSnapshot) {
+        final Contribution contribution = dataSnapshot.getValue(Contribution.class);
+        contribution.setKey(dataSnapshot.getKey());
+        return contribution;
+    }
 
     private OnAfterLoadUserListener onAfterLoadUserListener = new OnAfterLoadUserListener() {
         @Override
@@ -303,6 +322,28 @@ public class StoryViewFragment extends Fragment {
             addContribution(contribution.getText().toString());
         }
     }
+
+    @Override
+    public void onContributionRemove(Contribution contribution) {
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
+                , getString(R.string.load_message_wait), true, false);
+        contributionServices.removeContribution(story, contribution, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                progressDialog.dismiss();
+                if (firebaseError == null) {
+                    displayToast(R.string.message_success_remove);
+                } else {
+                    displayToast(R.string.error_remove);
+                }
+            }
+        });
+    }
+
+    private void displayToast(@StringRes int messageId) {
+        Toast.makeText(getActivity(), messageId, Toast.LENGTH_SHORT).show();
+    }
+
     public interface OnAfterLoadUserListener {
         void onAfterLoadUser(Contribution contribution);
     }

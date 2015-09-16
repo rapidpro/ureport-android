@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import in.ureport.R;
-import in.ureport.listener.OnCloseGameficationListener;
+import in.ureport.listener.OnCloseDialogListener;
 
 /**
  * Created by johncordeiro on 7/24/15.
@@ -21,7 +21,7 @@ public class GameficationManager {
         this.context = context;
     }
 
-    public void showGameficationAlert(final OnCloseGameficationListener onCloseGameficationListener) {
+    public void showGameficationAlert(final OnCloseDialogListener onCloseDialogListener) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View customView = inflater.inflate(R.layout.view_points_earning, null);
 
@@ -30,8 +30,8 @@ public class GameficationManager {
                 .setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
                     public void onCancel(DialogInterface dialogInterface) {
-                        if(onCloseGameficationListener != null)
-                            onCloseGameficationListener.onCloseGamefication();
+                        if(onCloseDialogListener != null)
+                            onCloseDialogListener.onCloseGamefication();
                     }
                 })
                 .create();

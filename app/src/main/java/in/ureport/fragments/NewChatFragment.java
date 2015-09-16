@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -27,7 +26,6 @@ import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
 import in.ureport.listener.OnChatRoomSavedListener;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.SearchManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
@@ -86,10 +84,18 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
         setHasOptionsMenu(true);
 
         TextView createGroup = (TextView) view.findViewById(R.id.saveGroup);
-        createGroup.setOnClickListener(onCreateGroupClickListener);
+        setupCreateGroupForModerators(createGroup);
 
         ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    private void setupCreateGroupForModerators(TextView createGroup) {
+        if(UserManager.canModerate()) {
+            createGroup.setOnClickListener(onCreateGroupClickListener);
+        } else {
+            createGroup.setVisibility(View.GONE);
+        }
     }
 
     private void loadData() {

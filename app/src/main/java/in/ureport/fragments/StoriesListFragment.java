@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,16 +40,16 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     private View info;
 
     private User user;
-    private boolean publicType = true;
+    protected boolean publicType = true;
 
     private StoriesAdapter.OnPublishStoryListener onPublishStoryListener;
 
     private FloatingActionButtonListener floatingActionButtonListener;
-    private StoriesAdapter adapter;
+    protected StoriesAdapter storiesAdapter;
 
-    private StoryServices storyServices;
-    private UserServices userServices;
-    private ContributionServices contributionServices;
+    protected StoryServices storyServices;
+    protected UserServices userServices;
+    protected ContributionServices contributionServices;
 
     public static StoriesListFragment newInstance(User user) {
         StoriesListFragment storiesListFragment = new StoriesListFragment();
@@ -115,14 +116,14 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     private void setupStoriesAdapter() {
-        adapter = new StoriesAdapter();
-        adapter.setHasStableIds(true);
+        storiesAdapter = new StoriesAdapter();
+        storiesAdapter.setHasStableIds(true);
 
-        if(needsUserPublish()) adapter.setUser(user);
+        if(needsUserPublish()) storiesAdapter.setUser(user);
 
-        adapter.setOnStoryViewListener(this);
-        adapter.setOnPublishStoryListener(onPublishStoryListener);
-        storiesList.setAdapter(adapter);
+        storiesAdapter.setOnStoryViewListener(this);
+        storiesAdapter.setOnPublishStoryListener(onPublishStoryListener);
+        storiesList.setAdapter(storiesAdapter);
     }
 
     @Override
@@ -143,38 +144,55 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
     public void updateUser(User user) {
         this.user = user;
-        if(adapter != null && needsUserPublish()) adapter.setUser(user);
+        if(storiesAdapter != null && needsUserPublish()) storiesAdapter.setUser(user);
+    }
+
+    private void removeStory(Story story) {
+        storiesAdapter.removeStory(story);
     }
 
     private void addStory(Story story) {
         if(!needsUserPublish())
             info.setVisibility(story != null ? View.GONE : View.VISIBLE);
 
-        adapter.addStory(story);
+        storiesAdapter.addStory(story);
     }
 
     private void updateStory(Story story) {
-        adapter.updateStory(story);
+        storiesAdapter.updateStory(story);
     }
 
     private boolean needsUserPublish() {
         return publicType && UserManager.isUserLoggedIn() && user != null;
     }
 
-    private ChildEventListener childEventListener = new ChildEventListenerAdapter() {
+    protected ChildEventListener childEventListener = new ChildEventListenerAdapter() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String previous) {
             super.onChildAdded(dataSnapshot, previous);
             updateStoryFromSnapshot(dataSnapshot);
         }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            super.onChildRemoved(dataSnapshot);
+            Story story = getStoryFromSnapshot(dataSnapshot);
+            removeStory(story);
+        }
     };
 
     private void updateStoryFromSnapshot(DataSnapshot dataSnapshot) {
+        final Story story = getStoryFromSnapshot(dataSnapshot);
+
+        addStory(story);
+        loadStoryData(story);
+    }
+
+    @NonNull
+    private Story getStoryFromSnapshot(DataSnapshot dataSnapshot) {
         final Story story = dataSnapshot.getValue(Story.class);
         story.setKey(dataSnapshot.getKey());
-        addStory(story);
-
-        loadStoryData(story);
+        return story;
     }
 
     private void loadStoryData(final Story story) {

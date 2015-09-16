@@ -1,5 +1,6 @@
 package in.ureport.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.listener.OnUserLoadedListener;
 import in.ureport.managers.CountryProgramManager;
 
 import in.ureport.managers.UserManager;
@@ -101,8 +103,16 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onUserReady(final User user) {
-        UserManager.updateUserInfo(user);
-        startMainActivity();
+        final ProgressDialog progressDialog = ProgressDialog.show(this, null
+                , getString(R.string.load_message_wait), true, false);
+
+        UserManager.updateUserInfo(user, new OnUserLoadedListener() {
+            @Override
+            public void onUserLoaded() {
+                progressDialog.dismiss();
+                startMainActivity();
+            }
+        });
 
         Intent gcmRegisterIntent = new Intent(this, GcmRegistrationIntentService.class);
         startService(gcmRegisterIntent);

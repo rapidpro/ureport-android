@@ -11,12 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import in.ureport.R;
-import in.ureport.listener.OnCloseGameficationListener;
+import in.ureport.listener.OnCloseDialogListener;
 import in.ureport.listener.PollQuestionAnswerListener;
 import in.ureport.managers.GameficationManager;
 import in.ureport.models.Poll;
 import in.ureport.models.PollQuestion;
-import in.ureport.views.adapters.PollQuestionAdapter;
 import in.ureport.views.widgets.ContentPager;
 
 /**
@@ -84,7 +83,7 @@ public class AnswerPollFragment extends Fragment implements PollQuestionAnswerLi
 
     private void showConfirmDialog() {
         GameficationManager gameficationManager = new GameficationManager(getActivity());
-        gameficationManager.showGameficationAlert(new OnCloseGameficationListener() {
+        gameficationManager.showGameficationAlert(new OnCloseDialogListener() {
             @Override
             public void onCloseGamefication() {
                 if (answerPollListener != null)

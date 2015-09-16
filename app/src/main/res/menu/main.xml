@@ -7,6 +7,11 @@
         <item
             android:id="@+id/home"
             android:title="@string/main_menu_home"/>
+
+        <item
+            android:id="@+id/moderation"
+            android:title="@string/label_moderation"
+            android:visible="false"/>
     </group>
 
     <item android:title="@string/main_menu_group_institutional">
@@ -14,15 +19,6 @@
             <item
                 android:id="@+id/about"
                 android:title="@string/label_about_ureport"/>
-            <item
-                android:id="@+id/makeDonations"
-                android:title="@string/label_donation"/>
-            <item
-                android:id="@+id/buyMerchandising"
-                android:title="@string/main_menu_subitem_buy_goods"/>
-            <item
-                android:id="@+id/ambassadors"
-                android:title="@string/main_menu_subitem_embassadors" />
         </menu>
     </item>
 

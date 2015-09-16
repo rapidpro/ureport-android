@@ -4,16 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.firebase.client.DataSnapshot;
 
 import in.ureport.R;
 import in.ureport.activities.LoginActivity;
 import in.ureport.activities.MainActivity;
+import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.listener.OnUserLoadedListener;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
@@ -29,6 +29,8 @@ public class UserManager {
 
     private static String userId = null;
     private static String countryCode = null;
+    private static Boolean master = false;
+    private static Boolean moderator = false;
 
     private static Context context;
 
@@ -38,21 +40,21 @@ public class UserManager {
         SystemPreferences systemPreferences = new SystemPreferences(context);
         userId = systemPreferences.getUserLoggedId();
         countryCode = systemPreferences.getCountryCode();
+        master = systemPreferences.isMaster();
+        moderator = systemPreferences.isModerator();
+
+        Log.i(TAG, "master? " + master + " or moderator? " + moderator);
 
         CountryProgramManager.switchCountryProgram(UserManager.getCountryCode());
     }
 
-    public static boolean isCountryProgramEnabled() {
+    public static boolean isUserCountryProgramEnabled() {
         return getCountryCode() != null
             && getCountryCode().equals(CountryProgramManager.getCurrentCountryProgram().getCode());
     }
 
-    public static String getUserId() {
-        return userId;
-    }
-
-    public static void updateUserInfo(User user) {
-        UserServices userServices = new UserServices();
+    public static void updateUserInfo(User user, final OnUserLoadedListener listener) {
+        final UserServices userServices = new UserServices();
         userServices.keepUserOffline(user);
 
         UserManager.userId = user.getKey();
@@ -60,13 +62,73 @@ public class UserManager {
 
         CountryProgramManager.switchCountryProgram(countryCode);
 
-        SystemPreferences systemPreferences = new SystemPreferences(context);
+        final SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setCountryCode(countryCode);
         systemPreferences.setUserLoggedId(userId);
+
+        checkUserModeratorPermission(user, listener);
+    }
+
+    private static void checkUserModeratorPermission(final User user, final OnUserLoadedListener listener) {
+        final UserServices userServices = new UserServices();
+        final SystemPreferences systemPreferences = new SystemPreferences(context);
+
+        userServices.isUserMaster(user, new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+
+                UserManager.master = dataSnapshot.exists();
+                systemPreferences.setMaster(UserManager.master);
+
+                Log.i(TAG, "onDataChange master? " + master);
+
+                if (UserManager.master) {
+                    listener.onUserLoaded();
+                } else {
+                    checkUserCountryModerator(user, listener);
+                }
+            }
+        });
+    }
+
+    private static void checkUserCountryModerator(final User user, final OnUserLoadedListener listener) {
+        final UserServices userServices = new UserServices();
+        final SystemPreferences systemPreferences = new SystemPreferences(context);
+
+        userServices.isUserCountryModerator(user, new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+
+                UserManager.moderator = dataSnapshot.exists();
+                systemPreferences.setModerator(UserManager.moderator);
+
+                Log.i(TAG, "onDataChange moderator? " + moderator);
+
+                listener.onUserLoaded();
+            }
+        });
+    }
+
+    public static String getUserId() {
+        return userId;
     }
 
     public static String getCountryCode() {
         return countryCode;
+    }
+
+    public static Boolean canModerate() {
+        return isMaster() || (isModerator() && isUserCountryProgramEnabled());
+    }
+
+    private static Boolean isMaster() {
+        return master;
+    }
+
+    private static Boolean isModerator() {
+        return moderator;
     }
 
     public static boolean validateKeyAction(Context context) {

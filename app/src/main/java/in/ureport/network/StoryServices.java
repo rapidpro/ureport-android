@@ -12,24 +12,46 @@ import in.ureport.models.User;
  */
 public class StoryServices extends ProgramServices {
 
-    public static final String path = "story";
+    private static final String storyPath = "story";
+    private static final String storyModeratePath = "story_moderate";
+    private static final String storyDisapprovedPath = "story_disapproved";
 
     public void saveStory(Story story, Firebase.CompletionListener listener) {
+        cleanStory(story);
         story.setUser(UserManager.getUserId());
+        getDefaultRoot().child(storyModeratePath).push().setValue(story, listener);
+    }
 
-        getDefaultRoot().child(path).push().setValue(story, listener);
+    public void approveStory(Story story, Firebase.CompletionListener listener) {
+        cleanStory(story);
+        getDefaultRoot().child(storyModeratePath).child(story.getKey()).removeValue();
+        getDefaultRoot().child(storyPath).child(story.getKey()).setValue(story, listener);
+    }
+
+    public void disapprovedStory(Story story, Firebase.CompletionListener listener) {
+        cleanStory(story);
+        getDefaultRoot().child(storyModeratePath).child(story.getKey()).removeValue();
+        getDefaultRoot().child(storyDisapprovedPath).child(story.getKey()).setValue(story, listener);
     }
 
     public void addChildEventListenerForUser(User user, ChildEventListener childEventListener) {
-        getCountryProgram().child(user.getCountryProgram()).child(path)
+        getCountryProgram().child(user.getCountryProgram()).child(storyPath)
                 .orderByChild("user").equalTo(user.getKey()).addChildEventListener(childEventListener);
     }
 
+    public void addStoryModerateChildEventListener(ChildEventListener childEventListener) {
+        getDefaultRoot().child(storyModeratePath).addChildEventListener(childEventListener);
+    }
+
     public void addChildEventListener(ChildEventListener childEventListener) {
-        getDefaultRoot().child(path).addChildEventListener(childEventListener);
+        getDefaultRoot().child(storyPath).addChildEventListener(childEventListener);
     }
 
     public void removeChildEventListener(ChildEventListener childEventListener) {
-        getDefaultRoot().child(path).removeEventListener(childEventListener);
+        getDefaultRoot().child(storyPath).removeEventListener(childEventListener);
+    }
+
+    private void cleanStory(Story story) {
+        story.setUserObject(null);
     }
 }
