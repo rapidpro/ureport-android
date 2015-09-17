@@ -2,9 +2,11 @@ package in.ureport.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 
 import in.ureport.R;
+import in.ureport.fragments.SelectModeratorsFragment;
 import in.ureport.fragments.StoriesModerationFragment;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
@@ -48,13 +50,28 @@ public class ModerationActivity extends BaseActivity {
 
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
 
-        NavigationItem storiesModeration = new NavigationItem(new StoriesModerationFragment()
-                , getString(R.string.stories_moderation));
+        NavigationItem[] navigationItems = getNavigationItems();
 
-        NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager(), storiesModeration);
+        NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager(), navigationItems);
         pager.setAdapter(adapter);
         getTabLayout().setupWithViewPager(pager);
 
         getMenuNavigation().getMenu().findItem(R.id.moderation).setChecked(true);
+    }
+
+    @NonNull
+    private NavigationItem[] getNavigationItems() {
+        NavigationItem storiesModeration = new NavigationItem(new StoriesModerationFragment()
+                , getString(R.string.stories_moderation));
+        NavigationItem selectModerators = new NavigationItem(new SelectModeratorsFragment()
+                , getString(R.string.label_country_moderator));
+
+        NavigationItem [] navigationItems;
+        if(UserManager.isMaster()) {
+            navigationItems = new NavigationItem[]{storiesModeration, selectModerators};
+        } else {
+            navigationItems = new NavigationItem[]{storiesModeration};
+        }
+        return navigationItems;
     }
 }

@@ -123,7 +123,7 @@ public class UserManager {
         return isMaster() || (isModerator() && isUserCountryProgramEnabled());
     }
 
-    private static Boolean isMaster() {
+    public static Boolean isMaster() {
         return master;
     }
 
@@ -135,7 +135,7 @@ public class UserManager {
         if(!isUserLoggedIn()) {
             showLoginAlertValidation(context);
             return false;
-        } else if(!isUserCountryProgram()) {
+        } else if(!isUserCountryProgram() && !isMaster()) {
             showCountryProgramAlert(context);
             return false;
         }

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import in.ureport.R;
+import in.ureport.listener.ItemSelectionListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.models.User;
@@ -30,13 +31,14 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private List<User> ureportersList;
     private List<User> searchUreportersList;
-
     private Set<User> selectedUreporters;
+
     private Boolean selectionEnabled = false;
     private Boolean searchEnabled = false;
     private Integer maxSelectionCount;
 
     private OnCreateIndividualChatListener onCreateIndividualChatListener;
+    private ItemSelectionListener<User> itemSelectionListener;
 
     public UreportersAdapter(List<User> ureportersList) {
         this.ureportersList = ureportersList;
@@ -101,6 +103,14 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         setSelectionEnabled(selectionEnabled, maxSelectionCount, null);
     }
 
+    public void setSelectionEnabled(Boolean selectionEnabled) {
+        setSelectionEnabled(selectionEnabled, null, null);
+    }
+
+    public void setItemSelectionListener(ItemSelectionListener<User> itemSelectionListener) {
+        this.itemSelectionListener = itemSelectionListener;
+    }
+
     public Set<User> getSelectedUreporters() {
         return selectedUreporters;
     }
@@ -144,6 +154,7 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             selected = (CheckBox) itemView.findViewById(R.id.selected);
             itemView.setOnClickListener(selectionEnabled ? null : onItemClickListener);
             selected.setOnCheckedChangeListener(selectionEnabled ? onUserCheckedListener : null);
+            selected.setOnClickListener(selectionEnabled ? onUserSelectedListener : null);
         }
 
         public void bindView(User user) {
@@ -162,16 +173,31 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         };
 
+        private View.OnClickListener onUserSelectedListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(itemSelectionListener == null) return;
+
+                User user = getCurrentUreportersList().get(getLayoutPosition());
+                if(selected.isChecked()) {
+                    itemSelectionListener.onItemSelected(user);
+                } else {
+                    itemSelectionListener.onItemDeselected(user);
+                }
+            }
+        };
+
         private CompoundButton.OnCheckedChangeListener onUserCheckedListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                User user = getCurrentUreportersList().get(getLayoutPosition());
                 if(isChecked) {
-                    if(selectedUreporters.size() <= maxSelectionCount)
-                        selectedUreporters.add(getCurrentUreportersList().get(getLayoutPosition()));
+                    if(maxSelectionCount == null || selectedUreporters.size() <= maxSelectionCount)
+                        selectedUreporters.add(user);
                     else
                         showMaximumNumberLimitError();
                 } else {
-                    selectedUreporters.remove(getCurrentUreportersList().get(getLayoutPosition()));
+                    selectedUreporters.remove(user);
                 }
             }
         };

@@ -1,5 +1,7 @@
 package in.ureport.network;
 
+import android.support.annotation.NonNull;
+
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -58,18 +60,6 @@ public class UserServices extends ProgramServices {
         FirebaseManager.getReference().child(userPath).child(key).addListenerForSingleValueEvent(valueEventListener);
     }
 
-    public void loadByName(String nickname, final OnLoadAllUsersListener onLoadAllUsersListener) {
-        FirebaseManager.getReference().child(userPath)
-                .startAt(nickname, "nickname")
-                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        super.onDataChange(dataSnapshot);
-                        handleDataResponse(dataSnapshot, onLoadAllUsersListener);
-                    }
-                });
-    }
-
     private void handleDataResponse(DataSnapshot dataSnapshot, OnLoadAllUsersListener onLoadAllUsersListener) {
         String currentUserKey = UserManager.getUserId();
 
@@ -85,9 +75,59 @@ public class UserServices extends ProgramServices {
     }
 
     public void loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {
+        Query query = FirebaseManager.getReference().child(userPath);
+        loadUsers(onLoadAllUsersListener, query);
+    }
+
+    public void addCountryModerator(User user, Firebase.CompletionListener listener) {
+        getDefaultRoot().child(userModeratorPath).child(user.getKey()).setValue(true, listener);
+    }
+
+    public void removeCountryModerator(User user, Firebase.CompletionListener listener) {
+        getDefaultRoot().child(userModeratorPath).child(user.getKey()).removeValue(listener);
+    }
+
+    public void loadMasterModerators(final OnLoadAllUsersListener onLoadAllUsersListener) {
+        FirebaseManager.getReference().child(userModeratorPath).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                List<User> users = getUsersWithKey(dataSnapshot);
+                onLoadAllUsersListener.onLoadAllUsers(users);
+            }
+        });
+    }
+
+    public void loadCountryModerators(final OnLoadAllUsersListener onLoadAllUsersListener) {
+        getDefaultRoot().child(userModeratorPath).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                List<User> users = getUsersWithKey(dataSnapshot);
+                onLoadAllUsersListener.onLoadAllUsers(users);
+            }
+        });
+    }
+
+    @NonNull
+    private List<User> getUsersWithKey(DataSnapshot dataSnapshot) {
+        List<User> users = new ArrayList<>();
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            User user = new User();
+            user.setKey(snapshot.getKey());
+            users.add(user);
+        }
+        return users;
+    }
+
+    public void loadByCountryCode(final OnLoadAllUsersListener onLoadAllUsersListener) {
         String countryCode = CountryProgramManager.getCurrentCountryProgram().getCode();
 
         Query query = FirebaseManager.getReference().child(userPath).orderByChild("countryProgram").equalTo(countryCode);
+        loadUsers(onLoadAllUsersListener, query);
+    }
+
+    private void loadUsers(final OnLoadAllUsersListener onLoadAllUsersListener, Query query) {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -95,10 +135,10 @@ public class UserServices extends ProgramServices {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
+            public void onCancelled(FirebaseError firebaseError) {}
         });
     }
+
 
     public void editUser(User user, Firebase.CompletionListener listener) {
         Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());

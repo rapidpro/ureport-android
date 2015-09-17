@@ -48,6 +48,15 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+            return false;
+        }
+        return super.onSupportNavigateUp();
+    }
+
+    @Override
     public void onMediaView(List<Media> medias, int position) {
         MediaViewFragment mediaViewFragment = MediaViewFragment.newInstance((ArrayList<Media>)medias, position);
         getSupportFragmentManager().beginTransaction()

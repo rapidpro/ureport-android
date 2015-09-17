@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.com.ilhasoft.support.tool.bitmap.BitmapCompressor;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;

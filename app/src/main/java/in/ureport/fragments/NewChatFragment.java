@@ -97,7 +97,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     }
 
     private void loadData() {
-        userServices.loadAll(new UserServices.OnLoadAllUsersListener() {
+        userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
             @Override
             public void onLoadAllUsers(List<User> users) {
                 if (ureportersAdapter != null) {

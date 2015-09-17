@@ -151,20 +151,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     }
 
     private void setupNavigationAdapter() {
-        storiesListFragment = new StoriesListFragment();
-        storiesListFragment.setFloatingActionButtonListener(this);
-        storiesListFragment.setOnPublishStoryListener(this);
-        NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
-
-        NavigationItem pollsItem = getPollsNavigationItem();
-
-        NavigationItem [] navigationItems;
-        if(UserManager.isUserLoggedIn() &&  UserManager.isUserCountryProgramEnabled()) {
-            NavigationItem chatItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.main_chat));
-            navigationItems = new NavigationItem[]{storiesItem, pollsItem, chatItem};
-        } else {
-            navigationItems = new NavigationItem[]{storiesItem, pollsItem};
-        }
+        NavigationItem[] navigationItems = getNavigationItems();
 
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager()
                 , navigationItems);
@@ -172,6 +159,24 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(navigationItems.length);
         selectChatIfNeeded();
+    }
+
+    @NonNull
+    private NavigationItem[] getNavigationItems() {
+        storiesListFragment = new StoriesListFragment();
+        storiesListFragment.setFloatingActionButtonListener(this);
+        storiesListFragment.setOnPublishStoryListener(this);
+        NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
+        NavigationItem pollsItem = getPollsNavigationItem();
+
+        NavigationItem [] navigationItems;
+        if(UserManager.isUserLoggedIn() && (UserManager.isUserCountryProgramEnabled() || UserManager.isMaster())) {
+            NavigationItem chatItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.main_chat));
+            navigationItems = new NavigationItem[]{storiesItem, pollsItem, chatItem};
+        } else {
+            navigationItems = new NavigationItem[]{storiesItem, pollsItem};
+        }
+        return navigationItems;
     }
 
     private void selectChatIfNeeded() {

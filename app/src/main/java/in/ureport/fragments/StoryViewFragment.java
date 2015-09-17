@@ -33,7 +33,6 @@ import in.ureport.R;
 import in.ureport.UreportApplication;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
-import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
@@ -43,6 +42,7 @@ import in.ureport.network.UserServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.helpers.WrapLinearLayoutManager;
+import in.ureport.tasks.ShareStoryTask;
 import in.ureport.views.adapters.ContributionAdapter;
 import in.ureport.views.adapters.MediaAdapter;
 
@@ -216,7 +216,8 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private View.OnClickListener onShareClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            PrototypeManager.showPrototypeAlert(getActivity());
+            ShareStoryTask shareStoryTask = new ShareStoryTask(StoryViewFragment.this, story);
+            shareStoryTask.execute();
         }
     };
 

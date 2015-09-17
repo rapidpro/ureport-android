@@ -15,6 +15,7 @@ import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.views.holders.StoryItemViewHolder;
 
 /**
  * Created by johncordeiro on 7/14/15.
@@ -52,7 +53,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if(moderationType)
                     return new ModeratedItemViewHolder(view);
                 else
-                    return new ItemViewHolder(view);
+                    return new StoryItemViewHolder(view, onStoryViewListener);
         }
     }
 
@@ -64,7 +65,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 break;
             default:
             case TYPE_ITEM:
-                ((ItemViewHolder)viewHolder).bind(stories.get(getListPosition(position)));
+                ((StoryItemViewHolder)viewHolder).bind(stories.get(getListPosition(position)));
         }
     }
 
@@ -159,10 +160,10 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         };
     }
 
-    private class ModeratedItemViewHolder extends ItemViewHolder {
+    private class ModeratedItemViewHolder extends StoryItemViewHolder {
 
         public ModeratedItemViewHolder(View itemView) {
-            super(itemView);
+            super(itemView, onStoryViewListener);
 
             Button readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
             readFullStory.setVisibility(View.GONE);
@@ -192,80 +193,6 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (storyModerationListener != null) {
                     storyModerationListener.onDisapprove(stories.get(getLayoutPosition()));
                 }
-            }
-        };
-    }
-
-    private class ItemViewHolder extends RecyclerView.ViewHolder {
-
-        private final String contributionsTemplate;
-
-        private final ImageView picture;
-        private final ImageView image;
-        private final TextView title;
-        private final TextView author;
-        private final TextView markers;
-        private final TextView contributions;
-        private final TextView summary;
-
-        public ItemViewHolder(View itemView) {
-            super(itemView);
-
-            contributionsTemplate = itemView.getContext().getString(R.string.stories_list_item_contributions);
-
-            picture = (ImageView) itemView.findViewById(R.id.picture);
-            image = (ImageView) itemView.findViewById(R.id.image);
-            title = (TextView) itemView.findViewById(R.id.title);
-            author = (TextView) itemView.findViewById(R.id.author);
-            markers = (TextView) itemView.findViewById(R.id.markers);
-            contributions = (TextView) itemView.findViewById(R.id.contributors);
-            summary = (TextView) itemView.findViewById(R.id.summary);
-
-            Button readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
-            readFullStory.setOnClickListener(onReadFullStoryClickListener);
-            itemView.setOnClickListener(onReadFullStoryClickListener);
-        }
-
-        private void bind(Story story) {
-            bindAuthor(story);
-            bindImage(story);
-            bindMarkers(story);
-
-            summary.setText(story.getContent());
-            title.setText(story.getTitle());
-            contributions.setText(String.format(contributionsTemplate, story.getContributions()));
-        }
-
-        private void bindMarkers(Story story) {
-            if(story.getMarkers() != null && story.getMarkers().length() > 0) {
-                markers.setText(story.getMarkers());
-                markers.setVisibility(View.VISIBLE);
-            } else {
-                markers.setVisibility(View.GONE);
-            }
-        }
-
-        private void bindImage(Story story) {
-            if(story.getCover() != null) {
-                ImageLoader.loadGenericPictureToImageView(image, story.getCover());
-                image.setVisibility(View.VISIBLE);
-            } else {
-                image.setVisibility(View.GONE);
-            }
-        }
-
-        private void bindAuthor(Story story) {
-            if(story.getUserObject() != null) {
-                ImageLoader.loadPersonPictureToImageView(picture, story.getUserObject().getPicture());
-                author.setText(story.getUserObject().getNickname());
-            }
-        }
-
-        private View.OnClickListener onReadFullStoryClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (onStoryViewListener != null)
-                    onStoryViewListener.onStoryViewClick(stories.get(getListPosition(getLayoutPosition())));
             }
         };
     }

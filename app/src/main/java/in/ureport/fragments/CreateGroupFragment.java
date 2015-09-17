@@ -158,7 +158,7 @@ public class CreateGroupFragment extends Fragment {
 
     private void loadUsers() {
         UserServices userServices = new UserServices();
-        userServices.loadAll(new UserServices.OnLoadAllUsersListener() {
+        userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
             @Override
             public void onLoadAllUsers(List<User> users) {
                 ureportersAdapter = new UreportersAdapter(users);

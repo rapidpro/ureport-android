@@ -250,6 +250,11 @@
     <string name="label_remove">Remove</string>
     <string name="error_remove">An error occurred during the remove process</string>
     <string name="message_success_remove">The data was removed with success!</string>
+    <string name="title_share_story">Share history using:</string>
+    <string name="title_share_subject">Story shared using U-Report</string>
+    <string name="story_share_info">Download U-Report app: http://goo.gl/Xxyodt</string>
+    <string name="label_country_moderator">Country Moderators</string>
+    <string name="message_success_user_update">User was updated with success!</string>
 
     <string-array name="spinner_loading_states">
         <item>Loading states...</item>
