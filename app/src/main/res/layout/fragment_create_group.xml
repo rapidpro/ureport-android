@@ -140,7 +140,7 @@
             android:elevation="10dp">
 
             <EditText
-                android:id="@+id/ureportersTitle"
+                android:id="@+id/ureportersSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -151,6 +151,8 @@
                 android:drawablePadding="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
+                android:singleLine="true"
+                android:imeOptions="actionSearch"
                 android:textSize="16sp"
                 android:background="@null"
                 android:hint="@string/chat_new_invite_ureporters" />

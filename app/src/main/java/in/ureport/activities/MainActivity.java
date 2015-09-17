@@ -157,9 +157,15 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
 
         NavigationItem pollsItem = getPollsNavigationItem();
-        NavigationItem chatItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.main_chat));
 
-        NavigationItem [] navigationItems = {storiesItem, pollsItem, chatItem};
+        NavigationItem [] navigationItems;
+        if(UserManager.isUserLoggedIn() &&  UserManager.isUserCountryProgramEnabled()) {
+            NavigationItem chatItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.main_chat));
+            navigationItems = new NavigationItem[]{storiesItem, pollsItem, chatItem};
+        } else {
+            navigationItems = new NavigationItem[]{storiesItem, pollsItem};
+        }
+
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager()
                 , navigationItems);
 

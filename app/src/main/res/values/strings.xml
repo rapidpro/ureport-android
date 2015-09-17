@@ -109,9 +109,13 @@
     <string name="cancel_dialog_button">Cancel</string>
     <string name="label_action_notifications">Notifications</string>
     <string name="about_content">
-        U-Report is a free tool for community participation, designed to address issues that the population cares about. Once a U-Reporter has registered on this app, polls and alerts are sent via Notifications and real-time responses are collected and mapped on this site. Results and ideas are shared back with the community. Issues polled include health, education, water, sanitation and hygiene, youth unemployment, HIV/AIDS, disease outbreaks and anything else people want to discuss.\n
-        \n
-        Individual messages are confidential but aggregated data is transparent.
+        U-Report is a free tool for community participation, designed to address issues that the people care about. Once you have signed up you become a U-Reporter and can Chat with other U-Reporters, submit stories and answer the weekly polls. Results and ideas are shared back with the community. Issues polled include health, education, water, sanitation and hygiene, youth unemployment, HIV/AIDS, disease outbreaks and anything else people want to discuss.
+        \n\n
+        Information is used to connect young people with their representatives, improve UNICEF programmes and draw attention to urgent issues with national governments and the UN. NGOs, civil society and country leaders can see the information on the site to understand what the people want or need.
+        \n\n
+        Registration is voluntary and U-Reporters incur no costs.
+        \n\n
+        Together U-Reporters create positive change in the community, the nation and internationally.
     </string>
     <string name="label_about_ureport">About U-Report</string>
     <string name="about_subtitle">Voice\nMatters</string>
@@ -189,7 +193,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="load_message_save_user">Saving user...</string>
     <string name="error_no_internet">Please, connect to the internet before continue.</string>
-    <string name="invite_contact_text">Chat with me on U-Report app! Download it here http://ureport.in</string>
+    <string name="invite_contact_text">Chat with me on U-Report app! Download it here http://goo.gl/Xxyodt</string>
     <string name="ureporters_selected_maximum">The maximum number of users selected are %1$s</string>
     <string name="chat_private_media_permission_title">Media allowed</string>
     <string name="search_title">Search</string>
@@ -246,6 +250,14 @@
     <string name="label_remove">Remove</string>
     <string name="error_remove">An error occurred during the remove process</string>
     <string name="message_success_remove">The data was removed with success!</string>
+
+    <string-array name="spinner_loading_states">
+        <item>Loading states...</item>
+    </string-array>
+
+    <string-array name="spinner_error_loading_states">
+        <item>Connect to the internet before continue</item>
+    </string-array>
 
     <plurals name="notification_chat_message">
         <item quantity="one">%1$s sent %2$s new message to you</item>

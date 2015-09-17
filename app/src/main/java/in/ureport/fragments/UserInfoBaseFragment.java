@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.support.annotation.ArrayRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -261,6 +262,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
 
             onStatesLoaded(states);
         } else {
+            resetStateSpinner(R.array.spinner_error_loading_states);
             Toast.makeText(getActivity(), R.string.error_no_internet, Toast.LENGTH_LONG).show();
         }
     }
@@ -303,19 +305,29 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             UserLocale userLocale = (UserLocale)country.getSelectedItem();
             Log.i(TAG, "onItemSelected onCountrySelected: " + userLocale);
-            resetStateSpinner();
+            resetStateSpinner(R.array.spinner_loading_states);
             loadStatesForUserLocale(userLocale);
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            resetStateSpinner();
+            resetStateSpinner(R.array.spinner_loading_states);
         }
     };
 
-    private void resetStateSpinner() {
-        state.setAdapter(null);
+    private void resetStateSpinner(@ArrayRes int loadingArrayMessage) {
+        ArrayAdapter<String> loadingStatesAdapter = createArrayAdapterForStringArray(loadingArrayMessage);
+
+        state.setAdapter(loadingStatesAdapter);
         state.setEnabled(false);
+    }
+
+    @NonNull
+    private ArrayAdapter<String> createArrayAdapterForStringArray(@ArrayRes int stringArray) {
+        ArrayAdapter<String> loadingStatesAdapter = new ArrayAdapter<>(getActivity()
+                , R.layout.view_spinner_dropdown, getResources().getStringArray(stringArray));
+        loadingStatesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return loadingStatesAdapter;
     }
 
     private void loadStatesForUserLocale(UserLocale userLocale) {

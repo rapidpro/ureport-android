@@ -59,7 +59,8 @@ public class UserServices extends ProgramServices {
     }
 
     public void loadByName(String nickname, final OnLoadAllUsersListener onLoadAllUsersListener) {
-        FirebaseManager.getReference().child(userPath).orderByChild("nickname").equalTo(nickname)
+        FirebaseManager.getReference().child(userPath)
+                .startAt(nickname, "nickname")
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -72,7 +73,7 @@ public class UserServices extends ProgramServices {
     private void handleDataResponse(DataSnapshot dataSnapshot, OnLoadAllUsersListener onLoadAllUsersListener) {
         String currentUserKey = UserManager.getUserId();
 
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
             User user = snapshot.getValue(User.class);
             if(!snapshot.getKey().equals(currentUserKey)) {

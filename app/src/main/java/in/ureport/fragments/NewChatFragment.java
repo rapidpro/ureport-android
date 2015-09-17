@@ -39,8 +39,6 @@ import in.ureport.views.adapters.UreportersAdapter;
 public class NewChatFragment extends Fragment implements OnCreateIndividualChatListener
         , SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
-    private static final String TAG = "NewChatFragment";
-
     private RecyclerView ureportersList;
 
     private UserServices userServices;
@@ -49,7 +47,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     private OnChatRoomSavedListener onChatRoomSavedListener;
     private OnCreateGroupListener onCreateGroupListener;
 
-    private UreportersAdapter adapter;
+    private UreportersAdapter ureportersAdapter;
 
     @Nullable
     @Override
@@ -102,8 +100,8 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
         userServices.loadAll(new UserServices.OnLoadAllUsersListener() {
             @Override
             public void onLoadAllUsers(List<User> users) {
-                if(adapter != null) {
-                    adapter.update(users);
+                if (ureportersAdapter != null) {
+                    ureportersAdapter.update(users);
                 } else {
                     setupAdapter(users);
                 }
@@ -112,9 +110,9 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     }
 
     private void setupAdapter(List<User> users) {
-        adapter = new UreportersAdapter(users);
-        adapter.setOnCreateIndividualChatListener(NewChatFragment.this);
-        ureportersList.setAdapter(adapter);
+        ureportersAdapter = new UreportersAdapter(users);
+        ureportersAdapter.setOnCreateIndividualChatListener(NewChatFragment.this);
+        ureportersList.setAdapter(ureportersAdapter);
     }
 
     @Override
@@ -167,24 +165,19 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        userServices.loadByName(query, new UserServices.OnLoadAllUsersListener() {
-            @Override
-            public void onLoadAllUsers(List<User> users) {
-                if(adapter != null)
-                    adapter.update(users);
-            }
-        });
+        ureportersAdapter.search(query);
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        ureportersAdapter.search(newText);
         return false;
     }
 
     @Override
     public boolean onClose() {
-        loadData();
+        ureportersAdapter.clearSearch();
         return false;
     }
 }

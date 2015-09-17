@@ -1,5 +1,6 @@
 package in.ureport.views.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,9 +29,11 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final String TAG = "UreportersAdapter";
 
     private List<User> ureportersList;
+    private List<User> searchUreportersList;
 
     private Set<User> selectedUreporters;
     private Boolean selectionEnabled = false;
+    private Boolean searchEnabled = false;
     private Integer maxSelectionCount;
 
     private OnCreateIndividualChatListener onCreateIndividualChatListener;
@@ -51,17 +54,28 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder)holder).bindView(ureportersList.get(position));
+        ((ViewHolder)holder).bindView(getCurrentUreportersList().get(position));
+    }
+
+    private List<User> getCurrentUreportersList() {
+        if(searchEnabled) {
+            return searchUreportersList;
+        }
+        return ureportersList;
     }
 
     @Override
     public long getItemId(int position) {
-        return ureportersList.get(position).hashCode();
+        return getCurrentUreportersList().get(position).hashCode();
     }
 
     @Override
     public int getItemCount() {
-        return ureportersList.size();
+        return getCurrentUreportersList().size();
+    }
+
+    public List<User> getUreportersList() {
+        return ureportersList;
     }
 
     public void update(List<User> ureportersList) {
@@ -91,6 +105,31 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return selectedUreporters;
     }
 
+    public void search(String query) {
+        searchEnabled = true;
+        searchUreportersList = getUreportersByNickname(query);
+        notifyDataSetChanged();
+    }
+
+    public void clearSearch() {
+        searchEnabled = false;
+        notifyDataSetChanged();
+    }
+
+    @NonNull
+    private List<User> getUreportersByNickname(String query) {
+        List<User> resultUreportersList = new ArrayList<>();
+
+        List<User> ureportersList = getUreportersList();
+        query = query.toLowerCase();
+        for (User user : ureportersList) {
+            if(user.getNickname().toLowerCase().contains(query)) {
+                resultUreportersList.add(user);
+            }
+        }
+        return resultUreportersList;
+    }
+
     private class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView name;
@@ -113,14 +152,13 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             selected.setVisibility(selectionEnabled ? View.VISIBLE : View.GONE);
             if(selectionEnabled) selected.setChecked(selectedUreporters.contains(user));
-
         }
 
         private View.OnClickListener onItemClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(onCreateIndividualChatListener != null)
-                    onCreateIndividualChatListener.onCreateIndividualChat(ureportersList.get(getLayoutPosition()));
+                    onCreateIndividualChatListener.onCreateIndividualChat(getCurrentUreportersList().get(getLayoutPosition()));
             }
         };
 
@@ -129,11 +167,11 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
                     if(selectedUreporters.size() <= maxSelectionCount)
-                        selectedUreporters.add(ureportersList.get(getLayoutPosition()));
+                        selectedUreporters.add(getCurrentUreportersList().get(getLayoutPosition()));
                     else
                         showMaximumNumberLimitError();
                 } else {
-                    selectedUreporters.remove(ureportersList.get(getLayoutPosition()));
+                    selectedUreporters.remove(getCurrentUreportersList().get(getLayoutPosition()));
                 }
             }
         };

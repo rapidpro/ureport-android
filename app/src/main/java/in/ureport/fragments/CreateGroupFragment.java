@@ -12,7 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
@@ -188,6 +192,10 @@ public class CreateGroupFragment extends Fragment {
         privateGroup = (SwitchCompat) view.findViewById(R.id.privateGroup);
         mediaAllowed = (SwitchCompat) view.findViewById(R.id.mediaAllowed);
 
+        EditText ureportersSearch = (EditText) view.findViewById(R.id.ureportersSearch);
+        ureportersSearch.addTextChangedListener(ureportersSearchTextWatcher);
+        ureportersSearch.setOnEditorActionListener(onSearchUreporterActionListener);
+
         ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -351,6 +359,31 @@ public class CreateGroupFragment extends Fragment {
         public void onClick(View view) {
             ImagePicker imagePicker = new ImagePicker();
             imagePicker.pickImageFromGallery(CreateGroupFragment.this);
+        }
+    };
+
+    private TextWatcher ureportersSearchTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence text, int start, int before, int count) {
+            String query = text.toString();
+            ureportersAdapter.search(query);
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+        }
+    };
+
+    private TextView.OnEditorActionListener onSearchUreporterActionListener = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
+            String query = textView.getText().toString();
+            ureportersAdapter.search(query);
+            return true;
         }
     };
 }
