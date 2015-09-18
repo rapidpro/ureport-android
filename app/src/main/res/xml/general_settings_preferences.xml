@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="pref_key_privacy_settings"
+        android:title="@string/title_preferences_privacy">
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:key="pref_key_chat_available"
+            android:title="@string/title_pref_chat_available"
+            android:checked="true"/>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -14,7 +14,7 @@ import in.ureport.models.User;
 /**
  * Created by johncordeiro on 11/09/15.
  */
-public class UserSettingsActivity extends AppCompatActivity implements UserSettingsFragment.UserSettingsListener {
+public class UserSettingsActivity extends SettingsActivity implements UserSettingsFragment.UserSettingsListener {
 
     public static final String EXTRA_USER = "user";
 
@@ -23,9 +23,6 @@ public class UserSettingsActivity extends AppCompatActivity implements UserSetti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_settings);
-
-        setupToolbar();
 
         if(savedInstanceState == null) {
             user = getIntent().getParcelableExtra(EXTRA_USER);
@@ -35,12 +32,6 @@ public class UserSettingsActivity extends AppCompatActivity implements UserSetti
                     .add(R.id.content, userSettingsFragment)
                     .commit();
         }
-    }
-
-    private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

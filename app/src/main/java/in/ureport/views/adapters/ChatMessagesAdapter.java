@@ -27,6 +27,8 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private DateFormat hourFormatter;
 
+    private OnChatMessageSelectedListener onChatMessageSelectedListener;
+
     public ChatMessagesAdapter(User user) {
         this.chatMessages = new ArrayList<>();
         this.user = user;
@@ -75,6 +77,18 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyItemInserted(0);
     }
 
+    public void removeChatMessage(ChatMessage chatMessage) {
+        int indexOfMessage = chatMessages.indexOf(chatMessage);
+        if(indexOfMessage >= 0) {
+            chatMessages.remove(indexOfMessage);
+            notifyItemRemoved(indexOfMessage);
+        }
+    }
+
+    public void setOnChatMessageSelectedListener(OnChatMessageSelectedListener onChatMessageSelectedListener) {
+        this.onChatMessageSelectedListener = onChatMessageSelectedListener;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
@@ -97,6 +111,12 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             message.setText(chatMessage.getMessage());
             date.setText(hourFormatter.format(chatMessage.getDate()));
             bindName(chatMessage);
+
+            if(getItemViewType() == TYPE_OTHER) {
+                itemView.setOnLongClickListener(null);
+            } else {
+                itemView.setOnLongClickListener(onLongClickListener);
+            }
         }
 
         private void bindName(ChatMessage chatMessage) {
@@ -105,6 +125,19 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 name.setText(chatMessage.getUser().getNickname());
             }
         }
+
+        private View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(onChatMessageSelectedListener != null) {
+                    onChatMessageSelectedListener.onChatMessageSelected(chatMessages.get(getLayoutPosition()));
+                }
+                return false;
+            }
+        };
     }
 
+    public interface OnChatMessageSelectedListener {
+        void onChatMessageSelected(ChatMessage chatMessage);
+    }
 }

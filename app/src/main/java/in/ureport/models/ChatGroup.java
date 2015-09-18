@@ -3,11 +3,14 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatGroup implements Parcelable {
 
     private String title;

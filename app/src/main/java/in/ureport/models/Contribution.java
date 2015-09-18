@@ -1,10 +1,13 @@
 package in.ureport.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 
 /**
  * Created by johncordeiro on 7/16/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Contribution {
 
     private String key;

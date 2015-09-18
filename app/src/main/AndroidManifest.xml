@@ -51,6 +51,15 @@
             android:label="@string/label_chat" />
 
         <activity
+            android:name=".activities.GeneralSettingsActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+
+        <activity
             android:name=".activities.ModerationActivity"
             android:screenOrientation="portrait"
             android:label="@string/label_moderation" />

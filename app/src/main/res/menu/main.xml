@@ -27,7 +27,7 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/changeSettings"
-            android:title="@string/main_menu_settings"/>
+            android:title="@string/label_settings"/>
 
         <item
             android:id="@+id/logout"

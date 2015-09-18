@@ -11,7 +11,7 @@ import android.widget.Toast;
 import in.ureport.R;
 import in.ureport.fragments.ChatGroupFragment;
 import in.ureport.fragments.CreateGroupFragment;
-import in.ureport.listener.OnChatMembersLoadedListener;
+import in.ureport.listener.ChatRoomInterface;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.GroupChatRoom;
@@ -62,7 +62,7 @@ public class OpenGroupsActivity extends AppCompatActivity implements ChatGroupAd
 
     @Override
     public void onJoinChatGroup(final GroupChatRoom groupChatRoom) {
-        chatRoomServices.loadChatRoomMembers(groupChatRoom.getKey(), new OnChatMembersLoadedListener() {
+        chatRoomServices.loadChatRoomMembers(groupChatRoom.getKey(), new ChatRoomInterface.OnChatMembersLoadedListener() {
             @Override
             public void onChatMembersLoaded(ChatMembers chatMembers) {
                 joinChatGroup(chatMembers, groupChatRoom);
@@ -93,7 +93,7 @@ public class OpenGroupsActivity extends AppCompatActivity implements ChatGroupAd
     @Override
     public void onViewGroupInfo(final GroupChatRoom groupChatRoom) {
         ChatRoomServices chatRoomServices = new ChatRoomServices();
-        chatRoomServices.loadChatRoomMembers(groupChatRoom.getKey(), new OnChatMembersLoadedListener() {
+        chatRoomServices.loadChatRoomMembers(groupChatRoom.getKey(), new ChatRoomInterface.OnChatMembersLoadedListener() {
             @Override
             public void onChatMembersLoaded(ChatMembers chatMembers) {
                 startGroupInfoActivity(groupChatRoom, chatMembers);

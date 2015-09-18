@@ -2,6 +2,7 @@ package in.ureport.network;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -12,11 +13,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import in.ureport.listener.OnChatLastMessageLoadedListener;
-import in.ureport.listener.OnChatMembersLoadedListener;
-import in.ureport.listener.OnChatRoomSavedListener;
-import in.ureport.listener.OnChatRoomLoadedListener;
+import in.ureport.listener.ChatRoomInterface;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
@@ -30,6 +29,8 @@ import in.ureport.helpers.ValueEventListenerAdapter;
  * Created by johncordeiro on 16/08/15.
  */
 public class ChatRoomServices extends ProgramServices {
+
+    private static final String TAG = "ChatRoomServices";
 
     public static final String chatRoomPath = "chat_room";
     public static final String membersPath = "chat_members";
@@ -61,6 +62,11 @@ public class ChatRoomServices extends ProgramServices {
         getDefaultRoot().child(chatRoomPath).child(chatRoom.getKey()).removeValue();
     }
 
+    public void removeChatMessage(ChatRoom chatRoom, ChatMessage chatMessage, Firebase.CompletionListener listener) {
+        getDefaultRoot().child(messagesPath).child(chatRoom.getKey())
+                .child(chatMessage.getKey()).removeValue(listener);
+    }
+
     public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
         setUserIfNeeded(chatMessage);
         getDefaultRoot().child(messagesPath).child(chatRoom.getKey())
@@ -75,25 +81,25 @@ public class ChatRoomServices extends ProgramServices {
         }
     }
 
-    public void getChatRoom(final String key, final OnChatRoomLoadedListener listener) {
+    public void getChatRoom(final String key, final ChatRoomInterface.OnChatRoomLoadedListener listener) {
         getDefaultRoot().child(chatRoomPath).child(key).addListenerForSingleValueEvent(
                 new ValueEventListenerAdapter() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) return;
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (!dataSnapshot.exists()) return;
 
-                final ChatRoom chatRoom = getChatRoomInstance(dataSnapshot);
-                chatRoom.setKey(key);
-                loadExtraDataForChatRoom(chatRoom, key, listener);
-            }
-        });
+                        final ChatRoom chatRoom = getChatRoomInstance(dataSnapshot);
+                        chatRoom.setKey(key);
+                        loadExtraDataForChatRoom(chatRoom, key, listener);
+                    }
+                });
     }
 
-    private void loadExtraDataForChatRoom(final ChatRoom chatRoom, final String key, final OnChatRoomLoadedListener listener) {
-        loadChatRoomMembers(key, new OnChatMembersLoadedListener() {
+    private void loadExtraDataForChatRoom(final ChatRoom chatRoom, final String key, final ChatRoomInterface.OnChatRoomLoadedListener listener) {
+        loadChatRoomMembers(key, new ChatRoomInterface.OnChatMembersLoadedListener() {
             @Override
             public void onChatMembersLoaded(final ChatMembers chatMembers) {
-                loadLastChatMessage(key, chatMembers, new OnChatLastMessageLoadedListener() {
+                loadLastChatMessage(key, chatMembers, new ChatRoomInterface.OnChatLastMessageLoadedListener() {
                     @Override
                     public void onChatLastMessageLoaded(ChatMessage chatMessage) {
                         listener.onChatRoomLoaded(chatRoom, chatMembers, chatMessage);
@@ -116,7 +122,7 @@ public class ChatRoomServices extends ProgramServices {
     }
 
     private void loadLastChatMessage(String key, final ChatMembers chatMembers
-            , final OnChatLastMessageLoadedListener onChatLastMessageLoadedListener) {
+            , final ChatRoomInterface.OnChatLastMessageLoadedListener onChatLastMessageLoadedListener) {
         getDefaultRoot().child(messagesPath).child(key).orderByKey().limitToLast(1)
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override
@@ -140,29 +146,46 @@ public class ChatRoomServices extends ProgramServices {
                 });
     }
 
-    public void loadChatRoomMembers(String key, final OnChatMembersLoadedListener listener) {
+    public void loadChatRoomMembersWithoutData(String key, final ChatRoomInterface.OnChatMembersLoadedListener listener) {
         getDefaultRoot().child(membersPath).child(key)
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        List<User> users = new ArrayList<>();
+                        ChatMembers chatMembers = getChatMembersFromSnapshot(dataSnapshot);
+                        if(listener != null)
+                            listener.onChatMembersLoaded(chatMembers);
+                    }
+                });
+    }
 
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            User user = new User();
-                            user.setKey(snapshot.getKey());
-
-                            users.add(user);
-                        }
-
-                        ChatMembers chatMembers = new ChatMembers();
-                        chatMembers.setUsers(users);
-
+    public void loadChatRoomMembers(String key, final ChatRoomInterface.OnChatMembersLoadedListener listener) {
+        getDefaultRoot().child(membersPath).child(key)
+                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ChatMembers chatMembers = getChatMembersFromSnapshot(dataSnapshot);
                         loadUsersFromChatRooms(chatMembers, listener);
                     }
                 });
     }
 
-    private void loadUsersFromChatRooms(final ChatMembers chatMembers, final OnChatMembersLoadedListener listener) {
+    @NonNull
+    private ChatMembers getChatMembersFromSnapshot(DataSnapshot dataSnapshot) {
+        List<User> users = new ArrayList<>();
+
+        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+            User user = new User();
+            user.setKey(snapshot.getKey());
+
+            users.add(user);
+        }
+
+        ChatMembers chatMembers = new ChatMembers();
+        chatMembers.setUsers(users);
+        return chatMembers;
+    }
+
+    private void loadUsersFromChatRooms(final ChatMembers chatMembers, final ChatRoomInterface.OnChatMembersLoadedListener listener) {
         for (int position = 0; position < chatMembers.getUsers().size(); position++) {
             User user = chatMembers.getUsers().get(position);
             UserServices userServices = new UserServices();
@@ -185,7 +208,7 @@ public class ChatRoomServices extends ProgramServices {
     }
 
     public void saveGroupChatRoom(final Context context, final User administrator, final GroupChatRoom groupChatRoom
-            , final List<User> members, final OnChatRoomSavedListener onChatRoomSavedListener) {
+            , final List<User> members, final ChatRoomInterface.OnChatRoomSavedListener onChatRoomSavedListener) {
         User administratorWithKey = new User();
         administratorWithKey.setKey(administrator.getKey());
         groupChatRoom.setAdministrator(administrator);
@@ -213,7 +236,7 @@ public class ChatRoomServices extends ProgramServices {
     }
 
     public void saveIndividualChatRoom(final Context context, final User me, final User friend
-            , final OnChatRoomSavedListener onChatRoomSavedListener) {
+            , final ChatRoomInterface.OnChatRoomSavedListener onChatRoomSavedListener) {
         final IndividualChatRoom chatRoom = new IndividualChatRoom();
         chatRoom.setCreatedDate(new Date());
 

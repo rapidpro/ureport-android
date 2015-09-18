@@ -1,8 +1,11 @@
 package in.ureport.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Created by johncordeiro on 19/07/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Contact {
 
     private String name;

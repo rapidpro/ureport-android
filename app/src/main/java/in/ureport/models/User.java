@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.StringRes;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
 import java.util.Date;
@@ -14,6 +15,7 @@ import in.ureport.R;
 /**
  * Created by johncordeiro on 7/9/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Parcelable {
 
     @Expose
@@ -48,6 +50,8 @@ public class User implements Parcelable {
     private String pushIdentity;
 
     private HashMap<String, Boolean> chatRooms;
+
+    private Boolean publicProfile = true;
 
     public String getKey() {
         return key;
@@ -169,6 +173,14 @@ public class User implements Parcelable {
         this.chatRooms = chatRooms;
     }
 
+    public Boolean getPublicProfile() {
+        return publicProfile;
+    }
+
+    public void setPublicProfile(Boolean publicProfile) {
+        this.publicProfile = publicProfile;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -241,6 +253,7 @@ public class User implements Parcelable {
         dest.writeValue(this.polls);
         dest.writeString(this.pushIdentity);
         dest.writeSerializable(this.chatRooms);
+        dest.writeValue(this.publicProfile);
     }
 
     public User() {
@@ -265,6 +278,7 @@ public class User implements Parcelable {
         this.polls = (Integer) in.readValue(Integer.class.getClassLoader());
         this.pushIdentity = in.readString();
         this.chatRooms = (HashMap<String, Boolean>) in.readSerializable();
+        this.publicProfile = (Boolean) in.readValue(Boolean.class.getClassLoader());
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {

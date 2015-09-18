@@ -4,9 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Created by johncordeiro on 7/17/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class News implements Parcelable {
 
     private String title;

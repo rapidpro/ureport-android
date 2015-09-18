@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -23,9 +24,11 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.listener.ChatRoomInterface;
+import in.ureport.listener.OnChatRoomCheckUserListener;
 import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
-import in.ureport.listener.OnChatRoomSavedListener;
+import in.ureport.managers.ChatRoomValidator;
 import in.ureport.managers.SearchManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
@@ -44,7 +47,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     private UserServices userServices;
     private ChatRoomServices chatRoomServices;
 
-    private OnChatRoomSavedListener onChatRoomSavedListener;
+    private ChatRoomInterface.OnChatRoomSavedListener onChatRoomSavedListener;
     private OnCreateGroupListener onCreateGroupListener;
 
     private UreportersAdapter ureportersAdapter;
@@ -67,8 +70,8 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-        if(activity instanceof OnChatRoomSavedListener)
-            onChatRoomSavedListener = (OnChatRoomSavedListener)activity;
+        if(activity instanceof ChatRoomInterface.OnChatRoomSavedListener)
+            onChatRoomSavedListener = (ChatRoomInterface.OnChatRoomSavedListener)activity;
         if(activity instanceof OnCreateGroupListener)
             onCreateGroupListener = (OnCreateGroupListener)activity;
     }
@@ -145,22 +148,47 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        getLoggedUserAndSaveChat(user);
+                        getLoggedUserAndCheck(user);
                     }
                 }).create();
         alertDialog.show();
     }
 
-    private void getLoggedUserAndSaveChat(final User friend) {
+    private void getLoggedUserAndCheck(final User friend) {
         userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
-
                 User me = dataSnapshot.getValue(User.class);
-                chatRoomServices.saveIndividualChatRoom(getActivity(), me, friend, onChatRoomSavedListener);
+                checkIfExistsAndSaveChat(me, friend);
             }
         });
+    }
+
+    private void checkIfExistsAndSaveChat(final User me, final User friend) {
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
+                , getString(R.string.load_message_wait), true, false);
+
+        ChatRoomValidator chatRoomValidator = new ChatRoomValidator();
+        chatRoomValidator.checkIfExistsChatRoom(me, friend, new OnChatRoomCheckUserListener() {
+            @Override
+            public void onChatRoomCheckUser(Boolean containsUser) {
+                progressDialog.dismiss();
+                if(containsUser) {
+                    displayDuplicateAlert();
+                } else {
+                    chatRoomServices.saveIndividualChatRoom(getActivity(), me, friend, onChatRoomSavedListener);
+                }
+            }
+        });
+    }
+
+    private void displayDuplicateAlert() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                .setMessage(R.string.error_chat_create_individual)
+                .setNeutralButton(R.string.confirm_neutral_dialog_button, null)
+                .create();
+        alertDialog.show();
     }
 
     @Override

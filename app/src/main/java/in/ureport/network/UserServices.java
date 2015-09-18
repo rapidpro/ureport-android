@@ -66,7 +66,7 @@ public class UserServices extends ProgramServices {
         List<User> users = new ArrayList<>();
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
             User user = snapshot.getValue(User.class);
-            if(!snapshot.getKey().equals(currentUserKey)) {
+            if(!snapshot.getKey().equals(currentUserKey) && (user.getPublicProfile() == null || user.getPublicProfile())) {
                 users.add(user);
             }
         }
@@ -139,6 +139,10 @@ public class UserServices extends ProgramServices {
         });
     }
 
+    public void changePublicProfile(User user, Boolean publicProfile, Firebase.CompletionListener listener) {
+        Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
+        userReference.child("publicProfile").setValue(publicProfile, listener);
+    }
 
     public void editUser(User user, Firebase.CompletionListener listener) {
         Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());

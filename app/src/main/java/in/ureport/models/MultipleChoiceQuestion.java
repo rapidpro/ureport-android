@@ -3,11 +3,14 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 /**
  * Created by johncordeiro on 7/17/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MultipleChoiceQuestion extends PollQuestion {
 
     private List<String> choices;

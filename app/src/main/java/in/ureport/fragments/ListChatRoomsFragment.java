@@ -28,7 +28,7 @@ import java.util.Map;
 import in.ureport.R;
 import in.ureport.activities.ChatRoomActivity;
 import in.ureport.activities.InviteContactsActivity;
-import in.ureport.listener.OnChatRoomLoadedListener;
+import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.LocalNotificationManager;
@@ -208,7 +208,7 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
             super.onChildAdded(dataSnapshot, previousChild);
 
             String chatRoomKey = dataSnapshot.getKey();
-            chatRoomServices.getChatRoom(chatRoomKey, new OnChatRoomLoadedListener() {
+            chatRoomServices.getChatRoom(chatRoomKey, new ChatRoomInterface.OnChatRoomLoadedListener() {
                 @Override
                 public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage) {
                     chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));

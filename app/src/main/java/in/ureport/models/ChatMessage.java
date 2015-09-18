@@ -3,6 +3,7 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
 /**
  * Created by johncordeiro on 7/21/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatMessage implements Parcelable {
 
     @Expose
@@ -54,6 +56,22 @@ public class ChatMessage implements Parcelable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ChatMessage that = (ChatMessage) o;
+
+        return key.equals(that.key);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
     }
 
     @Override

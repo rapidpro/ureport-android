@@ -2,11 +2,14 @@ package in.ureport.models;
 
 import android.os.Parcel;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 /**
  * Created by johncordeiro on 18/07/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class KeywordsResult extends PollResult {
 
     private List<ItemKeyword> results;

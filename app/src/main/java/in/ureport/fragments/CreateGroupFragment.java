@@ -37,7 +37,7 @@ import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.listener.OnChatRoomSavedListener;
+import in.ureport.listener.ChatRoomInterface;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.helpers.ImagePicker;
 import in.ureport.managers.TransferManager;
@@ -76,7 +76,7 @@ public class CreateGroupFragment extends Fragment {
 
     private UreportersAdapter ureportersAdapter;
 
-    private OnChatRoomSavedListener onChatRoomSavedListener;
+    private ChatRoomInterface.OnChatRoomSavedListener onChatRoomSavedListener;
     private Uri pictureUri;
 
     private boolean editMode = false;
@@ -174,8 +174,8 @@ public class CreateGroupFragment extends Fragment {
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-        if(activity instanceof OnChatRoomSavedListener)
-            onChatRoomSavedListener = (OnChatRoomSavedListener)activity;
+        if(activity instanceof ChatRoomInterface.OnChatRoomSavedListener)
+            onChatRoomSavedListener = (ChatRoomInterface.OnChatRoomSavedListener)activity;
     }
 
     private void setupObjects() {

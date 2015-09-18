@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -99,10 +100,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
         menuNavigation = (NavigationView) findViewById(R.id.menuNavigation);
         menuNavigation.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
-        setupModerationMenuItem();
-
-        MenuItem logoutItem = menuNavigation.getMenu().findItem(R.id.logout);
-        logoutItem.setVisible(UserManager.isUserLoggedIn());
+        setupMenuPermissions();
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout
@@ -117,10 +115,12 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupModerationMenuItem() {
-        if(UserManager.canModerate()) {
-            getMenuNavigation().getMenu().findItem(R.id.moderation).setVisible(true);
-        }
+    private void setupMenuPermissions() {
+        Menu menu = getMenuNavigation().getMenu();
+        menu.findItem(R.id.moderation).setVisible(UserManager.canModerate());
+        menu.findItem(R.id.changeSettings).setVisible(UserManager.isUserLoggedIn());
+        menu.findItem(R.id.logout).setVisible(UserManager.isUserLoggedIn());
+
     }
 
     @Override
@@ -303,6 +303,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                     break;
                 case R.id.about:
                     navigationIntent = new Intent(BaseActivity.this, AboutActivity.class);
+                    startActivity(navigationIntent);
+                    return true;
+                case R.id.changeSettings:
+                    navigationIntent = new Intent(BaseActivity.this, GeneralSettingsActivity.class);
                     startActivity(navigationIntent);
                     return true;
                 case R.id.logout:

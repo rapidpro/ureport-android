@@ -12,7 +12,7 @@
     <string name="label_donation">جعل التبرعات</string>
     <string name="main_menu_subitem_buy_goods">شراء السلع</string>
     <string name="main_menu_subitem_embassadors">سفراء</string>
-    <string name="main_menu_settings">الإعدادات</string>
+    <string name="label_settings">الإعدادات</string>
 
     <string name="profile_polls">استطلاعات: %1$s</string>
     <string name="profile_stories">قصص: %1$s</string>

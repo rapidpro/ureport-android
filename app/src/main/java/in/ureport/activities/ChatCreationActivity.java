@@ -10,7 +10,7 @@ import android.support.v7.widget.Toolbar;
 import in.ureport.R;
 import in.ureport.fragments.CreateGroupFragment;
 import in.ureport.fragments.NewChatFragment;
-import in.ureport.listener.OnChatRoomSavedListener;
+import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.ChatMembers;
@@ -20,7 +20,7 @@ import in.ureport.models.GroupChatRoom;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class ChatCreationActivity extends AppCompatActivity implements OnChatRoomSavedListener
+public class ChatCreationActivity extends AppCompatActivity implements ChatRoomInterface.OnChatRoomSavedListener
     , OnCreateGroupListener {
 
     public static final String EXTRA_CHAT_ROOM = "chatRoom";

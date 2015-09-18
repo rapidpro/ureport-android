@@ -1,5 +1,7 @@
 package in.ureport.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 
 import in.ureport.listener.OnNotificationSelectedListener;
@@ -7,6 +9,7 @@ import in.ureport.listener.OnNotificationSelectedListener;
 /**
  * Created by johncordeiro on 21/07/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Notification {
 
     private String id;

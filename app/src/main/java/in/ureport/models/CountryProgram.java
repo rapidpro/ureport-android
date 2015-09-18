@@ -3,9 +3,12 @@ package in.ureport.models;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Created by johncordeiro on 7/23/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CountryProgram {
 
     private String code;
