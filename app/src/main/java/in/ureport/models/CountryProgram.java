@@ -24,12 +24,15 @@ public class CountryProgram {
     @StringRes
     private int channel;
 
-    public CountryProgram(String code, @StyleRes int theme, String name, @StringRes int apiToken, @StringRes int channel) {
+    private String twitter;
+
+    public CountryProgram(String code, @StyleRes int theme, String name, @StringRes int apiToken, @StringRes int channel, String twitter) {
         this.code = code;
         this.theme = theme;
         this.name = name;
         this.apiToken = apiToken;
         this.channel = channel;
+        this.twitter = twitter;
     }
 
     public CountryProgram(String code, String name) {
@@ -85,6 +88,14 @@ public class CountryProgram {
 
     public void setChannel(int channel) {
         this.channel = channel;
+    }
+
+    public String getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
     }
 
     @Override

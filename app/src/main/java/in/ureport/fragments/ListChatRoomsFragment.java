@@ -287,4 +287,8 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     public boolean onQueryTextChange(String newText) {
         return false;
     }
+
+    public List<ChatRoomHolder> getChatRooms() {
+        return chatRoomsAdapter.getChatRooms();
+    }
 }

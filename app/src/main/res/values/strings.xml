@@ -279,5 +279,13 @@
 
     <string name="message_remove_chat_message">Do you really want to delete this message?</string>
     <string name="message_delete_message_success">Your message was deleted with success!</string>
+    <string name="message_individual_chat_blocked">This chat room was blocked by %1$s</string>
+    <string name="block_chat_room">Block chat room</string>
+    <string name="label_unblock_chat_room">Unblock chat room</string>
+    <string name="message_block_chat_room">This chat room is blocked now!</string>
+    <string name="message_unblock_chat_room">This chat room was unblocked now!</string>
+    <string name="message_confirm_block_user">Do you really want to block this chat room?</string>
+    <string name="message_confirm_unblock_user">Do you really want to unblock this chat room?</string>
+    <string name="message_user_blocked_by_other">The user %1$s has blocked you. You can\'t chat with him.</string>
 
 </resources>

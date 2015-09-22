@@ -68,8 +68,8 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     }
 
     private void updateChatData(Intent data) {
-        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_ROOM);
-        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_MEMBERS);
+        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_ROOM);
+        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_MEMBERS);
 
         updateIntentResult(chatRoom, chatMembers);
         if(chatRoomFragment != null)

@@ -23,7 +23,7 @@
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="60dp"
         android:layout_toRightOf="@+id/picture"
         android:layout_toEndOf="@+id/picture"
         android:maxLines="1"
@@ -47,28 +47,15 @@
         tools:text="Points: 125"/>
 
     <TextView
-        android:id="@+id/polls"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/points"
-        android:layout_toRightOf="@+id/stories"
-        android:layout_toEndOf="@+id/stories"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
-        android:textColor="@android:color/white"
-        tools:text="Polls: 20"/>
-
-    <TextView
         android:id="@+id/stories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/points"
+        android:layout_below="@+id/name"
+        android:layout_toRightOf="@+id/points"
+        android:layout_toEndOf="@+id/points"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_toRightOf="@+id/picture"
-        android:layout_toEndOf="@+id/picture"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:textColor="@android:color/white"
         tools:text="Stories: 30"/>
 

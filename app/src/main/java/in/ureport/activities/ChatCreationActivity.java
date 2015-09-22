@@ -7,6 +7,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import in.ureport.R;
 import in.ureport.fragments.CreateGroupFragment;
 import in.ureport.fragments.NewChatFragment;
@@ -16,6 +19,7 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
+import in.ureport.models.holders.ChatRoomHolder;
 
 /**
  * Created by johncordeiro on 19/07/15.
@@ -23,8 +27,10 @@ import in.ureport.models.GroupChatRoom;
 public class ChatCreationActivity extends AppCompatActivity implements ChatRoomInterface.OnChatRoomSavedListener
     , OnCreateGroupListener {
 
-    public static final String EXTRA_CHAT_ROOM = "chatRoom";
-    public static final String EXTRA_CHAT_MEMBERS = "chatMembers";
+    public static final String EXTRA_RESULT_CHAT_ROOM = "chatRoom";
+    public static final String EXTRA_RESULT_CHAT_MEMBERS = "chatMembers";
+
+    public static final String EXTRA_CHAT_ROOMS = "chatRooms";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,13 +41,14 @@ public class ChatCreationActivity extends AppCompatActivity implements ChatRoomI
         setResult(Activity.RESULT_CANCELED);
 
         if(savedInstanceState == null) {
-            if(getIntent().hasExtra(EXTRA_CHAT_ROOM)) {
-                ChatRoom chatRoom = getIntent().getParcelableExtra(EXTRA_CHAT_ROOM);
-                ChatMembers chatMembers = getIntent().getParcelableExtra(EXTRA_CHAT_MEMBERS);
+            if(getIntent().hasExtra(EXTRA_RESULT_CHAT_ROOM)) {
+                ChatRoom chatRoom = getIntent().getParcelableExtra(EXTRA_RESULT_CHAT_ROOM);
+                ChatMembers chatMembers = getIntent().getParcelableExtra(EXTRA_RESULT_CHAT_MEMBERS);
 
                 addCreateGroupFragment(chatRoom, chatMembers);
             } else {
-                addNewChatFragment();
+                ArrayList<ChatRoomHolder> chatRooms = getIntent().getParcelableArrayListExtra(EXTRA_CHAT_ROOMS);
+                addNewChatFragment(chatRooms);
             }
         }
     }
@@ -57,8 +64,8 @@ public class ChatCreationActivity extends AppCompatActivity implements ChatRoomI
         return true;
     }
 
-    private void addNewChatFragment() {
-        NewChatFragment newChatFragment = new NewChatFragment();
+    private void addNewChatFragment(ArrayList<ChatRoomHolder> chatRooms) {
+        NewChatFragment newChatFragment = NewChatFragment.newInstance(chatRooms);
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.content, newChatFragment)
@@ -74,8 +81,8 @@ public class ChatCreationActivity extends AppCompatActivity implements ChatRoomI
     @Override
     public void onChatRoomSaved(ChatRoom chatRoom, ChatMembers chatMembers) {
         Intent data = new Intent();
-        data.putExtra(EXTRA_CHAT_ROOM, chatRoom);
-        data.putExtra(EXTRA_CHAT_MEMBERS, chatMembers);
+        data.putExtra(EXTRA_RESULT_CHAT_ROOM, chatRoom);
+        data.putExtra(EXTRA_RESULT_CHAT_MEMBERS, chatMembers);
 
         setResult(RESULT_OK, data);
         finish();

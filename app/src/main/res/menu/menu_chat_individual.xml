@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/blockChatRoom"
+        android:title="@string/block_chat_room"
+        android:icon="@drawable/ic_account_remove_white_24dp"
+        android:visible="false"
+        tools:visible="true"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/unblockChatRoom"
+        android:title="@string/label_unblock_chat_room"
+        android:icon="@drawable/ic_account_check_white_24dp"
+        android:visible="false"
+        tools:visible="true"
+        app:showAsAction="always" />
+
+</menu>

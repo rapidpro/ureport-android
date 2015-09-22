@@ -230,6 +230,8 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
                 @Override
                 public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                     if(firebaseError == null) {
+                        userServices.incrementContributionPoint();
+
                         StoryViewFragment.this.contribution.setText(null);
                         incrementContributionsText();
                         refreshContribution();

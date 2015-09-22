@@ -79,11 +79,19 @@ public abstract class ChatRoom implements Parcelable {
 
         ChatRoom chatRoom = (ChatRoom) o;
         return key.equals(chatRoom.key);
-
     }
 
     @Override
     public int hashCode() {
         return key.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "ChatRoom{" +
+                "key='" + key + '\'' +
+                ", unreadMessages=" + unreadMessages +
+                ", type=" + type +
+                '}';
     }
 }

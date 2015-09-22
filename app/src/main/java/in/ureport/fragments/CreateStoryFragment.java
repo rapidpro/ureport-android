@@ -43,6 +43,7 @@ import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.network.StoryServices;
 import in.ureport.helpers.SpaceItemDecoration;
+import in.ureport.network.UserServices;
 import in.ureport.views.adapters.MediaAdapter;
 
 /**
@@ -233,10 +234,16 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null && storyCreationListener != null) {
+                    incrementStoryCount();
                     storyCreationListener.onStoryCreated(story);
                 }
             }
         });
+    }
+
+    private void incrementStoryCount() {
+        UserServices userServices = new UserServices();
+        userServices.incrementStoryCount();
     }
 
     @Nullable

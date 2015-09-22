@@ -8,15 +8,16 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
@@ -54,6 +55,22 @@ public class ChatRoomServices extends ProgramServices {
         getDefaultRoot().child(messagesPath).child(key).orderByChild("date").removeEventListener(listener);
     }
 
+    public void addValueListenForChatRoom(ChatRoom chatRoom, ValueEventListener listener) {
+        getDefaultRoot().child(chatRoomPath).child(chatRoom.getKey()).addValueEventListener(listener);
+    }
+
+    public void removeValueListenForChatRoom(ChatRoom chatRoom, ValueEventListener listener) {
+        getDefaultRoot().child(chatRoomPath).child(chatRoom.getKey()).removeEventListener(listener);
+    }
+
+    public void blockChatRoom(ChatRoom chatRoom) {
+        getDefaultRoot().child(chatRoomPath).child(chatRoom.getKey()).child("blocked").setValue(UserManager.getUserId());
+    }
+
+    public void unblockChatRoom(ChatRoom chatRoom) {
+        getDefaultRoot().child(chatRoomPath).child(chatRoom.getKey()).child("blocked").removeValue();
+    }
+
     public void closeChatRoom(Context context, ChatRoom chatRoom, ChatMembers chatMembers) {
         for (User user : chatMembers.getUsers()) {
             removeChatMember(context, user, chatRoom.getKey());
@@ -88,7 +105,7 @@ public class ChatRoomServices extends ProgramServices {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (!dataSnapshot.exists()) return;
 
-                        final ChatRoom chatRoom = getChatRoomInstance(dataSnapshot);
+                        final ChatRoom chatRoom = getChatRoomFromSnapshot(dataSnapshot);
                         chatRoom.setKey(key);
                         loadExtraDataForChatRoom(chatRoom, key, listener);
                     }
@@ -109,7 +126,7 @@ public class ChatRoomServices extends ProgramServices {
         });
     }
 
-    private ChatRoom getChatRoomInstance(DataSnapshot dataSnapshot) {
+    public ChatRoom getChatRoomFromSnapshot(DataSnapshot dataSnapshot) {
         Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
 
         final ChatRoom chatRoom;
@@ -118,6 +135,7 @@ public class ChatRoomServices extends ProgramServices {
         } else {
             chatRoom = dataSnapshot.getValue(IndividualChatRoom.class);
         }
+        chatRoom.setKey(dataSnapshot.getKey());
         return chatRoom;
     }
 
@@ -142,18 +160,6 @@ public class ChatRoomServices extends ProgramServices {
                         }
 
                         onChatLastMessageLoadedListener.onChatLastMessageLoaded(lastChatMessage);
-                    }
-                });
-    }
-
-    public void loadChatRoomMembersWithoutData(String key, final ChatRoomInterface.OnChatMembersLoadedListener listener) {
-        getDefaultRoot().child(membersPath).child(key)
-                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        ChatMembers chatMembers = getChatMembersFromSnapshot(dataSnapshot);
-                        if(listener != null)
-                            listener.onChatMembersLoaded(chatMembers);
                     }
                 });
     }
@@ -217,6 +223,7 @@ public class ChatRoomServices extends ProgramServices {
                 , new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                Log.i(TAG, "onComplete firebaseError: " + firebaseError);
                 if (firebaseError == null) {
                     members.add(administrator);
                     for (User member : members) {

@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,18 +21,20 @@ import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
-import in.ureport.listener.OnChatRoomCheckUserListener;
 import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
-import in.ureport.managers.ChatRoomValidator;
 import in.ureport.managers.SearchManager;
 import in.ureport.managers.UserManager;
+import in.ureport.models.ChatMembers;
+import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
+import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.views.adapters.UreportersAdapter;
@@ -42,6 +45,10 @@ import in.ureport.views.adapters.UreportersAdapter;
 public class NewChatFragment extends Fragment implements OnCreateIndividualChatListener
         , SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
+    private static final String TAG = "NewChatFragment";
+
+    private static final String EXTRA_CHAT_ROOMS = "chatRooms";
+
     private RecyclerView ureportersList;
 
     private UserServices userServices;
@@ -51,6 +58,24 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     private OnCreateGroupListener onCreateGroupListener;
 
     private UreportersAdapter ureportersAdapter;
+    private List<ChatRoomHolder> existingChatRooms;
+
+    public static NewChatFragment newInstance(ArrayList<ChatRoomHolder> chatRooms) {
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(EXTRA_CHAT_ROOMS, chatRooms);
+
+        NewChatFragment fragment = new NewChatFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(getArguments() != null && getArguments().containsKey(EXTRA_CHAT_ROOMS)) {
+            existingChatRooms = getArguments().getParcelableArrayList(EXTRA_CHAT_ROOMS);
+        }
+    }
 
     @Nullable
     @Override
@@ -166,21 +191,30 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     }
 
     private void checkIfExistsAndSaveChat(final User me, final User friend) {
-        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
-                , getString(R.string.load_message_wait), true, false);
-
-        ChatRoomValidator chatRoomValidator = new ChatRoomValidator();
-        chatRoomValidator.checkIfExistsChatRoom(me, friend, new OnChatRoomCheckUserListener() {
-            @Override
-            public void onChatRoomCheckUser(Boolean containsUser) {
-                progressDialog.dismiss();
-                if(containsUser) {
-                    displayDuplicateAlert();
-                } else {
-                    chatRoomServices.saveIndividualChatRoom(getActivity(), me, friend, onChatRoomSavedListener);
+        if(existingChatRooms != null && containsChatRoom(me, friend)) {
+            displayDuplicateAlert();
+        } else {
+            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
+                    , getString(R.string.load_message_wait), true, false);
+            chatRoomServices.saveIndividualChatRoom(getActivity(), me, friend, new ChatRoomInterface.OnChatRoomSavedListener() {
+                @Override
+                public void onChatRoomSaved(ChatRoom chatRoom, ChatMembers chatMembers) {
+                    progressDialog.dismiss();
+                    onChatRoomSavedListener.onChatRoomSaved(chatRoom, chatMembers);
                 }
+            });
+        }
+    }
+
+    private boolean containsChatRoom(User me, User friend) {
+        for (ChatRoomHolder existingChatRoom : existingChatRooms) {
+            if(existingChatRoom.chatRoom.getType() == ChatRoom.Type.Individual
+            && existingChatRoom.members.getUsers().contains(me)
+            && existingChatRoom.members.getUsers().contains(friend)) {
+                return true;
             }
-        });
+        }
+        return false;
     }
 
     private void displayDuplicateAlert() {

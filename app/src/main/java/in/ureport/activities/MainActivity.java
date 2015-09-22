@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
@@ -28,6 +29,7 @@ import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
 import in.ureport.models.Notification;
+import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.views.adapters.NavigationAdapter;
 import in.ureport.views.adapters.StoriesAdapter;
@@ -52,6 +54,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     private ViewPager pager;
 
     private StoriesListFragment storiesListFragment;
+    private ListChatRoomsFragment listChatRoomsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,8 +117,8 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     }
 
     private void startChatRoom(Intent data) {
-        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_ROOM);
-        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_MEMBERS);
+        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_ROOM);
+        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_MEMBERS);
 
         if(chatRoom != null && chatMembers != null) {
             Intent chatRoomIntent = new Intent(this, ChatRoomActivity.class);
@@ -171,7 +174,8 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
 
         NavigationItem [] navigationItems;
         if(UserManager.isUserLoggedIn() && (UserManager.isUserCountryProgramEnabled() || UserManager.isMaster())) {
-            NavigationItem chatItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.main_chat));
+            listChatRoomsFragment = new ListChatRoomsFragment();
+            NavigationItem chatItem = new NavigationItem(listChatRoomsFragment, getString(R.string.main_chat));
             navigationItems = new NavigationItem[]{storiesItem, pollsItem, chatItem};
         } else {
             navigationItems = new NavigationItem[]{storiesItem, pollsItem};
@@ -274,8 +278,10 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     };
 
     private void createChat() {
-        if(UreportApplication.validateUserLogin(MainActivity.this)) {
+        if(UreportApplication.validateUserLogin(MainActivity.this) && listChatRoomsFragment != null) {
             Intent newChatIntent = new Intent(MainActivity.this, ChatCreationActivity.class);
+            newChatIntent.putParcelableArrayListExtra(ChatCreationActivity.EXTRA_CHAT_ROOMS
+                    , (ArrayList<ChatRoomHolder>) listChatRoomsFragment.getChatRooms());
             startActivityForResult(newChatIntent, REQUEST_CODE_CHAT_CREATION);
         }
     }

@@ -17,6 +17,8 @@ public class ProfileActivity extends AppCompatActivity implements OnEditProfileL
 
     private static final int REQUEST_CODE_EDIT_USER = 100;
 
+    public static final String ACTION_DISPLAY_RANKING = "in.ureport.ProfileDisplayRanking";
+
     private ProfileFragment profileFragment;
 
     @Override

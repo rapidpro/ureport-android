@@ -45,8 +45,6 @@ public class User implements Parcelable {
 
     private Integer stories;
 
-    private Integer polls;
-
     private String pushIdentity;
 
     private HashMap<String, Boolean> chatRooms;
@@ -149,14 +147,6 @@ public class User implements Parcelable {
         this.stories = stories;
     }
 
-    public Integer getPolls() {
-        return polls;
-    }
-
-    public void setPolls(Integer polls) {
-        this.polls = polls;
-    }
-
     public String getPushIdentity() {
         return pushIdentity;
     }
@@ -250,7 +240,6 @@ public class User implements Parcelable {
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
         dest.writeValue(this.points);
         dest.writeValue(this.stories);
-        dest.writeValue(this.polls);
         dest.writeString(this.pushIdentity);
         dest.writeSerializable(this.chatRooms);
         dest.writeValue(this.publicProfile);
@@ -275,7 +264,6 @@ public class User implements Parcelable {
         this.type = tmpType == -1 ? null : User.Type.values()[tmpType];
         this.points = (Integer) in.readValue(Integer.class.getClassLoader());
         this.stories = (Integer) in.readValue(Integer.class.getClassLoader());
-        this.polls = (Integer) in.readValue(Integer.class.getClassLoader());
         this.pushIdentity = in.readString();
         this.chatRooms = (HashMap<String, Boolean>) in.readSerializable();
         this.publicProfile = (Boolean) in.readValue(Boolean.class.getClassLoader());

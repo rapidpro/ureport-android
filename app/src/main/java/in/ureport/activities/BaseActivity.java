@@ -190,9 +190,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             TextView points = (TextView) menuHeader.findViewById(R.id.points);
             points.setText(getString(R.string.menu_points, getIntegerValue(user.getPoints())));
 
-            TextView polls = (TextView) menuHeader.findViewById(R.id.polls);
-            polls.setText(getString(R.string.profile_polls, getIntegerValue(user.getPolls())));
-
             TextView stories = (TextView) menuHeader.findViewById(R.id.stories);
             stories.setText(getString(R.string.profile_stories, getIntegerValue(user.getStories())));
 

@@ -228,13 +228,11 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
-        Log.i(TAG, "onCreateLoader OnCreateLoader: " + id);
         switch(id) {
             case LOAD_COUNTRY_LIST_ID:
                 return new CountryListLoader(getActivity());
             case LOAD_STATES_ID:
                 Locale locale = (Locale) args.getSerializable(EXTRA_LOCALE_LOADER);
-                Log.i(TAG, "onCreateLoader loadStatesId: " + locale);
                 return new StatesLoader(getActivity(), locale);
         }
         return null;

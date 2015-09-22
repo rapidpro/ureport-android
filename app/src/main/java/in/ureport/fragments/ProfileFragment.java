@@ -3,11 +3,11 @@ package in.ureport.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.firebase.client.DataSnapshot;
 
 import in.ureport.R;
+import in.ureport.activities.ProfileActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.listener.OnEditProfileListener;
@@ -33,13 +34,14 @@ import in.ureport.views.adapters.NavigationAdapter;
 public class ProfileFragment extends Fragment {
 
     private static final String EXTRA_USER = "user";
+    private static final int RANKING_POSITION = 1;
 
     private TextView name;
     private ViewPager pager;
     private TextView points;
-    private TextView polls;
     private TextView stories;
     private ImageView picture;
+    private TabLayout tabs;
 
     private User user;
 
@@ -98,10 +100,10 @@ public class ProfileFragment extends Fragment {
         picture = (ImageView)view.findViewById(R.id.picture);
 
         points = (TextView) view.findViewById(R.id.points);
-        polls = (TextView) view.findViewById(R.id.polls);
         stories = (TextView) view.findViewById(R.id.stories);
 
         pager = (ViewPager)view.findViewById(R.id.pager);
+        tabs = (TabLayout)view.findViewById(R.id.tabs);
 
         Button logout = (Button) view.findViewById(R.id.logout);
         logout.setOnClickListener(onLogoutClickListener);
@@ -117,8 +119,7 @@ public class ProfileFragment extends Fragment {
         ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
 
         points.setText(getString(R.string.menu_points, getIntegerValue(user.getPoints())));
-        polls.setText(getString(R.string.profile_polls, getIntegerValue(user.getPoints())));
-        stories.setText(getString(R.string.profile_stories, getIntegerValue(user.getPoints())));
+        stories.setText(getString(R.string.profile_stories, getIntegerValue(user.getStories())));
     }
 
     private int getIntegerValue(Integer value) {
@@ -126,12 +127,22 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupPagerWithUser(User user) {
-        Log.i("ProfileFragment", "setupPagerWithUser " + user);
         NavigationItem storiesItem = new NavigationItem(StoriesListFragment.newInstance(user), getString(R.string.profile_my_stories));
+        NavigationItem rankingItem = new NavigationItem(RankingFragment.newInstance(user), getString(R.string.profile_ranking));
 
-        NavigationAdapter navigationAdapter = new NavigationAdapter(getFragmentManager(), storiesItem);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(getFragmentManager(), storiesItem, rankingItem);
         pager.setAdapter(navigationAdapter);
-        pager.setOffscreenPageLimit(3);
+        pager.setOffscreenPageLimit(2);
+        tabs.setupWithViewPager(pager);
+
+        checkRankingAction();
+    }
+
+    private void checkRankingAction() {
+        String action = getActivity().getIntent().getAction();
+        if(action != null && action.equals(ProfileActivity.ACTION_DISPLAY_RANKING)) {
+            pager.setCurrentItem(RANKING_POSITION);
+        }
     }
 
     private View.OnClickListener onLogoutClickListener = new View.OnClickListener() {

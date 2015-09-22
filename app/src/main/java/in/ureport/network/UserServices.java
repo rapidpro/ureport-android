@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.helpers.ValueIncrementerTransaction;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.GameficationManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 
@@ -72,6 +74,37 @@ public class UserServices extends ProgramServices {
         }
 
         if(onLoadAllUsersListener != null) onLoadAllUsersListener.onLoadAllUsers(users);
+    }
+
+    public void incrementContributionPoint() {
+        FirebaseManager.getReference().child(userPath).child(UserManager.getUserId()).child("points")
+                .runTransaction(new ValueIncrementerTransaction(GameficationManager.CONTRIBUTION_POINTS));
+    }
+
+    public void incrementStoryCount() {
+        FirebaseManager.getReference().child(userPath).child(UserManager.getUserId()).child("stories")
+                .runTransaction(new ValueIncrementerTransaction(1));
+
+        FirebaseManager.getReference().child(userPath).child(UserManager.getUserId()).child("points")
+                .runTransaction(new ValueIncrementerTransaction(GameficationManager.STORIES_POINTS));
+    }
+
+    public void loadRanking(final OnLoadAllUsersListener onLoadAllUsersListener) {
+        FirebaseManager.getReference().child(userPath).orderByChild("points")
+                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        super.onDataChange(dataSnapshot);
+
+                        List<User> users = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            User user = snapshot.getValue(User.class);
+                            users.add(user);
+                        }
+
+                        onLoadAllUsersListener.onLoadAllUsers(users);
+                    }
+                });
     }
 
     public void loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {

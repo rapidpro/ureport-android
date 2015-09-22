@@ -18,7 +18,9 @@ import in.ureport.models.User;
 import in.ureport.models.geonames.State;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
+import in.ureport.models.rapidpro.Contact;
 import in.ureport.network.UserServices;
+import in.ureport.tasks.SaveContactTask;
 
 /**
  * Created by johncordeiro on 10/09/15.
@@ -145,15 +147,34 @@ public class EditUserFragment extends UserInfoBaseFragment {
 
     private Firebase.CompletionListener onUserUpdatedListener = new Firebase.CompletionListener() {
         @Override
-        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+        public void onComplete(final FirebaseError firebaseError, Firebase firebase) {
             progressDialog.dismiss();
             if(firebaseError == null) {
-                userSettingsListener.onEditFinished();
+                updateContactToRapidpro();
             } else {
-                Toast.makeText(getActivity(), R.string.error_update_user, Toast.LENGTH_SHORT).show();
+                displayError();
             }
         }
+
+        private void updateContactToRapidpro() {
+            SaveContactTask saveContactTask = new SaveContactTask(getActivity()) {
+                @Override
+                protected void onPostExecute(Contact contact) {
+                    super.onPostExecute(contact);
+                    if(contact != null) {
+                        userSettingsListener.onEditFinished();
+                    } else {
+                        displayError();
+                    }
+                }
+            };
+            saveContactTask.execute(user);
+        }
     };
+
+    private void displayError() {
+        Toast.makeText(getActivity(), R.string.error_update_user, Toast.LENGTH_SHORT).show();
+    }
 
     private boolean validFieldsForCustomUser() {
         return isUsernameValid() && isBirthdayValid() && isStateValid() && isSpinnerValid(gender);

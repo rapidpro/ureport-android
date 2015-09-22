@@ -48,15 +48,29 @@
                 tools:text="\@JonSnow"/>
 
             <TextView
-                android:id="@+id/polls"
+                android:id="@+id/points"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/name"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toLeftOf="@+id/space"
+                android:layout_toStartOf="@+id/space"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                tools:text="Points: 125"
+                />
+
+            <TextView
+                android:id="@+id/space"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/name"
                 android:layout_marginTop="5dp"
                 android:layout_centerHorizontal="true"
                 android:textColor="@android:color/white"
-                android:textSize="12sp"
-                tools:text="Polls: 20"/>
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/stories"
@@ -64,33 +78,19 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/name"
                 android:layout_marginTop="5dp"
-                android:layout_marginRight="25dp"
-                android:layout_marginEnd="25dp"
-                android:layout_toLeftOf="@+id/polls"
-                android:layout_toStartOf="@+id/polls"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_toRightOf="@+id/space"
+                android:layout_toEndOf="@+id/space"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
-                tools:text="Stories: 30"/>
-
-            <TextView
-                android:id="@+id/points"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/name"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginStart="25dp"
-                android:layout_toRightOf="@+id/polls"
-                android:layout_toEndOf="@+id/polls"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                tools:text="Points: 125"/>
+                tools:text="Stories: 30" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_below="@+id/polls"
+                android:layout_below="@+id/points"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:gravity="center_horizontal">
@@ -118,6 +118,15 @@
             </LinearLayout>
 
         </RelativeLayout>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:layout_gravity="bottom"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            style="@style/AppTheme.TabLayout" />
 
     </android.support.design.widget.AppBarLayout>
 

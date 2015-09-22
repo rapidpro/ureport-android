@@ -56,8 +56,8 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
     }
 
     private void startChatRoom(Intent data) {
-        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_ROOM);
-        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_MEMBERS);
+        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_ROOM);
+        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_MEMBERS);
 
         if(chatRoom != null && chatMembers != null) {
             Intent chatRoomIntent = new Intent(this, ChatRoomActivity.class);

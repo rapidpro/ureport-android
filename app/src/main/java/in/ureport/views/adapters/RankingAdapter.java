@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.managers.UserViewManager;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.models.User;
 
 /**
@@ -56,7 +56,12 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         private void bindView(User user) {
             name.setText(user.getNickname());
-            points.setText(String.valueOf(user.getPoints()));
+            points.setText(String.valueOf(getPoints(user)));
+            ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
+        }
+
+        private Integer getPoints(User user) {
+            return user.getPoints() != null ? user.getPoints() : 0;
         }
     }
 }

@@ -17,5 +17,6 @@
     <dimen name="logo_container_height">180dp</dimen>
     <dimen name="dialog_width">320dp</dimen>
     <dimen name="dialog_height">340dp</dimen>
+    <dimen name="chat_message_elevation">3dp</dimen>
 
 </resources>

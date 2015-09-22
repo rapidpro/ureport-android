@@ -59,8 +59,8 @@ public class GroupInfoActivity extends AppCompatActivity implements InfoGroupCha
     private void updateChatData(Intent data) {
         setResult(Activity.RESULT_OK, data);
 
-        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_ROOM);
-        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_CHAT_MEMBERS);
+        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_ROOM);
+        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_MEMBERS);
 
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content);
         if(fragment instanceof GroupInfoFragment) {

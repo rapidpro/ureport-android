@@ -7,16 +7,17 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Button;
 
 import in.ureport.R;
+import in.ureport.managers.CountryProgramManager;
+import in.ureport.models.CountryProgram;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
 public class AboutActivity extends AppCompatActivity {
 
-    private static final String TWITTER_URL = "http://twitter.com/UReportGlobal";
+    private static final String TWITTER_URL = "http://twitter.com/%1$s";
     private static final String FACEBOOK_URL = "https://www.facebook.com/U-report-Nigeria-1429673597287501";
 
     @Override
@@ -55,7 +56,8 @@ public class AboutActivity extends AppCompatActivity {
     private View.OnClickListener onTwitterClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            openPage(Uri.parse(TWITTER_URL));
+            CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
+            openPage(Uri.parse(String.format(TWITTER_URL, countryProgram.getTwitter())));
         }
     };
 
