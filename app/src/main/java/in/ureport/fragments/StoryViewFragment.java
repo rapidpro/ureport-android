@@ -207,7 +207,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private View.OnClickListener onContributeClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(UreportApplication.validateUserLogin(getActivity())) {
+            if(UserManager.validateKeyAction(getActivity())) {
                 updateViewForContribution();
             }
         }

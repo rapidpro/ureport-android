@@ -164,6 +164,17 @@ public class ChatRoomServices extends ProgramServices {
                 });
     }
 
+    public void loadChatRoomMembersWithoutData(String key, final ChatRoomInterface.OnChatMembersLoadedListener listener) {
+        getDefaultRoot().child(membersPath).child(key)
+                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ChatMembers chatMembers = getChatMembersFromSnapshot(dataSnapshot);
+                        listener.onChatMembersLoaded(chatMembers);
+                    }
+                });
+    }
+
     public void loadChatRoomMembers(String key, final ChatRoomInterface.OnChatMembersLoadedListener listener) {
         getDefaultRoot().child(membersPath).child(key)
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {

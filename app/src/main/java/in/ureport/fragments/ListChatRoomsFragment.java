@@ -228,6 +228,12 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         }
     };
 
+    public void startChatRoom(ChatRoom chatRoom) {
+        Intent chatRoomIntent = new Intent(getActivity(), ChatRoomActivity.class);
+        chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM_KEY, chatRoom.getKey());
+        startActivityForResult(chatRoomIntent, REQUEST_CODE_CHAT_ROOM);
+    }
+
     @Override
     public void onChatRoomSelected(ChatRoom chatRoom, ChatMembers members) {
         Intent chatRoomIntent = new Intent(getActivity(), ChatRoomActivity.class);

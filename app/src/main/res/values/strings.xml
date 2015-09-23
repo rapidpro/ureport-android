@@ -287,5 +287,8 @@
     <string name="message_confirm_block_user">Do you really want to block this chat room?</string>
     <string name="message_confirm_unblock_user">Do you really want to unblock this chat room?</string>
     <string name="message_user_blocked_by_other">The user %1$s has blocked you. You can\'t chat with him.</string>
+    <string name="label_chat_invite">Chat</string>
+    <string name="label_view_stories">Stories</string>
+    <string name="label_view_points">Points</string>
 
 </resources>

@@ -84,12 +84,12 @@ public class SignUpFragment extends UserInfoBaseFragment {
 
     private void setupUserIfExists() {
         if(user != null) {
-            toolbar.setBackgroundColor(getResources().getColor(R.color.confirm_info_primary_color));
-            setSignupStatusBarColor(R.color.confirm_info_primary_color_dark);
+            toolbar.setBackgroundColor(getResources().getColor(R.color.light_cyan_highlight));
+            setSignupStatusBarColor(R.color.dark_cyan_highlight);
             confirm.setBackgroundResource(R.drawable.shape_round_simple_blue_button);
         } else {
-            toolbar.setBackgroundColor(getResources().getColor(R.color.signup_primary_color));
-            setSignupStatusBarColor(R.color.signup_primary_color_dark);
+            toolbar.setBackgroundColor(getResources().getColor(R.color.light_yellow_highlight));
+            setSignupStatusBarColor(R.color.dark_yellow_highlight);
         }
     }
 

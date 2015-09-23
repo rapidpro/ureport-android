@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.listener.OnUserStartChattingListener;
+import in.ureport.managers.UserViewManager;
 import in.ureport.models.Story;
 import in.ureport.views.adapters.StoriesAdapter;
 
@@ -20,6 +22,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     private final String contributionsTemplate;
 
     private final StoriesAdapter.OnStoryViewListener onStoryViewListener;
+    private final OnUserStartChattingListener onUserStartChattingListener;
 
     private final ImageView picture;
     private final ImageView image;
@@ -32,9 +35,13 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
     private Story story;
 
-    public StoryItemViewHolder(View itemView, StoriesAdapter.OnStoryViewListener onStoryViewListener) {
+    private UserViewManager userViewManager;
+
+    public StoryItemViewHolder(View itemView, StoriesAdapter.OnStoryViewListener onStoryViewListener
+            , OnUserStartChattingListener onUserStartChattingListener) {
         super(itemView);
         this.onStoryViewListener = onStoryViewListener;
+        this.onUserStartChattingListener = onUserStartChattingListener;
 
         contributionsTemplate = itemView.getContext().getString(R.string.stories_list_item_contributions);
 
@@ -49,6 +56,8 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
         readFullStory.setOnClickListener(onReadFullStoryClickListener);
         itemView.setOnClickListener(onReadFullStoryClickListener);
+
+        userViewManager = new UserViewManager(itemView.getContext());
     }
 
     public void bindInfo(@StringRes int info) {
@@ -64,6 +73,9 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         summary.setText(story.getContent());
         title.setText(story.getTitle());
         contributions.setText(String.format(contributionsTemplate, story.getContributions()));
+
+        picture.setOnClickListener(onUserClickListener);
+        author.setOnClickListener(onUserClickListener);
     }
 
     private void bindMarkers(Story story) {
@@ -96,6 +108,13 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         public void onClick(View view) {
             if (onStoryViewListener != null)
                 onStoryViewListener.onStoryViewClick(story);
+        }
+    };
+
+    private View.OnClickListener onUserClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            userViewManager.showUserInfo(story.getUserObject(), onUserStartChattingListener);
         }
     };
 }

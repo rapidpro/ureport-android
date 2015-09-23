@@ -3,7 +3,7 @@
     android:color="?android:attr/colorControlHighlight">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/signup_primary_color"/>
+            <solid android:color="@color/light_yellow_highlight"/>
             <corners android:radius="@dimen/button_radius"/>
         </shape>
     </item>

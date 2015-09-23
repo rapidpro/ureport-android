@@ -13,6 +13,7 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.views.holders.StoryItemViewHolder;
@@ -35,6 +36,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private OnStoryViewListener onStoryViewListener;
     private OnPublishStoryListener onPublishStoryListener;
     private StoryModerationListener storyModerationListener;
+    private OnUserStartChattingListener onUserStartChattingListener;
 
     public StoriesAdapter() {
         setHasStableIds(true);
@@ -53,7 +55,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if(moderationType)
                     return new ModeratedItemViewHolder(view);
                 else
-                    return new StoryItemViewHolder(view, onStoryViewListener);
+                    return new StoryItemViewHolder(view, onStoryViewListener, onUserStartChattingListener);
         }
     }
 
@@ -98,6 +100,10 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setOnPublishStoryListener(OnPublishStoryListener onPublishStoryListener) {
         this.onPublishStoryListener = onPublishStoryListener;
+    }
+
+    public void setOnUserStartChattingListener(OnUserStartChattingListener onUserStartChattingListener) {
+        this.onUserStartChattingListener = onUserStartChattingListener;
     }
 
     public void updateStory(Story story) {
@@ -163,7 +169,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private class ModeratedItemViewHolder extends StoryItemViewHolder {
 
         public ModeratedItemViewHolder(View itemView) {
-            super(itemView, onStoryViewListener);
+            super(itemView, onStoryViewListener, onUserStartChattingListener);
 
             Button readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
             readFullStory.setVisibility(View.GONE);

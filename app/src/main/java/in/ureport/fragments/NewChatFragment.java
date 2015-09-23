@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,6 +47,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     private static final String TAG = "NewChatFragment";
 
     private static final String EXTRA_CHAT_ROOMS = "chatRooms";
+    private static final String EXTRA_CHAT_USER = "user";
 
     private RecyclerView ureportersList;
 
@@ -58,7 +58,17 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     private OnCreateGroupListener onCreateGroupListener;
 
     private UreportersAdapter ureportersAdapter;
+
     private List<ChatRoomHolder> existingChatRooms;
+    private User user;
+
+    public static NewChatFragment newInstance(ArrayList<ChatRoomHolder> chatRooms, User user) {
+        NewChatFragment fragment = NewChatFragment.newInstance(chatRooms);
+        Bundle args = fragment.getArguments();
+        args.putParcelable(EXTRA_CHAT_USER, user);
+
+        return fragment;
+    }
 
     public static NewChatFragment newInstance(ArrayList<ChatRoomHolder> chatRooms) {
         Bundle args = new Bundle();
@@ -74,6 +84,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
         super.onCreate(savedInstanceState);
         if(getArguments() != null && getArguments().containsKey(EXTRA_CHAT_ROOMS)) {
             existingChatRooms = getArguments().getParcelableArrayList(EXTRA_CHAT_ROOMS);
+            user = getArguments().getParcelable(EXTRA_CHAT_USER);
         }
     }
 
@@ -90,6 +101,13 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
         setupObject();
         setupView(view);
         loadData();
+        createChatRoomIfNeeded();
+    }
+
+    private void createChatRoomIfNeeded() {
+        if(user != null) {
+            createChatWithUser(user);
+        }
     }
 
     @Override
@@ -173,13 +191,13 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        getLoggedUserAndCheck(user);
+                        createChatWithUser(user);
                     }
                 }).create();
         alertDialog.show();
     }
 
-    private void getLoggedUserAndCheck(final User friend) {
+    private void createChatWithUser(final User friend) {
         userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

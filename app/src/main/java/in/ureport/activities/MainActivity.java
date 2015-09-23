@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.UreportApplication;
 import in.ureport.fragments.ListChatRoomsFragment;
 import in.ureport.fragments.PollQuestionFragment;
 import in.ureport.fragments.PollsFragment;
@@ -23,6 +22,7 @@ import in.ureport.fragments.StoriesListFragment;
 import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.listener.OnSeeLastPollsListener;
 import in.ureport.listener.OnSeeOpenGroupsListener;
+import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
@@ -38,7 +38,7 @@ import in.ureport.views.adapters.StoriesAdapter;
  * Created by johncordeiro on 7/9/15.
  */
 public class MainActivity extends BaseActivity implements FloatingActionButtonListener
-        , StoriesAdapter.OnPublishStoryListener, OnSeeOpenGroupsListener, OnSeeLastPollsListener {
+        , StoriesAdapter.OnPublishStoryListener, OnSeeOpenGroupsListener, OnSeeLastPollsListener, OnUserStartChattingListener {
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     private static final int REQUEST_CODE_CHAT_CREATION = 200;
@@ -48,6 +48,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     private static final int POSITION_CHAT_FRAGMENT = 2;
 
     public static final String ACTION_OPEN_CHAT_NOTIFICATION = "in.ureport.ChatNotification";
+
     public static final String EXTRA_FORCED_LOGIN = "forcedLogin";
 
     private TextView notificationsAlert;
@@ -63,17 +64,21 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
+        checkIntentAction();
     }
 
     private void checkForcedLogin() {
         Bundle extras = getIntent().getExtras();
-        if(extras != null && extras.containsKey(EXTRA_FORCED_LOGIN)) {
-            Boolean forcedLogin = extras.getBoolean(EXTRA_FORCED_LOGIN, false);
+        if(extras != null) {
 
-            if(forcedLogin) {
-                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(loginIntent);
-                finish();
+            if(extras.containsKey(EXTRA_FORCED_LOGIN)) {
+                Boolean forcedLogin = extras.getBoolean(EXTRA_FORCED_LOGIN, false);
+
+                if(forcedLogin) {
+                    Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(loginIntent);
+                    finish();
+                }
             }
         }
     }
@@ -161,14 +166,11 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
 
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(navigationItems.length);
-        selectChatIfNeeded();
     }
 
     @NonNull
     private NavigationItem[] getNavigationItems() {
         storiesListFragment = new StoriesListFragment();
-        storiesListFragment.setFloatingActionButtonListener(this);
-        storiesListFragment.setOnPublishStoryListener(this);
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
         NavigationItem pollsItem = getPollsNavigationItem();
 
@@ -183,16 +185,20 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         return navigationItems;
     }
 
-    private void selectChatIfNeeded() {
-        if(getIntent().getAction() != null
-        && getIntent().getAction().equals(ACTION_OPEN_CHAT_NOTIFICATION)) {
-            pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
+    private void checkIntentAction() {
+        final String action = getIntent().getAction();
+        if(action != null) {
+            switch(action) {
+                case ACTION_OPEN_CHAT_NOTIFICATION:
+                    pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
+                    break;
+            }
         }
     }
 
     @NonNull
     private NavigationItem getPollsNavigationItem() {
-        if(UserManager.isUserCountryProgramEnabled()) {
+        if(UserManager.isUserCountryProgramEnabled() && CountryProgramManager.allowsPollParticipation()) {
             return new NavigationItem(new PollQuestionFragment(), getString(R.string.main_polls));
         } else {
             return new NavigationItem(new PollsFragment(), getString(R.string.main_polls));
@@ -237,7 +243,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     }
 
     private void publishStory() {
-        if(UreportApplication.validateUserLogin(MainActivity.this)) {
+        if(UserManager.validateKeyAction(MainActivity.this)) {
             Intent createStoryIntent = new Intent(MainActivity.this, CreateStoryActivity.class);
             startActivityForResult(createStoryIntent, REQUEST_CODE_CREATE_STORY);
         }
@@ -278,10 +284,15 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     };
 
     private void createChat() {
-        if(UreportApplication.validateUserLogin(MainActivity.this) && listChatRoomsFragment != null) {
+        createChat(null);
+    }
+
+    private void createChat(User user) {
+        if(UserManager.validateKeyAction(MainActivity.this) && listChatRoomsFragment != null) {
             Intent newChatIntent = new Intent(MainActivity.this, ChatCreationActivity.class);
             newChatIntent.putParcelableArrayListExtra(ChatCreationActivity.EXTRA_CHAT_ROOMS
                     , (ArrayList<ChatRoomHolder>) listChatRoomsFragment.getChatRooms());
+            if(user != null)  newChatIntent.putExtra(ChatCreationActivity.EXTRA_USER, user);
             startActivityForResult(newChatIntent, REQUEST_CODE_CHAT_CREATION);
         }
     }
@@ -323,5 +334,32 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     public void onSeeLastPolls() {
         Intent seeLastPolls = new Intent(this, LastPollsActivity.class);
         startActivity(seeLastPolls);
+    }
+
+    @Override
+    public void onUserStartChatting(User user) {
+        if(UserManager.validateKeyAction(this) && listChatRoomsFragment.getChatRooms() != null) {
+            ChatRoom chatRoom = containsChatRoom(user);
+            if(chatRoom != null) {
+                listChatRoomsFragment.startChatRoom(chatRoom);
+            } else {
+                createChat(user);
+            }
+        }
+    }
+
+    private ChatRoom containsChatRoom(User friend) {
+        User me = new User();
+        me.setKey(UserManager.getUserId());
+
+        for (ChatRoomHolder existingChatRoom : listChatRoomsFragment.getChatRooms()) {
+            if(existingChatRoom.chatRoom.getType() == ChatRoom.Type.Individual
+            && existingChatRoom.members.getUsers().contains(me)
+            && existingChatRoom.members.getUsers().contains(friend)
+            && !me.equals(friend)) {
+                return existingChatRoom.chatRoom;
+            }
+        }
+        return null;
     }
 }

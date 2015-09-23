@@ -33,8 +33,4 @@ public class UreportApplication extends Application {
         TwitterAuthConfig authConfig = new TwitterAuthConfig(getString(R.string.twitter_key), getString(R.string.twitter_secret));
         Fabric.with(this, new Twitter(authConfig));
     }
-
-    public static boolean validateUserLogin(Context context) {
-        return UserManager.validateKeyAction(context);
-    }
 }

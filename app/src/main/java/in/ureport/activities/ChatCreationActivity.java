@@ -19,6 +19,7 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
+import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
 
 /**
@@ -31,6 +32,7 @@ public class ChatCreationActivity extends AppCompatActivity implements ChatRoomI
     public static final String EXTRA_RESULT_CHAT_MEMBERS = "chatMembers";
 
     public static final String EXTRA_CHAT_ROOMS = "chatRooms";
+    public static final String EXTRA_USER = "user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,8 @@ public class ChatCreationActivity extends AppCompatActivity implements ChatRoomI
                 addCreateGroupFragment(chatRoom, chatMembers);
             } else {
                 ArrayList<ChatRoomHolder> chatRooms = getIntent().getParcelableArrayListExtra(EXTRA_CHAT_ROOMS);
-                addNewChatFragment(chatRooms);
+                User user = getIntent().getParcelableExtra(EXTRA_USER);
+                addNewChatFragment(chatRooms, user);
             }
         }
     }
@@ -64,8 +67,13 @@ public class ChatCreationActivity extends AppCompatActivity implements ChatRoomI
         return true;
     }
 
-    private void addNewChatFragment(ArrayList<ChatRoomHolder> chatRooms) {
-        NewChatFragment newChatFragment = NewChatFragment.newInstance(chatRooms);
+    private void addNewChatFragment(ArrayList<ChatRoomHolder> chatRooms, User user) {
+        NewChatFragment newChatFragment;
+        if(user != null) {
+            newChatFragment = NewChatFragment.newInstance(chatRooms, user);
+        } else {
+            newChatFragment = NewChatFragment.newInstance(chatRooms);
+        }
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .add(R.id.content, newChatFragment)

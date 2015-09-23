@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.listener.OnStoryContributionCountListener;
 import in.ureport.helpers.RecyclerScrollListener;
+import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
@@ -43,8 +45,9 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     protected boolean publicType = true;
 
     private StoriesAdapter.OnPublishStoryListener onPublishStoryListener;
-
+    private OnUserStartChattingListener onUserStartChattingListener;
     private FloatingActionButtonListener floatingActionButtonListener;
+
     protected StoriesAdapter storiesAdapter;
 
     protected StoryServices storyServices;
@@ -92,6 +95,23 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         storyServices.removeChildEventListener(childEventListener);
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof StoriesAdapter.OnPublishStoryListener) {
+            onPublishStoryListener = (StoriesAdapter.OnPublishStoryListener) context;
+        }
+
+        if(context instanceof OnUserStartChattingListener) {
+            onUserStartChattingListener = (OnUserStartChattingListener) context;
+        }
+
+        if(context instanceof FloatingActionButtonListener) {
+            floatingActionButtonListener = (FloatingActionButtonListener) context;
+        }
+    }
+
     private void setupObjects() {
         storyServices = new StoryServices();
         userServices = new UserServices();
@@ -123,6 +143,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
         storiesAdapter.setOnStoryViewListener(this);
         storiesAdapter.setOnPublishStoryListener(onPublishStoryListener);
+        storiesAdapter.setOnUserStartChattingListener(onUserStartChattingListener);
         storiesList.setAdapter(storiesAdapter);
     }
 
@@ -132,14 +153,6 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         storyViewIntent.putExtra(StoryViewActivity.EXTRA_STORY, story);
         storyViewIntent.putExtra(StoryViewActivity.EXTRA_USER, user);
         startActivity(storyViewIntent);
-    }
-
-    public void setOnPublishStoryListener(StoriesAdapter.OnPublishStoryListener onPublishStoryListener) {
-        this.onPublishStoryListener = onPublishStoryListener;
-    }
-
-    public void setFloatingActionButtonListener(FloatingActionButtonListener floatingActionButtonListener) {
-        this.floatingActionButtonListener = floatingActionButtonListener;
     }
 
     public void updateUser(User user) {
@@ -200,7 +213,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
             @Override
             public void onStoryContributionCountListener(long count) {
                 story.setContributions(Long.valueOf(count).intValue());
-                loadUsersFromStorry(story, onAfterStoryLoadedListener);
+                loadUsersFromStory(story, onAfterStoryLoadedListener);
             }
         });
     }
@@ -212,7 +225,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         }
     };
 
-    private void loadUsersFromStorry(final Story story, final OnAfterStoryLoadedListener onAfterStoryLoadedListener) {
+    private void loadUsersFromStory(final Story story, final OnAfterStoryLoadedListener onAfterStoryLoadedListener) {
         userServices.getUser(story.getUser(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
