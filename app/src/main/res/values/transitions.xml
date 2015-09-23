@@ -3,4 +3,6 @@
 
     <string name="transition_profile_picture">profilePicture</string>
     <string name="transition_profile_nickname">profileNickname</string>
+    <string name="transition_story_markers">storyMarkers</string>
+    <string name="transition_story_title">storyTitle</string>
 </resources>

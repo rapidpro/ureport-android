@@ -1,11 +1,15 @@
 package in.ureport.views.holders;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.lang.reflect.Array;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
@@ -106,8 +110,27 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     private View.OnClickListener onReadFullStoryClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (onStoryViewListener != null)
-                onStoryViewListener.onStoryViewClick(story);
+            if (onStoryViewListener != null) {
+                onStoryViewListener.onStoryViewClick(story, getViews());
+            }
+        }
+
+        @NonNull
+        private Pair<View, String> [] getViews() {
+            Pair<View, String> picturePair = Pair.create((View)picture
+                    , itemView.getContext().getString(R.string.transition_profile_picture));
+
+            Pair<View, String> nicknamePair = Pair.create((View)author
+                    , itemView.getContext().getString(R.string.transition_profile_nickname));
+
+            Pair<View, String> storyTitle = Pair.create((View)title
+                    , itemView.getContext().getString(R.string.transition_story_title));
+
+            Pair<View, String> [] views = (Pair<View, String> []) Array.newInstance(Pair.class, 3);
+            views[0] = picturePair;
+            views[1] = nicknamePair;
+            views[2] = storyTitle;
+            return views;
         }
     };
 

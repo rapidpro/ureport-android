@@ -1,5 +1,6 @@
 package in.ureport.views.adapters;
 
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -209,7 +210,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public interface OnStoryViewListener {
-        void onStoryViewClick(Story story);
+        void onStoryViewClick(Story story, Pair<View, String>... views);
     }
 
     public interface OnPublishStoryListener {

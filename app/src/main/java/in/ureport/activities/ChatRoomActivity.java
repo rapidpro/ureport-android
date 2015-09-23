@@ -22,8 +22,6 @@ import in.ureport.models.ChatRoom;
 public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragment.ChatRoomListener
     , InfoGroupChatListener {
 
-    private static final String TAG = "ChatRoomActivity";
-
     public static final String EXTRA_CHAT_ROOM_KEY = "chatRoomKey";
     public static final String EXTRA_CHAT_ROOM = "chatRoom";
     public static final String EXTRA_CHAT_MEMBERS = "chatMembers";

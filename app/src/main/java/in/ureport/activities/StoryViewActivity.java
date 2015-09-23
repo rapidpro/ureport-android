@@ -42,7 +42,7 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
                         .add(R.id.content, storyViewFragment)
                         .commit();
             } else {
-                finish();
+                supportFinishAfterTransition();
             }
         }
     }
@@ -52,8 +52,10 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
         if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
             return false;
+        } else {
+            supportFinishAfterTransition();
         }
-        return super.onSupportNavigateUp();
+        return true;
     }
 
     @Override
