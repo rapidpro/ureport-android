@@ -15,6 +15,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
         android:layout_centerVertical="true"
+        android:transitionName="@string/transition_profile_picture"
         tools:src="@drawable/face" />
 
     <TextView
@@ -33,6 +34,7 @@
         android:textAlignment="viewStart"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:transitionName="@string/transition_profile_nickname"
         tools:text="\@Eddie"/>
 
     <TextView

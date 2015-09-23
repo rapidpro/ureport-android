@@ -1,5 +1,6 @@
 package in.ureport.views.adapters;
 
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -158,8 +159,14 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             @Override
             public void onClick(View view) {
                 if (onChatRoomSelectedListener != null) {
+                    Pair<View, String> picturePair = Pair.create((View)picture
+                            , itemView.getContext().getString(R.string.transition_profile_picture));
+                    Pair<View, String> nicknamePair = Pair.create((View)name
+                            , itemView.getContext().getString(R.string.transition_profile_nickname));
+
                     ChatRoomHolder chatRoomHolder = chatRooms.get(getLayoutPosition());
-                    onChatRoomSelectedListener.onChatRoomSelected(chatRoomHolder.chatRoom, chatRoomHolder.members);
+                    onChatRoomSelectedListener.onChatRoomSelected(chatRoomHolder.chatRoom, chatRoomHolder.members
+                            , picturePair);//, nicknamePair);
                 }
             }
         };
@@ -170,6 +177,6 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public interface OnChatRoomSelectedListener {
-        void onChatRoomSelected(ChatRoom chatRoom, ChatMembers chatMembers);
+        void onChatRoomSelected(ChatRoom chatRoom, ChatMembers chatMembers, Pair<View, String>... views);
     }
 }

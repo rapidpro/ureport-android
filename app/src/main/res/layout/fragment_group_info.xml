@@ -37,6 +37,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_alignTop="@+id/title"
+                    android:transitionName="@string/transition_profile_picture"
                     tools:src="@drawable/face" />
 
                 <TextView
@@ -51,6 +52,7 @@
                     android:layout_marginStart="10dp"
                     android:gravity="start"
                     android:maxLines="2"
+                    android:transitionName="@string/transition_profile_nickname"
                     android:ellipsize="end"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"

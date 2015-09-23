@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+        <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+                <item name="colorPrimary">@color/primary_color</item>
+                <item name="colorPrimaryDark">@color/primary_dark_color</item>
+                <item name="colorAccent">#287ca0</item>
+                <item name="searchViewStyle">@style/AppTheme.SearchView</item>
+                <item name="android:windowBackground">@color/window_background</item>
+                <item name="android:buttonStyle">@style/AppTheme.Button</item>
+                <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+
+                <item name="android:windowContentTransitions">true</item>
+
+                <item name="android:windowEnterTransition">@transition/activity_fade_out</item>
+                <item name="android:windowExitTransition">@transition/activity_fade_in</item>
+
+        </style>
+</resources>

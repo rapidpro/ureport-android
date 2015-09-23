@@ -2,7 +2,11 @@ package in.ureport.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import in.ureport.R;
 import in.ureport.fragments.ChatRoomFragment;
@@ -63,7 +67,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
                     updateChatData(data);
             }
         } else if(resultCode == GroupInfoActivity.RESULT_REMOVED) {
-            finish();
+            supportFinishAfterTransition();
         }
     }
 
@@ -88,7 +92,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
         } else {
-            finish();
+            supportFinishAfterTransition();
         }
         return true;
     }
@@ -105,10 +109,12 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     }
 
     @Override
-    public void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers) {
+    public void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers, Pair<View, String>... pairs) {
         Intent groupInfoIntent = new Intent(this, GroupInfoActivity.class);
         groupInfoIntent.putExtra(GroupInfoActivity.EXTRA_CHAT_ROOM, chatRoom);
         groupInfoIntent.putExtra(GroupInfoActivity.EXTRA_CHAT_MEMBERS, chatMembers);
-        startActivityForResult(groupInfoIntent, REQUEST_CODE_GROUP_INFO);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, pairs);
+        ActivityCompat.startActivityForResult(this, groupInfoIntent, REQUEST_CODE_GROUP_INFO, options.toBundle());
     }
 }

@@ -71,7 +71,7 @@ public class GroupInfoActivity extends AppCompatActivity implements InfoGroupCha
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        supportFinishAfterTransition();
         return true;
     }
 
@@ -103,7 +103,7 @@ public class GroupInfoActivity extends AppCompatActivity implements InfoGroupCha
                         chatRoomServices.closeChatRoom(GroupInfoActivity.this, chatRoom, members);
 
                         setResult(RESULT_REMOVED);
-                        finish();
+                        supportFinishAfterTransition();
                     }
                 }).create();
         alertDialog.show();

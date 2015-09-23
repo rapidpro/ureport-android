@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -235,11 +238,13 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     }
 
     @Override
-    public void onChatRoomSelected(ChatRoom chatRoom, ChatMembers members) {
+    public void onChatRoomSelected(ChatRoom chatRoom, ChatMembers members, Pair<View, String>... views) {
         Intent chatRoomIntent = new Intent(getActivity(), ChatRoomActivity.class);
         chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM, chatRoom);
         chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_MEMBERS, members);
-        startActivityForResult(chatRoomIntent, REQUEST_CODE_CHAT_ROOM);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), views);
+        ActivityCompat.startActivityForResult(getActivity(), chatRoomIntent, REQUEST_CODE_CHAT_ROOM, options.toBundle());
     }
 
     @Override

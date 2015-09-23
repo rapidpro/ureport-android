@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
+import java.lang.reflect.Array;
 import java.util.Date;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
@@ -220,8 +222,9 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
                     infoGroupChatListener.onChatRoomLeave(chatRoom);
                 return true;
             case R.id.groupInfo:
-                if (chatRoomListener != null)
-                    chatRoomListener.onChatRoomInfoView(chatRoom, chatMembers);
+                if (chatRoomListener != null) {
+                    chatRoomListener.onChatRoomInfoView(chatRoom, chatMembers, getPairs());
+                }
                 return true;
             case R.id.blockChatRoom:
                 displayAlert(R.string.message_confirm_block_user, new DialogInterface.OnClickListener() {
@@ -243,6 +246,17 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @NonNull
+    private Pair<View, String>[] getPairs() {
+        Pair<View, String> picturePair = Pair.create((View)picture, getString(R.string.transition_profile_picture));
+        Pair<View, String> nicknamePair = Pair.create((View)name, getString(R.string.transition_profile_nickname));
+
+        Pair<View, String> [] pairs = (Pair<View, String> []) Array.newInstance(Pair.class, 2);
+        pairs[0] = picturePair;
+        pairs[1] = nicknamePair;
+        return pairs;
     }
 
     private void displayAlert(@StringRes int messageId, DialogInterface.OnClickListener confirmListener) {
@@ -420,7 +434,7 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
         @Override
         public void onClick(View view) {
             if (chatRoomListener != null)
-                chatRoomListener.onChatRoomInfoView(chatRoom, chatMembers);
+                chatRoomListener.onChatRoomInfoView(chatRoom, chatMembers, getPairs());
         }
     };
 
@@ -531,6 +545,6 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
     }
 
     public interface ChatRoomListener {
-        void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers);
+        void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers, Pair<View, String>... pairs);
     }
 }
