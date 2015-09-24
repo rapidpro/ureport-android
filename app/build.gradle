@@ -26,19 +26,16 @@ android {
         applicationId "in.ureport"
         minSdkVersion 10
         targetSdkVersion 23
-        versionCode 10
+        versionCode 9
         versionName "1.0"
     }
     buildTypes {
         debug {
-            minifyEnabled false
-            debuggable true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.signature
         }
         release {
-            minifyEnabled false
-            debuggable true
+            minifyEnabled true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.signature
         }
