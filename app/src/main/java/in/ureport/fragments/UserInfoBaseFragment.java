@@ -33,9 +33,10 @@ import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.widget.DatePickerFragment;
 import in.ureport.R;
 import in.ureport.loader.CountryListLoader;
-import in.ureport.loader.StatesLoader;
+import in.ureport.loader.LocationInfoLoader;
 import in.ureport.models.User;
-import in.ureport.models.geonames.State;
+import in.ureport.models.geonames.Location;
+import in.ureport.models.holders.LocationInfo;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
 
@@ -67,8 +68,11 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     protected EditText birthday;
     protected Spinner country;
     protected Spinner state;
+    protected Spinner district;
     protected Spinner gender;
     protected Button confirm;
+
+    protected boolean containsDistrict = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,6 +142,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         loadCountryList();
 
         state = (Spinner) view.findViewById(R.id.state);
+        district = (Spinner) view.findViewById(R.id.district);
         confirm = (Button) view.findViewById(R.id.confirm);
     }
 
@@ -188,7 +193,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         boolean validEmail = isEmailValid();
         boolean validBirthday = isBirthdayValid();
 
-        return validTextFields && validEmail && validBirthday && isStateValid() &&
+        return validTextFields && validEmail && validBirthday && isStateValid() && isDistrictValid() &&
                 isSpinnerValid(country) && isSpinnerValid(gender) && isSpinnerValid(state) &&
                 validatePasswordIfNeeded();
     }
@@ -210,9 +215,17 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     }
 
     protected boolean isStateValid() {
-        boolean validState = state.getSelectedItem() != null;
-        if(!validState) Toast.makeText(getActivity(), R.string.error_choose_state, Toast.LENGTH_LONG).show();
-        return validState;
+        boolean valid = state.getSelectedItem() != null;
+        if(!valid) Toast.makeText(getActivity(), R.string.error_choose_state, Toast.LENGTH_LONG).show();
+        return valid;
+    }
+
+    protected boolean isDistrictValid() {
+        if(!containsDistrict) return true;
+
+        boolean valid = district.getSelectedItem() != null;
+        if(!valid) Toast.makeText(getActivity(), R.string.error_choose_district, Toast.LENGTH_LONG).show();
+        return valid;
     }
 
     private boolean validatePasswordIfNeeded() {
@@ -226,6 +239,10 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         return spinner.getSelectedItemPosition() != Spinner.INVALID_POSITION;
     }
 
+    protected UserLocale getUserLocale() {
+        return (UserLocale) country.getAdapter().getItem(country.getSelectedItemPosition());
+    }
+
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
         switch(id) {
@@ -233,7 +250,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
                 return new CountryListLoader(getActivity());
             case LOAD_STATES_ID:
                 Locale locale = (Locale) args.getSerializable(EXTRA_LOCALE_LOADER);
-                return new StatesLoader(getActivity(), locale);
+                return new LocationInfoLoader(getActivity(), locale);
         }
         return null;
     }
@@ -245,22 +262,33 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
                 updateUserLocale((List<UserLocale>)data);
                 break;
             case LOAD_STATES_ID:
-                List<State> states = (List<State>) data;
-                updateStates(states);
+                LocationInfo locationInfo = (LocationInfo) data;
+                updateSpinnerLocation(state, locationInfo.getStates());
+                updateDistrictSpinner(locationInfo);
         }
     }
 
-    private void updateStates(List<State> states) {
-        if(states != null) {
-            ArrayAdapter<State> statesAdapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, states);
-            statesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            state.setEnabled(true);
-            state.setAdapter(statesAdapter);
-
-            onStatesLoaded(states);
+    private void updateDistrictSpinner(LocationInfo locationInfo) {
+        containsDistrict = locationInfo.getDistricts() != null && !locationInfo.getDistricts().isEmpty();
+        if(containsDistrict) {
+            district.setVisibility(View.VISIBLE);
+            updateSpinnerLocation(district, locationInfo.getDistricts());
         } else {
-            resetStateSpinner(R.array.spinner_error_loading_states);
+            district.setVisibility(View.GONE);
+        }
+    }
+
+    private void updateSpinnerLocation(Spinner spinner, List<Location> locations) {
+        if(locations != null) {
+            ArrayAdapter<Location> adapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, locations);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            spinner.setEnabled(true);
+            spinner.setAdapter(adapter);
+
+            onStatesLoaded(locations);
+        } else {
+            resetLocationSpinner(spinner, R.array.spinner_error_loading_states);
             Toast.makeText(getActivity(), R.string.error_no_internet, Toast.LENGTH_LONG).show();
         }
     }
@@ -301,23 +329,24 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     private AdapterView.OnItemSelectedListener onCountrySelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            UserLocale userLocale = (UserLocale)country.getSelectedItem();
-            Log.i(TAG, "onItemSelected onCountrySelected: " + userLocale);
-            resetStateSpinner(R.array.spinner_loading_states);
+            UserLocale userLocale = (UserLocale) country.getSelectedItem();
+            resetLocationSpinner(state, R.array.spinner_loading);
+            resetLocationSpinner(district, R.array.spinner_loading);
             loadStatesForUserLocale(userLocale);
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            resetStateSpinner(R.array.spinner_loading_states);
+            resetLocationSpinner(state, R.array.spinner_loading);
+            resetLocationSpinner(district, R.array.spinner_loading);
         }
     };
 
-    private void resetStateSpinner(@ArrayRes int loadingArrayMessage) {
+    private void resetLocationSpinner(Spinner spinner, @ArrayRes int loadingArrayMessage) {
         ArrayAdapter<String> loadingStatesAdapter = createArrayAdapterForStringArray(loadingArrayMessage);
 
-        state.setAdapter(loadingStatesAdapter);
-        state.setEnabled(false);
+        spinner.setAdapter(loadingStatesAdapter);
+        spinner.setEnabled(false);
     }
 
     @NonNull
@@ -346,6 +375,6 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
 
     public abstract void onCountriesLoaded(List<UserLocale> data);
 
-    public abstract void onStatesLoaded(List<State> states);
+    public abstract void onStatesLoaded(List<Location> locations);
 
 }

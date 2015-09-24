@@ -16,7 +16,7 @@ import java.util.Locale;
 
 import in.ureport.R;
 import in.ureport.models.User;
-import in.ureport.models.geonames.State;
+import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
 import in.ureport.models.rapidpro.Contact;
@@ -105,28 +105,28 @@ public class EditUserFragment extends UserInfoBaseFragment {
     }
 
     @Override
-    public void onStatesLoaded(List<State> states) {
-        selectUserState(states, getUserState(states));
+    public void onStatesLoaded(List<Location> locations) {
+        selectUserState(locations, getUserState(locations));
     }
 
-    private void selectUserState(List<State> states, State userState) {
-        int userStatePosition = states.indexOf(userState);
+    private void selectUserState(List<Location> locations, Location userLocation) {
+        int userStatePosition = locations.indexOf(userLocation);
         if(userStatePosition >= 0) {
             state.setSelection(userStatePosition);
         }
     }
 
-    private State getUserState(List<State> states) {
-        for (State state : states) {
-            if(hasUserState(state)) {
-               return state;
+    private Location getUserState(List<Location> locations) {
+        for (Location location : locations) {
+            if(hasUserState(location)) {
+               return location;
             }
         }
         return null;
     }
 
-    private boolean hasUserState(State state) {
-        return state.getName().equals(user.getState()) || state.getToponymName().equals(user.getState());
+    private boolean hasUserState(Location location) {
+        return location.getName().equals(user.getState()) || location.getToponymName().equals(user.getState());
     }
 
     private View.OnClickListener onConfirmClickListener = new View.OnClickListener() {
@@ -136,8 +136,8 @@ public class EditUserFragment extends UserInfoBaseFragment {
                 user.setNickname(username.getText().toString());
                 user.setBirthday(getBirthdayDate());
 
-                State state = (State) EditUserFragment.this.state.getSelectedItem();
-                user.setState(state.getToponymName());
+                Location location = (Location) EditUserFragment.this.state.getSelectedItem();
+                user.setState(location.getName());
 
                 UserGender gender = (UserGender) EditUserFragment.this.gender.getSelectedItem();
                 user.setGender(gender.getGender());
@@ -162,7 +162,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
         }
 
         private void updateContactToRapidpro() {
-            SaveContactTask saveContactTask = new SaveContactTask(getActivity()) {
+            SaveContactTask saveContactTask = new SaveContactTask(getActivity(), getUserLocale().getLocale()) {
                 @Override
                 protected void onPostExecute(Contact contact) {
                     super.onPostExecute(contact);

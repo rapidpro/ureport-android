@@ -3,7 +3,7 @@ package in.ureport.network;
 import java.util.List;
 
 import in.ureport.models.geonames.CountryInfo;
-import in.ureport.models.geonames.State;
+import in.ureport.models.geonames.Location;
 import retrofit.RestAdapter;
 
 /**
@@ -25,7 +25,7 @@ public class GeonamesServices {
         return service.getCountryInfo(country, USERNAME).getGeonames();
     }
 
-    public List<State> getStates(Long geonameId) {
+    public List<Location> getStates(Long geonameId) {
         return service.getStates(geonameId, USERNAME).getGeonames();
     }
 

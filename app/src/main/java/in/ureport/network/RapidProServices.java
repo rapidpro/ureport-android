@@ -16,6 +16,7 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
+import in.ureport.models.rapidpro.Boundary;
 import in.ureport.models.rapidpro.Contact;
 import in.ureport.models.rapidpro.Group;
 import in.ureport.models.rapidpro.Response;
@@ -41,6 +42,10 @@ public class RapidProServices {
         RestAdapter restAdapter = buildRestAdapter();
         if(BuildConfig.DEBUG) restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
         service = restAdapter.create(RapidProApi.class);
+    }
+
+    public RapidProApi.Response<Boundary> loadBoundaries(String apiKey) {
+        return service.listBoundaries(apiKey);
     }
 
     public List<Group> loadGroups(String apiKey) {

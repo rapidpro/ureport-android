@@ -93,6 +93,7 @@ public class NotificationListManager {
 
         @Override
         public void onNotificationSelected(Notification notification) {
+            CountryProgramManager.switchToUserCountryProgram();
             Intent openChatIntent = new Intent(context.getApplicationContext(), ChatRoomActivity.class);
             openChatIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             openChatIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM_KEY, chatNotification.getChatRoomId());

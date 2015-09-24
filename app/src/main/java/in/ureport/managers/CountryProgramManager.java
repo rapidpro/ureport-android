@@ -10,6 +10,7 @@ import br.com.ilhasoft.support.tool.ResourceUtil;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.models.CountryProgram;
+import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 7/23/15.
@@ -18,6 +19,8 @@ public class CountryProgramManager {
 
     public static final int INVALID_API_TOKEN = -1;
     public static final int INVALID_CHANNEL = -1;
+
+    public static final String COUNTRY_PROGRAM_GLOBAL_CODE = "GLOBAL";
 
     private static CountryProgram countryProgram;
     private static List<CountryProgram> countryPrograms;
@@ -28,6 +31,10 @@ public class CountryProgramManager {
 
     public static void switchCountryProgram(String countryCode) {
         CountryProgramManager.countryProgram = getCountryProgramForCode(countryCode);
+    }
+
+    public static void switchToUserCountryProgram() {
+        CountryProgramManager.countryProgram = getCountryProgramForCode(UserManager.getCountryCode());
     }
 
     public static void setThemeIfNeeded(Activity activity) {
@@ -50,6 +57,10 @@ public class CountryProgramManager {
         indexOfCountryProgram = indexOfCountryProgram > 0 ? indexOfCountryProgram : 0;
 
         return getAvailableCountryPrograms().get(indexOfCountryProgram);
+    }
+
+    public static boolean isGlobalUser(User user) {
+        return getCountryProgramForCode(user.getCountry()).getCode().equals(COUNTRY_PROGRAM_GLOBAL_CODE);
     }
 
     public static boolean isCountryProgramEnabled(CountryProgram countryProgram) {

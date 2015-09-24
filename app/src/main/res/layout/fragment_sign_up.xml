@@ -108,6 +108,20 @@
                 style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
             <Spinner
+                android:id="@+id/district"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:paddingLeft="@dimen/spinner_padding_left"
+                android:paddingStart="@dimen/spinner_padding_left"
+                android:visibility="gone"
+                tools:visibility="visible"
+                style="@style/Widget.AppCompat.Spinner.Underlined"/>
+
+            <Spinner
                 android:id="@+id/gender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

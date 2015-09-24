@@ -10,7 +10,7 @@ import in.ureport.models.rapidpro.Group;
 /**
  * Created by johncordeiro on 18/08/15.
  */
-public class UserGroupsBuilder {
+public class ContactGroupsBuilder {
 
     private static final int YOUTH_MIN_BIRTHDAY_YEAR = 1979;
 

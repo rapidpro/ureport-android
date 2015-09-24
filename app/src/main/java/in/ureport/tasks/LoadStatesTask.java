@@ -7,19 +7,18 @@ import java.util.List;
 import java.util.Locale;
 
 import in.ureport.models.geonames.CountryInfo;
-import in.ureport.models.geonames.State;
-import in.ureport.models.holders.UserLocale;
+import in.ureport.models.geonames.Location;
 import in.ureport.network.GeonamesServices;
 
 /**
  * Created by johncordeiro on 18/08/15.
  */
-public class LoadStatesTask extends AsyncTask<Locale, Void, List<State>> {
+public class LoadStatesTask extends AsyncTask<Locale, Void, List<Location>> {
 
     private static final String TAG = "LoadStatesTask";
 
     @Override
-    protected List<State> doInBackground(Locale... params) {
+    protected List<Location> doInBackground(Locale... params) {
         try {
             Locale locale = params[0];
 

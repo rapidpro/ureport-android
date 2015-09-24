@@ -24,7 +24,7 @@ import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
-import in.ureport.models.geonames.State;
+import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
@@ -80,7 +80,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
     }
 
     @Override
-    public void onStatesLoaded(List<State> states) {}
+    public void onStatesLoaded(List<Location> locations) {}
 
     private void setupUserIfExists() {
         if(user != null) {
@@ -126,15 +126,20 @@ public class SignUpFragment extends UserInfoBaseFragment {
         user.setEmail(email.getText().toString());
         user.setBirthday(getBirthdayDate());
 
-        State state = (State)this.state.getSelectedItem();
-        user.setState(state.getToponymName());
+        Location state = (Location)this.state.getSelectedItem();
+        user.setState(state.getName());
+
+        if(containsDistrict) {
+            Location district = (Location) this.district.getSelectedItem();
+            user.setDistrict(district.getName());
+        }
 
         if(userType != User.Type.ureport) {
             user.setKey(this.user.getKey());
             user.setPicture(this.user.getPicture());
         }
 
-        UserLocale userLocale = (UserLocale) country.getAdapter().getItem(country.getSelectedItemPosition());
+        UserLocale userLocale = getUserLocale();
         String countryCode = userLocale.getLocale().getISO3Country();
         user.setCountry(countryCode);
         user.setCountryProgram(CountryProgramManager.getCountryProgramForCode(countryCode).getCode());
@@ -169,7 +174,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
             @Override
             public void onSuccess(Map<String, Object> result) {
                 user.setKey(result.get("uid").toString());
-                authenticateUserAndStore(login, user);
+                authenticateAndSaveUser(login, user);
             }
 
             @Override
@@ -180,11 +185,12 @@ public class SignUpFragment extends UserInfoBaseFragment {
         });
     }
 
-    private void authenticateUserAndStore(Login login, final User user) {
+    private void authenticateAndSaveUser(Login login, final User user) {
         FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
-                storeUserAndFinish(user);
+                dismissDialog();
+                saveUreportContact(user);
             }
 
             @Override
@@ -195,7 +201,23 @@ public class SignUpFragment extends UserInfoBaseFragment {
         });
     }
 
+    private void saveUreportContact(final User user) {
+        SaveContactTask saveContactTask = new SaveContactTask(getActivity(), getUserLocale().getLocale()) {
+            @Override
+            protected void onPostExecute(Contact contact) {
+                super.onPostExecute(contact);
+                if(contact != null) {
+                    storeUserAndFinish(user);
+                } else {
+                    Toast.makeText(getActivity(), R.string.error_rapidpro, Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        saveContactTask.execute(user);
+    }
+
     private void storeUserAndFinish(final User user) {
+        showDialog();
         UserServices userServices = new UserServices();
         userServices.saveUser(user, new Firebase.CompletionListener() {
             @Override
@@ -204,24 +226,9 @@ public class SignUpFragment extends UserInfoBaseFragment {
                 if (firebaseError != null)
                     Toast.makeText(getActivity().getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                 else
-                    finishRegistration(user);
+                    loginListener.onUserReady(user);
             }
         });
-    }
-
-    private void finishRegistration(final User user) {
-        SaveContactTask saveContactTask = new SaveContactTask(getActivity()) {
-            @Override
-            protected void onPostExecute(Contact contact) {
-                super.onPostExecute(contact);
-                if(contact != null) {
-                    loginListener.onUserReady(user);
-                } else {
-                    Toast.makeText(getActivity(), R.string.error_rapidpro, Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-        saveContactTask.execute(user);
     }
 
     @NonNull

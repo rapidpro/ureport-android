@@ -3,7 +3,7 @@ package in.ureport.network;
 import java.util.List;
 
 import in.ureport.models.geonames.CountryInfo;
-import in.ureport.models.geonames.State;
+import in.ureport.models.geonames.Location;
 import retrofit.http.GET;
 import retrofit.http.Query;
 
@@ -16,7 +16,7 @@ public interface GeonamesApi {
     Response<CountryInfo> getCountryInfo(@Query("country") String country, @Query("username") String username);
 
     @GET("/childrenJSON")
-    Response<State> getStates(@Query("geonameId") Long geonameId, @Query("username") String username);
+    Response<Location> getStates(@Query("geonameId") Long geonameId, @Query("username") String username);
 
     class Response<T> {
 

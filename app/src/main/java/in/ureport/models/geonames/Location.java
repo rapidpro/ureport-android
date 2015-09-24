@@ -3,7 +3,7 @@ package in.ureport.models.geonames;
 /**
  * Created by johncordeiro on 18/08/15.
  */
-public class State {
+public class Location {
 
     private String name;
 
@@ -25,6 +25,14 @@ public class State {
         this.toponymName = toponymName;
     }
 
+    public Location() {
+    }
+
+    public Location(String name, String toponymName) {
+        this.name = name;
+        this.toponymName = toponymName;
+    }
+
     @Override
     public String toString() {
         return toponymName != null ? toponymName : name;
@@ -35,8 +43,8 @@ public class State {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        State state = (State) o;
-        return name.equals(state.name);
+        Location location = (Location) o;
+        return name.equals(location.name);
 
     }
 

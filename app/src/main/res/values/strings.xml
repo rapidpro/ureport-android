@@ -203,6 +203,7 @@
     <string name="error_already_join_group">You already are member of this group.</string>
     <string name="success_message_join_group">Now you are member of this group! See in the your chat rooms.</string>
     <string name="error_choose_state">Choose the state of the country!</string>
+    <string name="error_choose_district">Choose the district!</string>
     <string name="error_rapidpro">An error occured during the registration process. Try again later.</string>
     <string name="load_message_user_data">Loading user data...</string>
     <string name="summary_notification">U-Report</string>
@@ -258,8 +259,8 @@
     <string name="label_country_moderator">Country Moderators</string>
     <string name="message_success_user_update">User was updated with success!</string>
 
-    <string-array name="spinner_loading_states">
-        <item>Loading states...</item>
+    <string-array name="spinner_loading">
+        <item>Loading...</item>
     </string-array>
 
     <string-array name="spinner_error_loading_states">

@@ -16,14 +16,10 @@ import android.widget.Toast;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
-import java.util.List;
-
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
-import in.ureport.models.geonames.State;
-import in.ureport.models.holders.UserLocale;
 
 /**
  * Created by johncordeiro on 11/09/15.

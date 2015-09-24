@@ -34,6 +34,8 @@ public class User implements Parcelable {
 
     private String state;
 
+    private String district;
+
     @Expose
     private String picture;
 
@@ -105,6 +107,14 @@ public class User implements Parcelable {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     public String getPicture() {
@@ -235,6 +245,7 @@ public class User implements Parcelable {
         dest.writeString(this.country);
         dest.writeString(this.countryProgram);
         dest.writeString(this.state);
+        dest.writeString(this.district);
         dest.writeString(this.picture);
         dest.writeInt(this.gender == null ? -1 : this.gender.ordinal());
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
@@ -257,6 +268,7 @@ public class User implements Parcelable {
         this.country = in.readString();
         this.countryProgram = in.readString();
         this.state = in.readString();
+        this.district = in.readString();
         this.picture = in.readString();
         int tmpGender = in.readInt();
         this.gender = tmpGender == -1 ? null : User.Gender.values()[tmpGender];

@@ -2,9 +2,11 @@ package in.ureport.network;
 
 import java.util.List;
 
+import in.ureport.models.rapidpro.Boundary;
 import in.ureport.models.rapidpro.Contact;
 import in.ureport.models.rapidpro.Group;
 import retrofit.http.Body;
+import retrofit.http.Field;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
@@ -12,15 +14,18 @@ import retrofit.http.POST;
 /**
  * Created by johncordeiro on 18/08/15.
  */
-interface RapidProApi {
+public interface RapidProApi {
 
     @GET("/groups.json")
     Response<Group> listGroups(@Header("Authorization") String apiKey);
 
+    @GET("/boundaries.json?aliases=true")
+    Response<Boundary> listBoundaries(@Header("Authorization") String apiKey);
+
     @POST("/contacts.json")
     Contact saveContact(@Header("Authorization") String apiKey, @Body Contact contact);
 
-    class Response<T> {
+    public class Response<T> {
 
         private Integer count;
 
