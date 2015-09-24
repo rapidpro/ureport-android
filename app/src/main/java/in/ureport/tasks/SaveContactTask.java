@@ -2,9 +2,11 @@ package in.ureport.tasks;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import in.ureport.R;
@@ -16,6 +18,9 @@ import in.ureport.models.rapidpro.Contact;
 import in.ureport.models.rapidpro.ContactFields;
 import in.ureport.network.RapidProServices;
 import in.ureport.tasks.common.ProgressTask;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by johncordeiro on 18/08/15.
@@ -33,11 +38,21 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         try {
             User user = params[0];
 
-            RapidProServices rapidProServices = new RapidProServices();
+            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(user.getCountry());
             Contact contact = buildContact(user);
 
-            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(user.getCountry());
-            return rapidProServices.saveContact(context.getString(countryProgram.getApiToken()), contact);
+            if(CountryProgramManager.isCountryProgramEnabled(countryProgram)) {
+                RapidProServices rapidProServices = new RapidProServices();
+                String token = context.getString(countryProgram.getApiToken());
+                try {
+                    return rapidProServices.saveContact(token, contact);
+                } catch(RetrofitError exception) {
+                    contact.getFields().setState(null);
+                }
+                return rapidProServices.saveContact(token, contact);
+            } else {
+                return contact;
+            }
         } catch (Exception exception) {
             Log.e(TAG, "doInBackground ", exception);
         }
@@ -58,14 +73,25 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         contact.setUrns(urns);
 
         ContactFields fields = new ContactFields();
-        fields.setNick_name(user.getNickname());
+        fields.setNickname(user.getNickname());
         fields.setBirthday(user.getBirthday());
+        fields.setBorn(getBorn(user));
         fields.setEmail(user.getEmail());
         fields.setGender(user.getGender().toString());
         fields.setState(user.getState());
         contact.setFields(fields);
 
         return contact;
+    }
+
+    @Nullable
+    private String getBorn(User user) {
+        if(user.getBirthday() != null) {
+            Calendar calendarBirthday = Calendar.getInstance();
+            calendarBirthday.setTime(user.getBirthday());
+            return String.valueOf(calendarBirthday.get(Calendar.YEAR));
+        }
+        return null;
     }
 
 }

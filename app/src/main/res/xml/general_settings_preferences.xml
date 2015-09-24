@@ -8,4 +8,13 @@
             android:title="@string/title_pref_chat_available"
             android:checked="true"/>
     </PreferenceCategory>
+
+    <!--<PreferenceCategory-->
+        <!--android:key="pref_key_privacy_settings"-->
+        <!--android:title="@string/title_preferences_notifications">-->
+        <!--<android.support.v7.preference.SwitchPreferenceCompat-->
+            <!--android:key="pref_key_chat_notifications"-->
+            <!--android:title="@string/title_pref_chat_notifications"-->
+            <!--android:checked="true"/>-->
+    <!--</PreferenceCategory>-->
 </PreferenceScreen>

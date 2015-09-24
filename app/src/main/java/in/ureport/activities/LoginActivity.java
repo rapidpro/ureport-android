@@ -17,7 +17,6 @@ import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnUserLoadedListener;
-import in.ureport.managers.CountryProgramManager;
 
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;

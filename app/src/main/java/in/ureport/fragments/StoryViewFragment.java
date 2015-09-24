@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -134,6 +135,14 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
         TextView content = (TextView) view.findViewById(R.id.content);
         content.setText(story.getContent());
+
+        final NestedScrollView scrollView = (NestedScrollView) view.findViewById(R.id.scrollView);
+        scrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(View.FOCUS_UP);
+            }
+        }, 200);
 
         TextView markers = (TextView) view.findViewById(R.id.markers);
         setupMarkers(markers);

@@ -2,7 +2,9 @@ package in.ureport.tasks;
 
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.view.View.MeasureSpec;
 import java.io.File;
 
 import br.com.ilhasoft.support.tool.ShareManager;
+import br.com.ilhasoft.support.tool.UnitConverter;
 import br.com.ilhasoft.support.tool.bitmap.ImageStorage;
 import in.ureport.R;
 import in.ureport.models.Story;
@@ -22,6 +25,9 @@ import in.ureport.views.holders.StoryItemViewHolder;
 public class ShareStoryTask extends AsyncTask<Void, Void, Void> {
 
     private static final String filename = "ureport_story";
+
+    private static final int WIDTH = 400;
+    private static final int HEIGHT = 300;
 
     private Fragment fragment;
     private Story story;
@@ -51,8 +57,7 @@ public class ShareStoryTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        buildDrawingCache(view);
-        Bitmap bitmap = getDrawingCache();
+        Bitmap bitmap = drawBitmap();
 
         ImageStorage imageStorage = new ImageStorage();
         File file = imageStorage.saveBitmapToJpg(bitmap, filename);
@@ -62,16 +67,21 @@ public class ShareStoryTask extends AsyncTask<Void, Void, Void> {
         return null;
     }
 
-    private Bitmap getDrawingCache() {
-        return view.getDrawingCache();
+    @NonNull
+    private Bitmap drawBitmap() {
+        UnitConverter unitConverter = new UnitConverter(fragment.getContext());
+        measureView((int)unitConverter.convertDpToPx(WIDTH));
+
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
     }
 
-    private void buildDrawingCache(View shareView) {
-        shareView.setDrawingCacheEnabled(true);
-        shareView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-        shareView.layout(0, 0, shareView.getMeasuredWidth(), shareView.getMeasuredHeight());
-        shareView.buildDrawingCache(true);
+    private void measureView(int width) {
+        view.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY)
+                , View.MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
     }
 
     @Override

@@ -111,12 +111,9 @@
     <string name="label_action_notifications">Notifications</string>
     <string name="about_content">
         U-Report is a free tool for community participation, designed to address issues that the people care about. Once you have signed up you become a U-Reporter and can Chat with other U-Reporters, submit stories and answer the weekly polls. Results and ideas are shared back with the community. Issues polled include health, education, water, sanitation and hygiene, youth unemployment, HIV/AIDS, disease outbreaks and anything else people want to discuss.
-        \n\n
-        Information is used to connect young people with their representatives, improve UNICEF programmes and draw attention to urgent issues with national governments and the UN. NGOs, civil society and country leaders can see the information on the site to understand what the people want or need.
-        \n\n
-        Registration is voluntary and U-Reporters incur no costs.
-        \n\n
-        Together U-Reporters create positive change in the community, the nation and internationally.
+        \n\nInformation is used to connect young people with their representatives, improve UNICEF programmes and draw attention to urgent issues with national governments and the UN. NGOs, civil society and country leaders can see the information on the site to understand what the people want or need.
+        \n\nRegistration is voluntary and U-Reporters incur no costs.
+        \n\nTogether U-Reporters create positive change in the community, the nation and internationally.
     </string>
     <string name="label_about_ureport">About U-Report</string>
     <string name="about_subtitle">Voice\nMatters</string>
@@ -220,8 +217,10 @@
     <string name="load_compressing_file">Compressing file...</string>
     <string name="title_media">Media</string>
     <string name="title_preferences_privacy">Privacy</string>
+    <string name="title_preferences_notifications">Notifications</string>
     <string name="title_preferences_account">Account</string>
     <string name="title_pref_chat_available">Available in chat</string>
+    <string name="title_pref_chat_notifications">Receive chat notifications</string>
     <string name="title_pref_edit_profile">Edit profile</string>
     <string name="title_pref_change_password">Change password</string>
     <string name="label_user_settings">Edit user</string>
@@ -236,8 +235,8 @@
     <string name="poll_response_hint">Tap here to answer</string>
     <string name="poll_question_default_message">Wait for the next poll or send a message to U-Report below</string>
     <string name="main_chat">Chat</string>
-    <string name="title_open_groups">Open Groups</string>
-    <string name="description_open_groups">See what they\'re talking about their community and participate</string>
+    <string name="title_open_groups">Follow Groups</string>
+    <string name="description_open_groups">See what U-Report communities are talking about</string>
     <string name="title_see">See</string>
     <string name="label_invite_contacts">Invite contacts</string>
     <string name="title_poll_question_no_login">You need to login to answer polls</string>
@@ -249,7 +248,7 @@
     <string name="button_title_disapprove">Disapprove</string>
     <string name="button_title_publish">Publish</string>
     <string name="success_story_update_message">Story was updated with success!</string>
-    <string name="message_story_publish_warning">Your story will be evaluated by U-Report team to be published. You will be notified soon with the outcome.</string>
+    <string name="message_story_publish_warning">Your story has been submitted to the U-Report team. Check back soon to see it published!</string>
     <string name="label_remove">Remove</string>
     <string name="error_remove">An error occurred during the remove process</string>
     <string name="message_success_remove">The data was removed with success!</string>

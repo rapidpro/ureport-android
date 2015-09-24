@@ -123,14 +123,14 @@
             android:paddingRight="15dp"
             android:paddingBottom="80dp"
             android:orientation="vertical"
-            android:gravity="start">
+            android:gravity="top|start">
 
             <TextView
                 android:id="@+id/content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:textAlignment="viewStart"
                 android:gravity="start"
                 android:ellipsize="end"
@@ -149,7 +149,9 @@
                 android:layout_height="@dimen/item_media_height"
                 android:minHeight="@dimen/item_media_height"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
             <TextView
                 android:id="@+id/contributors"

@@ -1,7 +1,6 @@
 package in.ureport;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.activeandroid.ActiveAndroid;
 
@@ -22,6 +21,7 @@ public class UreportApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        AnalyticsTracker.initialize(this);
         UserManager.init(this);
         FirebaseManager.init(this);
         initializeFabric();

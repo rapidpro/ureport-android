@@ -1,9 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="in.ureport">
+    package="in.ureport" >
 
-    <uses-sdk
-        tools:overrideLibrary="de.hdodenhof.circleimageview"/>
+    <uses-sdk tools:overrideLibrary="de.hdodenhof.circleimageview" />
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,224 +12,208 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
-    <permission android:name="in.ureport.permission.C2D_MESSAGE"
-                android:protectionLevel="signature" />
+    <permission
+        android:name="in.ureport.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
     <uses-permission android:name="in.ureport.permission.C2D_MESSAGE" />
 
     <application
-        android:allowBackup="true"
-        android:label="@string/app_name"
-        android:icon="@mipmap/icon"
-        android:theme="@style/AppTheme"
         android:name=".UreportApplication"
-        android:supportsRtl="true">
-
+        android:allowBackup="true"
+        android:icon="@mipmap/icon"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".activities.LoginActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.MainActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_home"
-            android:windowSoftInputMode="adjustPan"/>
-
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activities.ChatActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/label_chat" />
-
+            android:label="@string/label_chat"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.GeneralSettingsActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".activities.MainActivity">
+            android:label="@string/label_settings"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.ModerationActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/label_moderation" />
-
+            android:label="@string/label_moderation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.UserSettingsActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_user_settings"
-            android:parentActivityName=".activities.ProfileActivity">
-
+            android:parentActivityName=".activities.ProfileActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ProfileActivity" />
-
         </activity>
-
         <activity
             android:name=".activities.InviteContactsActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_invite_contacts"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.OpenGroupsActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_chat_groups"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.LastPollsActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_last_polls"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.AboutActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/label_about_ureport" />
-
+            android:label="@string/label_about_ureport"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.DonationActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/label_donation" />
-
+            android:label="@string/label_donation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.AmbassadorsActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/label_ambassadors" />
-
+            android:label="@string/label_ambassadors"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.GroupInfoActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/label_group_info" />
-
+            android:label="@string/label_group_info"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activities.ProfileActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_profile"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.ChatCreationActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_new_chat"
-            android:parentActivityName=".activities.ChatActivity">
+            android:parentActivityName=".activities.ChatActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ChatActivity" />
         </activity>
-
         <activity
             android:name=".activities.ChatRoomActivity"
-            android:screenOrientation="portrait"
             android:parentActivityName=".activities.ChatActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ChatActivity" />
         </activity>
-
         <activity
             android:name=".activities.CreateStoryActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_new_story"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.StoryViewActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_story_view"
             android:parentActivityName=".activities.MainActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.StatisticsActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_story_view"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.NewsViewActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_story_view"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.AnswerPollActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_answer_poll"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.PollResultsActivity"
-            android:screenOrientation="portrait"
             android:label="@string/label_poll_results"
-            android:parentActivityName=".activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
 
-        <meta-data android:name="AA_DB_NAME" android:value="Ureport.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="4" />
-
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="Ureport.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="4" />
         <meta-data
             android:name="AA_MODELS"
             android:value="in.ureport.models.Story,in.ureport.models.Marker,in.ureport.models.db.ChatNotification" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-
-        <activity android:name="com.facebook.FacebookActivity"
+        <activity
+            android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
@@ -245,31 +229,33 @@
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="in.ureport" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name="in.ureport.services.GcmListenerService"
+            android:name=".services.GcmListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-
         <service
             android:name=".services.InstanceIDListenerService"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
-
         <service
             android:name=".services.GcmRegistrationIntentService"
-            android:exported="false">
+            android:exported="false" >
         </service>
 
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

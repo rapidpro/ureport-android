@@ -148,8 +148,10 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
         CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask();
         cleanUnreadByRoomTask.execute(chatRoom);
 
-        chatRoomServices.removeEventListenerForChatMessages(chatRoom.getKey(), onChildEventListener);
-        chatRoomServices.removeValueListenForChatRoom(chatRoom, onChatRoomChangedListener);
+        if(chatRoom != null) {
+            chatRoomServices.removeEventListenerForChatMessages(chatRoom.getKey(), onChildEventListener);
+            chatRoomServices.removeValueListenForChatRoom(chatRoom, onChatRoomChangedListener);
+        }
     }
 
     private void loadData() {
@@ -442,8 +444,10 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             super.onDataChange(dataSnapshot);
-            chatRoom = chatRoomServices.getChatRoomFromSnapshot(dataSnapshot);
-            refreshChatRoomBlocking(chatRoom);
+            if(dataSnapshot.exists()) {
+                chatRoom = chatRoomServices.getChatRoomFromSnapshot(dataSnapshot);
+                refreshChatRoomBlocking(chatRoom);
+            }
         }
     };
 

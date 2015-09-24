@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ import in.ureport.tasks.SaveContactTask;
  * Created by johncordeiro on 10/09/15.
  */
 public class EditUserFragment extends UserInfoBaseFragment {
+
+    private static final String TAG = "EditUserFragment";
 
     private UserServices userServices;
 
@@ -140,6 +143,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
                 user.setGender(gender.getGender());
 
                 progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_wait), true, false);
+                Log.i(TAG, "onClick editUser ");
                 userServices.editUser(user, onUserUpdatedListener);
             }
         }
@@ -148,6 +152,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
     private Firebase.CompletionListener onUserUpdatedListener = new Firebase.CompletionListener() {
         @Override
         public void onComplete(final FirebaseError firebaseError, Firebase firebase) {
+            Log.i(TAG, "onComplete editUser");
             progressDialog.dismiss();
             if(firebaseError == null) {
                 updateContactToRapidpro();

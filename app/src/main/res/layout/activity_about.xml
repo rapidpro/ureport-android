@@ -81,6 +81,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="fill_vertical|top|start"
+        android:fillViewport="true"
+        android:paddingBottom="60dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
@@ -92,8 +94,7 @@
             android:textSize="16sp"
             android:textAlignment="viewStart"
             android:textColor="@android:color/black"
-            android:text="@string/about_content"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            android:text="@string/about_content" />
 
     </android.support.v4.widget.NestedScrollView>
 

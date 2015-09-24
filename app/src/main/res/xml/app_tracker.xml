@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ga_sessionTimeout">300</integer>
+
+    <bool name="ga_autoActivityTracking">true</bool>
+
+    <string name="ga_trackingId">UA-62089811-2</string>
+
+    <screenName name="in.ureport.activities.LoginActivity">
+        Login
+    </screenName>
+
+    <screenName name="in.ureport.activities.AboutActivity">
+        About U-Report
+    </screenName>
+
+    <screenName name="in.ureport.activities.ChatCreationActivity">
+        Chat creation
+    </screenName>
+
+    <screenName name="in.ureport.activities.ChatRoomActivity">
+        Chat Room
+    </screenName>
+
+    <screenName name="in.ureport.activities.MainActivity">
+        Home
+    </screenName>
+
+    <screenName name="in.ureport.activities.CreateStoryActivity">
+        Create Story
+    </screenName>
+
+    <screenName name="in.ureport.activities.DonationActivity">
+        Donations
+    </screenName>
+
+    <screenName name="in.ureport.activities.GeneralSettingsActivity">
+        Settings
+    </screenName>
+
+    <screenName name="in.ureport.activities.AmbassadorsActivity">
+        Ambassadors
+    </screenName>
+
+    <screenName name="in.ureport.activities.GroupInfoActivity">
+        Group Information
+    </screenName>
+
+    <screenName name="in.ureport.activities.LastPollsActivity">
+        Last Polls Information
+    </screenName>
+
+    <screenName name="in.ureport.activities.PollResultsActivity">
+        Poll Results
+    </screenName>
+
+    <screenName name="in.ureport.activities.InviteContactsActivity">
+        Invite Contacts
+    </screenName>
+
+    <screenName name="in.ureport.activities.ModerationActivity">
+        Moderation
+    </screenName>
+
+    <screenName name="in.ureport.activities.OpenGroupsActivity">
+        Open Groups
+    </screenName>
+
+    <screenName name="in.ureport.activities.StoryViewActivity">
+        View Story
+    </screenName>
+
+    <screenName name="in.ureport.activities.ProfileActivity">
+        Profile
+    </screenName>
+
+    <screenName name="in.ureport.activities.UserSettingsActivity">
+        User Edition
+    </screenName>
+
+</resources>

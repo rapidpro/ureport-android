@@ -9,7 +9,7 @@ public class ContactFields {
 
     private String lga;
 
-    private String nick_name;
+    private String nickname;
 
     private String gender;
 
@@ -39,12 +39,12 @@ public class ContactFields {
         this.lga = lga;
     }
 
-    public String getNick_name() {
-        return nick_name;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNick_name(String nick_name) {
-        this.nick_name = nick_name;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getGender() {
@@ -131,7 +131,7 @@ public class ContactFields {
     public String toString() {
         return "ContactFields{" +
                 "lga='" + lga + '\'' +
-                ", nick_name='" + nick_name + '\'' +
+                ", nickname='" + nickname + '\'' +
                 ", gender='" + gender + '\'' +
                 ", registration_date=" + registration_date +
                 ", state='" + state + '\'' +

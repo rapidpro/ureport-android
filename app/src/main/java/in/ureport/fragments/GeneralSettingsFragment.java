@@ -22,6 +22,7 @@ import in.ureport.network.UserServices;
 public class GeneralSettingsFragment extends PreferenceFragmentCompat {
 
     private static final String PUBLIC_PROFILE_KEY = "pref_key_chat_available";
+    private static final String CHAT_NOTIFICATIONS_KEY = "pref_key_chat_notifications";
 
     private UserServices userServices;
 

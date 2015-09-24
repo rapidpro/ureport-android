@@ -111,12 +111,12 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         @Override
         public void onClick(View view) {
             if (onStoryViewListener != null) {
-                onStoryViewListener.onStoryViewClick(story, getViews());
+                onStoryViewListener.onStoryViewClick(story, getViewsTransitions());
             }
         }
 
         @NonNull
-        private Pair<View, String> [] getViews() {
+        private Pair<View, String> [] getViewsTransitions() {
             Pair<View, String> picturePair = Pair.create((View)picture
                     , itemView.getContext().getString(R.string.transition_profile_picture));
 

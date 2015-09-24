@@ -10,7 +10,9 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ValueIncrementerTransaction;
@@ -179,10 +181,14 @@ public class UserServices extends ProgramServices {
 
     public void editUser(User user, Firebase.CompletionListener listener) {
         Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
-        userReference.child("nickname").setValue(user.getNickname());
-        userReference.child("birthday").setValue(user.getBirthday());
-        userReference.child("state").setValue(user.getState());
-        userReference.child("gender").setValue(user.getGender(), listener);
+
+        Map<String, Object> children = new HashMap<>();
+        children.put("nickname", user.getNickname());
+        children.put("birthday", user.getBirthday().getTime());
+        children.put("state", user.getState());
+        children.put("gender", user.getGender().toString());
+
+        userReference.updateChildren(children, listener);
     }
 
     public void saveUser(User user, Firebase.CompletionListener listener) {

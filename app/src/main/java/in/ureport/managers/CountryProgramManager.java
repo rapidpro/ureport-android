@@ -16,6 +16,7 @@ import in.ureport.models.CountryProgram;
  */
 public class CountryProgramManager {
 
+    public static final int INVALID_API_TOKEN = -1;
     public static final int INVALID_CHANNEL = -1;
 
     private static CountryProgram countryProgram;
@@ -51,6 +52,10 @@ public class CountryProgramManager {
         return getAvailableCountryPrograms().get(indexOfCountryProgram);
     }
 
+    public static boolean isCountryProgramEnabled(CountryProgram countryProgram) {
+        return countryProgram.getApiToken() != INVALID_API_TOKEN;
+    }
+
     public static boolean allowsPollParticipation() {
         return getCurrentCountryProgram().getChannel() != INVALID_CHANNEL;
     }
@@ -61,39 +66,39 @@ public class CountryProgramManager {
             countryPrograms.add(new CountryProgram("GLOBAL", R.style.AppTheme, "U-Report Global"
                     , R.string.global_api_token, R.string.global_external_channel, "UReportGlobal"));
             countryPrograms.add(new CountryProgram("BDI", R.style.AppTheme_Burundi, "Burundi"
-                    , R.string.burundi_api_token, INVALID_CHANNEL, "UReportGlobal"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "UReportGlobal"));
             countryPrograms.add(new CountryProgram("CMR", R.style.AppTheme_Cameroun, "Cameroun"
-                    , R.string.cameroun_api_token, INVALID_CHANNEL, "UReportCameroon"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "UReportCameroon"));
             countryPrograms.add(new CountryProgram("CHL", R.style.AppTheme_Chile, "Chile"
-                    , R.string.chile_api_token, R.string.chile_external_channel, "UReportChile"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "UReportChile"));
             countryPrograms.add(new CountryProgram("COD", R.style.AppTheme_Drc, "DRC"
-                    , R.string.drc_api_token, INVALID_CHANNEL, "UReportDRC"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "UReportDRC"));
             countryPrograms.add(new CountryProgram("IDN", R.style.AppTheme_Indonesia, "Indonesia"
                     , R.string.indonesia_api_token, R.string.indonesia_external_channel, "UReport_id"));
             countryPrograms.add(new CountryProgram("LBR", R.style.AppTheme_Liberia, "Liberia"
-                    , R.string.liberia_api_token, INVALID_CHANNEL, "UReportLiberia"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "UReportLiberia"));
             countryPrograms.add(new CountryProgram("MLI", R.style.AppTheme_Mali, "Mali"
-                    , R.string.mali_api_token, INVALID_CHANNEL, "UReportMali"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "UReportMali"));
             countryPrograms.add(new CountryProgram("MEX", R.style.AppTheme_Mexico, "México"
-                    , R.string.mexico_api_token, INVALID_CHANNEL, "UreportMexico"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "UreportMexico"));
             countryPrograms.add(new CountryProgram("NGA", R.style.AppTheme_Nigeria, "Nigeria"
                     , R.string.nigeria_api_token, R.string.nigeria_external_channel, "UReportNigeria"));
             countryPrograms.add(new CountryProgram("PAK", R.style.AppTheme_Pakistan, "Pakistan"
-                    , R.string.pakistan_api_token, INVALID_CHANNEL, "PakAvaz"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "PakAvaz"));
             countryPrograms.add(new CountryProgram("CAF", R.style.AppTheme_RepubliqueCentrafricaine, "République Centrafricaine"
-                    , R.string.republique_centrafricaine_api_token, INVALID_CHANNEL, "Ureport_rca"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "Ureport_rca"));
             countryPrograms.add(new CountryProgram("SEN", R.style.AppTheme_Senegal, "Sénégal"
-                    , R.string.senegal_api_token, INVALID_CHANNEL, "ureportsenegal"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "ureportsenegal"));
             countryPrograms.add(new CountryProgram("SLE", R.style.AppTheme_SierraLeone, "Sierra Leone"
-                    , R.string.sierra_leone_api_token, INVALID_CHANNEL, "UreportSL"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "UreportSL"));
             countryPrograms.add(new CountryProgram("SWZ", R.style.AppTheme_Swaiziland, "Swaziland"
-                    , R.string.swaziland_api_token, INVALID_CHANNEL, "Ureportszd"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "Ureportszd"));
             countryPrograms.add(new CountryProgram("UGA", R.style.AppTheme_Uganda, "Uganda"
-                    , R.string.uganda_api_token, INVALID_CHANNEL, "UReportUganda"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "UReportUganda"));
             countryPrograms.add(new CountryProgram("ZMB", R.style.AppTheme_Zambia, "Zambia"
-                    , R.string.zambia_api_token, INVALID_CHANNEL, "ZambiaUReport"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "ZambiaUReport"));
             countryPrograms.add(new CountryProgram("ZWE", R.style.AppTheme_Zimbabwe, "Zimbabwe"
-                    , R.string.zimbabwe_api_token, INVALID_CHANNEL, "Ureportzim"));
+                    , INVALID_API_TOKEN, INVALID_CHANNEL, "Ureportzim"));
         }
         return countryPrograms;
     }
