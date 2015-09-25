@@ -142,6 +142,11 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
 
         getTabLayout().setupWithViewPager(pager);
         getMainActionButton().setOnClickListener(onCreateStoryClickListener);
+    }
+
+    @Override
+    protected void onMenuLoaded() {
+        super.onMenuLoaded();
         getMenuNavigation().getMenu().findItem(R.id.home).setChecked(true);
     }
 

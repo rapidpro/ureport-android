@@ -23,7 +23,7 @@ public class ValueIncrementerTransaction implements Transaction.Handler {
     @Override
     public Transaction.Result doTransaction(MutableData mutableData) {
         if (mutableData.getValue() == null) {
-            mutableData.setValue(1);
+            mutableData.setValue(increment);
         } else {
             mutableData.setValue((Long) mutableData.getValue() + increment);
         }

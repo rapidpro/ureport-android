@@ -26,6 +26,8 @@ public class ChatMessage implements Parcelable {
     @Expose
     private User user;
 
+    private Media media;
+
     public String getKey() {
         return key;
     }
@@ -58,6 +60,14 @@ public class ChatMessage implements Parcelable {
         this.user = user;
     }
 
+    public Media getMedia() {
+        return media;
+    }
+
+    public void setMedia(Media media) {
+        this.media = media;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -75,6 +85,16 @@ public class ChatMessage implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return "ChatMessage{" +
+                "key='" + key + '\'' +
+                ", message='" + message + '\'' +
+                ", date=" + date +
+                ", user=" + user +
+                '}';
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -85,6 +105,7 @@ public class ChatMessage implements Parcelable {
         dest.writeString(this.message);
         dest.writeLong(date != null ? date.getTime() : -1);
         dest.writeParcelable(this.user, 0);
+        dest.writeParcelable(this.media, 0);
     }
 
     public ChatMessage() {
@@ -96,6 +117,7 @@ public class ChatMessage implements Parcelable {
         long tmpDate = in.readLong();
         this.date = tmpDate == -1 ? null : new Date(tmpDate);
         this.user = in.readParcelable(User.class.getClassLoader());
+        this.media = in.readParcelable(Media.class.getClassLoader());
     }
 
     public static final Creator<ChatMessage> CREATOR = new Creator<ChatMessage>() {
@@ -107,14 +129,4 @@ public class ChatMessage implements Parcelable {
             return new ChatMessage[size];
         }
     };
-
-    @Override
-    public String toString() {
-        return "ChatMessage{" +
-                "key='" + key + '\'' +
-                ", message='" + message + '\'' +
-                ", date=" + date +
-                ", user=" + user +
-                '}';
-    }
 }

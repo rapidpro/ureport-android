@@ -19,9 +19,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -42,6 +44,7 @@ import in.ureport.R;
 import in.ureport.loader.NotificationLoader;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.DonationManager;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.helpers.SpinnerColorSwitcher;
 import in.ureport.managers.UserManager;
@@ -120,7 +123,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         menu.findItem(R.id.moderation).setVisible(UserManager.canModerate());
         menu.findItem(R.id.changeSettings).setVisible(UserManager.isUserLoggedIn());
         menu.findItem(R.id.logout).setVisible(UserManager.isUserLoggedIn());
-
+        menu.findItem(R.id.makeDonation).setVisible(user != null && DonationManager.isDonationAllowed(user));
+        onMenuLoaded();
     }
 
     @Override
@@ -178,6 +182,10 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     private void updateUserInfo(User user) {
         BaseActivity.this.user = user;
         if(user != null) {
+            menuNavigation.getMenu().clear();
+            menuNavigation.inflateMenu(R.menu.main);
+            setupMenuPermissions();
+
             View menuHeader = getLayoutInflater().inflate(R.layout.view_header_menu, null);
             menuHeader.setOnClickListener(onMenuHeaderClickListener);
 
@@ -229,6 +237,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     }
 
     protected void setUser(User user){}
+
+    protected void onMenuLoaded(){}
 
     protected Toolbar getToolbar() {
         return toolbar;
@@ -300,6 +310,11 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                     break;
                 case R.id.about:
                     navigationIntent = new Intent(BaseActivity.this, AboutActivity.class);
+                    startActivity(navigationIntent);
+                    return true;
+                case R.id.makeDonation:
+                    navigationIntent = new Intent(BaseActivity.this, DonationActivity.class);
+                    navigationIntent.putExtra(DonationActivity.EXTRA_USER, user);
                     startActivity(navigationIntent);
                     return true;
                 case R.id.changeSettings:

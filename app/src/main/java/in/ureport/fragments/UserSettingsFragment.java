@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.util.Log;
 
 import in.ureport.R;
 import in.ureport.models.User;
@@ -36,7 +35,6 @@ public class UserSettingsFragment extends PreferenceFragmentCompat {
         if(getArguments() != null && getArguments().containsKey(EXTRA_USER)) {
             user = getArguments().getParcelable(EXTRA_USER);
         }
-        Log.i("UserSettingsFragment", "onCreate user: " + user);
     }
 
     @Override

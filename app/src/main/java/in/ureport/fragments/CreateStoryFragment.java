@@ -36,6 +36,8 @@ import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.helpers.ImagePicker;
+import in.ureport.helpers.MediaSelector;
+import in.ureport.listener.OnMediaSelectedListener;
 import in.ureport.managers.TransferManager;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Marker;
@@ -290,11 +292,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public void onMediaAddListener() {
-        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.create_story_title_media_source)
-                .setItems(R.array.create_story_media_sources, onMediaSelectedListener)
-                .create();
-        alertDialog.show();
+        MediaSelector mediaSelector = new MediaSelector(getActivity());
+        mediaSelector.selectMedia(onMediaSelectedListener);
     }
 
     private View.OnClickListener onMarkerClickListener = new View.OnClickListener() {
@@ -305,18 +304,16 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         }
     };
 
-    private DialogInterface.OnClickListener onMediaSelectedListener = new DialogInterface.OnClickListener() {
+    private OnMediaSelectedListener onMediaSelectedListener = new OnMediaSelectedListener() {
         @Override
-        public void onClick(DialogInterface dialogInterface, int position) {
+        public void onMediaSelected(int position) {
             switch (position) {
-                case 0:
+                case MediaSelector.POSITION_GALLERY:
                     imagePicker.pickImageFromGallery(CreateStoryFragment.this);
                     break;
-                case 1:
+                case MediaSelector.POSITION_CAMERA:
                     pickFromCamera();
                     break;
-                case 2:
-                    // TODO: 02/09/15 Youtube media source
             }
         }
     };

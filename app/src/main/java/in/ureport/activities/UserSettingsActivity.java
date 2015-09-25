@@ -2,8 +2,6 @@ package in.ureport.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import in.ureport.R;
 import in.ureport.fragments.ChangePasswordFragment;
@@ -27,11 +25,18 @@ public class UserSettingsActivity extends SettingsActivity implements UserSettin
         if(savedInstanceState == null) {
             user = getIntent().getParcelableExtra(EXTRA_USER);
 
-            UserSettingsFragment userSettingsFragment = UserSettingsFragment.newInstance(user);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.content, userSettingsFragment)
-                    .commit();
+            if(user.getType() != User.Type.ureport)
+                onEditProfile();
+            else
+                addUserSettingsFragment();
         }
+    }
+
+    private void addUserSettingsFragment() {
+        UserSettingsFragment userSettingsFragment = UserSettingsFragment.newInstance(user);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.content, userSettingsFragment)
+                .commit();
     }
 
     @Override

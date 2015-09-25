@@ -1,10 +1,10 @@
 package in.ureport.views.adapters;
 
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.User;
 
@@ -99,6 +100,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final TextView message;
         private final TextView date;
         private final TextView name;
+        private final ImageView media;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -106,10 +108,11 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             message = (TextView) itemView.findViewById(R.id.message);
             date = (TextView) itemView.findViewById(R.id.date);
             name = (TextView) itemView.findViewById(R.id.name);
+            media = (ImageView) itemView.findViewById(R.id.media);
         }
 
         private void bindView(ChatMessage chatMessage) {
-            message.setText(chatMessage.getMessage());
+            bindMessage(chatMessage);
             date.setText(hourFormatter.format(chatMessage.getDate()));
             bindName(chatMessage);
 
@@ -117,6 +120,16 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 itemView.setOnLongClickListener(null);
             } else {
                 itemView.setOnLongClickListener(onLongClickListener);
+            }
+        }
+
+        private void bindMessage(ChatMessage chatMessage) {
+            if(chatMessage.getMessage() != null) {
+                media.setVisibility(View.GONE);
+                message.setText(chatMessage.getMessage());
+            } else if(chatMessage.getMedia() != null) {
+                media.setVisibility(View.VISIBLE);
+                ImageLoader.loadPictureToImageView(media, chatMessage.getMedia());
             }
         }
 

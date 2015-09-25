@@ -14,11 +14,17 @@
             android:visible="false"/>
     </group>
 
-    <item android:title="@string/main_menu_group_institutional">
+    <item
+        android:title="@string/main_menu_group_institutional">
         <menu>
             <item
                 android:id="@+id/about"
                 android:title="@string/label_about_ureport"/>
+            <item
+                android:id="@+id/makeDonation"
+                android:title="@string/label_donation"
+                android:visible="false"/>
+
         </menu>
     </item>
 

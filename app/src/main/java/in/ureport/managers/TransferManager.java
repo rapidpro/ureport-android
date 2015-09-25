@@ -56,6 +56,11 @@ public class TransferManager {
         compressFileTask.execute(file);
     }
 
+    public void transferMedia(LocalMedia media, String parent, final TransferListenerAdapter transferListener)
+            throws URISyntaxException, IllegalStateException, IOException {
+        transferFile(media.getPath(), parent, transferListener);
+    }
+
     public void transferMedias(final List<Media> medias, String parent, final OnTransferMediasListener onTransferMediasListener)
             throws URISyntaxException, IllegalStateException, IOException {
         final List<Media> mediasUploaded = new ArrayList<>();

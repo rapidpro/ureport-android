@@ -25,7 +25,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            tools:text="@string/poll1_description"/>
+            tools:text="" />
+
+        <ImageView
+            android:id="@+id/media"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:src="@drawable/news1_cover_image"/>
 
         <TextView
             android:id="@+id/date"

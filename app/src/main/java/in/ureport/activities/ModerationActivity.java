@@ -55,7 +55,11 @@ public class ModerationActivity extends BaseActivity {
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager(), navigationItems);
         pager.setAdapter(adapter);
         getTabLayout().setupWithViewPager(pager);
+    }
 
+    @Override
+    protected void onMenuLoaded() {
+        super.onMenuLoaded();
         getMenuNavigation().getMenu().findItem(R.id.moderation).setChecked(true);
     }
 

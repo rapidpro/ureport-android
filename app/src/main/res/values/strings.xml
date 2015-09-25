@@ -117,10 +117,10 @@
     </string>
     <string name="label_about_ureport">About U-Report</string>
     <string name="about_subtitle">Voice\nMatters</string>
-    <string name="donation_subtitle">When you make \na donation</string>
+    <string name="donation_subtitle">When you make \na donation...</string>
     <string name="label_make_donation_subtitle">Make\nDonation</string>
-    <string name="make_donations_content">You help UNICEF save and transform lives, working for a more just and secure world for children and adolescents in the world. You can make a difference now!</string>
-    <string name="label_donation">Make Donations</string>
+    <string name="make_donations_content">You help UNICEF save children and transform lives by working for a more just and secure world for young people.  You can make a difference now!</string>
+    <string name="label_donation">Donate Now</string>
     <string name="chat_room_message_hint">Write a message</string>
     <string name="label_action_search">Search</string>
     <string name="label_leave_group">Leave Group</string>
@@ -290,5 +290,6 @@
     <string name="label_chat_invite">Chat</string>
     <string name="label_view_stories">Stories</string>
     <string name="label_view_points">Points</string>
+    <string name="text_donate">Donate</string>
 
 </resources>

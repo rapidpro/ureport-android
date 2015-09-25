@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:scaleType="centerCrop"
-                android:background="@color/poll_category_child"/>
+                android:background="?attr/colorPrimary"/>
 
             <TextView
                 android:id="@+id/info"
@@ -45,7 +45,7 @@
                 android:textAlignment="viewStart"
                 android:textSize="18sp"
                 android:padding="10dp"
-                tools:text="@string/poll1_description"/>
+                tools:text="Poll Description"/>
 
             <EditText
                 android:id="@+id/message"
