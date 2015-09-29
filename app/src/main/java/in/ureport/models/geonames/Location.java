@@ -35,7 +35,7 @@ public class Location {
 
     @Override
     public String toString() {
-        return toponymName != null ? toponymName : name;
+        return name != null ? name : toponymName;
     }
 
     @Override

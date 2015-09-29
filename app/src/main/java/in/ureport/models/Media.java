@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.annotations.Expose;
 
 /**
  * Created by johncordeiro on 20/08/15.
@@ -18,8 +19,10 @@ public class Media implements Parcelable {
 
     private String id;
 
+    @Expose
     private String url;
 
+    @Expose
     private Type type;
 
     public String getId() {

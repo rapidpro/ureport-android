@@ -38,7 +38,7 @@ import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
-public class TouchImageView extends ImageView {
+public class    TouchImageView extends ImageView {
 	
 	private static final String DEBUG = "DEBUG";
 	
@@ -47,8 +47,8 @@ public class TouchImageView extends ImageView {
 	// zoomed below or above the zoom boundaries, before animating back to the
 	// min/max zoom boundary.
 	//
-	private static final float SUPER_MIN_MULTIPLIER = .75f;
-	private static final float SUPER_MAX_MULTIPLIER = 1.25f;
+	public static final float SUPER_MIN_MULTIPLIER = .75f;
+    public static final float SUPER_MAX_MULTIPLIER = 1.25f;
 
     //
     // Scale of image ranges from minScale to maxScale, where minScale == 1
@@ -405,7 +405,7 @@ public class TouchImageView extends ImageView {
      */
     public void setZoom(TouchImageView img) {
     	PointF center = img.getScrollPosition();
-    	setZoom(img.getCurrentZoom(), center.x, center.y, img.getScaleType());
+    	if(center != null) setZoom(img.getCurrentZoom(), center.x, center.y, img.getScaleType());
     }
 
     /**

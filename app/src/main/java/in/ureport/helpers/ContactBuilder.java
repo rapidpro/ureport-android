@@ -5,14 +5,14 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
-import in.ureport.managers.CountryProgramManager;
-import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.models.rapidpro.Contact;
-import in.ureport.models.rapidpro.ContactFields;
+import in.ureport.models.rapidpro.Field;
 
 /**
  * Created by johncordeiro on 24/09/15.
@@ -21,8 +21,14 @@ public class ContactBuilder {
 
     private static final String URL_FORMAT = "tel:%1$s";
 
+    private List<Field> existingFields;
+
+    public ContactBuilder(List<Field> existingFields) {
+        this.existingFields = existingFields;
+    }
+
     @NonNull
-    public Contact buildContactByUser(User user, Locale locale) {
+    private Contact buildContact(User user) {
         ContactGroupsBuilder contactGroupsBuilder = new ContactGroupsBuilder();
         List<String> userGroups = contactGroupsBuilder.getGroupsForUser(user);
 
@@ -33,22 +39,34 @@ public class ContactBuilder {
         contact.setName(user.getNickname());
         contact.setGroups(userGroups);
         contact.setUrns(urns);
-
-        ContactFields fields = new ContactFields();
-        fields.setNickname(user.getNickname());
-        fields.setBirthday(user.getBirthday());
-        fields.setBorn(getBorn(user));
-        fields.setEmail(user.getEmail());
-        fields.setGender(user.getGender().toString());
-        fields.setState(user.getState());
-        fields.setLga(user.getDistrict());
-
-        if(CountryProgramManager.isGlobalUser(user)) {
-            fields.setCountry(locale.getCountry());
-        }
-
-        contact.setFields(fields);
         return contact;
+    }
+
+    public Contact buildContactByUser(User user, Locale locale) {
+        Contact contact = buildContact(user);
+        Map<String, Object> contactFields = new HashMap<>();
+
+        putValuesIfExists(user.getEmail(), contactFields, "email", "e_mail");
+        putValuesIfExists(user.getNickname(), contactFields, "nickname", "nick_name");
+        putValuesIfExists(user.getBirthday(), contactFields, "birthday", "birthdate", "birth_day");
+        putValuesIfExists(getBorn(user), contactFields, "born");
+        putValuesIfExists(user.getGender().toString(), contactFields, "gender");
+        putValuesIfExists(user.getState(), contactFields, "state", "region", "province", "county");
+        putValuesIfExists(user.getDistrict(), contactFields, "district", "lga");
+        putValuesIfExists(locale.getCountry(), contactFields, "country");
+
+        contact.setFields(contactFields);
+        return contact;
+    }
+
+    private void putValuesIfExists(Object value, Map<String, Object> contactFields, String... possibleKeys) {
+        for (String possibleField : possibleKeys) {
+            int indexOfField = existingFields.indexOf(new Field(possibleField));
+            if(indexOfField >= 0 && value != null) {
+                contactFields.put(possibleField, value);
+                break;
+            }
+        }
     }
 
     @Nullable

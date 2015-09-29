@@ -61,6 +61,11 @@
             android:name=".activities.ModerationActivity"
             android:label="@string/label_moderation"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".activities.MediaActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".activities.UserSettingsActivity"
             android:label="@string/label_user_settings"

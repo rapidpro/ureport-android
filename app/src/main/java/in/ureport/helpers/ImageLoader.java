@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Callback;
 
 import in.ureport.R;
 import in.ureport.models.Media;
@@ -23,6 +24,12 @@ public class ImageLoader {
         Picasso.with(imageView.getContext()).load(url)
                 .placeholder(placeholder)
                 .into(imageView);
+    }
+
+    public static void loadPictureToImageView(ImageView imageView, Media media, Callback callback) {
+        if(media != null) {
+            Picasso.with(imageView.getContext()).load(media.getUrl()).into(imageView, callback);
+        }
     }
 
     public static void loadPictureToImageView(ImageView imageView, Media media) {

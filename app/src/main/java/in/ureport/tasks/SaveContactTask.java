@@ -3,6 +3,7 @@ package in.ureport.tasks;
 import android.content.Context;
 import android.util.Log;
 
+import java.util.List;
 import java.util.Locale;
 
 import in.ureport.R;
@@ -11,6 +12,7 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.models.rapidpro.Contact;
+import in.ureport.models.rapidpro.Field;
 import in.ureport.network.RapidProServices;
 import in.ureport.tasks.common.ProgressTask;
 import retrofit.RetrofitError;
@@ -32,19 +34,21 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     protected Contact doInBackground(User... params) {
         try {
             User user = params[0];
+            RapidProServices rapidProServices = new RapidProServices();
 
             CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(user.getCountry());
-            ContactBuilder contactBuilder = new ContactBuilder();
+            String token = context.getString(countryProgram.getApiToken());
+
+            List<Field> fields = rapidProServices.loadFields(token);
+
+            ContactBuilder contactBuilder = new ContactBuilder(fields);
             Contact contact = contactBuilder.buildContactByUser(user, locale);
 
             if (CountryProgramManager.isCountryProgramEnabled(countryProgram)) {
-                RapidProServices rapidProServices = new RapidProServices();
-                String token = context.getString(countryProgram.getApiToken());
                 try {
                     return rapidProServices.saveContact(token, contact);
                 } catch (RetrofitError exception) {
-                    contact.getFields().setState(null);
-                    contact.getFields().setLga(null);
+                    Log.e(TAG, "doInBackground ", exception);
                 }
                 return rapidProServices.saveContact(token, contact);
             } else {

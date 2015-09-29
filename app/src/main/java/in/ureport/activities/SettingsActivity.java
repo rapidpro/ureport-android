@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import in.ureport.R;
+import in.ureport.managers.CountryProgramManager;
 
 /**
  * Created by johncordeiro on 18/09/15.
@@ -14,6 +15,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_settings);
         setupToolbar();
     }

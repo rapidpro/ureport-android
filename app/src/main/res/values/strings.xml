@@ -277,6 +277,10 @@
         <item quantity="other">%1$s new messages</item>
     </plurals>
 
+    <string-array name="chat_message_items">
+        <item>Remove message</item>
+    </string-array>
+
     <string name="message_remove_chat_message">Do you really want to delete this message?</string>
     <string name="message_delete_message_success">Your message was deleted with success!</string>
     <string name="message_individual_chat_blocked">This chat room was blocked by %1$s</string>
@@ -291,5 +295,6 @@
     <string name="label_view_stories">Stories</string>
     <string name="label_view_points">Points</string>
     <string name="text_donate">Donate</string>
+    <string name="label_chat_picture_notification">picture</string>
 
 </resources>

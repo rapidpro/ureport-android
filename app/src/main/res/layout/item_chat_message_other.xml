@@ -28,10 +28,11 @@
 
     <ImageView
         android:id="@+id/media"
-        android:layout_width="wrap_content"
-        android:layout_height="150dp"
+        android:layout_width="250dp"
+        android:layout_height="200dp"
         android:scaleType="centerCrop"
         android:visibility="gone"
+        android:transitionName="@string/transition_media"
         tools:visibility="visible"
         tools:src="@drawable/news1_cover_image"/>
 

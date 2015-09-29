@@ -6,4 +6,6 @@
     <string name="transition_story_markers">storyMarkers</string>
     <string name="transition_story_title">storyTitle</string>
     <string name="transition_story_contributions">storyContributions</string>
+
+    <string name="transition_media">media</string>
 </resources>

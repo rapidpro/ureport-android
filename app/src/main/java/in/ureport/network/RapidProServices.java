@@ -18,6 +18,7 @@ import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.rapidpro.Boundary;
 import in.ureport.models.rapidpro.Contact;
+import in.ureport.models.rapidpro.Field;
 import in.ureport.models.rapidpro.Group;
 import in.ureport.models.rapidpro.Response;
 import retrofit.RestAdapter;
@@ -46,6 +47,11 @@ public class RapidProServices {
 
     public RapidProApi.Response<Boundary> loadBoundaries(String apiKey) {
         return service.listBoundaries(apiKey);
+    }
+
+    public List<Field> loadFields(String apiKey) {
+        RapidProApi.Response<Field> response = service.listFields(apiKey);
+        return response.getResults();
     }
 
     public List<Group> loadGroups(String apiKey) {

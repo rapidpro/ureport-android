@@ -8,6 +8,7 @@ import android.util.Log;
 import java.util.Date;
 import java.util.List;
 
+import in.ureport.R;
 import in.ureport.db.business.ChatNotificationBusiness;
 import in.ureport.db.repository.ChatNotificationRepository;
 import in.ureport.helpers.SystemHelper;
@@ -59,6 +60,9 @@ public class ChatNotificationTask extends AsyncTask<ChatMessage, Void, Void> {
     @NonNull
     private ChatNotification buildNotification(ChatMessage chatMessage) {
         User user = chatMessage.getUser();
+        if(chatMessage.getMedia() != null) {
+            chatMessage.setMessage(context.getString(R.string.label_chat_picture_notification));
+        }
         return new ChatNotification(chatRoom.getKey(), user.getPicture(), user.getNickname()
                     , chatMessage.getMessage(), new Date());
     }

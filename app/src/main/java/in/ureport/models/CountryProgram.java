@@ -26,13 +26,16 @@ public class CountryProgram {
 
     private String twitter;
 
-    public CountryProgram(String code, @StyleRes int theme, String name, @StringRes int apiToken, @StringRes int channel, String twitter) {
+    private String group;
+
+    public CountryProgram(String code, @StyleRes int theme, String name, @StringRes int apiToken, @StringRes int channel, String twitter, String group) {
         this.code = code;
         this.theme = theme;
         this.name = name;
         this.apiToken = apiToken;
         this.channel = channel;
         this.twitter = twitter;
+        this.group = group;
     }
 
     public CountryProgram(String code, String name) {
@@ -96,6 +99,14 @@ public class CountryProgram {
 
     public void setTwitter(String twitter) {
         this.twitter = twitter;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     @Override

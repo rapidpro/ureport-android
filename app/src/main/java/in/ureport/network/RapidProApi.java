@@ -4,9 +4,9 @@ import java.util.List;
 
 import in.ureport.models.rapidpro.Boundary;
 import in.ureport.models.rapidpro.Contact;
+import in.ureport.models.rapidpro.Field;
 import in.ureport.models.rapidpro.Group;
 import retrofit.http.Body;
-import retrofit.http.Field;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
@@ -18,6 +18,9 @@ public interface RapidProApi {
 
     @GET("/groups.json")
     Response<Group> listGroups(@Header("Authorization") String apiKey);
+
+    @GET("/fields.json")
+    Response<Field> listFields(@Header("Authorization") String apiKey);
 
     @GET("/boundaries.json?aliases=true")
     Response<Boundary> listBoundaries(@Header("Authorization") String apiKey);

@@ -263,9 +263,14 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
                 break;
             case LOAD_STATES_ID:
                 LocationInfo locationInfo = (LocationInfo) data;
-                updateSpinnerLocation(state, locationInfo.getStates());
+                updateStateSpinner(locationInfo);
                 updateDistrictSpinner(locationInfo);
         }
+    }
+
+    private void updateStateSpinner(LocationInfo locationInfo) {
+        updateSpinnerLocation(state, locationInfo.getStates());
+        onStatesLoaded(locationInfo.getStates());
     }
 
     private void updateDistrictSpinner(LocationInfo locationInfo) {
@@ -285,8 +290,6 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
 
             spinner.setEnabled(true);
             spinner.setAdapter(adapter);
-
-            onStatesLoaded(locations);
         } else {
             resetLocationSpinner(spinner, R.array.spinner_error_loading_states);
             Toast.makeText(getActivity(), R.string.error_no_internet, Toast.LENGTH_LONG).show();

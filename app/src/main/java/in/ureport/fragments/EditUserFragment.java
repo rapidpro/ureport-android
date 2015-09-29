@@ -139,6 +139,11 @@ public class EditUserFragment extends UserInfoBaseFragment {
                 Location location = (Location) EditUserFragment.this.state.getSelectedItem();
                 user.setState(location.getName());
 
+                if(containsDistrict) {
+                    Location district = (Location) EditUserFragment.this.district.getSelectedItem();
+                    user.setDistrict(district.getName());
+                }
+
                 UserGender gender = (UserGender) EditUserFragment.this.gender.getSelectedItem();
                 user.setGender(gender.getGender());
 

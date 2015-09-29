@@ -2,6 +2,7 @@ package in.ureport.models.rapidpro;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by johncordeiro on 18/08/15.
@@ -16,7 +17,7 @@ public class Contact {
 
     private List<String> urns;
 
-    private ContactFields fields;
+    private Map<String, Object> fields;
 
     private Date modified_on;
 
@@ -54,11 +55,11 @@ public class Contact {
         this.urns = urns;
     }
 
-    public ContactFields getFields() {
+    public Map<String, Object> getFields() {
         return fields;
     }
 
-    public void setFields(ContactFields fields) {
+    public void setFields(Map<String, Object> fields) {
         this.fields = fields;
     }
 

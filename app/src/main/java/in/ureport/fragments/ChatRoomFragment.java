@@ -1,14 +1,18 @@
 package in.ureport.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +20,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.ChangeBounds;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +46,7 @@ import java.util.Date;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
+import in.ureport.activities.MediaActivity;
 import in.ureport.helpers.ImagePicker;
 import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.TransferListenerAdapter;
@@ -77,6 +85,7 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
     private static final String EXTRA_CHAT_ROOM_KEY = "chatRoomKey";
 
     private static final String MEDIA_PARENT = "chat_message";
+    public static final int REMOVE_CHAT_MESSAGE_POSITION = 0;
 
     private TextView name;
     private TextView message;
@@ -193,6 +202,8 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
         LocalMedia media = new LocalMedia();
         media.setPath(pictureUri);
 
+        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
+                , getString(R.string.load_message_uploading_image), true);
         try {
             TransferManager transferManager = new TransferManager(getActivity());
             transferManager.transferMedia(media, MEDIA_PARENT, new TransferListenerAdapter() {
@@ -205,6 +216,7 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
                     chatMessage.setDate(new Date());
                     chatMessage.setMedia(media);
                     saveChatMessage(chatMessage);
+                    progressDialog.dismiss();
                 }
             });
         } catch(Exception exception) {
@@ -596,7 +608,33 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
     };
 
     @Override
+    public void onMediaChatMessageView(ChatMessage chatMessage, ImageView mediaImageView) {
+        if(chatRoomListener != null) {
+            Intent mediaViewIntent = new Intent(getActivity(), MediaActivity.class);
+            mediaViewIntent.putExtra(MediaActivity.EXTRA_MEDIA, chatMessage.getMedia());
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity()
+                    , mediaImageView, getString(R.string.transition_media));
+            ActivityCompat.startActivity(getActivity(), mediaViewIntent, options.toBundle());
+        }
+    }
+
+    @Override
     public void onChatMessageSelected(final ChatMessage chatMessage) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                .setItems(R.array.chat_message_items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch(which) {
+                            case REMOVE_CHAT_MESSAGE_POSITION:
+                                removeChatMessageWithAlert(chatMessage);
+                        }
+                    }
+                }).create();
+        alertDialog.show();
+    }
+
+    private void removeChatMessageWithAlert(final ChatMessage chatMessage) {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setMessage(R.string.message_remove_chat_message)
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
@@ -656,6 +694,7 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
     }
 
     public interface ChatRoomListener {
+        void onMediaView(Media media, ImageView mediaImageView);
         void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers, Pair<View, String>... pairs);
     }
 }

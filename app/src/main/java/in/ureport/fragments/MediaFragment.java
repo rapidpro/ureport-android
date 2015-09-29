@@ -9,9 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Callback;
+
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.models.Media;
+import in.ureport.views.widgets.TouchImageView;
 
 /**
  * Created by johncordeiro on 04/09/15.
@@ -22,6 +25,7 @@ public class MediaFragment extends Fragment {
     private Media media;
 
     private MediaViewFragment.OnCloseMediaViewListener onCloseMediaViewListener;
+    private TouchImageView image;
 
     public static MediaFragment newInstance(Media media) {
         Bundle args = new Bundle();
@@ -54,15 +58,16 @@ public class MediaFragment extends Fragment {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onCloseMediaViewListener.onCloseMediaView();
+                if(onCloseMediaViewListener != null)
+                    onCloseMediaViewListener.onCloseMediaView();
             }
         });
         setupView(view);
     }
 
     private void setupView(View view) {
-        ImageView image = (ImageView) view.findViewById(R.id.image);
-        ImageLoader.loadPictureToImageView(image, media);
+        image = (TouchImageView) view.findViewById(R.id.image);
+        ImageLoader.loadPictureToImageView(image, media, onImageLoadedCallback);
     }
 
     @Override
@@ -72,4 +77,14 @@ public class MediaFragment extends Fragment {
             onCloseMediaViewListener = (MediaViewFragment.OnCloseMediaViewListener) context;
         }
     }
+
+    private Callback onImageLoadedCallback = new Callback() {
+        @Override
+        public void onSuccess() {
+            image.setZoom(image.getCurrentZoom());
+        }
+
+        @Override
+        public void onError() {}
+    };
 }

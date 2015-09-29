@@ -1,26 +1,37 @@
 package in.ureport.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.ChangeBounds;
+import android.transition.Slide;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
 
 import in.ureport.R;
 import in.ureport.fragments.ChatRoomFragment;
+import in.ureport.fragments.MediaFragment;
+import in.ureport.fragments.MediaViewFragment;
 import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.Media;
 
 /**
  * Created by johncordeiro on 7/21/15.
  */
 public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragment.ChatRoomListener
-    , InfoGroupChatListener {
+    , InfoGroupChatListener, MediaViewFragment.OnCloseMediaViewListener {
 
     public static final String EXTRA_CHAT_ROOM_KEY = "chatRoomKey";
     public static final String EXTRA_CHAT_ROOM = "chatRoom";
@@ -54,6 +65,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
             ChatMembers chatMembers = getIntent().getParcelableExtra(EXTRA_CHAT_MEMBERS);
             chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, chatMembers);
         }
+        addSharedElementTranstion(chatRoomFragment);
     }
 
     @Override
@@ -104,6 +116,30 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     @Override
     public void onChatRoomLeave(ChatRoom chatRoom) {
         UserManager.leaveFromGroup(this, chatRoom);
+    }
+
+    @Override
+    public void onMediaView(Media media, ImageView mediaImageView) {
+        MediaFragment fragment = MediaFragment.newInstance(media);
+        addSharedElementTranstion(fragment);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.content, fragment)
+                .addToBackStack(null)
+                .addSharedElement(mediaImageView, getString(R.string.transition_media))
+                .commit();
+    }
+
+    private void addSharedElementTranstion(Fragment fragment) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ChangeBounds changeBoundsTransition = new ChangeBounds();
+            changeBoundsTransition.setDuration(300);
+            fragment.setSharedElementEnterTransition(changeBoundsTransition);
+        }
+    }
+
+    @Override
+    public void onCloseMediaView() {
+        getSupportFragmentManager().popBackStack();
     }
 
     @Override

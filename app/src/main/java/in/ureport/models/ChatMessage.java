@@ -26,6 +26,7 @@ public class ChatMessage implements Parcelable {
     @Expose
     private User user;
 
+    @Expose
     private Media media;
 
     public String getKey() {

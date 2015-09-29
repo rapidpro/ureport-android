@@ -109,6 +109,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             date = (TextView) itemView.findViewById(R.id.date);
             name = (TextView) itemView.findViewById(R.id.name);
             media = (ImageView) itemView.findViewById(R.id.media);
+            media.setOnClickListener(onMediaClickListener);
         }
 
         private void bindView(ChatMessage chatMessage) {
@@ -118,18 +119,22 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             if(getItemViewType() == TYPE_OTHER) {
                 itemView.setOnLongClickListener(null);
+                media.setOnLongClickListener(null);
             } else {
                 itemView.setOnLongClickListener(onLongClickListener);
+                media.setOnLongClickListener(onLongClickListener);
             }
         }
 
         private void bindMessage(ChatMessage chatMessage) {
             if(chatMessage.getMessage() != null) {
                 media.setVisibility(View.GONE);
+                message.setVisibility(View.VISIBLE);
                 message.setText(chatMessage.getMessage());
             } else if(chatMessage.getMedia() != null) {
+                message.setVisibility(View.GONE);
                 media.setVisibility(View.VISIBLE);
-                ImageLoader.loadPictureToImageView(media, chatMessage.getMedia());
+                ImageLoader.loadGenericPictureToImageView(media, chatMessage.getMedia());
             }
         }
 
@@ -149,9 +154,19 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return false;
             }
         };
+
+        private View.OnClickListener onMediaClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(onChatMessageSelectedListener != null) {
+                    onChatMessageSelectedListener.onMediaChatMessageView(chatMessages.get(getLayoutPosition()), (ImageView)view);
+                }
+            }
+        };
     }
 
     public interface OnChatMessageSelectedListener {
+        void onMediaChatMessageView(ChatMessage chatMessage, ImageView mediaImageView);
         void onChatMessageSelected(ChatMessage chatMessage);
     }
 }

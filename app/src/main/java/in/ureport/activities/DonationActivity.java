@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import in.ureport.R;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.DonationManager;
 import in.ureport.models.User;
 
@@ -24,6 +25,7 @@ public class DonationActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_donation);
 
         user = getIntent().getParcelableExtra(EXTRA_USER);

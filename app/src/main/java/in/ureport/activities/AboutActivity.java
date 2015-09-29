@@ -23,6 +23,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_about);
 
         setupView();

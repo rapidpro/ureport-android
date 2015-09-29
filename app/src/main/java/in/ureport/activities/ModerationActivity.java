@@ -21,6 +21,7 @@ public class ModerationActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_moderation);
 
         boolean hasPermission = checkModerationPermission();

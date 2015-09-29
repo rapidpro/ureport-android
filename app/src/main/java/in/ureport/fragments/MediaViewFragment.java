@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +38,19 @@ public class MediaViewFragment extends Fragment {
     private OnCloseMediaViewListener onCloseMediaViewListener;
     private MediaViewAdapter mediaViewAdapter;
 
+    public static MediaViewFragment newInstance(Media media) {
+        ArrayList<Media> medias = new ArrayList<>();
+        medias.add(media);
+
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(EXTRA_MEDIAS, medias);
+        args.putInt(EXTRA_POSITION, 0);
+
+        MediaViewFragment fragment = new MediaViewFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public static MediaViewFragment newInstance(ArrayList<Media> medias, int position) {
         Bundle args = new Bundle();
         args.putParcelableArrayList(EXTRA_MEDIAS, medias);
@@ -67,6 +81,7 @@ public class MediaViewFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
+        ActivityCompat.startPostponedEnterTransition(getActivity());
     }
 
     @Override
@@ -111,7 +126,8 @@ public class MediaViewFragment extends Fragment {
         mediaPager.postDelayed(new Runnable() {
             @Override
             public void run() {
-                onCloseMediaViewListener.onCloseMediaView();
+                if(onCloseMediaViewListener != null)
+                    onCloseMediaViewListener.onCloseMediaView();
             }
         }, 500);
     }

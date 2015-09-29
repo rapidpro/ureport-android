@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import in.ureport.managers.CountryProgramManager;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
-import in.ureport.models.rapidpro.Group;
 
 /**
  * Created by johncordeiro on 18/08/15.
@@ -14,7 +15,6 @@ public class ContactGroupsBuilder {
 
     private static final int YOUTH_MIN_BIRTHDAY_YEAR = 1979;
 
-    private static final String GROUP_UREPORTERS = "UReporters";
     private static final String GROUP_UREPORT_YOUTH = "UReport Youth";
     private static final String GROUP_UREPORT_ADULTS = "UReport Adults";
     private static final String GROUP_UREPORT_MALES = "UReport Males";
@@ -22,7 +22,10 @@ public class ContactGroupsBuilder {
 
     public List<String> getGroupsForUser(User user) {
         List<String> userGroups = new ArrayList<>();
-        userGroups.add(GROUP_UREPORTERS);
+        CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(user.getCountry());
+        if(countryProgram.getGroup() != null) {
+            userGroups.add(countryProgram.getGroup());
+        }
         addGenderGroup(user, userGroups);
         addAgeGroup(user, userGroups);
         return userGroups;
