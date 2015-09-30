@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,8 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     private List<ChatRoomHolder> existingChatRooms;
     private User user;
 
+    private ValueEventListener userEventListener;
+
     public static NewChatFragment newInstance(ArrayList<ChatRoomHolder> chatRooms, User user) {
         NewChatFragment fragment = NewChatFragment.newInstance(chatRooms);
         Bundle args = fragment.getArguments();
@@ -104,6 +107,12 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
         createChatRoomIfNeeded();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(userEventListener != null) userServices.removeCountryCodeListener(userEventListener);
+    }
+
     private void createChatRoomIfNeeded() {
         if(user != null) {
             createChatWithUser(user);
@@ -143,7 +152,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     }
 
     private void loadData() {
-        userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
+        userEventListener = userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
             @Override
             public void onLoadAllUsers(List<User> users) {
                 if (ureportersAdapter != null) {

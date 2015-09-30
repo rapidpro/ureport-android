@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -157,8 +158,7 @@ public class CreateGroupFragment extends Fragment {
     }
 
     private void loadUsers() {
-        UserServices userServices = new UserServices();
-        userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
+        ValueEventListener userEventListener = userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
             @Override
             public void onLoadAllUsers(List<User> users) {
                 ureportersAdapter = new UreportersAdapter(users);
@@ -169,6 +169,7 @@ public class CreateGroupFragment extends Fragment {
                 ureportersList.setAdapter(ureportersAdapter);
             }
         });
+        userServices.removeCountryCodeListener(userEventListener);
     }
 
     @Override
@@ -364,8 +365,7 @@ public class CreateGroupFragment extends Fragment {
 
     private TextWatcher ureportersSearchTextWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
         @Override
         public void onTextChanged(CharSequence text, int start, int before, int count) {
@@ -374,8 +374,7 @@ public class CreateGroupFragment extends Fragment {
         }
 
         @Override
-        public void afterTextChanged(Editable editable) {
-        }
+        public void afterTextChanged(Editable editable) {}
     };
 
     private TextView.OnEditorActionListener onSearchUreporterActionListener = new TextView.OnEditorActionListener() {

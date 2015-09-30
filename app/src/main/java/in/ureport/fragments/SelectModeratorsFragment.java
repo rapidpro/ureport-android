@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.List;
 
@@ -37,6 +38,8 @@ public class SelectModeratorsFragment extends Fragment implements SearchView.OnC
 
     private UreportersAdapter ureportersAdapter;
 
+    private ValueEventListener userEventListener;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +53,12 @@ public class SelectModeratorsFragment extends Fragment implements SearchView.OnC
         setupObjects();
         setupView(view);
         loadMasterModerators();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(userEventListener != null) userServices.removeCountryCodeListener(userEventListener);
     }
 
     private void setupView(View view) {
@@ -80,7 +89,7 @@ public class SelectModeratorsFragment extends Fragment implements SearchView.OnC
     }
 
     private void loadUsersByCountryCode(final List<User> masterModerators, final List<User> countryModerators) {
-        userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
+        userEventListener = userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
             @Override
             public void onLoadAllUsers(List<User> users) {
                 users.removeAll(masterModerators);

@@ -109,9 +109,9 @@ public class UserServices extends ProgramServices {
                 });
     }
 
-    public void loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {
+    public ValueEventListener loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {
         Query query = FirebaseManager.getReference().child(userPath);
-        loadUsers(onLoadAllUsersListener, query);
+        return loadUsers(onLoadAllUsersListener, query);
     }
 
     public void addCountryModerator(User user, Firebase.CompletionListener listener) {
@@ -155,15 +155,23 @@ public class UserServices extends ProgramServices {
         return users;
     }
 
-    public void loadByCountryCode(final OnLoadAllUsersListener onLoadAllUsersListener) {
-        String countryCode = CountryProgramManager.getCurrentCountryProgram().getCode();
-
-        Query query = FirebaseManager.getReference().child(userPath).orderByChild("countryProgram").equalTo(countryCode);
-        loadUsers(onLoadAllUsersListener, query);
+    public void removeCountryCodeListener(ValueEventListener listener) {
+        Query query = getUserCountryProgramQuery();
+        query.removeEventListener(listener);
     }
 
-    private void loadUsers(final OnLoadAllUsersListener onLoadAllUsersListener, Query query) {
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+    public ValueEventListener loadByCountryCode(final OnLoadAllUsersListener onLoadAllUsersListener) {
+        Query query = getUserCountryProgramQuery();
+        return loadUsers(onLoadAllUsersListener, query);
+    }
+
+    private Query getUserCountryProgramQuery() {
+        String countryCode = CountryProgramManager.getCurrentCountryProgram().getCode();
+        return FirebaseManager.getReference().child(userPath).orderByChild("countryProgram").equalTo(countryCode);
+    }
+
+    private ValueEventListener loadUsers(final OnLoadAllUsersListener onLoadAllUsersListener, Query query) {
+        ValueEventListener listener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 handleDataResponse(dataSnapshot, onLoadAllUsersListener);
@@ -171,7 +179,9 @@ public class UserServices extends ProgramServices {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {}
-        });
+        };
+        query.addValueEventListener(listener);
+        return listener;
     }
 
     public void changePublicProfile(User user, Boolean publicProfile, Firebase.CompletionListener listener) {
