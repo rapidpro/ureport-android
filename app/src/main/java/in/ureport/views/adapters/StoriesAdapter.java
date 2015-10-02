@@ -15,8 +15,10 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.listener.OnUserStartChattingListener;
+import in.ureport.models.News;
 import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.views.holders.NewsItemViewHolder;
 import in.ureport.views.holders.StoryItemViewHolder;
 
 /**
@@ -24,10 +26,12 @@ import in.ureport.views.holders.StoryItemViewHolder;
  */
 public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int TYPE_ITEM = 0;
-    private static final int TYPE_HEADER = 1;
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_STORY = 1;
+    private static final int TYPE_NEWS = 2;
 
     private List<Story> stories;
+    private List<News> news;
 
     private boolean publicType = false;
     private boolean moderationType = false;
@@ -35,6 +39,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private User user;
 
     private OnStoryViewListener onStoryViewListener;
+    private OnNewsViewListener onNewsViewListener;
     private OnPublishStoryListener onPublishStoryListener;
     private StoryModerationListener storyModerationListener;
     private OnUserStartChattingListener onUserStartChattingListener;
@@ -42,6 +47,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public StoriesAdapter() {
         setHasStableIds(true);
         this.stories = new ArrayList<>();
+        this.news = new ArrayList<>();
     }
 
     @Override
@@ -50,8 +56,11 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch(type) {
             case TYPE_HEADER:
                 return new HeaderViewHolder(inflater.inflate(R.layout.item_story_header, viewGroup, false));
+            case TYPE_NEWS:
+                View newsView = inflater.inflate(R.layout.item_news, viewGroup, false);
+                return new NewsItemViewHolder(newsView, onNewsViewListener);
             default:
-            case TYPE_ITEM:
+            case TYPE_STORY:
                 View view = inflater.inflate(R.layout.item_story, viewGroup, false);
                 if(moderationType)
                     return new ModeratedItemViewHolder(view);
@@ -66,33 +75,67 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case TYPE_HEADER:
                 ((HeaderViewHolder)viewHolder).bind(user);
                 break;
-            default:
-            case TYPE_ITEM:
-                ((StoryItemViewHolder)viewHolder).bind(stories.get(getListPosition(position)));
+            case TYPE_STORY:
+                ((StoryItemViewHolder)viewHolder).bind(stories.get(getStoryPosition(position)));
+                break;
+            case TYPE_NEWS:
+                ((NewsItemViewHolder)viewHolder).bind(news.get(getNewsPosition(position)));
         }
     }
 
-    private int getListPosition(int position) {
+    private int getNewsPosition(int position) {
+        return position - getLastStoryPosition();
+    }
+
+    private int getStoryPosition(int position) {
         if(publicType) return position-1;
         return position;
     }
 
     @Override
     public long getItemId(int position) {
-        return getItemViewType(position) == TYPE_HEADER
-                ? 0 : stories.get(getListPosition(position)).getKey().hashCode();
+        switch(getItemViewType(position)) {
+            case TYPE_HEADER:
+                return 0;
+            case TYPE_NEWS:
+                return news.get(getNewsPosition(position)).getId();
+            default:
+            case TYPE_STORY:
+                return stories.get(getStoryPosition(position)).getKey().hashCode();
+        }
     }
 
     @Override
     public int getItemCount() {
-        if(publicType) return stories.size() + 1;
-        return stories.size();
+        if(publicType) return getDataCount() + 1;
+        return getDataCount();
+    }
+
+    private int getDataCount() {
+        return stories.size() + news.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(publicType && position == 0) return TYPE_HEADER;
-        return TYPE_ITEM;
+        if(publicType && position == 0) {
+            return TYPE_HEADER;
+        } else if(isNewsPosition(position)) {
+            return TYPE_NEWS;
+        } else {
+            return TYPE_STORY;
+        }
+    }
+
+    private boolean isNewsPosition(int position) {
+        return position >= getLastStoryPosition();
+    }
+
+    private int getLastStoryPosition() {
+        return publicType ? stories.size()+1 : stories.size();
+    }
+
+    public void setOnNewsViewListener(OnNewsViewListener onNewsViewListener) {
+        this.onNewsViewListener = onNewsViewListener;
     }
 
     public void setOnStoryViewListener(OnStoryViewListener onStoryViewListener) {
@@ -128,6 +171,11 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         int firstStoryIndex = publicType ? 1 : 0;
         notifyItemInserted(firstStoryIndex);
+    }
+
+    public void addNews(List<News> news) {
+        this.news.addAll(news);
+        notifyDataSetChanged();
     }
 
     public void enableModerationMode(StoryModerationListener storyModerationListener) {
@@ -211,6 +259,10 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public interface OnStoryViewListener {
         void onStoryViewClick(Story story, Pair<View, String>... views);
+    }
+
+    public interface OnNewsViewListener {
+        void onNewsViewClick(News news, Pair<View, String>... views);
     }
 
     public interface OnPublishStoryListener {

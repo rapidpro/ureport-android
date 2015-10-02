@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import in.ureport.R;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.models.News;
 
@@ -61,19 +63,26 @@ public class NewsViewFragment extends Fragment {
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
         activity.setSupportActionBar(toolbar);
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        activity.setTitle(news.getCategory());
+        activity.setTitle("");
+
+        TextView category = (TextView) view.findViewById(R.id.category);
+        if(news.getCategory() != null && news.getCategory().getName() != null) {
+            category.setText(news.getCategory().getName());
+        }
 
         TextView title = (TextView) view.findViewById(R.id.title);
         title.setText(news.getTitle());
 
         TextView content = (TextView) view.findViewById(R.id.content);
-        content.setText(news.getContent());
+        content.setText(news.getSummary());
 
         TextView author = (TextView) view.findViewById(R.id.author);
-        author.setText(String.format(getString(R.string.stories_list_item_author), news.getAuthor()));
+        author.setText(String.format(getString(R.string.stories_list_item_author), news.getTags()));
 
         ImageView cover = (ImageView) view.findViewById(R.id.cover);
-        cover.setImageResource(news.getCover());
+        if(news.getImages() != null && !news.getImages().isEmpty()) {
+            ImageLoader.loadGenericPictureToImageViewFit(cover, news.getImages().get(0));
+        }
 
         FloatingActionButton share = (FloatingActionButton) view.findViewById(R.id.share);
         share.setOnClickListener(onShareClickListener);

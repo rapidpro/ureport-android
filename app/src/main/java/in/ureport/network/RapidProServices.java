@@ -20,7 +20,6 @@ import in.ureport.models.rapidpro.Boundary;
 import in.ureport.models.rapidpro.Contact;
 import in.ureport.models.rapidpro.Field;
 import in.ureport.models.rapidpro.Group;
-import in.ureport.models.rapidpro.Response;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
@@ -45,17 +44,17 @@ public class RapidProServices {
         service = restAdapter.create(RapidProApi.class);
     }
 
-    public RapidProApi.Response<Boundary> loadBoundaries(String apiKey) {
+    public Response<Boundary> loadBoundaries(String apiKey) {
         return service.listBoundaries(apiKey);
     }
 
     public List<Field> loadFields(String apiKey) {
-        RapidProApi.Response<Field> response = service.listFields(apiKey);
+        Response<Field> response = service.listFields(apiKey);
         return response.getResults();
     }
 
     public List<Group> loadGroups(String apiKey) {
-        RapidProApi.Response<Group> response = service.listGroups(apiKey);
+        Response<Group> response = service.listGroups(apiKey);
         return response.getResults();
     }
 
@@ -97,7 +96,8 @@ public class RapidProServices {
         CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
         String channel = context.getString(countryProgram.getChannel());
 
-        Response response = new Response(channel, UserManager.getUserId(), message);
+        in.ureport.models.rapidpro.Response response = new in.ureport.models.rapidpro.Response(
+                channel, UserManager.getUserId(), message);
         FirebaseManager.getReference().child(path).child(responsePath).push().setValue(response);
     }
 

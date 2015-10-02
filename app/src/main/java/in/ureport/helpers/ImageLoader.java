@@ -43,21 +43,29 @@ public class ImageLoader {
         loadMedia(imageView, media, R.drawable.shape_loading_picture);
     }
 
+    public static void loadGenericPictureToImageViewFit(ImageView imageView, String url) {
+        loadUrl(imageView, url, R.drawable.shape_loading_picture);
+    }
+
     public static void loadGroupPictureToImageView(ImageView imageView, Media media) {
         loadMedia(imageView, media, R.drawable.default_group);
     }
 
     private static void loadMedia(ImageView imageView, Media media, @DrawableRes int placeholderDrawableId) {
         if(media != null && media.getUrl() != null) {
-            Context context = imageView.getContext();
-            Drawable placeholder = ContextCompat.getDrawable(context, placeholderDrawableId);
-
-            Picasso.with(imageView.getContext()).load(media.getUrl())
-                    .placeholder(placeholder)
-                    .into(imageView);
+            loadUrl(imageView, media.getUrl(), placeholderDrawableId);
         } else {
             imageView.setImageResource(placeholderDrawableId);
         }
+    }
+
+    private static void loadUrl(ImageView imageView, String url, @DrawableRes int placeholderDrawableId) {
+        Context context = imageView.getContext();
+        Drawable placeholder = ContextCompat.getDrawable(context, placeholderDrawableId);
+
+        Picasso.with(imageView.getContext()).load(url)
+                .placeholder(placeholder)
+                .into(imageView);
     }
 
 }

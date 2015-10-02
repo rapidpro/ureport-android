@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,25 +20,35 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 
 import in.ureport.R;
+import in.ureport.activities.NewsViewActivity;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.listener.OnStoryContributionCountListener;
 import in.ureport.helpers.RecyclerScrollListener;
 import in.ureport.listener.OnUserStartChattingListener;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
+import in.ureport.models.News;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.network.ContributionServices;
+import in.ureport.network.Response;
 import in.ureport.network.StoryServices;
+import in.ureport.network.UreportServices;
 import in.ureport.network.UserServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.views.adapters.StoriesAdapter;
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class StoriesListFragment extends Fragment implements StoriesAdapter.OnStoryViewListener {
+public class StoriesListFragment extends Fragment implements StoriesAdapter.OnStoryViewListener
+        , StoriesAdapter.OnNewsViewListener {
+
+    private static final String TAG = "StoriesListFragment";
 
     private static final String EXTRA_USER = "user";
 
@@ -123,6 +134,10 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
     public void loadStories() {
         if(publicType) {
+            UreportServices ureportServices = new UreportServices();
+            ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization()
+                    , 1, onNewsLoadedCallback);
+
             storyServices.addChildEventListener(childEventListener);
         } else {
             storyServices.addChildEventListenerForUser(user, childEventListener);
@@ -145,6 +160,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         if(needsUserPublish()) storiesAdapter.setUser(user);
 
         storiesAdapter.setOnStoryViewListener(this);
+        storiesAdapter.setOnNewsViewListener(this);
         storiesAdapter.setOnPublishStoryListener(onPublishStoryListener);
         storiesAdapter.setOnUserStartChattingListener(onUserStartChattingListener);
         storiesList.setAdapter(storiesAdapter);
@@ -242,6 +258,29 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
                 }
             }
         });
+    }
+
+    private Callback<Response<News>> onNewsLoadedCallback = new Callback<Response<News>>() {
+        @Override
+        public void success(Response<News> newsResponse, retrofit.client.Response response) {
+            Log.i(TAG, "success newsResponse: " + newsResponse.getResults());
+            storiesAdapter.addNews(newsResponse.getResults());
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e(TAG, "failure ", error);
+        }
+    };
+
+    @Override
+    public void onNewsViewClick(News news, Pair<View, String>... views) {
+        Intent storyViewIntent = new Intent(getActivity(), NewsViewActivity.class);
+        storyViewIntent.putExtra(NewsViewActivity.EXTRA_NEWS, news);
+
+        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
+                .makeSceneTransitionAnimation(getActivity(), views);
+        ActivityCompat.startActivity(getActivity(), storyViewIntent, optionsCompat.toBundle());
     }
 
     private interface OnAfterStoryLoadedListener {

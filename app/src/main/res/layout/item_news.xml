@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/card_margin">
+    android:layout_margin="@dimen/card_margin"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground">
 
     <RelativeLayout
         android:orientation="vertical"
@@ -17,12 +19,15 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/default_cover_height"
             android:scaleType="centerCrop"
-            android:src="@drawable/news1_cover_image"/>
+            android:transitionName="@string/transition_media"
+            android:background="@drawable/shape_media"/>
 
         <View
+            android:id="@+id/mediaLayer"
             android:layout_width="match_parent"
             android:layout_height="@dimen/default_cover_height"
-            android:background="@color/translucent_cover"/>
+            android:background="@color/translucent_cover"
+            android:transitionName="@string/transition_media_layer"/>
 
         <Button
             android:id="@+id/share"
@@ -43,6 +48,7 @@
             android:paddingBottom="1dp"
             android:background="?attr/colorPrimary"
             android:textColor="@android:color/white"
+            android:transitionName="@string/transition_news_category"
             tools:text="@string/news1_category"/>
 
         <TextView
@@ -52,7 +58,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
-            android:layout_above="@+id/author"
+            android:layout_above="@+id/tags"
             android:maxLines="3"
             android:gravity="start"
             android:textAlignment="viewStart"
@@ -60,10 +66,11 @@
             android:textStyle="bold"
             android:textColor="@android:color/white"
             android:textSize="20sp"
+            android:transitionName="@string/transition_story_title"
             tools:text="Boosting community development, disease control with sms-based platform"/>
 
         <TextView
-            android:id="@+id/author"
+            android:id="@+id/tags"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/cover"
@@ -86,7 +93,7 @@
             android:ellipsize="end"
             android:textSize="16sp"
             android:padding="10dp"
-            tools:text="@string/poll1_description"/>
+            tools:text="Description"/>
 
     </RelativeLayout>
 

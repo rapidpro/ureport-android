@@ -33,12 +33,15 @@
                     android:id="@+id/cover"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    android:transitionName="@string/transition_media"/>
 
-                <ImageView
+                <View
+                    android:id="@+id/mediaLayer"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/translucent_cover" />
+                    android:background="@color/translucent_cover"
+                    android:transitionName="@string/transition_media_layer"/>
 
                 <TextView
                     android:id="@+id/title"
@@ -55,6 +58,7 @@
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
+                    android:transitionName="@string/transition_story_title"
                     tools:text="Boosting community development, disease control with sms-based platform"/>
 
                 <TextView
@@ -78,7 +82,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin">
+
+                <TextView
+                    android:id="@+id/category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:transitionName="@string/transition_news_category"
+                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                    tools:text="Category"/>
+
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 

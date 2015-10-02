@@ -2,9 +2,11 @@ package in.ureport.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.DrawableRes;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 /**
  * Created by johncordeiro on 7/17/15.
@@ -12,22 +14,34 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class News implements Parcelable {
 
+    private Integer id;
+
     private String title;
 
-    private String content;
+    private Boolean featured;
 
-    private String author;
+    private String summary;
 
-    private @DrawableRes int cover;
+    @SerializedName("video_id")
+    private String videoId;
 
-    private String category;
+    @SerializedName("audio_link")
+    private String audioLink;
 
-    public News(String title, String author, String content, @DrawableRes int cover, String category) {
-        this.title = title;
-        this.author = author;
-        this.content = content;
-        this.cover = cover;
-        this.category = category;
+    private String tags;
+
+    private Integer org;
+
+    private List<String> images;
+
+    private Category category;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -38,36 +52,84 @@ public class News implements Parcelable {
         this.title = title;
     }
 
-    public String getContent() {
-        return content;
+    public Boolean getFeatured() {
+        return featured;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setFeatured(Boolean featured) {
+        this.featured = featured;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
-    public int getCover() {
-        return cover;
+    public String getVideoId() {
+        return videoId;
     }
 
-    public void setCover(int cover) {
-        this.cover = cover;
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
     }
 
-    public String getCategory() {
+    public String getAudioLink() {
+        return audioLink;
+    }
+
+    public void setAudioLink(String audioLink) {
+        this.audioLink = audioLink;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public Integer getOrg() {
+        return org;
+    }
+
+    public void setOrg(Integer org) {
+        this.org = org;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
+
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        News news = (News) o;
+
+        return id.equals(news.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     @Override
@@ -77,19 +139,32 @@ public class News implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
         dest.writeString(this.title);
-        dest.writeString(this.content);
-        dest.writeString(this.author);
-        dest.writeInt(this.cover);
-        dest.writeString(this.category);
+        dest.writeValue(this.featured);
+        dest.writeString(this.summary);
+        dest.writeString(this.videoId);
+        dest.writeString(this.audioLink);
+        dest.writeString(this.tags);
+        dest.writeValue(this.org);
+        dest.writeStringList(this.images);
+        dest.writeParcelable(this.category, flags);
+    }
+
+    public News() {
     }
 
     protected News(Parcel in) {
+        this.id = (Integer) in.readValue(Integer.class.getClassLoader());
         this.title = in.readString();
-        this.content = in.readString();
-        this.author = in.readString();
-        this.cover = in.readInt();
-        this.category = in.readString();
+        this.featured = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.summary = in.readString();
+        this.videoId = in.readString();
+        this.audioLink = in.readString();
+        this.tags = in.readString();
+        this.org = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.images = in.createStringArrayList();
+        this.category = in.readParcelable(Category.class.getClassLoader());
     }
 
     public static final Creator<News> CREATOR = new Creator<News>() {
@@ -101,4 +176,20 @@ public class News implements Parcelable {
             return new News[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", featured=" + featured +
+                ", summary='" + summary + '\'' +
+                ", videoId='" + videoId + '\'' +
+                ", audioLink='" + audioLink + '\'' +
+                ", tags='" + tags + '\'' +
+                ", org=" + org +
+                ", images=" + images +
+                ", category=" + category +
+                '}';
+    }
 }

@@ -5,10 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import in.ureport.R;
 import in.ureport.fragments.NewsViewFragment;
-import in.ureport.fragments.StoryViewFragment;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.News;
-import in.ureport.models.Story;
 
 /**
  * Created by johncordeiro on 7/17/15.
@@ -36,5 +34,11 @@ public class NewsViewActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        supportFinishAfterTransition();
+        return true;
     }
 }

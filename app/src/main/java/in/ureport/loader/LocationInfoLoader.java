@@ -18,6 +18,7 @@ import in.ureport.models.rapidpro.Boundary;
 import in.ureport.network.GeonamesServices;
 import in.ureport.network.RapidProApi;
 import in.ureport.network.RapidProServices;
+import in.ureport.network.Response;
 
 /**
  * Created by johncordeiro on 10/09/15.
@@ -40,7 +41,7 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
             if(CountryProgramManager.isCountryProgramEnabled(countryProgram)
             && !countryProgram.getCode().equals(CountryProgramManager.COUNTRY_PROGRAM_GLOBAL_CODE)) {
                 RapidProServices rapidProServices = new RapidProServices();
-                RapidProApi.Response<Boundary> response = rapidProServices.loadBoundaries(getContext().getString(countryProgram.getApiToken()));
+                Response<Boundary> response = rapidProServices.loadBoundaries(getContext().getString(countryProgram.getApiToken()));
 
                 if(response.getCount() > 1) {
                     return getStatesByRapidproResponse(response);
@@ -57,7 +58,7 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
     }
 
     @NonNull
-    private LocationInfo getStatesByRapidproResponse(RapidProApi.Response<Boundary> response) {
+    private LocationInfo getStatesByRapidproResponse(Response<Boundary> response) {
         List<Location> states = new ArrayList<>();
         List<Location> districts = new ArrayList<>();
 

@@ -120,16 +120,15 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View view) {
                 if (newsListener != null)
-                    newsListener.onReadNews(newsList.get(getLayoutPosition()-1));
+                    newsListener.onReadNews(newsList.get(getLayoutPosition() - 1));
             }
         };
 
         private void bindView(News news) {
-            category.setText(news.getCategory());
+            category.setText(news.getCategory().getName());
             title.setText(news.getTitle());
-            description.setText(news.getContent());
-            author.setText(itemView.getContext().getString(R.string.stories_list_item_author, news.getAuthor()));
-            cover.setImageResource(news.getCover());
+            description.setText(news.getSummary());
+            author.setText(itemView.getContext().getString(R.string.stories_list_item_author, news.getTags()));
         }
 
         private View.OnClickListener onShareClickListener = new View.OnClickListener() {
