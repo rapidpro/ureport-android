@@ -43,8 +43,8 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/picture"
         android:layout_toEndOf="@+id/picture"
-        android:layout_toLeftOf="@+id/unreadMessages"
-        android:layout_toStartOf="@+id/unreadMessages"
+        android:layout_toLeftOf="@+id/lastMessageDate"
+        android:layout_toStartOf="@+id/lastMessageDate"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="15dp"
@@ -55,6 +55,7 @@
         android:visibility="gone"
         android:maxLines="1"
         android:ellipsize="end"
+        tools:visibility="visible"
         tools:text="@string/chat1_lastMessage"/>
 
     <TextView

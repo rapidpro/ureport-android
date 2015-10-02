@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -47,7 +46,7 @@
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_above="@+id/author"
+                    android:layout_above="@+id/tags"
                     android:layout_marginLeft="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="10dp"
@@ -62,7 +61,7 @@
                     tools:text="Boosting community development, disease control with sms-based platform"/>
 
                 <TextView
-                    android:id="@+id/author"
+                    android:id="@+id/tags"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
@@ -72,6 +71,7 @@
                     android:gravity="center_vertical"
                     android:textColor="@android:color/white"
                     android:textAllCaps="true"
+                    android:transitionName="@string/transition_tags"
                     style="@style/AppTheme.Info"
                     tools:text="by John Cordeiro"/>
 
@@ -132,6 +132,16 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="10dp"
                 android:background="#44c9c9c9"/>
+
+            <in.ureport.views.widgets.UntouchableRecyclerView
+                android:id="@+id/mediaList"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/item_media_height"
+                android:minHeight="@dimen/item_media_height"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
         </LinearLayout>
 

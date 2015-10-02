@@ -80,6 +80,7 @@
             android:textAllCaps="true"
             android:maxLines="1"
             android:textColor="@android:color/white"
+            android:transitionName="@string/transition_tags"
             tools:text="@string/stories_list_item_author"/>
 
         <TextView

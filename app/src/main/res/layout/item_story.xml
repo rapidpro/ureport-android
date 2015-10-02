@@ -23,7 +23,7 @@
             tools:src="@drawable/face" />
 
         <TextView
-            android:id="@+id/author"
+            android:id="@+id/tags"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_toRightOf="@+id/picture"
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/author"
+            android:layout_below="@+id/tags"
             android:gravity="start"
             android:maxLines="2"
             android:textColor="@android:color/black"

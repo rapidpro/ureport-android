@@ -108,7 +108,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             cover = (ImageView) itemView.findViewById(R.id.cover);
             title = (TextView) itemView.findViewById(R.id.title);
             description = (TextView) itemView.findViewById(R.id.description);
-            author = (TextView) itemView.findViewById(R.id.author);
+            author = (TextView) itemView.findViewById(R.id.tags);
 
             itemView.setOnClickListener(onNewsClickListener);
 

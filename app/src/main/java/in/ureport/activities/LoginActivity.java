@@ -102,6 +102,8 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onUserReady(final User user) {
+        if(user == null) return;
+
         final ProgressDialog progressDialog = ProgressDialog.show(this, null
                 , getString(R.string.load_message_wait), true, false);
 

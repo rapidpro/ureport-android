@@ -33,7 +33,7 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
         storiesAdapter.enableModerationMode(this);
     }
 
-    public void loadStories() {
+    public void loadData() {
         storyServices.addStoryModerateChildEventListener(childEventListener);
     }
 

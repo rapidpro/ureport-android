@@ -25,24 +25,23 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     private static final String TAG = "SaveContactTask";
     private Locale locale;
 
+    private RapidProServices rapidProServices;
+
     public SaveContactTask(Context context, Locale locale) {
         super(context, R.string.load_message_save_user);
         this.locale = locale;
+        this.rapidProServices = new RapidProServices();
     }
 
     @Override
     protected Contact doInBackground(User... params) {
         try {
             User user = params[0];
-            RapidProServices rapidProServices = new RapidProServices();
 
             CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(user.getCountry());
             String token = context.getString(countryProgram.getApiToken());
 
-            List<Field> fields = rapidProServices.loadFields(token);
-
-            ContactBuilder contactBuilder = new ContactBuilder(fields);
-            Contact contact = contactBuilder.buildContactByUser(user, locale);
+            Contact contact = getContactForUser(user, token);
 
             if (CountryProgramManager.isCountryProgramEnabled(countryProgram)) {
                 try {
@@ -58,6 +57,13 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             Log.e(TAG, "doInBackground ", exception);
         }
         return null;
+    }
+
+    private Contact getContactForUser(User user, String token) {
+        List<Field> fields = rapidProServices.loadFields(token);
+
+        ContactBuilder contactBuilder = new ContactBuilder(fields);
+        return contactBuilder.buildContactByUser(user, locale);
     }
 
 }

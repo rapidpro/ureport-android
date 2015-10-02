@@ -21,7 +21,7 @@
         tools:src="@drawable/face" />
 
     <TextView
-        android:id="@+id/author"
+        android:id="@+id/tags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"

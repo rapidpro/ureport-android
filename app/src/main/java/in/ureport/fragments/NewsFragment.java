@@ -15,8 +15,8 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.activities.NewsViewActivity;
 import in.ureport.activities.StatisticsActivity;
+import in.ureport.activities.StoryViewActivity;
 import in.ureport.loader.NewsLoader;
 import in.ureport.models.News;
 import in.ureport.models.User;
@@ -110,8 +110,8 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onReadNews(News news) {
-        Intent newsViewIntent = new Intent(getActivity(), NewsViewActivity.class);
-        newsViewIntent.putExtra(NewsViewActivity.EXTRA_NEWS, news);
+        Intent newsViewIntent = new Intent(getActivity(), StoryViewActivity.class);
+        newsViewIntent.putExtra(StoryViewActivity.EXTRA_NEWS, news);
         startActivity(newsViewIntent);
     }
 }

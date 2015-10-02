@@ -31,7 +31,6 @@ import java.util.Date;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
-import in.ureport.UreportApplication;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.UserManager;
@@ -147,7 +146,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         TextView markers = (TextView) view.findViewById(R.id.markers);
         setupMarkers(markers);
 
-        TextView author = (TextView) view.findViewById(R.id.author);
+        TextView author = (TextView) view.findViewById(R.id.tags);
         author.setText(story.getUserObject().getNickname());
 
         ImageView picture = (ImageView) view.findViewById(R.id.picture);

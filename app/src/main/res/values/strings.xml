@@ -11,10 +11,10 @@
     <string name="login">Login</string>
     <string name="login_facebook">Facebook</string>
     <string name="login_google">Google+</string>
-    <string name="login_twitter">Login with Twitter</string>
+    <string name="login_twitter">Sign up with Twitter</string>
     <string name="login_skip">Skip Login</string>
     <string name="login_or">Or</string>
-    <string name="login_sign_up">Don\'t have an account? Sign up</string>
+    <string name="login_sign_up">Click here to sign up with email!</string>
     <string name="sign_up_name">Name</string>
     <string name="sign_up_nickname">Nickname</string>
     <string name="sign_up_email">E-mail</string>
@@ -172,7 +172,7 @@
     <string name="send">Send</string>
     <string name="error_forgot_password">This email doesn\'t exists.</string>
     <string name="load_message_reset_password">Resetting password...</string>
-    <string name="error_email_check">Your password was resetted. Please check your email to get the new password.</string>
+    <string name="error_email_check">Your password was reset. Please check your email to get the new password.</string>
     <string name="label_login">Login</string>
     <string name="label_forgot_password">Forgot password</string>
     <string name="label_data_confirmation">Data confirmation</string>
@@ -253,7 +253,8 @@
     <string name="label_remove">Remove</string>
     <string name="error_remove">An error occurred during the remove process</string>
     <string name="message_success_remove">The data was removed with success!</string>
-    <string name="title_share_story">Share history using:</string>
+    <string name="title_share_story">Share story using:</string>
+    <string name="title_share_news">Share news using:</string>
     <string name="title_share_subject">Story shared using U-Report</string>
     <string name="story_share_info">Download U-Report app: http://goo.gl/Xxyodt</string>
     <string name="label_country_moderator">Country Moderators</string>

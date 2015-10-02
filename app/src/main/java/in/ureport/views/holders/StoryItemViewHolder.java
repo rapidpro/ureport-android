@@ -52,7 +52,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         picture = (ImageView) itemView.findViewById(R.id.picture);
         image = (ImageView) itemView.findViewById(R.id.image);
         title = (TextView) itemView.findViewById(R.id.title);
-        author = (TextView) itemView.findViewById(R.id.author);
+        author = (TextView) itemView.findViewById(R.id.tags);
         markers = (TextView) itemView.findViewById(R.id.markers);
         contributions = (TextView) itemView.findViewById(R.id.contributors);
         summary = (TextView) itemView.findViewById(R.id.summary);

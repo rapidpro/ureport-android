@@ -9,9 +9,11 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.fragments.MediaViewFragment;
+import in.ureport.fragments.NewsViewFragment;
 import in.ureport.fragments.StoryViewFragment;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.Media;
+import in.ureport.models.News;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.views.adapters.MediaAdapter;
@@ -19,10 +21,12 @@ import in.ureport.views.adapters.MediaAdapter;
 /**
  * Created by johncordeiro on 7/16/15.
  */
-public class StoryViewActivity extends AppCompatActivity implements MediaAdapter.OnMediaViewListener, MediaViewFragment.OnCloseMediaViewListener {
+public class StoryViewActivity extends AppCompatActivity implements MediaAdapter.OnMediaViewListener
+        , MediaViewFragment.OnCloseMediaViewListener {
 
     public static final String EXTRA_STORY = "story";
     public static final String EXTRA_USER = "user";
+    public static final String EXTRA_NEWS = "news";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +40,28 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
             if(extras != null && extras.containsKey(EXTRA_STORY)) {
                 Story story = extras.getParcelable(EXTRA_STORY);
                 User user = extras.getParcelable(EXTRA_USER);
-
-                StoryViewFragment storyViewFragment = StoryViewFragment.newInstance(story, user);
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.content, storyViewFragment)
-                        .commit();
+                addStoryViewFragment(story, user);
+            } else if(extras != null && extras.containsKey(EXTRA_NEWS)) {
+                News news = extras.getParcelable(EXTRA_NEWS);
+                addNewsViewFragment(news);
             } else {
                 supportFinishAfterTransition();
             }
         }
+    }
+
+    private void addNewsViewFragment(News news) {
+        NewsViewFragment newsViewFragment = NewsViewFragment.newInstance(news);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.content, newsViewFragment)
+                .commit();
+    }
+
+    private void addStoryViewFragment(Story story, User user) {
+        StoryViewFragment storyViewFragment = StoryViewFragment.newInstance(story, user);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.content, storyViewFragment)
+                .commit();
     }
 
     @Override

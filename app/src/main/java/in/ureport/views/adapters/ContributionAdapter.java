@@ -94,7 +94,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             picture = (ImageView) itemView.findViewById(R.id.picture);
             contribution = (TextView) itemView.findViewById(R.id.contribution);
-            author = (TextView) itemView.findViewById(R.id.author);
+            author = (TextView) itemView.findViewById(R.id.tags);
             date = (TextView) itemView.findViewById(R.id.date);
 
             setupViewForModeration(itemView);

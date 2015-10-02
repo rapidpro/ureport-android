@@ -12,7 +12,6 @@ import java.lang.reflect.Array;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
-import in.ureport.managers.PrototypeManager;
 import in.ureport.models.News;
 import in.ureport.views.adapters.StoriesAdapter;
 
@@ -23,17 +22,22 @@ public class NewsItemViewHolder extends RecyclerView.ViewHolder {
 
     private final TextView description;
     private final TextView category;
+    private final Button share;
     private TextView title;
     private TextView tags;
     private ImageView cover;
     private View mediaLayer;
 
     private StoriesAdapter.OnNewsViewListener onNewsViewListener;
+    private final StoriesAdapter.OnShareNewsListener onShareNewsListener;
+
     private News news;
 
-    public NewsItemViewHolder(View itemView, StoriesAdapter.OnNewsViewListener onNewsViewListener) {
+    public NewsItemViewHolder(View itemView, StoriesAdapter.OnNewsViewListener onNewsViewListener
+        , StoriesAdapter.OnShareNewsListener onShareNewsListener) {
         super(itemView);
         this.onNewsViewListener = onNewsViewListener;
+        this.onShareNewsListener = onShareNewsListener;
 
         category = (TextView) itemView.findViewById(R.id.category);
         cover = (ImageView) itemView.findViewById(R.id.cover);
@@ -44,7 +48,7 @@ public class NewsItemViewHolder extends RecyclerView.ViewHolder {
 
         itemView.setOnClickListener(onNewsClickListener);
 
-        Button share = (Button) itemView.findViewById(R.id.share);
+        share = (Button) itemView.findViewById(R.id.share);
         share.setOnClickListener(onShareClickListener);
     }
 
@@ -59,6 +63,10 @@ public class NewsItemViewHolder extends RecyclerView.ViewHolder {
         if(news.getImages() != null && !news.getImages().isEmpty()) {
             ImageLoader.loadGenericPictureToImageViewFit(cover, news.getImages().get(0));
         }
+    }
+
+    public void prepareForShare() {
+        share.setVisibility(View.GONE);
     }
 
     private View.OnClickListener onNewsClickListener = new View.OnClickListener() {
@@ -84,18 +92,24 @@ public class NewsItemViewHolder extends RecyclerView.ViewHolder {
         Pair<View, String> categoryPair = Pair.create((View)category
                 , itemView.getContext().getString(R.string.transition_news_category));
 
-        Pair<View, String> [] views = (Pair<View, String> []) Array.newInstance(Pair.class, 4);
+        Pair<View, String> tagsPair = Pair.create((View)tags
+                , itemView.getContext().getString(R.string.transition_tags));
+
+        Pair<View, String> [] views = (Pair<View, String> []) Array.newInstance(Pair.class, 5);
         views[0] = picturePair;
         views[1] = storyTitlePair;
         views[2] = mediaLayerPair;
         views[3] = categoryPair;
+        views[4] = tagsPair;
         return views;
     }
 
     private View.OnClickListener onShareClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            PrototypeManager.showPrototypeAlert(itemView.getContext());
+            if(onShareNewsListener != null) {
+                onShareNewsListener.onShareNews(news);
+            }
         }
     };
 }

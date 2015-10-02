@@ -43,6 +43,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private OnPublishStoryListener onPublishStoryListener;
     private StoryModerationListener storyModerationListener;
     private OnUserStartChattingListener onUserStartChattingListener;
+    private OnShareNewsListener onShareNewsListener;
 
     public StoriesAdapter() {
         setHasStableIds(true);
@@ -58,7 +59,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 return new HeaderViewHolder(inflater.inflate(R.layout.item_story_header, viewGroup, false));
             case TYPE_NEWS:
                 View newsView = inflater.inflate(R.layout.item_news, viewGroup, false);
-                return new NewsItemViewHolder(newsView, onNewsViewListener);
+                return new NewsItemViewHolder(newsView, onNewsViewListener, onShareNewsListener);
             default:
             case TYPE_STORY:
                 View view = inflater.inflate(R.layout.item_story, viewGroup, false);
@@ -148,6 +149,10 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setOnUserStartChattingListener(OnUserStartChattingListener onUserStartChattingListener) {
         this.onUserStartChattingListener = onUserStartChattingListener;
+    }
+
+    public void setOnShareNewsListener(OnShareNewsListener onShareNewsListener) {
+        this.onShareNewsListener = onShareNewsListener;
     }
 
     public void updateStory(Story story) {
@@ -263,6 +268,10 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public interface OnNewsViewListener {
         void onNewsViewClick(News news, Pair<View, String>... views);
+    }
+
+    public interface OnShareNewsListener {
+        void onShareNews(News news);
     }
 
     public interface OnPublishStoryListener {

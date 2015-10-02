@@ -20,7 +20,6 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 
 import in.ureport.R;
-import in.ureport.activities.NewsViewActivity;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
@@ -38,6 +37,7 @@ import in.ureport.network.StoryServices;
 import in.ureport.network.UreportServices;
 import in.ureport.network.UserServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
+import in.ureport.tasks.ShareNewsTask;
 import in.ureport.views.adapters.StoriesAdapter;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -46,7 +46,7 @@ import retrofit.RetrofitError;
  * Created by johncordeiro on 7/13/15.
  */
 public class StoriesListFragment extends Fragment implements StoriesAdapter.OnStoryViewListener
-        , StoriesAdapter.OnNewsViewListener {
+        , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener {
 
     private static final String TAG = "StoriesListFragment";
 
@@ -54,6 +54,9 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
     private RecyclerView storiesList;
     private View info;
+
+    private RecyclerScrollListener recyclerFloatingScrollListener;
+    private LinearLayoutManager layoutManager;
 
     private User user;
     protected boolean publicType = true;
@@ -67,6 +70,11 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     protected StoryServices storyServices;
     protected UserServices userServices;
     protected ContributionServices contributionServices;
+    protected UreportServices ureportServices;
+
+    private boolean loadingNews = false;
+    private int previousPageLoaded = 1;
+    private boolean hasNewsNextPage = false;
 
     public static StoriesListFragment newInstance(User user) {
         StoriesListFragment storiesListFragment = new StoriesListFragment();
@@ -100,7 +108,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
         setupObjects();
         setupView(view);
-        loadStories();
+        loadData();
     }
 
     @Override
@@ -130,24 +138,30 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         storyServices = new StoryServices();
         userServices = new UserServices();
         contributionServices = new ContributionServices();
+        ureportServices = new UreportServices();
     }
 
-    public void loadStories() {
+    public void loadData() {
         if(publicType) {
-            UreportServices ureportServices = new UreportServices();
-            ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization()
-                    , 1, onNewsLoadedCallback);
-
+            loadNewsForPage(previousPageLoaded);
             storyServices.addChildEventListener(childEventListener);
         } else {
             storyServices.addChildEventListenerForUser(user, childEventListener);
         }
     }
 
+    private void loadNewsForPage(int page) {
+        loadingNews = true;
+        ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization()
+                , page, onNewsLoadedCallback);
+    }
+
     private void setupView(View view) {
         storiesList = (RecyclerView) view.findViewById(R.id.storiesList);
-        storiesList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        storiesList.addOnScrollListener(new RecyclerScrollListener(floatingActionButtonListener));
+        layoutManager = new LinearLayoutManager(getActivity());
+        storiesList.setLayoutManager(layoutManager);
+        recyclerFloatingScrollListener = new RecyclerScrollListener(floatingActionButtonListener);
+        storiesList.addOnScrollListener(onStoriesListScrollListener);
         setupStoriesAdapter();
 
         info = view.findViewById(R.id.info);
@@ -161,6 +175,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
         storiesAdapter.setOnStoryViewListener(this);
         storiesAdapter.setOnNewsViewListener(this);
+        storiesAdapter.setOnShareNewsListener(this);
         storiesAdapter.setOnPublishStoryListener(onPublishStoryListener);
         storiesAdapter.setOnUserStartChattingListener(onUserStartChattingListener);
         storiesList.setAdapter(storiesAdapter);
@@ -263,7 +278,8 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     private Callback<Response<News>> onNewsLoadedCallback = new Callback<Response<News>>() {
         @Override
         public void success(Response<News> newsResponse, retrofit.client.Response response) {
-            Log.i(TAG, "success newsResponse: " + newsResponse.getResults());
+            loadingNews = false;
+            hasNewsNextPage = newsResponse.getNext() != null;
             storiesAdapter.addNews(newsResponse.getResults());
         }
 
@@ -275,12 +291,40 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
     @Override
     public void onNewsViewClick(News news, Pair<View, String>... views) {
-        Intent storyViewIntent = new Intent(getActivity(), NewsViewActivity.class);
-        storyViewIntent.putExtra(NewsViewActivity.EXTRA_NEWS, news);
+        Intent storyViewIntent = new Intent(getActivity(), StoryViewActivity.class);
+        storyViewIntent.putExtra(StoryViewActivity.EXTRA_NEWS, news);
 
         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
                 .makeSceneTransitionAnimation(getActivity(), views);
         ActivityCompat.startActivity(getActivity(), storyViewIntent, optionsCompat.toBundle());
+    }
+
+    private RecyclerView.OnScrollListener onStoriesListScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            recyclerFloatingScrollListener.onScrolled(recyclerView, dx, dy);
+            checkNewsPageLoading();
+        }
+    };
+
+    private void checkNewsPageLoading() {
+        int visibleItemCount = layoutManager.getChildCount();
+        int totalItemCount = layoutManager.getItemCount();
+        int pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
+
+        if(hasNewsNextPage && !loadingNews) {
+            if((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                previousPageLoaded++;
+                loadNewsForPage(previousPageLoaded);
+            }
+        }
+    }
+
+    @Override
+    public void onShareNews(News news) {
+        ShareNewsTask shareNewsTask = new ShareNewsTask(this, news);
+        shareNewsTask.execute();
     }
 
     private interface OnAfterStoryLoadedListener {

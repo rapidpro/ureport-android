@@ -174,15 +174,6 @@
                 android:value=".activities.MainActivity" />
         </activity>
         <activity
-            android:name=".activities.NewsViewActivity"
-            android:label="@string/label_story_view"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
-        </activity>
-        <activity
             android:name=".activities.AnswerPollActivity"
             android:label="@string/label_answer_poll"
             android:parentActivityName=".activities.MainActivity"
