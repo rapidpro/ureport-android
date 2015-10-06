@@ -84,7 +84,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             android:scaleType="centerCrop"
-            tools:src="@drawable/news1_cover_image"
+            tools:src="@drawable/tutorial_item1"
             android:layout_below="@+id/line"
             android:visibility="visible"/>
 

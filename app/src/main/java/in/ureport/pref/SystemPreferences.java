@@ -14,6 +14,7 @@ public class SystemPreferences extends Preferences {
     private enum Fields {
         UserLoggedId,
         CountryCode,
+        TutorialView,
         Moderator,
         Master
     }
@@ -36,6 +37,14 @@ public class SystemPreferences extends Preferences {
 
     public String getCountryCode() {
         return getValue(Fields.CountryCode, "");
+    }
+
+    public void setTutorialView(boolean tutorialView) {
+        setValue(Fields.TutorialView, tutorialView);
+    }
+
+    public boolean getTutorialView() {
+        return getValue(Fields.TutorialView, false);
     }
 
     public void setModerator(boolean moderator) {

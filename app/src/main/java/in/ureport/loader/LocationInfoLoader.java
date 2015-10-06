@@ -16,7 +16,6 @@ import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.LocationInfo;
 import in.ureport.models.rapidpro.Boundary;
 import in.ureport.network.GeonamesServices;
-import in.ureport.network.RapidProApi;
 import in.ureport.network.RapidProServices;
 import in.ureport.network.Response;
 
@@ -28,23 +27,23 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
     private static final String TAG = "StatesLoader";
 
     private final Locale locale;
+    private final CountryProgram countryProgram;
 
     public LocationInfoLoader(Context context, Locale locale) {
         super(context);
         this.locale = locale;
+        this.countryProgram = CountryProgramManager.getCountryProgramForCode(locale.getISO3Country());
     }
 
     @Override
     public LocationInfo loadInBackground() {
         try {
-            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(locale.getISO3Country());
             if(CountryProgramManager.isCountryProgramEnabled(countryProgram)
             && !countryProgram.getCode().equals(CountryProgramManager.COUNTRY_PROGRAM_GLOBAL_CODE)) {
-                RapidProServices rapidProServices = new RapidProServices();
-                Response<Boundary> response = rapidProServices.loadBoundaries(getContext().getString(countryProgram.getApiToken()));
+                List<Boundary> boundaries = loadBoundariesByRapidPro(countryProgram);
 
-                if(response.getCount() > 1) {
-                    return getStatesByRapidproResponse(response);
+                if(boundaries.size() > 1) {
+                    return getStatesByRapidproResponse(boundaries);
                 } else {
                     return new LocationInfo(loadGeonamesStates(), null);
                 }
@@ -58,11 +57,27 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
     }
 
     @NonNull
-    private LocationInfo getStatesByRapidproResponse(Response<Boundary> response) {
+    private List<Boundary> loadBoundariesByRapidPro(CountryProgram countryProgram) {
+        RapidProServices rapidProServices = new RapidProServices();
+
+        List<Boundary> boundaries = new ArrayList<>();
+        Response<Boundary> response;
+        int page = 1;
+        do {
+            response = rapidProServices.loadBoundaries(getContext().getString(countryProgram.getApiToken()), page);
+            boundaries.addAll(response.getResults());
+
+            page++;
+        } while(response.getNext() != null);
+        return boundaries;
+    }
+
+    @NonNull
+    private LocationInfo getStatesByRapidproResponse(List<Boundary> results) {
         List<Location> states = new ArrayList<>();
         List<Location> districts = new ArrayList<>();
 
-        for (Boundary boundary : response.getResults()) {
+        for (Boundary boundary : results) {
             String name = boundary.getName();
             String toponymName = boundary.getAliases() != null && boundary.getAliases().size() > 0
                     ? boundary.getAliases().get(0) : name;

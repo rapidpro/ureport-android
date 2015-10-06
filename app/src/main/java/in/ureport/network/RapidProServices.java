@@ -44,8 +44,8 @@ public class RapidProServices {
         service = restAdapter.create(RapidProApi.class);
     }
 
-    public Response<Boundary> loadBoundaries(String apiKey) {
-        return service.listBoundaries(apiKey);
+    public Response<Boundary> loadBoundaries(String apiKey, Integer page) {
+        return service.listBoundaries(apiKey, page);
     }
 
     public List<Field> loadFields(String apiKey) {

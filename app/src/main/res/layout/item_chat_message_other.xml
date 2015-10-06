@@ -34,7 +34,7 @@
         android:visibility="gone"
         android:transitionName="@string/transition_media"
         tools:visibility="visible"
-        tools:src="@drawable/news1_cover_image"/>
+        tools:src="@drawable/tutorial_item1"/>
 
     <TextView
         android:id="@+id/message"

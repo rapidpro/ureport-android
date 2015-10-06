@@ -57,6 +57,11 @@
 -dontwarn org.shaded.apache.**
 -dontwarn org.ietf.jgss.**
 
+#ViewPagerIndicator
+-keep class com.viewpagerindicator.** { *; }
+-keep interface com.viewpagerindicator.** { *; }
+-dontwarn com.viewpagerindicator.**
+
 #Preference Support Library
 -keep class android.support.v7.preference.** { *; }
 

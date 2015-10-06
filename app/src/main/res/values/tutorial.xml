@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="tutorial_title1">Create Stories</string>
+    <string name="tutorial_description1">Amplify your voice, talk about what\'s happening in your community creating stories and contributing to reports of other users</string>
+
+    <string name="tutorial_title2">Polls</string>
+    <string name="tutorial_description2">Polls on community interest topics will be sent periodically to be answered</string>
+
+    <string name="tutorial_title3">Chat</string>
+    <string name="tutorial_description3">Contact with other users and see what they say out there</string>
+    
+</resources>

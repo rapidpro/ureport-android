@@ -297,5 +297,6 @@
     <string name="label_view_points">Points</string>
     <string name="text_donate">Donate</string>
     <string name="label_chat_picture_notification">picture</string>
+    <string name="get_started_title">Get started</string>
 
 </resources>

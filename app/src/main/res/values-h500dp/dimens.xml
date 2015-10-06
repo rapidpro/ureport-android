@@ -2,5 +2,6 @@
 <resources>
 
     <dimen name="logo_container_height">240dp</dimen>
+    <dimen name="tutorial_image_height">270dp</dimen>
 
 </resources>

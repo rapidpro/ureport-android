@@ -8,6 +8,8 @@ import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.POST;
+import retrofit.http.Path;
+import retrofit.http.Query;
 
 /**
  * Created by johncordeiro on 18/08/15.
@@ -21,7 +23,7 @@ public interface RapidProApi {
     Response<Field> listFields(@Header("Authorization") String apiKey);
 
     @GET("/boundaries.json?aliases=true")
-    Response<Boundary> listBoundaries(@Header("Authorization") String apiKey);
+    Response<Boundary> listBoundaries(@Header("Authorization") String apiKey, @Query("page") Integer page);
 
     @POST("/contacts.json")
     Contact saveContact(@Header("Authorization") String apiKey, @Body Contact contact);

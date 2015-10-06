@@ -10,6 +10,10 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
+    <style name="AppTheme.Fullscreen" parent="AppTheme">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="AppTheme.SearchView" parent="Widget.AppCompat.SearchView">
         <item name="searchIcon">@drawable/ic_search_white_24dp</item>
         <item name="closeIcon">@drawable/ic_close_white_24dp</item>

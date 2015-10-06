@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#007083">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/tutorialPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/getStarted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:drawablePadding="10dp"
+        android:drawableEnd="@drawable/ic_arrow_forward_white_24dp"
+        android:drawableRight="@drawable/ic_arrow_forward_white_24dp"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:text="@string/get_started_title"/>
+
+    <com.viewpagerindicator.CirclePageIndicator
+        android:id="@+id/indicator"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        app:radius="5dp"
+        app:fillColor="#004b58"
+        app:pageColor="#005e6a"
+        app:strokeWidth="0dp"
+        tools:background="#FFCCCCCC" />
+
+</RelativeLayout>

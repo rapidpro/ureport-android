@@ -31,6 +31,7 @@ import in.ureport.models.User;
 import in.ureport.models.Notification;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.models.holders.NavigationItem;
+import in.ureport.pref.SystemPreferences;
 import in.ureport.views.adapters.NavigationAdapter;
 import in.ureport.views.adapters.StoriesAdapter;
 
@@ -61,16 +62,24 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        checkTutorialView();
         checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
         checkIntentAction();
     }
 
+    private void checkTutorialView() {
+        SystemPreferences systemPreferences = new SystemPreferences(this);
+        if(!systemPreferences.getTutorialView()) {
+            Intent tutorialViewIntent = new Intent(this, TutorialActivity.class);
+            startActivity(tutorialViewIntent);
+        }
+    }
+
     private void checkForcedLogin() {
         Bundle extras = getIntent().getExtras();
         if(extras != null) {
-
             if(extras.containsKey(EXTRA_FORCED_LOGIN)) {
                 Boolean forcedLogin = extras.getBoolean(EXTRA_FORCED_LOGIN, false);
 
