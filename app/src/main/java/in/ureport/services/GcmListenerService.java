@@ -9,9 +9,13 @@ import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
-import in.ureport.models.GroupChatRoom;
+import in.ureport.models.Contribution;
+import in.ureport.models.Story;
+import in.ureport.models.User;
 import in.ureport.network.GcmServices;
 import in.ureport.tasks.ChatNotificationTask;
+import in.ureport.tasks.ContributionNotificationTask;
+import in.ureport.tasks.MessageNotificationTask;
 
 /**
  * Created by johncordeiro on 21/08/15.
@@ -23,20 +27,70 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     private static final String EXTRA_CHAT_ROOM = "chatRoom";
     private static final String EXTRA_CHAT_MESSAGE = "chatMessage";
 
+    private static final String EXTRA_NOTIFICATION_TYPE = "type";
+    private static final String EXTRA_MESSAGE = "message";
+
+    private static final String EXTRA_CONTRIBUTION = "contribution";
+    private static final String EXTRA_STORY = "story";
+
+    public enum Type {
+        Rapidpro
+    }
+
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
+
         if(from.startsWith(GcmTopicManager.CHAT_TOPICS_PATH)) {
             sendChatMessageNotification(data);
+        } else if(from.startsWith(GcmTopicManager.STORY_TOPICS_PATH)) {
+            sendContributionNotification(data);
+        } else {
+            handleNotificationType(data);
         }
+    }
+
+    private void sendContributionNotification(Bundle data) {
+        try {
+            Contribution contribution = getObject(data, EXTRA_CONTRIBUTION, Contribution.class);
+            Story story = getObject(data, EXTRA_STORY, Story.class);
+
+            if(isUserAllowedForMessageNotification(contribution.getAuthor())) {
+                ContributionNotificationTask contributionNotificationTask = new ContributionNotificationTask(this, story);
+                contributionNotificationTask.execute(contribution);
+            }
+        } catch(Exception exception) {
+            Log.e(TAG, "sendChatMessageNotification ", exception);
+        }
+    }
+
+    private void handleNotificationType(Bundle data) {
+        try {
+            String notificationType = data.getString(EXTRA_NOTIFICATION_TYPE);
+            Type type = Type.valueOf(notificationType);
+
+            switch(type) {
+                case Rapidpro:
+                    sendRapidproNotification(data);
+            }
+        } catch(Exception exception) {
+            Log.e(TAG, "onMessageReceived ", exception);
+        }
+    }
+
+    private void sendRapidproNotification(Bundle data) {
+        String message = data.getString(EXTRA_MESSAGE);
+
+        MessageNotificationTask messageNotificationTask = new MessageNotificationTask(this);
+        messageNotificationTask.execute(message);
     }
 
     private void sendChatMessageNotification(Bundle data) {
         try {
-            ChatRoom chatRoom = getChatRoom(data);
-            ChatMessage chatMessage = getChatMessage(data);
+            ChatRoom chatRoom = getObject(data, EXTRA_CHAT_ROOM, ChatRoom.class);
+            ChatMessage chatMessage = getObject(data, EXTRA_CHAT_MESSAGE, ChatMessage.class);
 
-            if(isUserAllowedForMessageNotification(chatMessage)) {
+            if(isUserAllowedForMessageNotification(chatMessage.getUser())) {
                 ChatNotificationTask chatNotificationTask = new ChatNotificationTask(this, chatRoom);
                 chatNotificationTask.execute(chatMessage);
             }
@@ -45,24 +99,16 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
         }
     }
 
-    private boolean isUserAllowedForMessageNotification(ChatMessage chatMessage) {
+    private boolean isUserAllowedForMessageNotification(User user) {
         FirebaseManager.init(this);
         String authUserKey = UserManager.getUserId();
-        return authUserKey != null && !chatMessage.getUser().getKey().equals(authUserKey);
+        return authUserKey != null && !user.getKey().equals(authUserKey);
     }
 
-    private ChatMessage getChatMessage(Bundle data) {
-        String chatMessageJson = data.getString(EXTRA_CHAT_MESSAGE);
-        JsonDeserializer<ChatMessage> chatMessageDeserializer = new JsonDeserializer<>(chatMessageJson);
-        chatMessageDeserializer.setDateFormat(GcmServices.DATE_STYLE);
-        return chatMessageDeserializer.get(ChatMessage.class);
-    }
-
-    private ChatRoom getChatRoom(Bundle data) {
-        String chatRoomJson = data.getString(EXTRA_CHAT_ROOM);
-
-        JsonDeserializer<GroupChatRoom> chatRoomDeserializer = new JsonDeserializer<>(chatRoomJson);
-        chatRoomDeserializer.setDateFormat(GcmServices.DATE_STYLE);
-        return chatRoomDeserializer.get(GroupChatRoom.class);
+    private <T> T getObject(Bundle data, String key, Class<T> mClass) {
+        String json = data.getString(key);
+        JsonDeserializer<T> deserializer = new JsonDeserializer<>(json);
+        deserializer.setDateFormat(GcmServices.DATE_STYLE);
+        return deserializer.get(mClass);
     }
 }

@@ -24,9 +24,11 @@ import in.ureport.listener.OnSeeLastPollsListener;
 import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.LocalNotificationManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.models.Notification;
 import in.ureport.models.holders.ChatRoomHolder;
@@ -44,13 +46,19 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     private static final int REQUEST_CODE_CHAT_CREATION = 200;
     public static final int REQUEST_CODE_CHAT_NOTIFICATION = 300;
+    public static final int REQUEST_CODE_MESSAGE_NOTIFICATION = 400;
+    public static final int REQUEST_CODE_CONTRIBUTION_NOTIFICATION = 500;
 
     private static final int POSITION_STORIES_FRAGMENT = 0;
+    private static final int POSITION_POLLS_FRAGMENT = 1;
     private static final int POSITION_CHAT_FRAGMENT = 2;
 
+    public static final String ACTION_CONTRIBUTION_NOTIFICATION = "in.ureport.ContributionNotification";
     public static final String ACTION_OPEN_CHAT_NOTIFICATION = "in.ureport.ChatNotification";
+    public static final String ACTION_OPEN_MESSAGE_NOTIFICATION = "in.ureport.MessageNotification";
 
     public static final String EXTRA_FORCED_LOGIN = "forcedLogin";
+    public static final String EXTRA_STORY = "story";
 
     private TextView notificationsAlert;
     private ViewPager pager;
@@ -58,15 +66,35 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     private StoriesListFragment storiesListFragment;
     private ListChatRoomsFragment listChatRoomsFragment;
 
+    private LocalNotificationManager localNotificationManager;
+    private Story story;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setupObjects();
         checkTutorialView();
         checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
         checkIntentAction();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        localNotificationManager.cancelContributionNotification();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        localNotificationManager.cancelContributionNotification();
+    }
+
+    private void setupObjects() {
+        localNotificationManager = new LocalNotificationManager(this);
     }
 
     private void checkTutorialView() {
@@ -206,6 +234,11 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
                 case ACTION_OPEN_CHAT_NOTIFICATION:
                     pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
                     break;
+                case ACTION_OPEN_MESSAGE_NOTIFICATION:
+                    pager.setCurrentItem(POSITION_POLLS_FRAGMENT);
+                    break;
+                case ACTION_CONTRIBUTION_NOTIFICATION:
+                    story = getIntent().getParcelableExtra(EXTRA_STORY);
             }
         }
     }
@@ -220,13 +253,28 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     }
 
     @Override
-    public void setUser(User user) {
+    public void setUser(final User user) {
         super.setUser(user);
 
         if(user != null) {
             storiesListFragment.updateUser(user);
             getToolbar().setTitle(CountryProgramManager.getCurrentCountryProgram().getName());
+            openStoryIfNeeded(user);
         }
+    }
+
+    private void openStoryIfNeeded(User user) {
+        if(story != null) {
+            startStoryViewActivity(story, user);
+        }
+    }
+
+    private void startStoryViewActivity(Story story, User user) {
+        Intent storyViewIntent = new Intent(MainActivity.this, StoryViewActivity.class);
+        storyViewIntent.setAction(StoryViewActivity.ACTION_LOAD_STORY);
+        storyViewIntent.putExtra(StoryViewActivity.EXTRA_STORY, story);
+        storyViewIntent.putExtra(StoryViewActivity.EXTRA_USER, user);
+        startActivity(storyViewIntent);
     }
 
     @Override

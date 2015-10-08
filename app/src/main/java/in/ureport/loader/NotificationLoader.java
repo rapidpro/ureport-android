@@ -24,7 +24,9 @@ public class NotificationLoader extends AsyncTaskLoader<List<Notification>> {
     @Override
     public List<Notification> loadInBackground() {
         List<Notification> notifications = new ArrayList<>();
-        notifications.addAll(notificationListManager.getNotificationsByChatNotifications());
+        notifications.addAll(notificationListManager.getNotificationsByMessages());
+        notifications.addAll(notificationListManager.getNotificationsByContributions());
+        notifications.addAll(notificationListManager.getNotificationsByChat());
 
         return notifications;
     }

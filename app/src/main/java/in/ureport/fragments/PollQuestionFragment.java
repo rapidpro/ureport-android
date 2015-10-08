@@ -25,6 +25,7 @@ import in.ureport.models.User;
 import in.ureport.models.rapidpro.Message;
 import in.ureport.network.RapidProServices;
 import in.ureport.network.UserServices;
+import in.ureport.tasks.CleanMessageNotificationTask;
 
 /**
  * Created by johncordeiro on 11/09/15.
@@ -58,6 +59,17 @@ public class PollQuestionFragment extends Fragment {
         setupObjects();
         setupView(view);
         loadData();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        cleanMessageNotifications();
+    }
+
+    private void cleanMessageNotifications() {
+        CleanMessageNotificationTask cleanMessageNotificationTask = new CleanMessageNotificationTask(getActivity());
+        cleanMessageNotificationTask.execute();
     }
 
     @Override
@@ -111,6 +123,7 @@ public class PollQuestionFragment extends Fragment {
         response.setText(null);
         rapidProServices.sendMessage(getActivity(), message);
         Toast.makeText(getActivity(), R.string.response_message, Toast.LENGTH_SHORT).show();
+        cleanMessageNotifications();
     }
 
     @Override

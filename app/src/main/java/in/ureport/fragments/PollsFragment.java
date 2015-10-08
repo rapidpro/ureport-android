@@ -22,6 +22,7 @@ import in.ureport.R;
 import in.ureport.activities.AnswerPollActivity;
 import in.ureport.activities.PollResultsActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.managers.LocalNotificationManager;
 import in.ureport.models.Poll;
 import in.ureport.models.User;
 import in.ureport.network.PollServices;
@@ -33,6 +34,7 @@ import in.ureport.views.adapters.PollAdapter;
 public class PollsFragment extends Fragment implements PollAdapter.PollParticipationListener {
 
     private static final String TAG = "PollsFragment";
+
     private static final String EXTRA_USER = "user";
 
     private RecyclerView pollsList;

@@ -21,15 +21,14 @@ import in.ureport.models.db.ChatNotification;
 /**
  * Created by johncordeiro on 22/08/15.
  */
-public class ChatNotificationTask extends AsyncTask<ChatMessage, Void, Void> {
+public class ChatNotificationTask extends NotificationTask<ChatMessage, Void, Void> {
 
     private static final String TAG = "ChatNotificationTask";
 
-    private final Context context;
     private final ChatRoom chatRoom;
 
     public ChatNotificationTask(Context context, ChatRoom chatRoom) {
-        this.context = context;
+        super(context);
         this.chatRoom = chatRoom;
     }
 

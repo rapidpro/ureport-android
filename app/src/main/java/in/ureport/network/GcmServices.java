@@ -11,6 +11,9 @@ import in.ureport.R;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.Contribution;
+import in.ureport.models.Story;
+import in.ureport.models.holders.ContributionHolder;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
@@ -42,7 +45,16 @@ public class GcmServices {
         GcmApi.Input<ChatMessageHolder> chatMessageHolderInput = new GcmApi.Input<>(
                 GcmTopicManager.CHAT_TOPICS_PATH + chatRoom.getKey(), chatMessageHolder);
 
-        return gcmApi.sendChatMessage(context.getString(R.string.gcm_api_key), chatMessageHolderInput);
+        return gcmApi.sendData(context.getString(R.string.gcm_api_key), chatMessageHolderInput);
+    }
+
+    public GcmApi.Response sendContribution(Story story, Contribution contribution) {
+        ContributionHolder contributionHolder = new ContributionHolder(story, contribution);
+
+        GcmApi.Input<ContributionHolder> contributionData = new GcmApi.Input<>(
+                GcmTopicManager.STORY_TOPICS_PATH + story.getKey(), contributionHolder);
+
+        return gcmApi.sendData(context.getString(R.string.gcm_api_key), contributionData);
     }
 
     private RestAdapter buildRestAdapter() {

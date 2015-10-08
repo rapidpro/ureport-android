@@ -12,7 +12,7 @@ import com.viewpagerindicator.CirclePageIndicator;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.ilhasoft.support.widget.ParallaxPageTransformer;
+import br.com.ilhasoft.support.widget.FadePageTransformer;
 import in.ureport.R;
 import in.ureport.models.holders.Tutorial;
 import in.ureport.pref.SystemPreferences;
@@ -52,13 +52,11 @@ public class TutorialActivity extends AppCompatActivity {
     }
 
     private void setupPagerTransformer(ViewPager tutorialPager) {
-        ParallaxPageTransformer parallaxPageTransformer = new ParallaxPageTransformer();
-        parallaxPageTransformer.addViewToParallax(new ParallaxPageTransformer.ParallaxTransformInformation(R.id.image
-                , -0.65f, ParallaxPageTransformer.ParallaxTransformInformation.PARALLAX_EFFECT_DEFAULT));
-        parallaxPageTransformer.addViewToParallax(new ParallaxPageTransformer.ParallaxTransformInformation(R.id.description
-                , -0.85f, ParallaxPageTransformer.ParallaxTransformInformation.PARALLAX_EFFECT_DEFAULT));
+        FadePageTransformer fadePageTransformer = new FadePageTransformer();
+        fadePageTransformer.addViewToFade(new FadePageTransformer.TransformInformation(R.id.image));
+        fadePageTransformer.addViewToFade(new FadePageTransformer.TransformInformation(R.id.infoBackground));
 
-        tutorialPager.setPageTransformer(true, parallaxPageTransformer);
+        tutorialPager.setPageTransformer(true, fadePageTransformer);
     }
 
     @NonNull
@@ -66,15 +64,18 @@ public class TutorialActivity extends AppCompatActivity {
         List<Tutorial> tutorialList = new ArrayList<>();
         tutorialList.add(new Tutorial(getString(R.string.tutorial_title1)
                                     , getString(R.string.tutorial_description1)
-                                    , R.drawable.tutorial_item1));
+                                    , R.drawable.tutorial_item1
+                                    , R.color.tutorial_background1));
 
         tutorialList.add(new Tutorial(getString(R.string.tutorial_title2)
                                     , getString(R.string.tutorial_description2)
-                                    , R.drawable.tutorial_item2));
+                                    , R.drawable.tutorial_item2
+                                    , R.color.tutorial_background2));
 
         tutorialList.add(new Tutorial(getString(R.string.tutorial_title3)
                                     , getString(R.string.tutorial_description3)
-                                    , R.drawable.tutorial_item3));
+                                    , R.drawable.tutorial_item3
+                                    , R.color.tutorial_background3));
 
         return tutorialList;
     }

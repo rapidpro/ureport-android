@@ -1,6 +1,7 @@
 package in.ureport.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.annotations.Expose;
 
 import java.util.Date;
 
@@ -10,10 +11,13 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Contribution {
 
+    @Expose
     private String key;
 
+    @Expose
     private String content;
 
+    @Expose
     private User author;
 
     private Date createdDate;

@@ -279,7 +279,7 @@ public class ChatRoomServices extends ProgramServices {
         userServices.removeUserChatRoom(user.getKey(), chatRoomKey);
 
         GcmTopicManager gcmTopicManager = new GcmTopicManager(context);
-        gcmTopicManager.unregisterUserTopic(user, chatRoomKey);
+        gcmTopicManager.unregisterToChatRoomTopic(user, chatRoomKey);
 
         getRootByCode(user.getCountryProgram()).child(membersPath)
                 .child(chatRoomKey)
@@ -292,7 +292,7 @@ public class ChatRoomServices extends ProgramServices {
         userServices.addUserChatRoom(user.getKey(), chatRoomKey);
 
         GcmTopicManager gcmTopicManager = new GcmTopicManager(context);
-        gcmTopicManager.registerUserTopic(user, chatRoomKey);
+        gcmTopicManager.registerToChatRoomTopic(user, chatRoomKey);
 
         getRootByCode(user.getCountryProgram()).child(membersPath)
                 .child(chatRoomKey)

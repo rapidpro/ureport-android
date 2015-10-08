@@ -2,7 +2,10 @@ package in.ureport.network;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
+import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
@@ -16,10 +19,14 @@ public class StoryServices extends ProgramServices {
     private static final String storyModeratePath = "story_moderate";
     private static final String storyDisapprovedPath = "story_disapproved";
 
-    public void saveStory(Story story, Firebase.CompletionListener listener) {
+    public void saveStory(final Story story, final Firebase.CompletionListener listener) {
         cleanStory(story);
         story.setUser(UserManager.getUserId());
         getDefaultRoot().child(storyModeratePath).push().setValue(story, listener);
+    }
+
+    public void loadStory(final Story story, ValueEventListener listener) {
+        getDefaultRoot().child(storyPath).child(story.getKey()).addListenerForSingleValueEvent(listener);
     }
 
     public void approveStory(Story story, Firebase.CompletionListener listener) {
@@ -32,6 +39,11 @@ public class StoryServices extends ProgramServices {
         cleanStory(story);
         getDefaultRoot().child(storyModeratePath).child(story.getKey()).removeValue();
         getDefaultRoot().child(storyDisapprovedPath).child(story.getKey()).setValue(story, listener);
+    }
+
+    public void loadStoriesForUser(User user, ValueEventListener listener) {
+        getCountryProgram().child(user.getCountryProgram()).child(storyPath)
+                .orderByChild("user").equalTo(user.getKey()).addListenerForSingleValueEvent(listener);
     }
 
     public void addChildEventListenerForUser(User user, ChildEventListener childEventListener) {

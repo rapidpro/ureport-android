@@ -199,10 +199,10 @@
             android:value="Ureport.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="4" />
+            android:value="5" />
         <meta-data
             android:name="AA_MODELS"
-            android:value="in.ureport.models.Story,in.ureport.models.Marker,in.ureport.models.db.ChatNotification" />
+            android:value="in.ureport.models.Story,in.ureport.models.Marker,in.ureport.models.db.ChatNotification,in.ureport.models.db.ContributionNotification,in.ureport.models.db.MessageNotification" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />

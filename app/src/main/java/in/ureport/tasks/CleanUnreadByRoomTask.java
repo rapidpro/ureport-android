@@ -1,5 +1,6 @@
 package in.ureport.tasks;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -11,9 +12,13 @@ import in.ureport.models.db.ChatNotification;
 /**
  * Created by johncordeiro on 22/08/15.
  */
-public class CleanUnreadByRoomTask extends AsyncTask<ChatRoom, Void, Void> {
+public class CleanUnreadByRoomTask extends NotificationTask<ChatRoom, Void, Void> {
 
     private static final String TAG = "CleanUnreadByRoomTask";
+
+    public CleanUnreadByRoomTask(Context context) {
+        super(context);
+    }
 
     @Override
     protected Void doInBackground(ChatRoom... params) {

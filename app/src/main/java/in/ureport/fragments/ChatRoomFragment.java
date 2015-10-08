@@ -228,7 +228,7 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask();
+        CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask(getActivity());
         cleanUnreadByRoomTask.execute(chatRoom);
 
         if(chatRoom != null) {
@@ -241,7 +241,7 @@ public class ChatRoomFragment extends Fragment implements ChatMessagesAdapter.On
         user = getMemberUserByKey(UserManager.getUserId());
         adapter.setUser(user);
 
-        CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask();
+        CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask(getActivity());
         cleanUnreadByRoomTask.execute(chatRoom);
 
         chatRoomServices.addChildEventListenerForChatMessages(chatRoom.getKey(), onChildEventListener);

@@ -2,6 +2,7 @@ package in.ureport.models.holders;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 
 /**
@@ -15,10 +16,13 @@ public class Tutorial implements Parcelable {
 
     private @DrawableRes int image;
 
-    public Tutorial(String title, String description, int image) {
+    private @ColorRes int background;
+
+    public Tutorial(String title, String description, int image, int background) {
         this.title = title;
         this.description = description;
         this.image = image;
+        this.background = background;
     }
 
     public String getTitle() {
@@ -45,6 +49,14 @@ public class Tutorial implements Parcelable {
         this.image = image;
     }
 
+    public int getBackground() {
+        return background;
+    }
+
+    public void setBackground(int background) {
+        this.background = background;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -55,12 +67,14 @@ public class Tutorial implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.description);
         dest.writeInt(this.image);
+        dest.writeInt(this.background);
     }
 
     protected Tutorial(Parcel in) {
         this.title = in.readString();
         this.description = in.readString();
         this.image = in.readInt();
+        this.background = in.readInt();
     }
 
     public static final Creator<Tutorial> CREATOR = new Creator<Tutorial>() {

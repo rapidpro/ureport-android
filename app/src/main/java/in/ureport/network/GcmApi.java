@@ -12,7 +12,7 @@ import retrofit.http.POST;
 public interface GcmApi {
 
     @POST("/gcm/send")
-    Response sendChatMessage(@Header("Authorization") String senderId, @Body Input input);
+    Response sendData(@Header("Authorization") String senderId, @Body Input input);
 
     class Response {
         String message_id;

@@ -55,5 +55,8 @@ public class TutorialItemFragment extends Fragment {
 
         TextView description = (TextView) view.findViewById(R.id.description);
         description.setText(tutorial.getDescription());
+
+        View infoBackground = view.findViewById(R.id.infoBackground);
+        infoBackground.setBackgroundColor(getResources().getColor(tutorial.getBackground()));
     }
 }

@@ -2,12 +2,15 @@
 <resources>
     
     <string name="tutorial_title1">Create Stories</string>
-    <string name="tutorial_description1">Amplify your voice, talk about what\'s happening in your community creating stories and contributing to reports of other users</string>
+    <string name="tutorial_description1">Amplify your voice and share what is happening in your community by creating stories and commenting on others</string>
+    <color name="tutorial_background1">#8000cff6</color>
 
-    <string name="tutorial_title2">Polls</string>
-    <string name="tutorial_description2">Polls on community interest topics will be sent periodically to be answered</string>
+    <string name="tutorial_title2">Answer Polls</string>
+    <string name="tutorial_description2">Each week you and millions of other U&#x2011;Reporters can answer polls about issues impacting young people in your community. Results will always be shared</string>
+    <color name="tutorial_background2">#c8ffa500</color>
 
-    <string name="tutorial_title3">Chat</string>
-    <string name="tutorial_description3">Contact with other users and see what they say out there</string>
+    <string name="tutorial_title3">Chat for Free</string>
+    <string name="tutorial_description3">Chat with other U-Reporters and follow Group Chats around youth issues</string>
+    <color name="tutorial_background3">#8000d400</color>
     
 </resources>

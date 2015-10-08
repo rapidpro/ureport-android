@@ -24,6 +24,8 @@ import in.ureport.views.adapters.MediaAdapter;
 public class StoryViewActivity extends AppCompatActivity implements MediaAdapter.OnMediaViewListener
         , MediaViewFragment.OnCloseMediaViewListener {
 
+    public static final String ACTION_LOAD_STORY = "in.ureport.LoadStory";
+
     public static final String EXTRA_STORY = "story";
     public static final String EXTRA_USER = "user";
     public static final String EXTRA_NEWS = "news";
@@ -58,7 +60,9 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
     }
 
     private void addStoryViewFragment(Story story, User user) {
-        StoryViewFragment storyViewFragment = StoryViewFragment.newInstance(story, user);
+        boolean isStoryLoaded = getIntent().getAction() == null || !getIntent().getAction().equals(ACTION_LOAD_STORY);
+
+        StoryViewFragment storyViewFragment = StoryViewFragment.newInstance(story, user, isStoryLoaded);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.content, storyViewFragment)
                 .commit();

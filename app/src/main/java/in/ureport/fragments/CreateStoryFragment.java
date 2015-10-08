@@ -3,14 +3,12 @@ package in.ureport.fragments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
@@ -37,12 +36,16 @@ import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.helpers.ImagePicker;
 import in.ureport.helpers.MediaSelector;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnMediaSelectedListener;
+import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.TransferManager;
+import in.ureport.managers.UserManager;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Marker;
 import in.ureport.models.Media;
 import in.ureport.models.Story;
+import in.ureport.models.User;
 import in.ureport.network.StoryServices;
 import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.network.UserServices;
@@ -236,9 +239,26 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null && storyCreationListener != null) {
+                    story.setKey(firebase.getKey());
+
                     incrementStoryCount();
                     storyCreationListener.onStoryCreated(story);
+                    registerAuthorToGcm(story);
                 }
+            }
+        });
+    }
+
+    private void registerAuthorToGcm(final Story story) {
+        UserServices userServices = new UserServices();
+        userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                User user = dataSnapshot.getValue(User.class);
+
+                GcmTopicManager gcmTopicManager = new GcmTopicManager(getActivity());
+                gcmTopicManager.registerToStoryTopic(user, story);
             }
         });
     }

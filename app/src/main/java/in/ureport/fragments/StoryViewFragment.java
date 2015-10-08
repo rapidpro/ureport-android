@@ -33,15 +33,19 @@ import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.network.ContributionServices;
+import in.ureport.network.StoryServices;
 import in.ureport.network.UserServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.helpers.WrapLinearLayoutManager;
+import in.ureport.tasks.CleanContributionNotificationTask;
+import in.ureport.tasks.SendGcmContributionTask;
 import in.ureport.tasks.ShareStoryTask;
 import in.ureport.views.adapters.ContributionAdapter;
 import in.ureport.views.adapters.MediaAdapter;
@@ -53,27 +57,37 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
     private static final String EXTRA_STORY = "story";
     private static final String EXTRA_USER = "user";
+    private static final String EXTRA_IS_LOADED = "loaded";
 
     private Story story;
     private User user;
+    private Boolean isLoaded;
 
     private ContributionAdapter contributionAdapter;
     private TextView contributions;
     private Button contribute;
     private EditText contribution;
+    private TextView author;
+    private ImageView picture;
     private View addContributionContainer;
 
     private ContributionServices contributionServices;
+    private StoryServices storyServices;
     private UserServices userServices;
 
     private MediaAdapter.OnMediaViewListener onMediaViewListener;
 
     public static StoryViewFragment newInstance(Story story, User user) {
+        return newInstance(story, user, true);
+    }
+
+    public static StoryViewFragment newInstance(Story story, User user, Boolean isLoaded) {
         StoryViewFragment storyViewFragment = new StoryViewFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_STORY, story);
         args.putParcelable(EXTRA_USER, user);
+        args.putBoolean(EXTRA_IS_LOADED, isLoaded);
         storyViewFragment.setArguments(args);
 
         return storyViewFragment;
@@ -86,6 +100,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         && getArguments().containsKey(EXTRA_USER)) {
             story = getArguments().getParcelable(EXTRA_STORY);
             user = getArguments().getParcelable(EXTRA_USER);
+            isLoaded = getArguments().getBoolean(EXTRA_IS_LOADED, true);
         }
     }
 
@@ -100,8 +115,37 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         super.onViewCreated(view, savedInstanceState);
 
         setupObjects();
-        setupView(view);
-        loadData();
+        if(isLoaded) {
+            setupView(view);
+            loadData();
+        } else {
+            loadStoryAndSetupView(view);
+        }
+    }
+
+    private void loadStoryAndSetupView(final View view) {
+        storyServices.loadStory(story, new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+
+                story = dataSnapshot.getValue(Story.class);
+                setupView(view);
+                loadData();
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        cleanNotification();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        cleanNotification();
     }
 
     @Override
@@ -120,6 +164,8 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private void setupObjects() {
         contributionServices = new ContributionServices();
         userServices = new UserServices();
+        storyServices = new StoryServices();
+        user.setKey(UserManager.getUserId());
     }
 
     private void setupView(View view) {
@@ -146,11 +192,10 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         TextView markers = (TextView) view.findViewById(R.id.markers);
         setupMarkers(markers);
 
-        TextView author = (TextView) view.findViewById(R.id.tags);
-        author.setText(story.getUserObject().getNickname());
+        author = (TextView) view.findViewById(R.id.tags);
+        picture = (ImageView) view.findViewById(R.id.picture);
 
-        ImageView picture = (ImageView) view.findViewById(R.id.picture);
-        ImageLoader.loadPersonPictureToImageView(picture, story.getUserObject().getPicture());
+        setupUser();
 
         contributions = (TextView) view.findViewById(R.id.contributors);
         contributions.setText(getContributionsText(story));
@@ -178,6 +223,26 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.share);
         floatingActionButton.setOnClickListener(onShareClickListener);
+    }
+
+    private void setupUser() {
+        if(story.getUserObject() != null) {
+            setupUserView(story.getUserObject());
+        } else {
+            userServices.getUser(story.getUser(), new ValueEventListenerAdapter() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    super.onDataChange(dataSnapshot);
+                    User user = dataSnapshot.getValue(User.class);
+                    setupUserView(user);
+                }
+            });
+        }
+    }
+
+    private void setupUserView(User user) {
+        author.setText(user.getNickname());
+        ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
     }
 
     private void setupMarkers(TextView markers) {
@@ -243,10 +308,23 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
                         StoryViewFragment.this.contribution.setText(null);
                         incrementContributionsText();
                         refreshContribution();
+                        addAuthorToTopic();
+                        sendNotification(contribution);
                     }
                 }
             });
         }
+    }
+
+    private void sendNotification(Contribution contribution) {
+        contribution.setAuthor(user);
+        SendGcmContributionTask sendGcmContributionTask = new SendGcmContributionTask(getActivity(), story);
+        sendGcmContributionTask.execute(contribution);
+    }
+
+    private void addAuthorToTopic() {
+        GcmTopicManager gcmTopicManager = new GcmTopicManager(getActivity());
+        gcmTopicManager.registerToStoryTopic(user, story);
     }
 
     private void incrementContributionsText() {
@@ -349,6 +427,11 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
                 }
             }
         });
+    }
+
+    private void cleanNotification() {
+        CleanContributionNotificationTask cleanContributionNotificationTask = new CleanContributionNotificationTask(getActivity());
+        cleanContributionNotificationTask.execute(story);
     }
 
     private void displayToast(@StringRes int messageId) {

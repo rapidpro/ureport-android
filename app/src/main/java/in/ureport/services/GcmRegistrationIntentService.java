@@ -14,7 +14,9 @@ import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
+import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.network.StoryServices;
 import in.ureport.network.UserServices;
 
 /**
@@ -39,14 +41,14 @@ public class GcmRegistrationIntentService extends IntentService {
             String userKey = UserManager.getUserId();
 
             if(userKey != null) {
-                updateUserInfo(pushIdentity, userKey);
+                registerTopics(pushIdentity, userKey);
             }
         } catch(Exception exception) {
             Log.e(TAG, "onHandleIntent ", exception);
         }
     }
 
-    private void updateUserInfo(final String pushIdentity, String userKey) {
+    private void registerTopics(final String pushIdentity, String userKey) {
         UserServices userServices = new UserServices();
         userServices.updatePushIdentity(userKey, pushIdentity);
         userServices.getUser(userKey, new ValueEventListenerAdapter() {
@@ -54,17 +56,38 @@ public class GcmRegistrationIntentService extends IntentService {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 final User user = dataSnapshot.getValue(User.class);
-                registerTopics(user, pushIdentity);
+                user.setKey(dataSnapshot.getKey());
+
+                registerToChatTopics(user, pushIdentity);
+                registerToStoryTopics(user);
             }
         });
     }
 
-    private void registerTopics(final User user, final String pushIdentity) {
+    private void registerToStoryTopics(final User user) {
+        StoryServices storyServices = new StoryServices();
+        storyServices.loadStoriesForUser(user, new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Story story = snapshot.getValue(Story.class);
+
+                        GcmTopicManager gcmTopicManager = new GcmTopicManager(getApplicationContext());
+                        gcmTopicManager.registerToStoryTopic(user, story);
+                    }
+                }
+            }
+        });
+    }
+
+    private void registerToChatTopics(final User user, final String pushIdentity) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 GcmTopicManager gcmTopicManager = new GcmTopicManager(GcmRegistrationIntentService.this);
-                gcmTopicManager.registerUserTopics(pushIdentity, user);
+                gcmTopicManager.registerToChatRoomTopics(pushIdentity, user);
                 return null;
             }
         }.execute();

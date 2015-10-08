@@ -1,6 +1,9 @@
 package in.ureport.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,11 +22,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -59,6 +60,8 @@ import in.ureport.views.adapters.NotificationAdapter;
  * Created by johncordeiro on 7/13/15.
  */
 public abstract class BaseActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Notification>> {
+
+    public static final String ACTION_RELOAD_NOTIFICATIONS = "in.ureport.ReloadNotifications";
 
     private AppBarLayout appBar;
     private Toolbar toolbar;
@@ -116,6 +119,13 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        registerNotificationListener();
+    }
+
+    private void registerNotificationListener() {
+        IntentFilter intentFilter = new IntentFilter(ACTION_RELOAD_NOTIFICATIONS);
+        registerReceiver(reloadNotificationsReceiver, intentFilter);
     }
 
     private void setupMenuPermissions() {
@@ -365,7 +375,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
         @Override
         public void onNothingSelected(AdapterView<?> adapterView) {}
-
     };
 
     protected void onNotificationsLoaded(List<Notification> notifications) {}
@@ -373,4 +382,11 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     protected List<Notification> getNotificationAlerts() {
         return notificationAlerts;
     }
+
+    private BroadcastReceiver reloadNotificationsReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            loadNotifications();
+        }
+    };
 }
