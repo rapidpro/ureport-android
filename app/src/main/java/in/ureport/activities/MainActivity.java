@@ -16,11 +16,9 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.fragments.ListChatRoomsFragment;
-import in.ureport.fragments.PollQuestionFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.listener.FloatingActionButtonListener;
-import in.ureport.listener.OnSeeLastPollsListener;
 import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.CountryProgramManager;
@@ -41,7 +39,7 @@ import in.ureport.views.adapters.StoriesAdapter;
  * Created by johncordeiro on 7/9/15.
  */
 public class MainActivity extends BaseActivity implements FloatingActionButtonListener
-        , StoriesAdapter.OnPublishStoryListener, OnSeeOpenGroupsListener, OnSeeLastPollsListener, OnUserStartChattingListener {
+        , StoriesAdapter.OnPublishStoryListener, OnSeeOpenGroupsListener, OnUserStartChattingListener {
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     private static final int REQUEST_CODE_CHAT_CREATION = 200;
@@ -214,7 +212,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     private NavigationItem[] getNavigationItems() {
         storiesListFragment = new StoriesListFragment();
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
-        NavigationItem pollsItem = getPollsNavigationItem();
+        NavigationItem pollsItem = new NavigationItem(new PollsFragment(), getString(R.string.main_polls));
 
         NavigationItem [] navigationItems;
         if(UserManager.isUserLoggedIn() && (UserManager.isUserCountryProgramEnabled() || UserManager.isMaster())) {
@@ -240,15 +238,6 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
                 case ACTION_CONTRIBUTION_NOTIFICATION:
                     story = getIntent().getParcelableExtra(EXTRA_STORY);
             }
-        }
-    }
-
-    @NonNull
-    private NavigationItem getPollsNavigationItem() {
-        if(UserManager.isUserCountryProgramEnabled() && CountryProgramManager.allowsPollParticipation()) {
-            return new NavigationItem(new PollQuestionFragment(), getString(R.string.main_polls));
-        } else {
-            return new NavigationItem(new PollsFragment(), getString(R.string.main_polls));
         }
     }
 
@@ -390,12 +379,6 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     public void onSeeOpenGroups() {
         Intent openGroupsIntent = new Intent(this, OpenGroupsActivity.class);
         startActivity(openGroupsIntent);
-    }
-
-    @Override
-    public void onSeeLastPolls() {
-        Intent seeLastPolls = new Intent(this, LastPollsActivity.class);
-        startActivity(seeLastPolls);
     }
 
     @Override

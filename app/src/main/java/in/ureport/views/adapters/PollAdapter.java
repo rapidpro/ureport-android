@@ -1,26 +1,20 @@
 package in.ureport.views.adapters;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.models.Poll;
 import in.ureport.models.PollCategory;
-import in.ureport.models.rapidpro.Message;
 
 /**
  * Created by johncordeiro on 7/16/15.
@@ -34,12 +28,9 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String[] categoryColors;
 
     private Map<PollCategory, Integer> colorMap = new HashMap<>();
-
-    private Message lastMessage;
-
     private PollParticipationListener pollParticipationListener;
 
-    private boolean changed = false;
+    private boolean currentPollEnabled = false;
 
     public PollAdapter(List<Poll> polls, String [] categoryColors) {
         this.polls = polls;
@@ -60,10 +51,6 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch(getItemViewType(position)) {
-            case TYPE_CURRENT_POLL:
-                ((CurrentPollViewHolder)holder).bindView(lastMessage);
-                break;
-            default:
             case TYPE_PAST_POLL:
                 ((PastPollViewHolder)holder).bindView(polls.get(getPollPosition(position)));
         }
@@ -72,39 +59,33 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public long getItemId(int position) {
         if(getItemViewType(position) == TYPE_CURRENT_POLL) {
-            return lastMessage.getKey().hashCode();
+            return R.layout.item_current_poll;
         }
         return polls.get(getPollPosition(position)).hashCode();
     }
 
     private int getPollPosition(int position) {
-        return hasCurrentPoll() ? position-1 : position;
+        return isCurrentPollEnabled() ? position-1 : position;
     }
 
-    private boolean hasCurrentPoll() {
-        return false;
+    private boolean isCurrentPollEnabled() {
+        return currentPollEnabled;
+    }
+
+    public void setCurrentPollEnabled(boolean currentPollEnabled) {
+        this.currentPollEnabled = currentPollEnabled;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return hasCurrentPoll() ? polls.size() + 1 : polls.size();
+        return isCurrentPollEnabled() ? polls.size() + 1 : polls.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(hasCurrentPoll() && position == 0) return TYPE_CURRENT_POLL;
+        if(isCurrentPollEnabled() && position == 0) return TYPE_CURRENT_POLL;
         return TYPE_PAST_POLL;
-    }
-
-    public void setLastMessage(Message lastMessage) {
-        if(!hasCurrentPoll()) {
-            this.lastMessage = lastMessage;
-            notifyDataSetChanged();
-        } else {
-            changed = true;
-            this.lastMessage = lastMessage;
-            notifyItemChanged(0, lastMessage);
-        }
     }
 
     private class PastPollViewHolder extends RecyclerView.ViewHolder {
@@ -162,75 +143,9 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private class CurrentPollViewHolder extends RecyclerView.ViewHolder {
-
-        private final TextView description;
-        private final EditText message;
-
         public CurrentPollViewHolder(View itemView) {
             super(itemView);
-
-            description = (TextView) itemView.findViewById(R.id.description);
-
-            Button send = (Button) itemView.findViewById(R.id.send);
-            send.setOnClickListener(onSendClickListener);
-
-            message = (EditText) itemView.findViewById(R.id.message);
-            message.setOnEditorActionListener(onMessageEditorActionListener);
         }
-
-        private void bindView(Message lastMessage) {
-            description.setText(lastMessage.getText());
-
-            if(changed) {
-                showKeyboard();
-            }
-        }
-
-        private void showKeyboard() {
-            message.requestFocus();
-            message.setError(null);
-
-            InputMethodManager inputMethodManager = (InputMethodManager) itemView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.showSoftInput(message, InputMethodManager.SHOW_IMPLICIT);
-        }
-
-        private View.OnClickListener onSendClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendResponse();
-            }
-        };
-
-        private void sendResponse() {
-            if (isResponseValid() && pollParticipationListener != null) {
-                pollParticipationListener.onPollRespond(message.getText().toString());
-
-                message.setText(null);
-                clearError();
-            }
-        }
-
-        private void clearError() {
-            message.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    message.setError(null);
-                }
-            }, 200);
-        }
-
-        private boolean isResponseValid() {
-            EditTextValidator validator = new EditTextValidator();
-            return validator.validateEmpty(message, itemView.getContext().getString(R.string.error_empty_message));
-        }
-
-        private TextView.OnEditorActionListener onMessageEditorActionListener = new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                sendResponse();
-                return true;
-            }
-        };
     }
 
     public void setPollParticipationListener(PollParticipationListener pollParticipationListener) {
@@ -238,7 +153,6 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public interface PollParticipationListener {
-        void onPollRespond(String message);
         void onSeeResults(Poll poll);
     }
 }

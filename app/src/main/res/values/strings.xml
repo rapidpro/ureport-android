@@ -302,5 +302,7 @@
     <string name="get_started_title">Get started</string>
     <string name="ureport_contribution_notification_title">New contribution to a story</string>
     <string name="title_tutorial">Once you register to become a U-Reporter you can:</string>
+    <string name="message_send_poll">Sending poll response...</string>
+    <string name="message_response_sent">Response sent successfully!</string>
 
 </resources>

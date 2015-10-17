@@ -87,6 +87,12 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(reloadNotificationsReceiver);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         loadNotifications();

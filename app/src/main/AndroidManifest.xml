@@ -47,7 +47,7 @@
         <activity
             android:name=".activities.TutorialActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Fullscreen"/>
+            android:theme="@style/AppTheme.Fullscreen" />
         <activity
             android:name=".activities.ChatActivity"
             android:label="@string/label_chat"
@@ -89,15 +89,6 @@
         <activity
             android:name=".activities.OpenGroupsActivity"
             android:label="@string/label_chat_groups"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
-        </activity>
-        <activity
-            android:name=".activities.LastPollsActivity"
-            android:label="@string/label_last_polls"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait" >
             <meta-data
@@ -169,15 +160,6 @@
         <activity
             android:name=".activities.StatisticsActivity"
             android:label="@string/label_story_view"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
-        </activity>
-        <activity
-            android:name=".activities.AnswerPollActivity"
-            android:label="@string/label_answer_poll"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait" >
             <meta-data
