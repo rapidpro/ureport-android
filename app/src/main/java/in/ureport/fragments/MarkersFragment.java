@@ -8,7 +8,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,8 +17,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.ilhasoft.support.utils.KeyboardHandler;
 import in.ureport.R;
-import in.ureport.helpers.KeyboardHandler;
 import in.ureport.listener.ItemSelectionListener;
 import in.ureport.listener.SelectionResultListener;
 import in.ureport.loader.MarkersLoader;
@@ -127,7 +126,7 @@ public class MarkersFragment extends Fragment implements LoaderManager.LoaderCal
 
     private void hideKeyboard() {
         KeyboardHandler keyboardHandler = new KeyboardHandler();
-        keyboardHandler.showSoftwareKeyboard(getActivity(), false);
+        keyboardHandler.changeKeyboardVisibility(getActivity(), false);
     }
 
     @Override
