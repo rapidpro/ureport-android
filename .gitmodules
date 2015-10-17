@@ -1,0 +1,3 @@
+[submodule "support-android"]
+	path = support-android
+	url = http://github.com/ilhasoft/support-android
