@@ -46,10 +46,6 @@
         Group Information
     </screenName>
 
-    <screenName name="in.ureport.activities.LastPollsActivity">
-        Last Polls Information
-    </screenName>
-
     <screenName name="in.ureport.activities.PollResultsActivity">
         Poll Results
     </screenName>
