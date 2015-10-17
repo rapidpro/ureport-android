@@ -159,13 +159,28 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
     private void loadData() {
         contributionServices.addChildEventListener(story, contributionChildEventListener);
+        loadUserIfNeeded();
+    }
+
+    private void loadUserIfNeeded() {
+        if(user != null) {
+            user.setKey(UserManager.getUserId());
+        } else {
+            userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    super.onDataChange(dataSnapshot);
+                    user = dataSnapshot.getValue(User.class);
+                    user.setKey(dataSnapshot.getKey());
+                }
+            });
+        }
     }
 
     private void setupObjects() {
         contributionServices = new ContributionServices();
         userServices = new UserServices();
         storyServices = new StoryServices();
-        user.setKey(UserManager.getUserId());
     }
 
     private void setupView(View view) {
