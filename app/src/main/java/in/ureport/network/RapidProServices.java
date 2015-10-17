@@ -1,21 +1,19 @@
 package in.ureport.network;
 
-import android.content.Context;
-
-import com.firebase.client.ChildEventListener;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import in.ureport.BuildConfig;
-import in.ureport.helpers.GsonDateDeserializer;
-import in.ureport.managers.CountryProgramManager;
-import in.ureport.managers.FirebaseManager;
-import in.ureport.managers.UserManager;
-import in.ureport.models.CountryProgram;
+import in.ureport.flowrunner.models.FlowDefinition;
+import in.ureport.flowrunner.models.FlowRun;
+import in.ureport.flowrunner.models.FlowStepSet;
+import in.ureport.helpers.GsonDateTypeAdapter;
+import in.ureport.helpers.HashMapTypeAdapter;
 import in.ureport.models.rapidpro.Boundary;
 import in.ureport.models.rapidpro.Contact;
 import in.ureport.models.rapidpro.Field;
@@ -34,9 +32,7 @@ public class RapidProServices {
 
     private final RapidProApi service;
 
-    private static final String path = "rapidpro";
-    private static final String responsePath = "response";
-    private static final String messagePath = "message";
+    private GsonDateTypeAdapter gsonDateTypeAdapter;
 
     public RapidProServices() {
         RestAdapter restAdapter = buildRestAdapter();
@@ -45,7 +41,7 @@ public class RapidProServices {
     }
 
     public Response<Boundary> loadBoundaries(String apiKey, Integer page) {
-        return service.listBoundaries(apiKey, page);
+        return service.listBoundaries(apiKey, page, true);
     }
 
     public List<Field> loadFields(String apiKey) {
@@ -53,9 +49,27 @@ public class RapidProServices {
         return response.getResults();
     }
 
+    public List<FlowRun> loadRuns(String apiKey, String userUuid, Date after) {
+        Response<FlowRun> response = service.listRuns(apiKey, userUuid, gsonDateTypeAdapter.serializeDate(after));
+        return response.getResults();
+    }
+
+    public FlowDefinition loadFlowDefinition(String apiKey, String flowUuid) {
+        return service.loadFlowDefinition(apiKey, flowUuid);
+    }
+
+    public Contact loadContact(String apiKey, String urn) {
+        Response<Contact> response = service.loadContact(apiKey, urn);
+        return response.getCount() > 0 ? response.getResults().get(0) : null;
+    }
+
     public List<Group> loadGroups(String apiKey) {
         Response<Group> response = service.listGroups(apiKey);
         return response.getResults();
+    }
+
+    public void saveFlowStepSet(String apiKey, FlowStepSet flowStepSet) {
+        service.saveFlowStepSet(apiKey, flowStepSet);
     }
 
     public Contact saveContact(String apiKey, Contact contact) {
@@ -63,9 +77,12 @@ public class RapidProServices {
     }
 
     private RestAdapter buildRestAdapter() {
+        gsonDateTypeAdapter = new GsonDateTypeAdapter();
+
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .registerTypeAdapter(Date.class, new GsonDateDeserializer())
+                .registerTypeAdapter(Date.class, gsonDateTypeAdapter)
+                .registerTypeAdapter(HashMap.class, new HashMapTypeAdapter())
                 .create();
 
         return new RestAdapter.Builder()
@@ -74,31 +91,8 @@ public class RapidProServices {
                     .build();
     }
 
-    public void removeLastMessageChildEventListener(ChildEventListener listener) {
-        if(UserManager.getUserId() != null) {
-            FirebaseManager.getReference().child(path).child(messagePath).child(getRapidproUserId())
-                    .removeEventListener(listener);
-        }
-    }
-
-    private String getRapidproUserId() {
-        return UserManager.getUserId().replace(":", "").replace("-", "");
-    }
-
-    public void addLastMessageChildEventListener(ChildEventListener listener) {
-        if(UserManager.getUserId() != null) {
-            FirebaseManager.getReference().child(path).child(messagePath).child(getRapidproUserId()).limitToLast(1)
-                    .addChildEventListener(listener);
-        }
-    }
-
-    public void sendMessage(Context context, String message) {
-        CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
-        String channel = context.getString(countryProgram.getChannel());
-
-        in.ureport.models.rapidpro.Response response = new in.ureport.models.rapidpro.Response(
-                channel, UserManager.getUserId(), message);
-        FirebaseManager.getReference().child(path).child(responsePath).push().setValue(response);
+    private String getRapidproUserId(String userId) {
+        return userId.replace(":", "").replace("-", "");
     }
 
 }

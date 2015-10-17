@@ -13,6 +13,7 @@ public class SystemPreferences extends Preferences {
 
     private enum Fields {
         UserLoggedId,
+        UserLoggedRapidUuid,
         CountryCode,
         TutorialView,
         Moderator,
@@ -21,6 +22,14 @@ public class SystemPreferences extends Preferences {
 
     public SystemPreferences(Context context) {
         super(context, SystemPreferences.class.getName());
+    }
+
+    public void setUserLoggedRapidUuid(String id) {
+        setValue(Fields.UserLoggedRapidUuid, id);
+    }
+
+    public String getUserLoggedRapidUuid() {
+        return getValue(Fields.UserLoggedRapidUuid, USER_NO_LOGGED_ID);
     }
 
     public void setUserLoggedId(String id) {

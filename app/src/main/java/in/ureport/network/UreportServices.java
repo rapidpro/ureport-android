@@ -5,10 +5,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.Date;
-import java.util.List;
 
 import in.ureport.BuildConfig;
-import in.ureport.helpers.GsonDateDeserializer;
+import in.ureport.helpers.GsonDateTypeAdapter;
 import in.ureport.models.News;
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -34,7 +33,7 @@ public class UreportServices {
     private RestAdapter buildRestAdapter() {
         Gson gson = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .registerTypeAdapter(Date.class, new GsonDateDeserializer())
+                .registerTypeAdapter(Date.class, new GsonDateTypeAdapter())
                 .create();
 
         return new RestAdapter.Builder()

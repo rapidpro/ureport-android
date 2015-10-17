@@ -1,5 +1,10 @@
 package in.ureport.network;
 
+import java.util.Map;
+
+import in.ureport.flowrunner.models.FlowDefinition;
+import in.ureport.flowrunner.models.FlowRun;
+import in.ureport.flowrunner.models.FlowStepSet;
 import in.ureport.models.rapidpro.Boundary;
 import in.ureport.models.rapidpro.Contact;
 import in.ureport.models.rapidpro.Field;
@@ -7,8 +12,8 @@ import in.ureport.models.rapidpro.Group;
 import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Header;
+import retrofit.http.Headers;
 import retrofit.http.POST;
-import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
@@ -22,8 +27,23 @@ public interface RapidProApi {
     @GET("/fields.json")
     Response<Field> listFields(@Header("Authorization") String apiKey);
 
-    @GET("/boundaries.json?aliases=true")
-    Response<Boundary> listBoundaries(@Header("Authorization") String apiKey, @Query("page") Integer page);
+    @GET("/boundaries.json")
+    Response<Boundary> listBoundaries(@Header("Authorization") String apiKey
+            , @Query("page") Integer page, @Query("aliases") Boolean aliases);
+
+    @GET("/runs.json")
+    Response<FlowRun> listRuns(@Header("Authorization") String apiKey
+            , @Query("contact") String uuid, @Query("after") String after);
+
+    @GET("/flow_definition.json")
+    FlowDefinition loadFlowDefinition(@Header("Authorization") String apiKey, @Query("uuid") String flowUuid);
+
+    @POST("/steps")
+    @Headers({ "Accept: application/json", "Content-Type: application/json" })
+    Map<String, Object> saveFlowStepSet(@Header("Authorization") String apiKey, @Body FlowStepSet flowStepSet);
+
+    @GET("/contacts.json")
+    Response<Contact> loadContact(@Header("Authorization") String apiKey, @Query("urns") String urn);
 
     @POST("/contacts.json")
     Contact saveContact(@Header("Authorization") String apiKey, @Body Contact contact);
