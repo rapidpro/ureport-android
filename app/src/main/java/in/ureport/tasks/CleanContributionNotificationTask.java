@@ -14,6 +14,8 @@ public class CleanContributionNotificationTask extends NotificationTask<Story, V
 
     private static final String TAG = "CleanContribution";
 
+    private static final String CLEAN_CONTRIBUTION_TYPE = "cleanContributionNotification";
+
     public CleanContributionNotificationTask(Context context) {
         super(context);
     }
@@ -29,6 +31,11 @@ public class CleanContributionNotificationTask extends NotificationTask<Story, V
             Log.e(TAG, "doInBackground ", exception);
         }
         return null;
+    }
+
+    @Override
+    protected String getNotificationType() {
+        return CLEAN_CONTRIBUTION_TYPE;
     }
 
 }

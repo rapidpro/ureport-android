@@ -19,6 +19,7 @@ import in.ureport.models.db.ContributionNotification;
 public class ContributionNotificationTask extends NotificationTask<Contribution, Void, Void> {
 
     private static final String TAG = "ContributionNotif";
+    public static final String NEW_CONTRIBUTION_TYPE = "newContributionNotification";
 
     private Story story;
 
@@ -56,5 +57,10 @@ public class ContributionNotificationTask extends NotificationTask<Contribution,
             contributionNotification.setNickname(author.getNickname());
         }
         return contributionNotification;
+    }
+
+    @Override
+    protected String getNotificationType() {
+        return NEW_CONTRIBUTION_TYPE;
     }
 }

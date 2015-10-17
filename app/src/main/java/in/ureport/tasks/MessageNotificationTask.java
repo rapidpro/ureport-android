@@ -15,9 +15,15 @@ import in.ureport.models.db.MessageNotification;
 public class MessageNotificationTask extends NotificationTask<String, Void, Void> {
 
     private static final String TAG = "MessageNotification";
+    public static final String NEW_MESSAGE_TYPE = "newMessageNotification";
 
     public MessageNotificationTask(Context context) {
         super(context);
+    }
+
+    @Override
+    protected String getNotificationType() {
+        return NEW_MESSAGE_TYPE;
     }
 
     @Override

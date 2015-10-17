@@ -12,8 +12,15 @@ import in.ureport.models.db.MessageNotification;
  */
 public class CleanMessageNotificationTask extends NotificationTask<Void, Void, Void> {
 
+    public static final String CLEAN_MESSAGE_TYPE = "cleanMessageNotification";
+
     public CleanMessageNotificationTask(Context context) {
         super(context);
+    }
+
+    @Override
+    protected String getNotificationType() {
+        return CLEAN_MESSAGE_TYPE;
     }
 
     @Override

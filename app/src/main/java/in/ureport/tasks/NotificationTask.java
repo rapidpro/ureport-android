@@ -11,6 +11,7 @@ import in.ureport.activities.BaseActivity;
  */
 public abstract class NotificationTask<Param, Progress, Result> extends AsyncTask<Param, Progress, Result> {
 
+    public static final String EXTRA_TYPE = "type";
     protected Context context;
 
     public NotificationTask(Context context) {
@@ -20,7 +21,14 @@ public abstract class NotificationTask<Param, Progress, Result> extends AsyncTas
     @Override
     protected void onPostExecute(Result result) {
         super.onPostExecute(result);
+
+        String type = getNotificationType();
+
         Intent reloadNotificationIntent = new Intent(BaseActivity.ACTION_RELOAD_NOTIFICATIONS);
+        if(type != null)
+            reloadNotificationIntent.putExtra(EXTRA_TYPE, type);
         context.sendBroadcast(reloadNotificationIntent);
     }
+
+    protected abstract String getNotificationType();
 }

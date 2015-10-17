@@ -24,6 +24,7 @@ import in.ureport.models.db.ChatNotification;
 public class ChatNotificationTask extends NotificationTask<ChatMessage, Void, Void> {
 
     private static final String TAG = "ChatNotificationTask";
+    public static final String CHAT_NOTIFICATION_TYPE = "chatNotification";
 
     private final ChatRoom chatRoom;
 
@@ -64,5 +65,10 @@ public class ChatNotificationTask extends NotificationTask<ChatMessage, Void, Vo
         }
         return new ChatNotification(chatRoom.getKey(), user.getPicture(), user.getNickname()
                     , chatMessage.getMessage(), new Date());
+    }
+
+    @Override
+    protected String getNotificationType() {
+        return CHAT_NOTIFICATION_TYPE;
     }
 }

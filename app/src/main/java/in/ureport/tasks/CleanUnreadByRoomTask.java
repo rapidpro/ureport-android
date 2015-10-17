@@ -15,9 +15,15 @@ import in.ureport.models.db.ChatNotification;
 public class CleanUnreadByRoomTask extends NotificationTask<ChatRoom, Void, Void> {
 
     private static final String TAG = "CleanUnreadByRoomTask";
+    public static final String CLEAN_UNREAD_TYPE = "cleanUnreadNotification";
 
     public CleanUnreadByRoomTask(Context context) {
         super(context);
+    }
+
+    @Override
+    protected String getNotificationType() {
+        return CLEAN_UNREAD_TYPE;
     }
 
     @Override
