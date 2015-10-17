@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public class Contact {
 
+    private String uuid;
+
     private String name;
 
     private String language;
@@ -22,6 +24,14 @@ public class Contact {
     private Date modified_on;
 
     private String phone;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public String getName() {
         return name;

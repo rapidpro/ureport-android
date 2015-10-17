@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
 
@@ -28,6 +27,7 @@ public class UserManager {
     private static final String TAG = "UserManager";
 
     private static String userId = null;
+    private static String userRapidUuid = null;
     private static String countryCode = null;
     private static Boolean master = false;
     private static Boolean moderator = false;
@@ -39,11 +39,10 @@ public class UserManager {
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         userId = systemPreferences.getUserLoggedId();
+        userRapidUuid = systemPreferences.getUserLoggedRapidUuid();
         countryCode = systemPreferences.getCountryCode();
         master = systemPreferences.isMaster();
         moderator = systemPreferences.isModerator();
-
-        Log.i(TAG, "master? " + master + " or moderator? " + moderator);
 
         CountryProgramManager.switchCountryProgram(UserManager.getCountryCode());
     }
@@ -62,7 +61,7 @@ public class UserManager {
 
         CountryProgramManager.switchCountryProgram(countryCode);
 
-        final SystemPreferences systemPreferences = new SystemPreferences(context);
+        SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setCountryCode(countryCode);
         systemPreferences.setUserLoggedId(userId);
 
@@ -80,8 +79,6 @@ public class UserManager {
 
                 UserManager.master = dataSnapshot.exists();
                 systemPreferences.setMaster(UserManager.master);
-
-                Log.i(TAG, "onDataChange master? " + master);
 
                 if (UserManager.master) {
                     listener.onUserLoaded();
@@ -104,8 +101,6 @@ public class UserManager {
                 UserManager.moderator = dataSnapshot.exists();
                 systemPreferences.setModerator(UserManager.moderator);
 
-                Log.i(TAG, "onDataChange moderator? " + moderator);
-
                 listener.onUserLoaded();
             }
         });
@@ -113,6 +108,17 @@ public class UserManager {
 
     public static String getUserId() {
         return userId;
+    }
+
+    public static void updateUserRapidUuid(String userRapidUuid) {
+        UserManager.userRapidUuid = userRapidUuid;
+
+        SystemPreferences systemPreferences = new SystemPreferences(context);
+        systemPreferences.setUserLoggedRapidUuid(userRapidUuid);
+    }
+
+    public static String getUserRapidUuid() {
+        return userRapidUuid;
     }
 
     public static String getCountryCode() {
@@ -146,6 +152,10 @@ public class UserManager {
         return userId != null && !userId.equals(SystemPreferences.USER_NO_LOGGED_ID);
     }
 
+    public static boolean isUserRapidUuidValid() {
+        return userRapidUuid != null && !userRapidUuid.equals(SystemPreferences.USER_NO_LOGGED_ID);
+    }
+
     public static void leaveFromGroup(final Activity activity, final ChatRoom chatRoom) {
         AlertDialog alertDialog = new AlertDialog.Builder(activity)
                 .setMessage(R.string.chat_group_leave)
@@ -167,12 +177,14 @@ public class UserManager {
 
     public static void logout(Context context) {
         UserManager.userId = null;
+        UserManager.userRapidUuid = null;
         UserManager.countryCode = null;
 
         FirebaseManager.logout();
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
+        systemPreferences.setUserLoggedRapidUuid(SystemPreferences.USER_NO_LOGGED_ID);
         systemPreferences.setCountryCode("");
 
         startLoginFlow(context);

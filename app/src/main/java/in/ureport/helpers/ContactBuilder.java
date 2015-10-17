@@ -27,19 +27,26 @@ public class ContactBuilder {
         this.existingFields = existingFields;
     }
 
+    public ContactBuilder() {
+    }
+
     @NonNull
     private Contact buildContact(User user) {
         ContactGroupsBuilder contactGroupsBuilder = new ContactGroupsBuilder();
         List<String> userGroups = contactGroupsBuilder.getGroupsForUser(user);
 
         List<String> urns = new ArrayList<>();
-        urns.add(String.format(URL_FORMAT, user.getKey()));
+        urns.add(formatUrn(user.getKey()));
 
         Contact contact = new Contact();
         contact.setName(user.getNickname());
         contact.setGroups(userGroups);
         contact.setUrns(urns);
         return contact;
+    }
+
+    public String formatUrn(String key) {
+        return String.format(URL_FORMAT, key.replace(":", "").replace("-", ""));
     }
 
     public Contact buildContactByUser(User user, Locale locale) {
