@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
 
@@ -29,6 +30,7 @@ public class UserManager {
     private static String userId = null;
     private static String userRapidUuid = null;
     private static String countryCode = null;
+    private static String countryToken = null;
     private static Boolean master = false;
     private static Boolean moderator = false;
 
@@ -41,6 +43,7 @@ public class UserManager {
         userId = systemPreferences.getUserLoggedId();
         userRapidUuid = systemPreferences.getUserLoggedRapidUuid();
         countryCode = systemPreferences.getCountryCode();
+        countryToken = systemPreferences.getCountryToken();
         master = systemPreferences.isMaster();
         moderator = systemPreferences.isModerator();
 
@@ -48,6 +51,7 @@ public class UserManager {
     }
 
     public static boolean isUserCountryProgramEnabled() {
+        Log.i(TAG, "isUserCountryProgramEnabled getCountryCode: " + getCountryCode());
         return getCountryCode() != null
             && getCountryCode().equals(CountryProgramManager.getCurrentCountryProgram().getCode());
     }
@@ -56,14 +60,12 @@ public class UserManager {
         final UserServices userServices = new UserServices();
         userServices.keepUserOffline(user);
 
-        UserManager.userId = user.getKey();
         UserManager.countryCode = user.getCountryProgram();
 
         CountryProgramManager.switchCountryProgram(countryCode);
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setCountryCode(countryCode);
-        systemPreferences.setUserLoggedId(userId);
 
         checkUserModeratorPermission(user, listener);
     }
@@ -107,7 +109,8 @@ public class UserManager {
     }
 
     public static String getUserId() {
-        return userId;
+        return FirebaseManager.getReference().getAuth() != null
+            && FirebaseManager.getReference().getAuth().getUid() != null ? FirebaseManager.getReference().getAuth().getUid() : null;
     }
 
     public static void updateUserRapidUuid(String userRapidUuid) {
@@ -119,6 +122,21 @@ public class UserManager {
 
     public static String getUserRapidUuid() {
         return userRapidUuid;
+    }
+
+    public static void updateCountryToken(String countryToken) {
+        UserManager.countryToken = countryToken;
+
+        SystemPreferences systemPreferences = new SystemPreferences(context);
+        systemPreferences.setCountryToken(countryToken != null ? countryToken : "");
+    }
+
+    public static String getCountryToken() {
+        return countryToken;
+    }
+
+    public static boolean isCountryTokenValid() {
+        return countryToken != null && !countryToken.isEmpty();
     }
 
     public static String getCountryCode() {
@@ -148,12 +166,28 @@ public class UserManager {
         return true;
     }
 
-    public static boolean isUserLoggedIn() {
+    public static boolean hasOldVersion() {
+        Log.i(TAG, "hasOldVersion userId: " + userId);
         return userId != null && !userId.equals(SystemPreferences.USER_NO_LOGGED_ID);
+    }
+
+    public static void removeOldVersionFlag(Context context) {
+        UserManager.userId = null;
+
+        SystemPreferences systemPreferences = new SystemPreferences(context);
+        systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
+    }
+
+    public static boolean isUserLoggedIn() {
+        return getUserId() != null;
     }
 
     public static boolean isUserRapidUuidValid() {
         return userRapidUuid != null && !userRapidUuid.equals(SystemPreferences.USER_NO_LOGGED_ID);
+    }
+
+    public static boolean isCountryCodeValid() {
+        return countryCode != null && !countryCode.isEmpty();
     }
 
     public static void leaveFromGroup(final Activity activity, final ChatRoom chatRoom) {
@@ -164,7 +198,7 @@ public class UserManager {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         User user = new User();
-                        user.setKey(userId);
+                        user.setKey(getUserId());
 
                         ChatRoomServices chatRoomServices = new ChatRoomServices();
                         chatRoomServices.removeChatMember(activity, user, chatRoom.getKey());
@@ -179,6 +213,7 @@ public class UserManager {
         UserManager.userId = null;
         UserManager.userRapidUuid = null;
         UserManager.countryCode = null;
+        UserManager.countryToken = null;
 
         FirebaseManager.logout();
 
@@ -186,8 +221,7 @@ public class UserManager {
         systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
         systemPreferences.setUserLoggedRapidUuid(SystemPreferences.USER_NO_LOGGED_ID);
         systemPreferences.setCountryCode("");
-
-        startLoginFlow(context);
+        systemPreferences.setCountryToken("");
     }
 
     public static void startLoginFlow(Context context) {

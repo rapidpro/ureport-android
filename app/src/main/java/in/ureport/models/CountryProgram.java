@@ -20,19 +20,15 @@ public class CountryProgram {
 
     private int organization;
 
-    @StringRes
-    private int apiToken;
-
     private String twitter;
 
     private String group;
 
-    public CountryProgram(String code, @StyleRes int theme, String name, int organization, @StringRes int apiToken, String twitter, String group) {
+    public CountryProgram(String code, @StyleRes int theme, String name, int organization, String twitter, String group) {
         this.code = code;
         this.theme = theme;
         this.name = name;
         this.organization = organization;
-        this.apiToken = apiToken;
         this.twitter = twitter;
         this.group = group;
     }
@@ -69,14 +65,6 @@ public class CountryProgram {
 
     public void setOrganization(int organization) {
         this.organization = organization;
-    }
-
-    public int getApiToken() {
-        return apiToken;
-    }
-
-    public void setApiToken(int apiToken) {
-        this.apiToken = apiToken;
     }
 
     @Override

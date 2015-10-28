@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import in.ureport.managers.CountryProgramManager;
-import in.ureport.models.CountryProgram;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.LocationInfo;
 import in.ureport.models.rapidpro.Boundary;
 import in.ureport.network.GeonamesServices;
+import in.ureport.network.ProxyApi;
+import in.ureport.network.ProxyServices;
 import in.ureport.network.RapidProServices;
 import in.ureport.network.Response;
 
@@ -27,44 +27,39 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
     private static final String TAG = "StatesLoader";
 
     private final Locale locale;
-    private final CountryProgram countryProgram;
 
     public LocationInfoLoader(Context context, Locale locale) {
         super(context);
         this.locale = locale;
-        this.countryProgram = CountryProgramManager.getCountryProgramForCode(locale.getISO3Country());
     }
 
     @Override
     public LocationInfo loadInBackground() {
         try {
-            if(CountryProgramManager.isCountryProgramEnabled(countryProgram)
-            && !countryProgram.getCode().equals(CountryProgramManager.COUNTRY_PROGRAM_GLOBAL_CODE)) {
-                List<Boundary> boundaries = loadBoundariesByRapidPro(countryProgram);
+            ProxyServices proxyServices = new ProxyServices(getContext());
+            ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(locale.getISO3Country());
 
-                if(boundaries.size() > 1) {
-                    return getStatesByRapidproResponse(boundaries);
-                } else {
-                    return new LocationInfo(loadGeonamesStates(), null);
-                }
+            List<Boundary> boundaries = loadBoundariesByRapidPro(response.token);
+            if(boundaries.size() > 1) {
+                return getStatesByRapidproResponse(boundaries);
             } else {
                 return new LocationInfo(loadGeonamesStates(), null);
             }
         } catch(Exception exception) {
             Log.e(TAG, "doInBackground ", exception);
         }
-        return null;
+        return new LocationInfo(loadGeonamesStates(), null);
     }
 
     @NonNull
-    private List<Boundary> loadBoundariesByRapidPro(CountryProgram countryProgram) {
+    private List<Boundary> loadBoundariesByRapidPro(String apiToken) {
         RapidProServices rapidProServices = new RapidProServices();
 
         List<Boundary> boundaries = new ArrayList<>();
         Response<Boundary> response;
         int page = 1;
         do {
-            response = rapidProServices.loadBoundaries(getContext().getString(countryProgram.getApiToken()), page);
+            response = rapidProServices.loadBoundaries(apiToken, page);
             boundaries.addAll(response.getResults());
 
             page++;
@@ -93,14 +88,18 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
     }
 
     private List<Location> loadGeonamesStates() {
-        GeonamesServices services = new GeonamesServices();
-        List<CountryInfo> countryInfos = services.getCountryInfo(locale.getCountry());
+        try {
+            GeonamesServices services = new GeonamesServices();
+            List<CountryInfo> countryInfos = services.getCountryInfo(locale.getCountry());
 
-        if (countryInfos.size() > 0) {
-            CountryInfo countryInfo = countryInfos.get(0);
-            return services.getStates(countryInfo.getGeonameId());
+            if (countryInfos.size() > 0) {
+                CountryInfo countryInfo = countryInfos.get(0);
+                return services.getStates(countryInfo.getGeonameId());
+            }
+        } catch(Exception exception) {
+            Log.e(TAG, "loadGeonamesStates ", exception);
         }
-        return null;
+        return new ArrayList<>();
     }
 
 }
