@@ -319,9 +319,11 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             Intent navigationIntent;
             switch(menuItem.getItemId()) {
                 case R.id.home:
+                    menuItem.setChecked(true);
                     navigationIntent = new Intent(BaseActivity.this, MainActivity.class);
                     break;
                 case R.id.moderation:
+                    menuItem.setChecked(true);
                     navigationIntent = new Intent(BaseActivity.this, ModerationActivity.class);
                     break;
                 case R.id.about:
@@ -339,6 +341,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                     return true;
                 case R.id.logout:
                     UserManager.logout(BaseActivity.this);
+                    UserManager.startLoginFlow(BaseActivity.this);
                     finish();
                     return true;
                 default:
@@ -346,7 +349,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                     return true;
             }
 
-            menuItem.setChecked(true);
             startActivity(navigationIntent);
             finish();
             return true;

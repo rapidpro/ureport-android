@@ -14,23 +14,21 @@
             android:visible="false"/>
     </group>
 
-    <item
-        android:title="@string/main_menu_group_institutional">
-        <menu>
-            <item
-                android:id="@+id/about"
-                android:title="@string/label_about_ureport"/>
-            <item
-                android:id="@+id/makeDonation"
-                android:title="@string/label_donation"
-                android:visible="false"/>
-
-        </menu>
-    </item>
+    <group
+        android:id="@+id/institutional"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/about"
+            android:title="@string/label_about_ureport"/>
+        <item
+            android:id="@+id/makeDonation"
+            android:title="@string/label_donation"
+            android:visible="false"/>
+    </group>
 
     <group
         android:id="@+id/settings"
-        android:checkableBehavior="single">
+        android:checkableBehavior="none">
         <item
             android:id="@+id/changeSettings"
             android:title="@string/label_settings"/>
