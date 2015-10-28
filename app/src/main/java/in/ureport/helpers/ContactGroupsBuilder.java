@@ -19,6 +19,7 @@ public class ContactGroupsBuilder {
     private static final String GROUP_UREPORT_ADULTS = "UReport Adults";
     private static final String GROUP_UREPORT_MALES = "UReport Males";
     private static final String GROUP_UREPORT_FEMALES = "UReport Females";
+    private static final String GROUP_UREPORT_APP = "App U-Reporters";
 
     public List<String> getGroupsForUser(User user) {
         List<String> userGroups = new ArrayList<>();
@@ -26,6 +27,7 @@ public class ContactGroupsBuilder {
         if(countryProgram.getGroup() != null) {
             userGroups.add(countryProgram.getGroup());
         }
+        userGroups.add(GROUP_UREPORT_APP);
         addGenderGroup(user, userGroups);
         addAgeGroup(user, userGroups);
         return userGroups;
