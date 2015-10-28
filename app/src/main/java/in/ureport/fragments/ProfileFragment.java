@@ -162,7 +162,8 @@ public class ProfileFragment extends Fragment {
     };
 
     private void logout() {
-        UserManager.logout(getActivity());
+        UserManager.logout(getContext());
+        UserManager.startLoginFlow(getContext());
         getActivity().finish();
     }
 }

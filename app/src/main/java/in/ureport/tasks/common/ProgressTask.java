@@ -13,6 +13,7 @@ import android.util.Log;
 public abstract class ProgressTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
     private static final String TAG = "ProgressTask";
+    private static final int NO_PROGRESS_TEXT = -1;
 
     protected final Context context;
     private final @StringRes int text;
@@ -24,15 +25,22 @@ public abstract class ProgressTask<Params, Progress, Result> extends AsyncTask<P
         this.text = text;
     }
 
+    public ProgressTask(Context context) {
+        this.context = context;
+        this.text = NO_PROGRESS_TEXT;
+    }
+
     @Override
     protected void onPreExecute() {
-        progressDialog = ProgressDialog.show(context, null
+        if(showProgress())
+            progressDialog = ProgressDialog.show(context, null
                 , context.getString(text), true, false);
     }
 
     @Override
     protected void onPostExecute(Result result) {
-        progressDialog.dismiss();
+        if(showProgress())
+            progressDialog.dismiss();
     }
 
     protected void setException(final Exception exception) {
@@ -54,5 +62,13 @@ public abstract class ProgressTask<Params, Progress, Result> extends AsyncTask<P
 
     public void onTaskException(Exception exception) {
         Log.e(TAG, "An exception occurred during the task progress ", exception);
+    }
+
+    private boolean showProgress() {
+        return this.text != NO_PROGRESS_TEXT;
+    }
+
+    public Context getContext() {
+        return context;
     }
 }

@@ -19,7 +19,7 @@ import in.ureport.models.rapidpro.Field;
  */
 public class ContactBuilder {
 
-    private static final String URL_FORMAT = "tel:%1$s";
+    private static final String URL_FORMAT = "ext:%1$s";
 
     private List<Field> existingFields;
 
@@ -31,7 +31,7 @@ public class ContactBuilder {
     }
 
     @NonNull
-    private Contact buildContact(User user) {
+    public Contact buildContactWithoutFields(User user) {
         ContactGroupsBuilder contactGroupsBuilder = new ContactGroupsBuilder();
         List<String> userGroups = contactGroupsBuilder.getGroupsForUser(user);
 
@@ -49,8 +49,8 @@ public class ContactBuilder {
         return String.format(URL_FORMAT, key.replace(":", "").replace("-", ""));
     }
 
-    public Contact buildContactByUser(User user, Locale locale) {
-        Contact contact = buildContact(user);
+    public Contact buildContactWithFields(User user, Locale locale) {
+        Contact contact = buildContactWithoutFields(user);
         Map<String, Object> contactFields = new HashMap<>();
 
         putValuesIfExists(user.getEmail(), contactFields, "email", "e_mail");

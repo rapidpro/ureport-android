@@ -190,7 +190,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
             @Override
             public void onAuthenticated(AuthData authData) {
                 dismissDialog();
-                saveUreportContact(user);
+                storeUserAndFinish(user);
             }
 
             @Override
@@ -199,21 +199,6 @@ public class SignUpFragment extends UserInfoBaseFragment {
                 Toast.makeText(getActivity(), R.string.error_valid_email, Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private void saveUreportContact(final User user) {
-        SaveContactTask saveContactTask = new SaveContactTask(getActivity(), getUserLocale().getLocale()) {
-            @Override
-            protected void onPostExecute(Contact contact) {
-                super.onPostExecute(contact);
-                if(contact != null) {
-                    storeUserAndFinish(user);
-                } else {
-                    Toast.makeText(getActivity(), R.string.error_rapidpro, Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-        saveContactTask.execute(user);
     }
 
     private void storeUserAndFinish(final User user) {

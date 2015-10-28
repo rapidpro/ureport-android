@@ -55,7 +55,9 @@ public class RapidProServices {
     }
 
     public FlowDefinition loadFlowDefinition(String apiKey, String flowUuid) {
-        return service.loadFlowDefinition(apiKey, flowUuid);
+        FlowDefinition flowDefinition = service.loadFlowDefinition(apiKey, flowUuid);
+        flowDefinition.getMetadata().setUuid(flowUuid);
+        return flowDefinition;
     }
 
     public Contact loadContact(String apiKey, String urn) {

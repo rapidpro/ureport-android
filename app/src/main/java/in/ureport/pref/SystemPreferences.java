@@ -15,6 +15,7 @@ public class SystemPreferences extends Preferences {
         UserLoggedId,
         UserLoggedRapidUuid,
         CountryCode,
+        CountryToken,
         TutorialView,
         Moderator,
         Master
@@ -46,6 +47,14 @@ public class SystemPreferences extends Preferences {
 
     public String getCountryCode() {
         return getValue(Fields.CountryCode, "");
+    }
+
+    public void setCountryToken(String countryCode) {
+        setValue(Fields.CountryToken, countryCode);
+    }
+
+    public String getCountryToken() {
+        return getValue(Fields.CountryToken, "");
     }
 
     public void setTutorialView(boolean tutorialView) {

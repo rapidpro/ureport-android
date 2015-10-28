@@ -20,13 +20,17 @@ import in.ureport.listener.OnUserLoadedListener;
 
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
+import in.ureport.models.rapidpro.Contact;
 import in.ureport.network.UserServices;
 import in.ureport.services.GcmRegistrationIntentService;
+import in.ureport.tasks.SaveContactTask;
 
 /**
  * Created by johncordeiro on 7/7/15.
  */
 public class LoginActivity extends AppCompatActivity implements LoginFragment.LoginListener {
+
+    private static final String TAG = "LoginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +40,16 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         if(savedInstanceState == null) {
             addLoginFragment();
         }
-        checkUserLoggedAndProceed();
+        checkVersionAndProceed();
+    }
+
+    private void checkVersionAndProceed() {
+        if(UserManager.hasOldVersion()) {
+            UserManager.removeOldVersionFlag(this);
+            UserManager.logout(this);
+        } else {
+            checkUserLoggedAndProceed();
+        }
     }
 
     @Override
@@ -47,7 +60,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     private void checkUserLoggedAndProceed() {
-        if(UserManager.isUserLoggedIn()) {
+        if(UserManager.isUserLoggedIn() && UserManager.isCountryCodeValid()) {
             startMainActivity();
         }
     }
@@ -107,6 +120,21 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         final ProgressDialog progressDialog = ProgressDialog.show(this, null
                 , getString(R.string.load_message_wait), true, false);
 
+        saveContactOnRapidPro(user, progressDialog);
+    }
+
+    private void saveContactOnRapidPro(final User user, final ProgressDialog progressDialog) {
+        SaveContactTask saveContactTask = new SaveContactTask(this) {
+            @Override
+            protected void onPostExecute(Contact contact) {
+                super.onPostExecute(contact);
+                updateUserAndDismiss(user, progressDialog);
+            }
+        };
+        saveContactTask.execute(user);
+    }
+
+    private void updateUserAndDismiss(User user, final ProgressDialog progressDialog) {
         UserManager.updateUserInfo(user, new OnUserLoadedListener() {
             @Override
             public void onUserLoaded() {
@@ -115,6 +143,10 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
             }
         });
 
+        createGcmInstanceId();
+    }
+
+    private void createGcmInstanceId() {
         Intent gcmRegisterIntent = new Intent(this, GcmRegistrationIntentService.class);
         startService(gcmRegisterIntent);
     }
