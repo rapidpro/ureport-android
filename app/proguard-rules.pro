@@ -33,8 +33,12 @@
 #Remove Log
 -assumenosideeffects class android.util.Log { *; }
 
+#Android
+-keep class android.support.v7.widget.LinearLayoutManager { *; }
+
 # support design
 -dontwarn android.support.design.**
+-keep class android.support.design.internal.** { *; }
 -keep class android.support.design.** { *; }
 -keep interface android.support.design.** { *; }
 -keep public class android.support.design.R$* { *; }
@@ -89,6 +93,7 @@
 
 -keep class sun.misc.Unsafe { *; }
 -keep class in.ureport.models.** { *; }
+-keep class in.ureport.flowrunner.models.** { *; }
 -keep class in.ureport.network.** { *; }
 
 #Gson
