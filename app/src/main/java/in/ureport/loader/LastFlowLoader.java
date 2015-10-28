@@ -13,9 +13,10 @@ import in.ureport.flowrunner.managers.FlowRunnerManager;
 import in.ureport.flowrunner.models.FlowDefinition;
 import in.ureport.flowrunner.models.FlowRun;
 import in.ureport.helpers.ContactBuilder;
-import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.rapidpro.Contact;
+import in.ureport.network.ProxyApi;
+import in.ureport.network.ProxyServices;
 import in.ureport.network.RapidProServices;
 
 /**
@@ -37,7 +38,9 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
     @Override
     public FlowDefinition loadInBackground() {
         try {
+            loadCountryTokenIfNeeded();
             loadUserUuidIfNeeded();
+
             List<FlowRun> flowRuns = rapidProServices.loadRuns(getApiToken(), UserManager.getUserRapidUuid(), getMinimumDate());
 
             FlowRun lastFlowRun = flowRuns.get(0);
@@ -48,6 +51,14 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
             Log.e(TAG, "loadInBackground ", exception);
         }
         return null;
+    }
+
+    private void loadCountryTokenIfNeeded() {
+        if(!UserManager.isCountryTokenValid()) {
+            ProxyServices proxyServices = new ProxyServices(getContext());
+            ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(UserManager.getCountryCode());
+            UserManager.updateCountryToken(response.token);
+        }
     }
 
     @NonNull
@@ -68,7 +79,7 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
 
     @NonNull
     private String getApiToken() {
-        return getContext().getString(CountryProgramManager.getCurrentCountryProgram().getApiToken());
+        return UserManager.getCountryToken();
     }
 
 }

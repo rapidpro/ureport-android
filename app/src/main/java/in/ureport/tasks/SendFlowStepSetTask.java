@@ -5,8 +5,7 @@ import android.util.Log;
 
 import in.ureport.R;
 import in.ureport.flowrunner.models.FlowStepSet;
-import in.ureport.managers.CountryProgramManager;
-import in.ureport.models.CountryProgram;
+import in.ureport.managers.UserManager;
 import in.ureport.network.RapidProServices;
 import in.ureport.tasks.common.ProgressTask;
 
@@ -24,13 +23,10 @@ public class SendFlowStepSetTask extends ProgressTask<FlowStepSet, Void, Boolean
     @Override
     protected Boolean doInBackground(FlowStepSet... params) {
         try {
-            CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
-
             FlowStepSet flowStepSet = params[0];
 
             RapidProServices services = new RapidProServices();
-            services.saveFlowStepSet(context.getString(countryProgram.getApiToken()), flowStepSet);
-
+            services.saveFlowStepSet(UserManager.getCountryToken(), flowStepSet);
             return true;
         } catch(Exception exception) {
             Log.e(TAG, "instance initializer ", exception);
