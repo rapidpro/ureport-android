@@ -7,12 +7,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Callback;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.helpers.YoutubePlayer;
 import in.ureport.models.Media;
 import in.ureport.views.widgets.TouchImageView;
 
@@ -26,6 +27,7 @@ public class MediaFragment extends Fragment {
 
     private MediaViewFragment.OnCloseMediaViewListener onCloseMediaViewListener;
     private TouchImageView image;
+    private TextView videoPlay;
 
     public static MediaFragment newInstance(Media media) {
         Bundle args = new Bundle();
@@ -68,6 +70,17 @@ public class MediaFragment extends Fragment {
     private void setupView(View view) {
         image = (TouchImageView) view.findViewById(R.id.image);
         ImageLoader.loadPictureToImageView(image, media, onImageLoadedCallback);
+
+        videoPlay = (TextView) view.findViewById(R.id.videoPlay);
+        bindVideo();
+    }
+
+    private void bindVideo() {
+        if(media != null && media.getType() == Media.Type.Video) {
+            image.setEnabled(false);
+            videoPlay.setVisibility(View.VISIBLE);
+            videoPlay.setOnClickListener(onVideoPlayClickListener);
+        }
     }
 
     @Override
@@ -86,5 +99,13 @@ public class MediaFragment extends Fragment {
 
         @Override
         public void onError() {}
+    };
+
+    private View.OnClickListener onVideoPlayClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            YoutubePlayer youtubePlayer = new YoutubePlayer(getActivity());
+            youtubePlayer.playVideoMedia(media);
+        }
     };
 }

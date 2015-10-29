@@ -20,15 +20,30 @@
         android:layout_marginBottom="3dp"
         android:elevation="@dimen/chat_message_elevation">
 
-        <ImageView
-            android:id="@+id/media"
-            android:layout_width="250dp"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
-            android:transitionName="@string/transition_media"
-            android:background="@drawable/shape_media"
-            tools:visibility="visible"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/media"
+                android:layout_width="250dp"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                android:transitionName="@string/transition_media"
+                android:background="@drawable/shape_media"
+                tools:visibility="visible"/>
+
+            <ImageView
+                android:id="@+id/videoPlay"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play_48dp"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/message"

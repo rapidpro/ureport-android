@@ -26,15 +26,30 @@
         tools:visibility="visible"
         tools:text="steve"/>
 
-    <ImageView
-        android:id="@+id/media"
-        android:layout_width="250dp"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:visibility="gone"
-        android:transitionName="@string/transition_media"
-        tools:visibility="visible"
-        tools:src="@drawable/tutorial_item1"/>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/media"
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:transitionName="@string/transition_media"
+            tools:visibility="visible"
+            tools:src="@drawable/tutorial_item1"/>
+
+        <ImageView
+            android:id="@+id/videoPlay"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_play_48dp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/message"

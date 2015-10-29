@@ -124,12 +124,14 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         private final View cover;
         private final View coverUnselected;
+        private final ImageView videoPlay;
 
         public MediaViewHolder(View itemView) {
             super(itemView);
             image = (ImageView) itemView.findViewById(R.id.image);
             cover = itemView.findViewById(R.id.cover);
             coverUnselected = itemView.findViewById(R.id.coverUnselected);
+            videoPlay = (ImageView) itemView.findViewById(R.id.videoPlay);
 
             Button remove = (Button) itemView.findViewById(R.id.remove);
             remove.setVisibility(editMode ? View.VISIBLE : View.GONE);
@@ -139,12 +141,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         private void bindView(Media media) {
             bindCoverSelection(media);
-
-            if (media.getType() == Media.Type.Video) {
-                image.setImageResource(R.drawable.ic_video_grey600_36dp);
-            } else {
-                bindImage(media);
-            }
+            bindImage(media);
         }
 
         private void bindCoverSelection(Media media) {
@@ -154,6 +151,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             } else {
                 coverUnselected.setVisibility(View.GONE);
                 cover.setVisibility(View.GONE);
+                videoPlay.setVisibility(media.getType() == Media.Type.Video ? View.VISIBLE : View.GONE);
             }
         }
 

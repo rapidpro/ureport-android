@@ -24,7 +24,8 @@ public class MediaViewAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position < getCount()-1) {
-            return MediaFragment.newInstance(medias.get(position));
+            Media media = medias.get(position);
+            return MediaFragment.newInstance(media);
         }
         return new MediaFragment();
     }

@@ -6,13 +6,11 @@ import android.os.Parcelable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
-import java.util.Date;
-
 /**
  * Created by johncordeiro on 19/07/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class ChatRoom implements Parcelable {
+public class ChatRoom implements Parcelable {
 
     public enum Type {
         Individual,
@@ -50,26 +48,7 @@ public abstract class ChatRoom implements Parcelable {
         this.unreadMessages = unreadMessages;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.key);
-        dest.writeValue(this.unreadMessages);
-        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
-    }
-
     public ChatRoom() {
-    }
-
-    protected ChatRoom(Parcel in) {
-        this.key = in.readString();
-        this.unreadMessages = (Integer) in.readValue(Integer.class.getClassLoader());
-        int tmpType = in.readInt();
-        this.type = tmpType == -1 ? null : ChatRoom.Type.values()[tmpType];
     }
 
     @Override
@@ -94,4 +73,34 @@ public abstract class ChatRoom implements Parcelable {
                 ", type=" + type +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.key);
+        dest.writeValue(this.unreadMessages);
+        dest.writeInt(this.type == null ? -1 : this.type.ordinal());
+    }
+
+    protected ChatRoom(Parcel in) {
+        this.key = in.readString();
+        this.unreadMessages = (Integer) in.readValue(Integer.class.getClassLoader());
+        int tmpType = in.readInt();
+        this.type = tmpType == -1 ? null : ChatRoom.Type.values()[tmpType];
+    }
+
+    public static final Creator<ChatRoom> CREATOR = new Creator<ChatRoom>() {
+        public ChatRoom createFromParcel(Parcel source) {
+            return new ChatRoom(source);
+        }
+
+        public ChatRoom[] newArray(int size) {
+            return new ChatRoom[size];
+        }
+    };
 }

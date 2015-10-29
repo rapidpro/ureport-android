@@ -1,5 +1,7 @@
 package in.ureport.views.adapters;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,13 +9,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.helpers.YoutubePlayer;
 import in.ureport.models.ChatMessage;
+import in.ureport.models.Media;
 import in.ureport.models.User;
 
 /**
@@ -97,26 +103,37 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class ViewHolder extends RecyclerView.ViewHolder {
 
+        private ChatMessage chatMessage;
+
         private final TextView message;
         private final TextView date;
         private final TextView name;
         private final ImageView media;
+        private final ImageView videoPlay;
 
-        public ViewHolder(View itemView) {
+        private final YoutubePlayer youtubePlayer;
+
+        public ViewHolder(final View itemView) {
             super(itemView);
+            youtubePlayer = new YoutubePlayer((Activity)itemView.getContext());
 
             message = (TextView) itemView.findViewById(R.id.message);
             date = (TextView) itemView.findViewById(R.id.date);
             name = (TextView) itemView.findViewById(R.id.name);
             media = (ImageView) itemView.findViewById(R.id.media);
-            media.setOnClickListener(onMediaClickListener);
+            videoPlay = (ImageView) itemView.findViewById(R.id.videoPlay);
         }
 
         private void bindView(ChatMessage chatMessage) {
+            this.chatMessage = chatMessage;
+
             bindMessage(chatMessage);
             date.setText(hourFormatter.format(chatMessage.getDate()));
             bindName(chatMessage);
+            bindLongClick();
+        }
 
+        private void bindLongClick() {
             if(getItemViewType() == TYPE_OTHER) {
                 itemView.setOnLongClickListener(null);
                 media.setOnLongClickListener(null);
@@ -134,7 +151,18 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             } else if(chatMessage.getMedia() != null) {
                 message.setVisibility(View.GONE);
                 media.setVisibility(View.VISIBLE);
+                bindMediaType(chatMessage);
                 ImageLoader.loadGenericPictureToImageView(media, chatMessage.getMedia());
+            }
+        }
+
+        private void bindMediaType(ChatMessage chatMessage) {
+            if(chatMessage.getMedia().getType() == Media.Type.Picture) {
+                videoPlay.setVisibility(View.GONE);
+                media.setOnClickListener(onMediaClickListener);
+            } else {
+                videoPlay.setVisibility(View.VISIBLE);
+                media.setOnClickListener(onVideoMediaClickListener);
             }
         }
 
@@ -161,6 +189,13 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 if(onChatMessageSelectedListener != null) {
                     onChatMessageSelectedListener.onMediaChatMessageView(chatMessages.get(getLayoutPosition()), (ImageView)view);
                 }
+            }
+        };
+
+        private View.OnClickListener onVideoMediaClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                youtubePlayer.playVideoMedia(chatMessage.getMedia());
             }
         };
     }

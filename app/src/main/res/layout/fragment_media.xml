@@ -14,4 +14,20 @@
         android:transitionName="@string/transition_media"
         tools:layout_height="200dp" />
 
+    <TextView
+        android:id="@+id/videoPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/ic_play_48dp"
+        android:layout_gravity="center"
+        android:drawablePadding="5dp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:text="@string/title_click_to_play"
+        android:visibility="gone"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        tools:visibility="visible"/>
+
 </FrameLayout>

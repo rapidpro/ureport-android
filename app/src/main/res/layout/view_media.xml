@@ -18,6 +18,15 @@
             android:scaleType="centerCrop"
             android:src="@drawable/ic_camera_grey600_36dp" />
 
+        <ImageView
+            android:id="@+id/videoPlay"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_play_48dp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
     </FrameLayout>
 
     <TextView

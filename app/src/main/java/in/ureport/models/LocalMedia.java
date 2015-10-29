@@ -35,6 +35,10 @@ public class LocalMedia extends Media {
     public LocalMedia() {
     }
 
+    public LocalMedia(Uri path) {
+        this.path = path;
+    }
+
     protected LocalMedia(Parcel in) {
         super(in);
         this.path = in.readParcelable(Uri.class.getClassLoader());

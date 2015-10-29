@@ -49,6 +49,29 @@ public class Media implements Parcelable {
         this.type = type;
     }
 
+    public Media() {
+    }
+
+    public Media(String id, String url, Type type) {
+        this.id = id;
+        this.url = url;
+        this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Media media = (Media) o;
+        return id != null ? id.equals(media.id) : super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : super.hashCode();
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -59,15 +82,6 @@ public class Media implements Parcelable {
         dest.writeString(this.id);
         dest.writeString(this.url);
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
-    }
-
-    public Media() {
-    }
-
-    public Media(String id, String url, Type type) {
-        this.id = id;
-        this.url = url;
-        this.type = type;
     }
 
     protected Media(Parcel in) {
@@ -86,19 +100,4 @@ public class Media implements Parcelable {
             return new Media[size];
         }
     };
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Media media = (Media) o;
-        return id != null ? id.equals(media.id) : super.equals(o);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : super.hashCode();
-    }
 }

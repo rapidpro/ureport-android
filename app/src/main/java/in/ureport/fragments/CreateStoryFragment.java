@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +25,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,10 +32,10 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
-import in.ureport.helpers.ImagePicker;
 import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.listener.OnMediaSelectedListener;
+import in.ureport.helpers.YoutubePicker;
+import in.ureport.helpers.YoutubeThumbnailHandler;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
@@ -46,6 +44,7 @@ import in.ureport.models.Marker;
 import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.models.VideoMedia;
 import in.ureport.network.StoryServices;
 import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.network.UserServices;
@@ -54,7 +53,8 @@ import in.ureport.views.adapters.MediaAdapter;
 /**
  * Created by johncordeiro on 7/14/15.
  */
-public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaListener {
+public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaListener
+        , YoutubePicker.OnPickVideoListener {
 
     private static final String TAG = "CreateStoryFragment";
     public static final int MEDIA_GAP = 5;
@@ -70,8 +70,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     private StoryCreationListener storyCreationListener;
 
-    private ImagePicker imagePicker;
-    private File imageFromCamera;
+    private MediaSelector mediaSelector;
+    private YoutubeThumbnailHandler youtubeThumbnailHandler;
 
     @Nullable
     @Override
@@ -94,41 +94,24 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK) {
-            switch(requestCode) {
-                case ImagePicker.REQUEST_PICK_FROM_GALLERY:
-                    saveChoosenPicture(data);
-                    break;
-                case ImagePicker.REQUEST_IMAGE_CAPTURE:
-                    saveTakenPicture();
-            }
-        }
-    }
-
-    private void saveTakenPicture() {
-        if(imageFromCamera != null) {
-            addLocalMedia(Uri.fromFile(imageFromCamera));
-        } else {
-            showTakenPictureError();
-        }
-    }
-
-    private void saveChoosenPicture(Intent data) {
-        Uri pictureUri = data.getData();
-        if(pictureUri != null)
-            addLocalMedia(pictureUri);
+        mediaSelector.onActivityResult(this, onLoadLocalMediaListener, requestCode, resultCode, data);
     }
 
     private void addLocalMedia(Uri pictureUri) {
         LocalMedia media = new LocalMedia();
         media.setPath(pictureUri);
+        addMedia(media);
+    }
+
+    private void addMedia(Media media) {
         mediaList.add(media);
         mediaAdapter.updateMediaList(mediaList);
     }
 
     private void setupObjects() {
         mediaList = new ArrayList<>();
-        imagePicker = new ImagePicker();
+        mediaSelector = new MediaSelector(getContext());
+        youtubeThumbnailHandler = new YoutubeThumbnailHandler();
     }
 
     private void setupView(View view) {
@@ -191,12 +174,25 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     private void publishStory() {
         if(isFieldsValid()) {
-            if(mediaList.size() > 0) {
+            List<Media> mediasToUpload = getMediasToUpload();
+
+            if(mediasToUpload.size() > 0) {
                 uploadMediasAndCreateStory();
             } else {
-                createStoryWithMediasAndSave(null);
+                createStoryWithMediasAndSave(mediaList);
             }
         }
+    }
+
+    @NonNull
+    private List<Media> getMediasToUpload() {
+        List<Media> mediasToUpload = new ArrayList<>();
+        for (Media media : mediaList) {
+            if(media instanceof LocalMedia) {
+                mediasToUpload.add(media);
+            }
+        }
+        return mediasToUpload;
     }
 
     private void uploadMediasAndCreateStory() {
@@ -228,7 +224,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         story.setContributions(0);
         story.setContent(content.getText().toString());
         story.setCreatedDate(new Date());
-        story.setMedias(medias);
+        story.setMedias(medias.size() > 0 ? medias : null);
         story.setCover(getCoverFromMediasUploaded(medias));
 
         String markersText = markers.getText().toString();
@@ -312,8 +308,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public void onMediaAddListener() {
-        MediaSelector mediaSelector = new MediaSelector(getActivity());
-        mediaSelector.selectMedia(onMediaSelectedListener);
+        mediaSelector.selectMedia(this);
     }
 
     private View.OnClickListener onMarkerClickListener = new View.OnClickListener() {
@@ -324,31 +319,26 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         }
     };
 
-    private OnMediaSelectedListener onMediaSelectedListener = new OnMediaSelectedListener() {
+    private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
         @Override
-        public void onMediaSelected(int position) {
-            switch (position) {
-                case MediaSelector.POSITION_GALLERY:
-                    imagePicker.pickImageFromGallery(CreateStoryFragment.this);
-                    break;
-                case MediaSelector.POSITION_CAMERA:
-                    pickFromCamera();
-                    break;
-            }
+        public void onLoadLocalMedia(Uri uri) {
+            addLocalMedia(uri);
         }
     };
 
-    private void pickFromCamera() {
-        try {
-            imageFromCamera = imagePicker.pickImageFromCamera(CreateStoryFragment.this);
-        } catch(Exception exception) {
-            showTakenPictureError();
-            Log.e(TAG, "onClick ", exception);
-        }
+    @Override
+    public void onPickVideo(String videoId, String videoUrl) {
+        addVideoMedia(videoId, videoUrl);
     }
 
-    private void showTakenPictureError() {
-        Toast.makeText(getActivity(), R.string.error_take_picture, Toast.LENGTH_SHORT).show();
+    private void addVideoMedia(String videoId, String videoUrl) {
+        VideoMedia videoMedia = new VideoMedia();
+        videoMedia.setId(videoId);
+        videoMedia.setPath(videoUrl);
+        videoMedia.setUrl(youtubeThumbnailHandler.getThumbnailUrlFromVideo(videoId
+                , YoutubeThumbnailHandler.ThumbnailSizeClass.HighQuality));
+
+        addMedia(videoMedia);
     }
 
     public interface StoryCreationListener {

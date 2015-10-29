@@ -66,7 +66,10 @@ public class TransferManager {
         final List<Media> mediasUploaded = new ArrayList<>();
 
         for (Media media : medias) {
-            if(!(media instanceof LocalMedia)) continue;
+            if(!(media instanceof LocalMedia)) {
+                mediasUploaded.add(media);
+                continue;
+            }
 
             final LocalMedia localMedia = (LocalMedia) media;
             transferFile(localMedia.getPath(), parent, new TransferListenerAdapter() {
