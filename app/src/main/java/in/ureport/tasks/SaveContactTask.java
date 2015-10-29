@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import in.ureport.R;
+import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ContactBuilder;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
@@ -55,6 +56,7 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
                 try {
                     return rapidProServices.saveContact(countryToken, contact);
                 } catch (RetrofitError exception) {
+                    AnalyticsHelper.sendException(exception);
                     Log.e(TAG, "doInBackground ", exception);
                 }
                 return rapidProServices.saveContact(countryToken, contact);
@@ -63,6 +65,7 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
                 return contactBuilder.buildContactWithoutFields(user);
             }
         } catch (Exception exception) {
+            AnalyticsHelper.sendException(exception);
             Log.e(TAG, "doInBackground ", exception);
         }
         return null;
