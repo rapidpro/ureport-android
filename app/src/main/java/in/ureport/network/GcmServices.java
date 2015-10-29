@@ -24,12 +24,15 @@ public class GcmServices {
 
     private static final String ENDPOINT = "https://gcm-http.googleapis.com";
     public static final String DATE_STYLE = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    public static final String GCM_AUTHORIZATION = "key=%1$s";
 
     private final GcmApi gcmApi;
+    private final String gcmKey;
     private Context context;
 
     public GcmServices(Context context) {
         this.context = context;
+        this.gcmKey = String.format(GCM_AUTHORIZATION, context.getString(R.string.gcm_api_key));
 
         RestAdapter restAdapter = buildRestAdapter();
         if(BuildConfig.DEBUG)
@@ -45,7 +48,7 @@ public class GcmServices {
         GcmApi.Input<ChatMessageHolder> chatMessageHolderInput = new GcmApi.Input<>(
                 GcmTopicManager.CHAT_TOPICS_PATH + chatRoom.getKey(), chatMessageHolder);
 
-        return gcmApi.sendData(context.getString(R.string.gcm_api_key), chatMessageHolderInput);
+        return gcmApi.sendData(gcmKey, chatMessageHolderInput);
     }
 
     public GcmApi.Response sendContribution(Story story, Contribution contribution) {
@@ -54,7 +57,7 @@ public class GcmServices {
         GcmApi.Input<ContributionHolder> contributionData = new GcmApi.Input<>(
                 GcmTopicManager.STORY_TOPICS_PATH + story.getKey(), contributionHolder);
 
-        return gcmApi.sendData(context.getString(R.string.gcm_api_key), contributionData);
+        return gcmApi.sendData(gcmKey, contributionData);
     }
 
     private RestAdapter buildRestAdapter() {
