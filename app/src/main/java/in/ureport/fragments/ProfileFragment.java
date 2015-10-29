@@ -1,28 +1,42 @@
 package in.ureport.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 
 import in.ureport.R;
 import in.ureport.activities.ProfileActivity;
+import in.ureport.helpers.MediaSelector;
+import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.listener.OnEditProfileListener;
+import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
+import in.ureport.models.LocalMedia;
+import in.ureport.models.Media;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.network.UserServices;
@@ -32,6 +46,8 @@ import in.ureport.views.adapters.NavigationAdapter;
  * Created by johncordeiro on 18/07/15.
  */
 public class ProfileFragment extends Fragment {
+
+    private static final String TAG = "ProfileFragment";
 
     private static final String EXTRA_USER = "user";
     private static final int RANKING_POSITION = 1;
@@ -46,6 +62,9 @@ public class ProfileFragment extends Fragment {
     private User user;
 
     private OnEditProfileListener onEditProfileListener;
+
+    private MediaSelector mediaSelector;
+    private UserServices userServices;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,8 +84,14 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupObjects();
         setupView(view);
         loadUser();
+    }
+
+    private void setupObjects() {
+        userServices = new UserServices();
+        mediaSelector = new MediaSelector(getContext());
     }
 
     @Override
@@ -75,6 +100,12 @@ public class ProfileFragment extends Fragment {
         if(context instanceof OnEditProfileListener) {
             onEditProfileListener = (OnEditProfileListener) context;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mediaSelector.onActivityResult(this, onLoadLocalMediaListener, requestCode, resultCode, data);
     }
 
     public void loadUser() {
@@ -98,6 +129,7 @@ public class ProfileFragment extends Fragment {
 
         name = (TextView)view.findViewById(R.id.name);
         picture = (ImageView)view.findViewById(R.id.picture);
+        picture.setOnClickListener(onPictureClickListener);
 
         points = (TextView) view.findViewById(R.id.points);
         stories = (TextView) view.findViewById(R.id.stories);
@@ -160,6 +192,80 @@ public class ProfileFragment extends Fragment {
             }
         }
     };
+
+    private View.OnClickListener onPictureClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                    .setMessage(R.string.message_question_profile_picture)
+                    .setNegativeButton(R.string.cancel_dialog_button, null)
+                    .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mediaSelector.selectImage(ProfileFragment.this);
+                        }
+                    })
+                    .create();
+            alertDialog.show();
+        }
+    };
+
+    private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
+        @Override
+        public void onLoadLocalMedia(Uri uri) {
+            LocalMedia localMedia = new LocalMedia(uri);
+            transferMedia(localMedia);
+        }
+
+        private void transferMedia(final LocalMedia localMedia) {
+            try {
+                final ProgressDialog progressUpload = ProgressDialog.show(getActivity(), null
+                        , getString(R.string.load_message_uploading_image), true, true);
+
+                TransferManager transferManager = new TransferManager(getActivity());
+                transferManager.transferMedia(localMedia, "user", new ImageTransferListener(progressUpload, localMedia));
+            } catch(Exception exception) {
+                Log.e(TAG, "onLoadLocalMedia ", exception);
+                displayPictureError();
+            }
+        }
+    };
+
+    private class ImageTransferListener extends TransferListenerAdapter {
+        private ProgressDialog progressUpload;
+        private LocalMedia localMedia;
+        public ImageTransferListener(ProgressDialog progressUpload, LocalMedia localMedia) {
+            this.progressUpload = progressUpload;
+            this.localMedia = localMedia;
+        }
+
+        @Override
+        public void onTransferFinished(Media media) {
+            super.onTransferFinished(media);
+            user.setPicture(media.getUrl());
+            userServices.editUserPicture(user, new Firebase.CompletionListener() {
+                @Override
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    if (firebaseError == null) {
+                        picture.setImageURI(localMedia.getPath());
+                        progressUpload.dismiss();
+                    } else {
+                        displayPictureError();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onError(int id, Exception ex) {
+            super.onError(id, ex);
+            displayPictureError();
+        }
+    };
+
+    private void displayPictureError() {
+        Toast.makeText(getActivity(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
+    }
 
     private void logout() {
         UserManager.logout(getContext());
