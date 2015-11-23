@@ -76,6 +76,7 @@ public class OpenGroupsActivity extends AppCompatActivity implements ChatGroupAd
         if(UserManager.validateKeyAction(this)) {
             User me = new User();
             me.setKey(UserManager.getUserId());
+            me.setCountryProgram(UserManager.getCountryCode());
 
             if(chatMembers.getUsers().contains(me)) {
                 showMessage(R.string.error_already_join_group);

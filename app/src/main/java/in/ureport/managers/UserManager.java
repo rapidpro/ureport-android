@@ -199,6 +199,7 @@ public class UserManager {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         User user = new User();
                         user.setKey(getUserId());
+                        user.setCountryProgram(UserManager.getCountryCode());
 
                         ChatRoomServices chatRoomServices = new ChatRoomServices();
                         chatRoomServices.removeChatMember(activity, user, chatRoom.getKey());

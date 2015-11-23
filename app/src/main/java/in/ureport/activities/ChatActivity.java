@@ -143,6 +143,7 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
     private void joinChatGroup(ChatMembers chatMembers, GroupChatRoom groupChatRoom) {
         User me = new User();
         me.setKey(UserManager.getUserId());
+        me.setCountryProgram(UserManager.getCountryCode());
 
         if(chatMembers.getUsers().contains(me)) {
             showMessage(R.string.error_already_join_group);
