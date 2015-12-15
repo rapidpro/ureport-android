@@ -200,7 +200,6 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         @Override
         public void onConnected(Bundle bundle) {
             shouldResolveErrors = false;
-            loadUserDialog = showLoadUserProgress();
             FirebaseManager.authenticateWithGoogle(googleApiClient, LoginFragment.this);
         }
 
@@ -211,7 +210,6 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
     private GoogleApiClient.OnConnectionFailedListener googleConnectionFailedListener = new GoogleApiClient.OnConnectionFailedListener() {
         @Override
         public void onConnectionFailed(ConnectionResult connectionResult) {
-            loadUserDialog.dismiss();
             if (!resolvingGoogleSignin && shouldResolveErrors) {
                 if (connectionResult.hasResolution()) {
                     try {
@@ -222,6 +220,7 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
                         googleApiClient.connect();
                     }
                 } else {
+                    loadUserDialog.dismiss();
                     showLoginErrorAlert();
                 }
             }
