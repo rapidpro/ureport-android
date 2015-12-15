@@ -14,7 +14,7 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
-import in.ureport.models.rapidpro.Contact;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.models.rapidpro.Field;
 import in.ureport.network.ProxyApi;
 import in.ureport.network.ProxyServices;

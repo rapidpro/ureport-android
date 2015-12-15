@@ -11,13 +11,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import in.ureport.models.User;
-import in.ureport.models.rapidpro.Contact;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.models.rapidpro.Field;
 
 /**
  * Created by johncordeiro on 24/09/15.
  */
-public class ContactBuilder {
+public class git aContactBuilder {
 
     private static final String URL_FORMAT = "ext:%1$s";
 
@@ -36,7 +36,7 @@ public class ContactBuilder {
         List<String> userGroups = contactGroupsBuilder.getGroupsForUser(user);
 
         List<String> urns = new ArrayList<>();
-        urns.add(formatUrn(user.getKey()));
+        urns.add(formatExtUrn(user.getKey()));
 
         Contact contact = new Contact();
         contact.setName(user.getNickname());
@@ -45,13 +45,17 @@ public class ContactBuilder {
         return contact;
     }
 
-    public String formatUrn(String key) {
-        return String.format(URL_FORMAT, key.replace(":", "").replace("-", ""));
+    public String formatExtUrn(String key) {
+        return String.format(URL_FORMAT, formatUserId(key));
+    }
+
+    public String formatUserId(String key) {
+        return key.replace(":", "").replace("-", "");
     }
 
     public Contact buildContactWithFields(User user, Locale locale) {
         Contact contact = buildContactWithoutFields(user);
-        Map<String, Object> contactFields = new HashMap<>();
+        HashMap<String, Object> contactFields = new HashMap<>();
 
         putValuesIfExists(user.getEmail(), contactFields, "email", "e_mail");
         putValuesIfExists(user.getNickname(), contactFields, "nickname", "nick_name");

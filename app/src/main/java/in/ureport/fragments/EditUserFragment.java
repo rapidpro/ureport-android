@@ -19,7 +19,7 @@ import in.ureport.models.User;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
-import in.ureport.models.rapidpro.Contact;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.network.UserServices;
 import in.ureport.tasks.SaveContactTask;
 

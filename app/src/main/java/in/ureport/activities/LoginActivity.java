@@ -20,7 +20,7 @@ import in.ureport.listener.OnUserLoadedListener;
 
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
-import in.ureport.models.rapidpro.Contact;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.network.UserServices;
 import in.ureport.services.GcmRegistrationIntentService;
 import in.ureport.tasks.SaveContactTask;
