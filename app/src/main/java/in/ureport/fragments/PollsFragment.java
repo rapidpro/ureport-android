@@ -10,13 +10,13 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,14 +26,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import br.com.ilhasoft.support.manager.WrapLinearLayoutManager;
 import in.ureport.R;
 import in.ureport.activities.BaseActivity;
 import in.ureport.activities.PollResultsActivity;
 import in.ureport.flowrunner.fragments.FlowFragment;
 import in.ureport.flowrunner.models.FlowDefinition;
+import in.ureport.flowrunner.models.FlowRuleset;
 import in.ureport.flowrunner.models.FlowStepSet;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.loader.LastFlowLoader;
+import in.ureport.managers.FlowManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Poll;
 import in.ureport.models.User;
@@ -41,7 +44,7 @@ import in.ureport.network.PollServices;
 import in.ureport.tasks.CleanMessageNotificationTask;
 import in.ureport.tasks.MessageNotificationTask;
 import in.ureport.tasks.NotificationTask;
-import in.ureport.tasks.SendFlowStepSetTask;
+import in.ureport.tasks.SendFlowReponsesTask;
 import in.ureport.views.adapters.PollAdapter;
 
 /**
@@ -60,6 +63,7 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     private ProgressBar progressBar;
     private TextView title;
     private TextView subtitle;
+    private ScrollView scrollView;
 
     private PollServices pollServices;
     private PollAdapter pollsAdapter;
@@ -90,6 +94,13 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser)
+            scrollView.smoothScrollTo(0, 0);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         cleanMessageNotifications();
@@ -103,6 +114,7 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        FlowManager.enableFlowNotificiation();
         getActivity().unregisterReceiver(onReloadNotifications);
     }
 
@@ -122,8 +134,10 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     }
 
     private void setupView(View view) {
+        scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+
         pollsList = (RecyclerView) view.findViewById(R.id.pollsList);
-        pollsList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        pollsList.setLayoutManager(new WrapLinearLayoutManager(getActivity()));
 
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         title = (TextView) view.findViewById(R.id.title);
@@ -202,10 +216,10 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
 
     private void addFlowDefinition(final FlowDefinition flowDefinition) {
         pollsAdapter.setCurrentPollEnabled(true);
-        pollsList.post(new Runnable() {
+        progressBar.post(new Runnable() {
             @Override
             public void run() {
-                FlowFragment flowFragment = FlowFragment.newInstance(flowDefinition);
+                FlowFragment flowFragment = FlowFragment.newInstance(flowDefinition, UserManager.getUserLanguage());
                 flowFragment.setFlowListener(PollsFragment.this);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.topBar, flowFragment)
@@ -223,9 +237,19 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     public void onLoaderReset(Loader<FlowDefinition> loader) {}
 
     @Override
+    public void onFlowLanguageChanged(String iso3Language) {
+        UserManager.updateUserLanguage(iso3Language);
+    }
+
+    @Override
+    public void onFlowResponse(FlowRuleset ruleset) {
+        scrollView.smoothScrollTo(0, 0);
+    }
+
+    @Override
     public void onFlowFinished(FlowStepSet stepSet) {
         stepSet.setContact(UserManager.getUserRapidUuid());
-        SendFlowStepSetTask sendFlowStepSetTask = new SendFlowStepSetTask(getActivity()) {
+        SendFlowReponsesTask sendFlowReponsesTask = new SendFlowReponsesTask(getActivity()) {
             @Override
             protected void onPostExecute(Boolean successResult) {
                 super.onPostExecute(successResult);
@@ -236,7 +260,7 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
                 }
             }
         };
-        sendFlowStepSetTask.execute(stepSet);
+        sendFlowReponsesTask.execute(stepSet);
     }
 
     private BroadcastReceiver onReloadNotifications = new BroadcastReceiver() {
