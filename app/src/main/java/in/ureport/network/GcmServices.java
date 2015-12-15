@@ -47,8 +47,14 @@ public class GcmServices {
 
         GcmApi.Input<ChatMessageHolder> chatMessageHolderInput = new GcmApi.Input<>(
                 GcmTopicManager.CHAT_TOPICS_PATH + chatRoom.getKey(), chatMessageHolder);
+        chatMessageHolderInput.setNotification(new GcmApi.Notification(context.getString(R.string.title_chat_message)
+                , String.format("%1$s: %2$s", chatMessage.getUser().getNickname(), getChatMessage(chatMessage))));
 
         return gcmApi.sendData(gcmKey, chatMessageHolderInput);
+    }
+
+    private String getChatMessage(ChatMessage chatMessage) {
+        return chatMessage.getMessage() != null && !chatMessage.getMessage().isEmpty() ? chatMessage.getMessage() : context.getString(R.string.prompt_media_notification);
     }
 
     public GcmApi.Response sendContribution(Story story, Contribution contribution) {
