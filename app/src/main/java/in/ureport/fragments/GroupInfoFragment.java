@@ -83,16 +83,16 @@ public class GroupInfoFragment extends Fragment {
     }
 
     private void setupMenuItemVisibility(Menu menu) {
-        boolean currentUserAdministrator = isCurrentUserAdministrator();
+        boolean groupModerator = isGroupModerator();
 
         MenuItem editGroup = menu.findItem(R.id.editGroup);
-        editGroup.setVisible(currentUserAdministrator);
+        editGroup.setVisible(groupModerator);
 
         MenuItem leaveGroup = menu.findItem(R.id.leaveGroup);
-        leaveGroup.setVisible(!currentUserAdministrator && isCurrentUserMember());
+        leaveGroup.setVisible(!groupModerator && isCurrentUserMember());
 
         MenuItem closeGroup = menu.findItem(R.id.closeGroup);
-        closeGroup.setVisible(currentUserAdministrator);
+        closeGroup.setVisible(groupModerator);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class GroupInfoFragment extends Fragment {
 
         Button addUreporter = (Button) view.findViewById(R.id.addUreporter);
         addUreporter.setOnClickListener(onAddUreporterClickListener);
-        addUreporter.setVisibility(isCurrentUserAdministrator() ? View.VISIBLE : View.GONE);
+        addUreporter.setVisibility(isGroupModerator() ? View.VISIBLE : View.GONE);
     }
 
     public void updateViewForChatRoom(ChatRoom chatRoom, ChatMembers chatMembers) {
@@ -200,8 +200,9 @@ public class GroupInfoFragment extends Fragment {
         }
     };
 
-    private boolean isCurrentUserAdministrator() {
-        return chatRoom.getAdministrator().getKey().equals(UserManager.getUserId());
+    private boolean isGroupModerator() {
+        return chatRoom.getAdministrator().getKey().equals(UserManager.getUserId())
+            || UserManager.canModerate();
     }
 
     private boolean isCurrentUserMember() {

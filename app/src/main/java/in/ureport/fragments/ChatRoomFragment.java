@@ -574,7 +574,7 @@ public class ChatRoomFragment extends Fragment
 
     private ChatRoomInterface.OnChatRoomLoadedListener onLoadChatRoomByKeyListener = new ChatRoomInterface.OnChatRoomLoadedListener() {
         @Override
-        public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage) {
+        public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
             ChatRoomFragment.this.chatRoom = chatRoom;
             ChatRoomFragment.this.chatMembers = chatMembers;
 
@@ -597,17 +597,19 @@ public class ChatRoomFragment extends Fragment
 
     @Override
     public void onChatMessageSelected(final ChatMessage chatMessage) {
-        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                .setItems(R.array.chat_message_items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch(which) {
-                            case REMOVE_CHAT_MESSAGE_POSITION:
-                                removeChatMessageWithAlert(chatMessage);
+        if(chatMessage.getUser().getKey().equals(UserManager.getUserId()) || UserManager.canModerate()) {
+            AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                    .setItems(R.array.chat_message_items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch(which) {
+                                case REMOVE_CHAT_MESSAGE_POSITION:
+                                    removeChatMessageWithAlert(chatMessage);
+                            }
                         }
-                    }
-                }).create();
-        alertDialog.show();
+                    }).create();
+            alertDialog.show();
+        }
     }
 
     private void removeChatMessageWithAlert(final ChatMessage chatMessage) {
