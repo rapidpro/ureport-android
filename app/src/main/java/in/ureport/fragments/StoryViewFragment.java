@@ -15,6 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -184,6 +187,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     }
 
     private void setupView(View view) {
+        setHasOptionsMenu(true);
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
@@ -286,6 +290,38 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         } else {
             mediaList.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        if(UserManager.canModerate()) {
+            inflater.inflate(R.menu.menu_story_view, menu);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.disapproveStory:
+                disapproveStory();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void disapproveStory() {
+        storyServices.removeStory(story, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError == null) {
+                    displayToast(R.string.message_story_disapproved);
+                    getActivity().finish();
+                } else {
+                    displayToast(R.string.error_remove);
+                }
+            }
+        });
     }
 
     private String getContributionsText(Story story) {
