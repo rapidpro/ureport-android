@@ -16,6 +16,9 @@ public class CountryProgram {
     @StyleRes
     private int theme;
 
+    @StringRes
+    private int channel;
+
     private String name;
 
     private int organization;
@@ -24,9 +27,11 @@ public class CountryProgram {
 
     private String group;
 
-    public CountryProgram(String code, @StyleRes int theme, String name, int organization, String twitter, String group) {
+    public CountryProgram(String code, @StyleRes int theme, @StringRes int channel
+            , String name, int organization, String twitter, String group) {
         this.code = code;
         this.theme = theme;
+        this.channel = channel;
         this.name = name;
         this.organization = organization;
         this.twitter = twitter;
@@ -49,6 +54,14 @@ public class CountryProgram {
 
     public void setTheme(@StyleRes int theme) {
         this.theme = theme;
+    }
+
+    public int getChannel() {
+        return channel;
+    }
+
+    public void setChannel(int channel) {
+        this.channel = channel;
     }
 
     public String getName() {
