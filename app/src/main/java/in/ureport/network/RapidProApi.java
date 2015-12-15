@@ -6,20 +6,29 @@ import in.ureport.flowrunner.models.FlowDefinition;
 import in.ureport.flowrunner.models.FlowRun;
 import in.ureport.flowrunner.models.FlowStepSet;
 import in.ureport.models.rapidpro.Boundary;
-import in.ureport.models.rapidpro.Contact;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.models.rapidpro.Field;
 import in.ureport.models.rapidpro.Group;
 import retrofit.http.Body;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Headers;
 import retrofit.http.POST;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
  * Created by johncordeiro on 18/08/15.
  */
 public interface RapidProApi {
+
+    @FormUrlEncoded
+    @POST("/external/received/{channel}/")
+    retrofit.client.Response sendReceivedMessage(@Header("Authorization") String apiKey
+            , @Path("channel") String channel
+            , @retrofit.http.Field("from") String from
+            , @retrofit.http.Field("text") String text);
 
     @GET("/groups.json")
     Response<Group> listGroups(@Header("Authorization") String apiKey);

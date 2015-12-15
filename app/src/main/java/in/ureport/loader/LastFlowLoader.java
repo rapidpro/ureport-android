@@ -14,7 +14,7 @@ import in.ureport.flowrunner.models.FlowDefinition;
 import in.ureport.flowrunner.models.FlowRun;
 import in.ureport.helpers.ContactBuilder;
 import in.ureport.managers.UserManager;
-import in.ureport.models.rapidpro.Contact;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.network.ProxyApi;
 import in.ureport.network.ProxyServices;
 import in.ureport.network.RapidProServices;
@@ -39,14 +39,17 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
     public FlowDefinition loadInBackground() {
         try {
             loadCountryTokenIfNeeded();
-            loadUserUuidIfNeeded();
 
+            Contact contact = loadContact();
             List<FlowRun> flowRuns = rapidProServices.loadRuns(getApiToken(), UserManager.getUserRapidUuid(), getMinimumDate());
 
             FlowRun lastFlowRun = flowRuns.get(0);
-            if(FlowRunnerManager.isFlowActive(lastFlowRun)) {
-                return rapidProServices.loadFlowDefinition(getApiToken(), lastFlowRun.getFlowUuid());
-            }
+            FlowDefinition flowDefinition = rapidProServices.loadFlowDefinition(getApiToken(), lastFlowRun.getFlowUuid());
+            flowDefinition.setContact(contact);
+            flowDefinition.setFlowRun(lastFlowRun);
+
+            if(!FlowRunnerManager.isFlowExpired(flowDefinition))
+                return flowDefinition;
         } catch(Exception exception) {
             Log.e(TAG, "loadInBackground ", exception);
         }
@@ -68,13 +71,14 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
         return calendar.getTime();
     }
 
-    private void loadUserUuidIfNeeded() {
-        if(!UserManager.isUserRapidUuidValid()) {
-            ContactBuilder contactBuilder = new ContactBuilder();
+    private Contact loadContact() {
+        ContactBuilder contactBuilder = new ContactBuilder();
+        Contact contact = rapidProServices.loadContact(getApiToken(), contactBuilder.formatExtUrn(UserManager.getUserId()));
 
-            Contact contact = rapidProServices.loadContact(getApiToken(), contactBuilder.formatUrn(UserManager.getUserId()));
+        if(!UserManager.isUserRapidUuidValid())
             UserManager.updateUserRapidUuid(contact.getUuid());
-        }
+
+        return contact;
     }
 
     @NonNull

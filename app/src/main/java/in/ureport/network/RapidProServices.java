@@ -15,7 +15,7 @@ import in.ureport.flowrunner.models.FlowStepSet;
 import in.ureport.helpers.GsonDateTypeAdapter;
 import in.ureport.helpers.HashMapTypeAdapter;
 import in.ureport.models.rapidpro.Boundary;
-import in.ureport.models.rapidpro.Contact;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.models.rapidpro.Field;
 import in.ureport.models.rapidpro.Group;
 import retrofit.RestAdapter;
@@ -68,6 +68,10 @@ public class RapidProServices {
     public List<Group> loadGroups(String apiKey) {
         Response<Group> response = service.listGroups(apiKey);
         return response.getResults();
+    }
+
+    public void sendReceivedMessage(String apiKey, String channel, String from, String text) {
+        service.sendReceivedMessage(apiKey, channel, from, text);
     }
 
     public void saveFlowStepSet(String apiKey, FlowStepSet flowStepSet) {

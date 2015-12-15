@@ -17,7 +17,7 @@ import in.ureport.models.rapidpro.Field;
 /**
  * Created by johncordeiro on 24/09/15.
  */
-public class git aContactBuilder {
+public class ContactBuilder {
 
     private static final String URL_FORMAT = "ext:%1$s";
 
