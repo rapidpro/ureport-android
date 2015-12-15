@@ -52,7 +52,7 @@ public class YoutubePicker {
 
     private String getVideoIdFromLink(String youtubeLink) {
         String videoId = null;
-        Pattern pattern = Pattern.compile("^https?://.*(?:youtu.be/|v/|u/\\w/|embed/|watch?v=)([^#&?]*).*$",
+        Pattern pattern = Pattern.compile(".*(?:youtu.be\\/|v\\/|u\\/\\w\\/|embed\\/|e\\/|watch\\?v=|watch\\?.*v=)([^#&\\?]*).*",
                 Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(youtubeLink);
         if (matcher.matches()) {
