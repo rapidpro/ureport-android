@@ -136,7 +136,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
     private void setupMenuPermissions() {
         Menu menu = getMenuNavigation().getMenu();
-        menu.findItem(R.id.moderation).setVisible(UserManager.canModerate());
+        menu.findItem(R.id.moderation).setVisible(UserManager.isUserLoggedIn() && UserManager.canModerate());
         menu.findItem(R.id.changeSettings).setVisible(UserManager.isUserLoggedIn());
         menu.findItem(R.id.logout).setVisible(UserManager.isUserLoggedIn());
         menu.findItem(R.id.makeDonation).setVisible(user != null && DonationManager.isDonationAllowed(user));

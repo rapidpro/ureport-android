@@ -165,7 +165,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private void loadUserIfNeeded() {
         if(user != null) {
             user.setKey(UserManager.getUserId());
-        } else {
+        } else if (UserManager.isUserLoggedIn()) {
             userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
