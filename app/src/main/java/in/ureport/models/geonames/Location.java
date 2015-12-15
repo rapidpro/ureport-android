@@ -5,9 +5,21 @@ package in.ureport.models.geonames;
  */
 public class Location {
 
+    private String boundary;
+
     private String name;
 
     private String toponymName;
+
+    private String parent;
+
+    public String getBoundary() {
+        return boundary;
+    }
+
+    public void setBoundary(String boundary) {
+        this.boundary = boundary;
+    }
 
     public String getName() {
         return name;
@@ -23,6 +35,14 @@ public class Location {
 
     public void setToponymName(String toponymName) {
         this.toponymName = toponymName;
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
     }
 
     public Location() {

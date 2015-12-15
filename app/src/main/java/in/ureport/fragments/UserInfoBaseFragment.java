@@ -73,6 +73,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     protected Button confirm;
 
     protected boolean containsDistrict = false;
+    private List<Location> districts;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,6 +143,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         loadCountryList();
 
         state = (Spinner) view.findViewById(R.id.state);
+        state.setOnItemSelectedListener(onStateSelectedListener);
         district = (Spinner) view.findViewById(R.id.district);
         confirm = (Button) view.findViewById(R.id.confirm);
     }
@@ -215,7 +217,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     }
 
     protected boolean isStateValid() {
-        boolean valid = state.getSelectedItem() != null;
+        boolean valid = state.getSelectedItem() != null && state.getSelectedItem() instanceof Location;
         if(!valid) Toast.makeText(getActivity(), R.string.error_choose_state, Toast.LENGTH_LONG).show();
         return valid;
     }
@@ -276,11 +278,24 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     private void updateDistrictSpinner(LocationInfo locationInfo) {
         containsDistrict = locationInfo.getDistricts() != null && !locationInfo.getDistricts().isEmpty();
         if(containsDistrict) {
+            districts = locationInfo.getDistricts();
             district.setVisibility(View.VISIBLE);
-            updateSpinnerLocation(district, locationInfo.getDistricts());
+
+            Location stateSelectedItem = (Location) state.getSelectedItem();
+            updateDistrictsForState(stateSelectedItem);
         } else {
             district.setVisibility(View.GONE);
         }
+    }
+
+    private void updateDistrictsForState(Location stateSelectedItem) {
+        List<Location> stateDistricts = new ArrayList<>();
+        for (Location location : districts) {
+            if(location.getParent() != null && location.getParent().equals(stateSelectedItem.getBoundary())) {
+                stateDistricts.add(location);
+            }
+        }
+        updateSpinnerLocation(district, stateDistricts);
     }
 
     private void updateSpinnerLocation(Spinner spinner, List<Location> locations) {
@@ -374,6 +389,19 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
             datePickerFragment.setOnDateSetListener(UserInfoBaseFragment.this);
             datePickerFragment.show(getFragmentManager(), "datePickerFragment");
         }
+    };
+
+    private AdapterView.OnItemSelectedListener onStateSelectedListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (districts != null) {
+                Location state = (Location) parent.getItemAtPosition(position);
+                updateDistrictsForState(state);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {}
     };
 
     public abstract void onCountriesLoaded(List<UserLocale> data);

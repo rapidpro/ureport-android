@@ -78,6 +78,8 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
                     ? boundary.getAliases().get(0) : name;
 
             Location location = new Location(name, toponymName);
+            location.setBoundary(boundary.getBoundary());
+            location.setParent(boundary.getParent());
             if(boundary.getLevel() != null && boundary.getLevel() == 1) {
                 states.add(location);
             } else if(boundary.getLevel() != null && boundary.getLevel() == 2) {
