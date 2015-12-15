@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -14,15 +13,12 @@ import android.widget.Toast;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
-import in.ureport.AnalyticsTracker;
 import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ToolbarDesigner;
@@ -33,9 +29,7 @@ import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.holders.UserLocale;
-import in.ureport.models.rapidpro.Contact;
 import in.ureport.network.UserServices;
-import in.ureport.tasks.SaveContactTask;
 
 /**
  * Created by johncordeiro on 7/9/15.
