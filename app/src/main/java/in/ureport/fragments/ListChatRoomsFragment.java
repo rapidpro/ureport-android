@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 
 import java.util.ArrayList;
@@ -65,6 +66,8 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
 
     private Map<ChatRoom, Integer> chatNotifications;
     private RecyclerView chatsList;
+
+    private List<ChildEventListener> chatEventListenerList;
 
     private OnSeeOpenGroupsListener onSeeOpenGroupsListener;
 
@@ -161,9 +164,13 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     public void onDestroyView() {
         super.onDestroyView();
         FirebaseManager.getReference().removeEventListener(childEventListener);
+        for (ChildEventListener chatEventListener : chatEventListenerList) {
+            FirebaseManager.getReference().removeEventListener(chatEventListener);
+        }
     }
 
     private void setupObjects() {
+        chatEventListenerList = new ArrayList<>();
         chatRoomServices = new ChatRoomServices();
         userServices = new UserServices();
     }
@@ -210,9 +217,11 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
             String chatRoomKey = dataSnapshot.getKey();
             chatRoomServices.getChatRoom(chatRoomKey, new ChatRoomInterface.OnChatRoomLoadedListener() {
                 @Override
-                public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage) {
+                public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
+                    chatRoomServices.loadLastChatMessage(chatRoom, chatMembers, onLastChatMessageLoaded);
+
                     chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
-                    chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, lastMessage));
+                    chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, null));
                 }
             });
         }
@@ -259,7 +268,7 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
             List<ChatRoomHolder> chatRooms = getChatRoomsListForQuery(query);
 
             ChatRoomsAdapter chatRoomsAdapter = new ChatRoomsAdapter();
-            chatRoomsAdapter.updateData(chatRooms);
+            chatRoomsAdapter.addAll(chatRooms);
             chatRoomsAdapter.setOnChatRoomSelectedListener(this);
             chatsList.setAdapter(chatRoomsAdapter);
         } catch(Exception exception) {
@@ -272,7 +281,8 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
         List<ChatRoomHolder> chatRooms = new ArrayList<>();
 
         query = query.toLowerCase();
-        for (ChatRoomHolder chatRoomHolder : chatRoomsAdapter.getChatRooms()) {
+        for (int i = 0; i < chatRoomsAdapter.getChatRooms().size(); i++) {
+            ChatRoomHolder chatRoomHolder = chatRoomsAdapter.getChatRooms().get(i);
             if (chatRoomHolder.chatRoom.getType() == ChatRoom.Type.Group) {
                 GroupChatRoom groupChatRoom = (GroupChatRoom) chatRoomHolder.chatRoom;
                 if (groupChatRoom.getTitle().toLowerCase().contains(query)) {
@@ -295,6 +305,19 @@ public class ListChatRoomsFragment extends Fragment implements ChatRoomsAdapter.
     }
 
     public List<ChatRoomHolder> getChatRooms() {
-        return chatRoomsAdapter.getChatRooms();
+        List<ChatRoomHolder> chatRoomHolderList = new ArrayList<>();
+        for (int i = 0; i < chatRoomsAdapter.getChatRooms().size(); i++) {
+            ChatRoomHolder chatRoomHolder = chatRoomsAdapter.getChatRooms().get(i);
+            chatRoomHolderList.add(chatRoomHolder);
+        }
+        return chatRoomHolderList;
     }
+
+    private ChatRoomInterface.OnChatLastMessageLoadedListener onLastChatMessageLoaded =
+            new ChatRoomInterface.OnChatLastMessageLoadedListener() {
+        @Override
+        public void onChatLastMessageLoaded(ChatRoom chatRoom, ChatMessage lastChatMessage) {
+            chatRoomsAdapter.updateChatRoomMessage(chatRoom, lastChatMessage);
+        }
+    };
 }

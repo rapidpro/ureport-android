@@ -8,6 +8,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
@@ -116,12 +118,7 @@ public class ChatRoomServices extends ProgramServices {
         loadChatRoomMembers(key, new ChatRoomInterface.OnChatMembersLoadedListener() {
             @Override
             public void onChatMembersLoaded(final ChatMembers chatMembers) {
-                loadLastChatMessage(key, chatMembers, new ChatRoomInterface.OnChatLastMessageLoadedListener() {
-                    @Override
-                    public void onChatLastMessageLoaded(ChatMessage chatMessage) {
-                        listener.onChatRoomLoaded(chatRoom, chatMembers, chatMessage);
-                    }
-                });
+                listener.onChatRoomLoaded(chatRoom, chatMembers);
             }
         });
     }
@@ -139,29 +136,23 @@ public class ChatRoomServices extends ProgramServices {
         return chatRoom;
     }
 
-    private void loadLastChatMessage(String key, final ChatMembers chatMembers
+    public ChildEventListener loadLastChatMessage(final ChatRoom chatRoom, final ChatMembers chatMembers
             , final ChatRoomInterface.OnChatLastMessageLoadedListener onChatLastMessageLoadedListener) {
-        getDefaultRoot().child(messagesPath).child(key).orderByKey().limitToLast(1)
-                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        super.onDataChange(dataSnapshot);
+        Query query = getDefaultRoot().child(messagesPath).child(chatRoom.getKey()).orderByKey().limitToLast(1);
+        return query.addChildEventListener(new ChildEventListenerAdapter() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
+                super.onChildAdded(dataSnapshot, previousChild);
 
-                        ChatMessage lastChatMessage = null;
-
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            lastChatMessage = snapshot.getValue(ChatMessage.class);
-                            if (lastChatMessage != null) {
-                                int indexOfUser = chatMembers.getUsers().indexOf(lastChatMessage.getUser());
-                                if (indexOfUser >= 0)
-                                    lastChatMessage.setUser(chatMembers.getUsers().get(indexOfUser));
-                            }
-                            break;
-                        }
-
-                        onChatLastMessageLoadedListener.onChatLastMessageLoaded(lastChatMessage);
-                    }
-                });
+                ChatMessage lastChatMessage = dataSnapshot.getValue(ChatMessage.class);
+                if (lastChatMessage != null) {
+                    int indexOfUser = chatMembers.getUsers().indexOf(lastChatMessage.getUser());
+                    if (indexOfUser >= 0)
+                        lastChatMessage.setUser(chatMembers.getUsers().get(indexOfUser));
+                }
+                onChatLastMessageLoadedListener.onChatLastMessageLoaded(chatRoom, lastChatMessage);
+            }
+        });
     }
 
     public void loadChatRoomMembers(String key, final ChatRoomInterface.OnChatMembersLoadedListener listener) {

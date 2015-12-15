@@ -1,15 +1,12 @@
 package in.ureport.views.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.youtube.player.YouTubeStandalonePlayer;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -122,6 +119,9 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             name = (TextView) itemView.findViewById(R.id.name);
             media = (ImageView) itemView.findViewById(R.id.media);
             videoPlay = (ImageView) itemView.findViewById(R.id.videoPlay);
+
+            itemView.setOnLongClickListener(onLongClickListener);
+            media.setOnLongClickListener(onLongClickListener);
         }
 
         private void bindView(ChatMessage chatMessage) {
@@ -130,17 +130,6 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             bindMessage(chatMessage);
             date.setText(hourFormatter.format(chatMessage.getDate()));
             bindName(chatMessage);
-            bindLongClick();
-        }
-
-        private void bindLongClick() {
-            if(getItemViewType() == TYPE_OTHER) {
-                itemView.setOnLongClickListener(null);
-                media.setOnLongClickListener(null);
-            } else {
-                itemView.setOnLongClickListener(onLongClickListener);
-                media.setOnLongClickListener(onLongClickListener);
-            }
         }
 
         private void bindMessage(ChatMessage chatMessage) {
@@ -148,6 +137,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 media.setVisibility(View.GONE);
                 message.setVisibility(View.VISIBLE);
                 message.setText(chatMessage.getMessage());
+                videoPlay.setVisibility(View.GONE);
             } else if(chatMessage.getMedia() != null) {
                 message.setVisibility(View.GONE);
                 media.setVisibility(View.VISIBLE);

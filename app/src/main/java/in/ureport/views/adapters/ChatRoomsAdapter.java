@@ -1,6 +1,8 @@
 package in.ureport.views.adapters;
 
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.util.SortedListAdapterCallback;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,13 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
+import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.models.IndividualChatRoom;
@@ -26,14 +28,14 @@ import in.ureport.models.holders.ChatRoomHolder;
  */
 public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<ChatRoomHolder> chatRooms;
+    private SortedList<ChatRoomHolder> chatRooms;
 
     private DateFormat hourFormatter;
 
     private OnChatRoomSelectedListener onChatRoomSelectedListener;
 
     public ChatRoomsAdapter() {
-        this.chatRooms = new ArrayList<>();
+        this.chatRooms = new SortedList<>(ChatRoomHolder.class, sortedListAdapterCallback);
 
         hourFormatter = DateFormat.getTimeInstance(DateFormat.SHORT);
         setHasStableIds(true);
@@ -61,29 +63,35 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public void removeChatRoom(ChatRoomHolder chatRoom) {
-        chatRooms.remove(chatRoom);
-        notifyDataSetChanged();
-    }
-
-    public void updateData(List<ChatRoomHolder> chatRooms) {
-        this.chatRooms = chatRooms;
-        notifyDataSetChanged();
-    }
-
-    public void updateChatRoom(ChatRoomHolder chatRoom) {
-        int chatRoomPosition = chatRooms.indexOf(chatRoom);
-        if(chatRoomPosition >= 0) {
-            chatRooms.set(chatRoomPosition, chatRoom);
-            notifyItemChanged(chatRoomPosition);
+        for (int position = 0; position < chatRooms.size(); position++) {
+            ChatRoomHolder chatRoomHolder = chatRooms.get(position);
+            if(chatRoomHolder.chatRoom.equals(chatRoom.chatRoom)) {
+                chatRooms.removeItemAt(position);
+                break;
+            }
         }
+    }
+
+    public void addAll(List<ChatRoomHolder> chatRooms) {
+        this.chatRooms.addAll(chatRooms);
     }
 
     public void addChatRoom(ChatRoomHolder chatRoom) {
         chatRooms.add(chatRoom);
-        notifyDataSetChanged();
     }
 
-    public List<ChatRoomHolder> getChatRooms() {
+    public void updateChatRoomMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
+        for (int position = 0; position < chatRooms.size(); position++) {
+            ChatRoomHolder chatRoomHolder = chatRooms.get(position);
+            if(chatRoomHolder.chatRoom.equals(chatRoom)) {
+                chatRoomHolder.lastMessage = chatMessage;
+                chatRooms.updateItemAt(position, chatRoomHolder);
+                break;
+            }
+        }
+    }
+
+    public SortedList<ChatRoomHolder> getChatRooms() {
         return chatRooms;
     }
 
@@ -111,8 +119,10 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             if(chatRoom instanceof IndividualChatRoom) {
                 User friend = getFriend(chatRoomHolder);
-                name.setText(friend.getNickname());
-                ImageLoader.loadPersonPictureToImageView(picture, friend.getPicture());
+                if(friend != null) {
+                    name.setText(friend.getNickname());
+                    ImageLoader.loadPersonPictureToImageView(picture, friend.getPicture());
+                }
             } else if(chatRoom instanceof GroupChatRoom) {
                 GroupChatRoom chatGroup = ((GroupChatRoom)chatRoom);
                 name.setText(chatGroup.getTitle());
@@ -170,4 +180,22 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public interface OnChatRoomSelectedListener {
         void onChatRoomSelected(ChatRoom chatRoom, ChatMembers chatMembers);
     }
+
+    private SortedListAdapterCallback<ChatRoomHolder> sortedListAdapterCallback = new SortedListAdapterCallback<ChatRoomHolder>(this) {
+        @Override
+        public int compare(ChatRoomHolder item1, ChatRoomHolder item2) {
+            return item1.lastMessage != null && item2.lastMessage != null
+                    ? item2.lastMessage.getDate().compareTo(item1.lastMessage.getDate()) : 1;
+        }
+
+        @Override
+        public boolean areContentsTheSame(ChatRoomHolder oldItem, ChatRoomHolder newItem) {
+            return oldItem.chatRoom.getKey().equals(newItem.chatRoom.getKey());
+        }
+
+        @Override
+        public boolean areItemsTheSame(ChatRoomHolder item1, ChatRoomHolder item2) {
+            return item1.chatRoom.getKey().equals(item2.chatRoom.getKey());
+        }
+    };
 }

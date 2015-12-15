@@ -10,7 +10,7 @@ import in.ureport.models.ChatRoom;
 public interface ChatRoomInterface {
 
     interface OnChatLastMessageLoadedListener {
-        void onChatLastMessageLoaded(ChatMessage chatMessage);
+        void onChatLastMessageLoaded(ChatRoom chatRoom, ChatMessage chatMessage);
     }
 
     interface OnChatMembersLoadedListener {
@@ -18,7 +18,7 @@ public interface ChatRoomInterface {
     }
 
     interface OnChatRoomLoadedListener {
-        void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastMessage);
+        void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers);
     }
 
     interface OnChatRoomSavedListener {
