@@ -311,5 +311,8 @@
     <string name="hint_youtube_link">Youtube link</string>
     <string name="error_video_load">An error occurred during the video load</string>
     <string name="title_click_to_play">Click to play</string>
+    <string name="message_story_disapproved">The story was disapproved with success!</string>
+    <string name="title_chat_message">New chat message</string>
+    <string name="prompt_media_notification">media</string>
 
 </resources>
