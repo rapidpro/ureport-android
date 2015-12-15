@@ -29,6 +29,7 @@ public class UserManager {
 
     private static String userId = null;
     private static String userRapidUuid = null;
+    private static String userLanguage = null;
     private static String countryCode = null;
     private static String countryToken = null;
     private static Boolean master = false;
@@ -42,6 +43,7 @@ public class UserManager {
         SystemPreferences systemPreferences = new SystemPreferences(context);
         userId = systemPreferences.getUserLoggedId();
         userRapidUuid = systemPreferences.getUserLoggedRapidUuid();
+        userLanguage = systemPreferences.getUserLanguage();
         countryCode = systemPreferences.getCountryCode();
         countryToken = systemPreferences.getCountryToken();
         master = systemPreferences.isMaster();
@@ -118,6 +120,18 @@ public class UserManager {
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setUserLoggedRapidUuid(userRapidUuid);
+    }
+
+    public static String getUserLanguage() {
+        return userLanguage != null && !userLanguage.equals(SystemPreferences.USER_LANGUAGE_NOT_DEFINED)
+                ? userLanguage : null;
+    }
+
+    public static void updateUserLanguage(String userLanguage) {
+        UserManager.userLanguage = userLanguage;
+
+        SystemPreferences systemPreferences = new SystemPreferences(context);
+        systemPreferences.setUserLanguage(userLanguage);
     }
 
     public static String getUserRapidUuid() {

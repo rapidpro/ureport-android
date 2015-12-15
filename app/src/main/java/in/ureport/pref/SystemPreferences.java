@@ -3,6 +3,7 @@ package in.ureport.pref;
 import android.content.Context;
 
 import br.com.ilhasoft.support.preferences.Preferences;
+import in.ureport.models.rapidpro.Field;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -10,10 +11,12 @@ import br.com.ilhasoft.support.preferences.Preferences;
 public class SystemPreferences extends Preferences {
 
     public static final String USER_NO_LOGGED_ID = "NONE";
+    public static final String USER_LANGUAGE_NOT_DEFINED = "NOT_DEFINED";
 
     private enum Fields {
         UserLoggedId,
         UserLoggedRapidUuid,
+        UserLanguage,
         CountryCode,
         CountryToken,
         TutorialView,
@@ -39,6 +42,14 @@ public class SystemPreferences extends Preferences {
 
     public String getUserLoggedId() {
         return getValue(Fields.UserLoggedId, USER_NO_LOGGED_ID);
+    }
+
+    public void setUserLanguage(String userLanguage) {
+        setValue(Fields.UserLanguage, userLanguage);
+    }
+
+    public String getUserLanguage() {
+        return getValue(Fields.UserLanguage, USER_LANGUAGE_NOT_DEFINED);
     }
 
     public void setCountryCode(String countryCode) {
