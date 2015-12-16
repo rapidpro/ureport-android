@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <integer name="ga_sessionTimeout">300</integer>
 
     <bool name="ga_autoActivityTracking">true</bool>
 
-    <string name="ga_trackingId">UA-62089811-2</string>
+    <string name="ga_trackingId" translatable="false">UA-62089811-2</string>
 
     <screenName name="in.ureport.activities.LoginActivity">
         Login

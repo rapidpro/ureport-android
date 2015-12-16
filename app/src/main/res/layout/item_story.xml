@@ -100,7 +100,7 @@
             android:textAlignment="viewStart"
             android:textColor="@android:color/black"
             android:textSize="16sp"
-            tools:text="@string/story1_content"/>
+            tools:text="Story 1 content"/>
 
         <TextView
             android:id="@+id/contributors"

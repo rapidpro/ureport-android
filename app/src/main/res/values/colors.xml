@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
+
     <color name="primary_color">#42b6e7</color>
     <color name="primary_dark_color">#3aadda</color>
     <color name="translucent_cover">#6000</color>

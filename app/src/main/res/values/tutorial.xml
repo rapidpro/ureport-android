@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
     
     <string name="tutorial_title1">Create Stories</string>
     <string name="tutorial_description1">Amplify your voice and share what is happening in your community by creating stories and commenting on others</string>
