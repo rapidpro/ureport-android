@@ -72,6 +72,7 @@ public class LocalNotificationManager {
     private PendingIntent getContributionIntent(Story story) {
         Intent intent = new Intent(context, MainActivity.class);
         intent.setAction(MainActivity.ACTION_CONTRIBUTION_NOTIFICATION);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(MainActivity.EXTRA_STORY, story);
         return PendingIntent.getActivity(context, MainActivity.REQUEST_CODE_CONTRIBUTION_NOTIFICATION
                 , intent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -96,6 +97,7 @@ public class LocalNotificationManager {
     private PendingIntent getMessageIntent() {
         Intent intent = new Intent(context, MainActivity.class);
         intent.setAction(MainActivity.ACTION_OPEN_MESSAGE_NOTIFICATION);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return PendingIntent.getActivity(context, MainActivity.REQUEST_CODE_MESSAGE_NOTIFICATION, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
@@ -142,6 +144,7 @@ public class LocalNotificationManager {
     private PendingIntent getChatPendingIntent() {
         Intent chatIntent = new Intent(context, MainActivity.class);
         chatIntent.setAction(MainActivity.ACTION_OPEN_CHAT_NOTIFICATION);
+        chatIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return PendingIntent.getActivity(context, MainActivity.REQUEST_CODE_CHAT_NOTIFICATION, chatIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 

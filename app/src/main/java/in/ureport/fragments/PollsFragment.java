@@ -94,6 +94,11 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if(isVisibleToUser && scrollView != null)
