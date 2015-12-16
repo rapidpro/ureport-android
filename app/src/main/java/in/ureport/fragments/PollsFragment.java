@@ -96,7 +96,7 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(isVisibleToUser)
+        if(isVisibleToUser && scrollView != null)
             scrollView.smoothScrollTo(0, 0);
     }
 
