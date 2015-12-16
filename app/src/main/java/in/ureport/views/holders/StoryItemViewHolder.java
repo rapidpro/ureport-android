@@ -93,7 +93,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
     private void bindImage(Story story) {
         if(story.getCover() != null) {
-            ImageLoader.loadGenericPictureToImageView(image, story.getCover());
+            ImageLoader.loadGenericPictureToImageViewFit(image, story.getCover());
             image.setVisibility(View.VISIBLE);
         } else {
             image.setVisibility(View.GONE);

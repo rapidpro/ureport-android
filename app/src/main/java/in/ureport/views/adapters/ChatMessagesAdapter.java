@@ -142,7 +142,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 message.setVisibility(View.GONE);
                 media.setVisibility(View.VISIBLE);
                 bindMediaType(chatMessage);
-                ImageLoader.loadGenericPictureToImageView(media, chatMessage.getMedia());
+                ImageLoader.loadGenericPictureToImageViewFit(media, chatMessage.getMedia());
             }
         }
 

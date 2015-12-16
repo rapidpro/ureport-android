@@ -164,7 +164,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 LocalMedia localMedia = (LocalMedia) media;
                 bitmapLoader.loadBitmapByUri(localMedia.getPath(), image, 100);
             } else {
-                ImageLoader.loadGenericPictureToImageView(image, media);
+                ImageLoader.loadGenericPictureToImageViewFit(image, media);
             }
         }
 

@@ -12,6 +12,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -231,6 +232,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         contribution.setOnEditorActionListener(onDescriptionEditorActionListener);
 
         RecyclerView contributionList = (RecyclerView) view.findViewById(R.id.contributionList);
+        ((SimpleItemAnimator) contributionList.getItemAnimator()).setSupportsChangeAnimations(false);
         contributionList.setLayoutManager(new WrapLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         contributionAdapter = new ContributionAdapter();
