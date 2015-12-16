@@ -22,7 +22,7 @@ android {
         }
     }
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion '23.0.2'
     defaultConfig {
         applicationId "in.ureport"
         minSdkVersion 10
@@ -35,8 +35,8 @@ android {
             signingConfig signingConfigs.signature
         }
         release {
-            minifyEnabled true
-            debuggable false
+            minifyEnabled false
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.signature
         }
