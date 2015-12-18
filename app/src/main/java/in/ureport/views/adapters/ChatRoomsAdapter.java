@@ -3,6 +3,7 @@ package in.ureport.views.adapters;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.util.SortedListAdapterCallback;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,8 @@ import in.ureport.models.holders.ChatRoomHolder;
  */
 public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = "ChatRoomsAdapter";
+
     private SortedList<ChatRoomHolder> chatRooms;
 
     private DateFormat hourFormatter;
@@ -49,7 +52,11 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder)holder).bindView(chatRooms.get(position));
+        try {
+            ((ViewHolder) holder).bindView(chatRooms.get(position));
+        } catch(Exception exception) {
+            Log.e(TAG, "onBindViewHolder: " + exception.getLocalizedMessage());
+        }
     }
 
     @Override
