@@ -314,5 +314,6 @@
     <string name="message_story_disapproved">The story was disapproved with success!</string>
     <string name="title_chat_message">New chat message</string>
     <string name="prompt_media_notification">media</string>
+    <string name="error_message_permission">It\'s not possible to login with Google+ without permissions</string>
 
 </resources>
