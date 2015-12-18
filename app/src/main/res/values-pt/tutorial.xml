@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="tutorial_title1">Criar Histórias</string>
+  <string name="tutorial_description1">Amplifique sua voz e compartilhe o que está acontecendo em sua comunidade criando histórias e contribuindo em outras</string>
+  <string name="tutorial_title2">Responder Enquetes</string>
+  <string name="tutorial_description2">Toda semana você e milhões de outros U-Reporters podem responder enquetes sobre questões que impactam pessoas jovens em sua comunidade. Resultados serão sempre compartilhados</string>
+  <string name="tutorial_title3">Chat grátis</string>
+  <string name="tutorial_description3">Chat com outros U-Reporters e siga grupos de chat sobre questões da juventude</string>
+</resources>
