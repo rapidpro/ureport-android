@@ -48,6 +48,15 @@
     public <init>(android.content.Context, android.util.AttributeSet);
 }
 
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+
+#3rd libraries
+-dontwarn android.support.**
+-dontwarn com.github.**
+-dontwarn com.squareup.picasso.**
+-dontwarn com.etsy.android.grid.**
+
 #twitter
 -include ../proguard-com.twitter.sdk.android.twitter.txt
 
