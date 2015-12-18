@@ -136,8 +136,10 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private View.OnClickListener onSeeResultsClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pollParticipationListener != null)
-                    pollParticipationListener.onSeeResults(polls.get(getLayoutPosition()));
+                if (pollParticipationListener != null) {
+                    Poll poll = polls.get(isCurrentPollEnabled() ? getLayoutPosition() - 1 : getLayoutPosition());
+                    pollParticipationListener.onSeeResults(poll);
+                }
             }
         };
     }
