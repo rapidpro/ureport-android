@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -51,6 +53,7 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
 
     public static final String [] FACEBOOK_PERMISSIONS = { "email", "user_birthday" };
     public static final int ERROR_RESOLUTION_REQUEST_CODE = 300;
+    public static final int REQUEST_CODE_GET_ACCOUNTS_PERMISSION = 101;
 
     private LoginListener loginListener;
     private StatusBarDesigner statusBarDesigner;
@@ -91,6 +94,21 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
             if (resultCode != Activity.RESULT_OK) shouldResolveErrors = false;
             resolvingGoogleSignin = false;
             googleApiClient.connect();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode) {
+            case REQUEST_CODE_GET_ACCOUNTS_PERMISSION:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    loginWithGooglePlus();
+                } else {
+                    Toast.makeText(getContext(),  R.string.error_message_permission, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -252,15 +270,27 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
     private View.OnClickListener onGoogleLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            loadUserDialog = showLoadUserProgress();
-
-            if(!googleApiClient.isConnected()) {
-                googleApiClient.connect();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                int hasWriteContactsPermission = getActivity().checkSelfPermission(android.Manifest.permission.GET_ACCOUNTS);
+                if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[] { android.Manifest.permission.GET_ACCOUNTS }
+                            , REQUEST_CODE_GET_ACCOUNTS_PERMISSION);
+                }
             } else {
-                googleConnectionCallbacks.onConnected(null);
+                loginWithGooglePlus();
             }
         }
     };
+
+    private void loginWithGooglePlus() {
+        loadUserDialog = showLoadUserProgress();
+
+        if(!googleApiClient.isConnected()) {
+            googleApiClient.connect();
+        } else {
+            googleConnectionCallbacks.onConnected(null);
+        }
+    }
 
     private View.OnClickListener onSkipLoginClickListener = new View.OnClickListener() {
         @Override
