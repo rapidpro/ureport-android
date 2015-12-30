@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import in.ureport.models.User;
 import in.ureport.flowrunner.models.Contact;
+import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.rapidpro.Field;
 
 /**
@@ -53,7 +53,7 @@ public class ContactBuilder {
         return key.replace(":", "").replace("-", "");
     }
 
-    public Contact buildContactWithFields(User user, Locale locale) {
+    public Contact buildContactWithFields(User user, CountryInfo countryInfo) {
         Contact contact = buildContactWithoutFields(user);
         HashMap<String, Object> contactFields = new HashMap<>();
 
@@ -64,7 +64,7 @@ public class ContactBuilder {
         putValuesIfExists(user.getGender().toString(), contactFields, "gender");
         putValuesIfExists(user.getState(), contactFields, "state", "region", "province", "county");
         putValuesIfExists(user.getDistrict(), contactFields, "district", "lga");
-        putValuesIfExists(locale.getCountry(), contactFields, "country");
+        putValuesIfExists(countryInfo.getCountryCode(), contactFields, "country");
 
         contact.setFields(contactFields);
         return contact;

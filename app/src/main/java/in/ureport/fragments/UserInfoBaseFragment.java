@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.widget.DatePickerFragment;
@@ -35,10 +34,10 @@ import in.ureport.R;
 import in.ureport.loader.CountryListLoader;
 import in.ureport.loader.LocationInfoLoader;
 import in.ureport.models.User;
+import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.LocationInfo;
 import in.ureport.models.holders.UserGender;
-import in.ureport.models.holders.UserLocale;
 
 /**
  * Created by johncordeiro on 10/09/15.
@@ -48,7 +47,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     private static final String TAG = "UserInfoBaseFragment";
 
     protected static final String EXTRA_USER = "user";
-    private static final String EXTRA_LOCALE_LOADER = "locale";
+    private static final String EXTRA_COUNTRY_INFO = "countryInfo";
 
     public static final int FIELDS_MINIMUM_SIZE = 5;
 
@@ -140,10 +139,13 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
 
         country = (Spinner) view.findViewById(R.id.country);
         country.setOnItemSelectedListener(onCountrySelectedListener);
+        resetLocationSpinner(country, R.array.spinner_loading);
         loadCountryList();
 
         state = (Spinner) view.findViewById(R.id.state);
         state.setOnItemSelectedListener(onStateSelectedListener);
+        resetLocationSpinner(state, R.array.spinner_loading);
+
         district = (Spinner) view.findViewById(R.id.district);
         confirm = (Button) view.findViewById(R.id.confirm);
     }
@@ -241,8 +243,8 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         return spinner.getSelectedItemPosition() != Spinner.INVALID_POSITION;
     }
 
-    protected UserLocale getUserLocale() {
-        return (UserLocale) country.getAdapter().getItem(country.getSelectedItemPosition());
+    protected CountryInfo getCountrySelected() {
+        return (CountryInfo) country.getAdapter().getItem(country.getSelectedItemPosition());
     }
 
     @Override
@@ -251,8 +253,8 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
             case LOAD_COUNTRY_LIST_ID:
                 return new CountryListLoader(getActivity());
             case LOAD_STATES_ID:
-                Locale locale = (Locale) args.getSerializable(EXTRA_LOCALE_LOADER);
-                return new LocationInfoLoader(getActivity(), locale);
+                CountryInfo countryInfo = args.getParcelable(EXTRA_COUNTRY_INFO);
+                return new LocationInfoLoader(getActivity(), countryInfo);
         }
         return null;
     }
@@ -261,7 +263,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     public void onLoadFinished(Loader loader, Object data) {
         switch (loader.getId()) {
             case LOAD_COUNTRY_LIST_ID:
-                updateUserLocale((List<UserLocale>)data);
+                updateCountries((List<CountryInfo>)data);
                 break;
             case LOAD_STATES_ID:
                 LocationInfo locationInfo = (LocationInfo) data;
@@ -314,11 +316,13 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     @Override
     public void onLoaderReset(Loader loader) {}
 
-    private void updateUserLocale(List<UserLocale> data) {
-        ArrayAdapter<UserLocale> localeAdapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, data);
+    private void updateCountries(List<CountryInfo> data) {
+        ArrayAdapter<CountryInfo> localeAdapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, data);
         localeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         country.setAdapter(localeAdapter);
+        country.setEnabled(true);
+
         onCountriesLoaded(data);
     }
 
@@ -347,10 +351,13 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     private AdapterView.OnItemSelectedListener onCountrySelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            UserLocale userLocale = (UserLocale) country.getSelectedItem();
-            resetLocationSpinner(state, R.array.spinner_loading);
-            resetLocationSpinner(district, R.array.spinner_loading);
-            loadStatesForUserLocale(userLocale);
+            Object item = country.getSelectedItem();
+            if(item instanceof CountryInfo) {
+                CountryInfo countryInfo = (CountryInfo) item;
+                resetLocationSpinner(state, R.array.spinner_loading);
+                resetLocationSpinner(district, R.array.spinner_loading);
+                loadStatesForCountry(countryInfo);
+            }
         }
 
         @Override
@@ -375,9 +382,9 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         return loadingStatesAdapter;
     }
 
-    private void loadStatesForUserLocale(UserLocale userLocale) {
+    private void loadStatesForCountry(CountryInfo countryInfo) {
         Bundle bundle = new Bundle();
-        bundle.putSerializable(EXTRA_LOCALE_LOADER, userLocale.getLocale());
+        bundle.putParcelable(EXTRA_COUNTRY_INFO, countryInfo);
 
         getLoaderManager().restartLoader(LOAD_STATES_ID, bundle, this).forceLoad();
     }
@@ -394,8 +401,9 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     private AdapterView.OnItemSelectedListener onStateSelectedListener = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (districts != null) {
-                Location state = (Location) parent.getItemAtPosition(position);
+            Object item = parent.getItemAtPosition(position);
+            if (districts != null && item instanceof Location) {
+                Location state = (Location) item;
                 updateDistrictsForState(state);
             }
         }
@@ -404,7 +412,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         public void onNothingSelected(AdapterView<?> parent) {}
     };
 
-    public abstract void onCountriesLoaded(List<UserLocale> data);
+    public abstract void onCountriesLoaded(List<CountryInfo> data);
 
     public abstract void onStatesLoaded(List<Location> locations);
 

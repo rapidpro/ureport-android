@@ -12,13 +12,12 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.util.List;
-import java.util.Locale;
 
 import in.ureport.R;
 import in.ureport.models.User;
+import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.UserGender;
-import in.ureport.models.holders.UserLocale;
 import in.ureport.flowrunner.models.Contact;
 import in.ureport.network.UserServices;
 import in.ureport.tasks.SaveContactTask;
@@ -64,7 +63,6 @@ public class EditUserFragment extends UserInfoBaseFragment {
 
     private void setupView() {
         password.setVisibility(View.GONE);
-        country.setEnabled(false);
         email.setVisibility(View.GONE);
 
         confirm.setOnClickListener(onConfirmClickListener);
@@ -75,32 +73,32 @@ public class EditUserFragment extends UserInfoBaseFragment {
     }
 
     @Override
-    public void onCountriesLoaded(List<UserLocale> data) {
-        selectUserCountry(data, getUserLocale(data));
+    public void onCountriesLoaded(List<CountryInfo> data) {
+        country.setEnabled(false);
+        selectUserCountry(data, getUserCountry(data));
     }
 
     @Nullable
-    private UserLocale getUserLocale(List<UserLocale> data) {
-        for (UserLocale userLocale : data) {
+    private CountryInfo getUserCountry(List<CountryInfo> data) {
+        for (CountryInfo countryInfo : data) {
             try {
-                if (hasUserISOCode(userLocale.getLocale())) {
-                    return userLocale;
+                if (hasUserISOCode(countryInfo.getIsoAlpha3())) {
+                    return countryInfo;
                 }
             } catch(Exception ignored){}
         }
         return null;
     }
 
-    private boolean hasUserISOCode(Locale locale) {
-        return locale.getDisplayCountry() != null && locale.getISO3Country() != null
-                && locale.getISO3Country().equals(user.getCountry());
+    private boolean hasUserISOCode(String countryCode) {
+        return countryCode != null && countryCode.equals(user.getCountry());
     }
 
-    private void selectUserCountry(List<UserLocale> data, UserLocale locale) {
-        int userLocalePosition = data.indexOf(locale);
+    private void selectUserCountry(List<CountryInfo> data, CountryInfo countryInfo) {
+        int countryInfoPosition = data.indexOf(countryInfo);
 
-        if(userLocalePosition >= 0) {
-            country.setSelection(userLocalePosition);
+        if(countryInfoPosition >= 0) {
+            country.setSelection(countryInfoPosition);
         }
     }
 
@@ -167,7 +165,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
         }
 
         private void updateContactToRapidpro() {
-            SaveContactTask saveContactTask = new SaveContactTask(getActivity(), getUserLocale().getLocale()) {
+            SaveContactTask saveContactTask = new SaveContactTask(getActivity(), getCountrySelected()) {
                 @Override
                 protected void onPostExecute(Contact contact) {
                     super.onPostExecute(contact);

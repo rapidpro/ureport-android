@@ -2,6 +2,7 @@ package in.ureport.network;
 
 import java.util.List;
 
+import in.ureport.BuildConfig;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import retrofit.RestAdapter;
@@ -18,11 +19,16 @@ public class GeonamesServices {
 
     public GeonamesServices() {
         RestAdapter restAdapter = buildRestAdapter();
+        if(BuildConfig.DEBUG) restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
         service = restAdapter.create(GeonamesApi.class);
     }
 
     public List<CountryInfo> getCountryInfo(String country) {
         return service.getCountryInfo(country, USERNAME).getGeonames();
+    }
+
+    public List<CountryInfo> getCountriesByLanguage(String language) {
+        return service.getCountriesByLanguage(language, USERNAME).getGeonames();
     }
 
     public List<Location> getStates(Long geonameId) {

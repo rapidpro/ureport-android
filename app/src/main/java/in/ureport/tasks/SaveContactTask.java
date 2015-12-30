@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.List;
-import java.util.Locale;
 
 import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
@@ -15,6 +14,7 @@ import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.flowrunner.models.Contact;
+import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.rapidpro.Field;
 import in.ureport.network.ProxyApi;
 import in.ureport.network.ProxyServices;
@@ -28,13 +28,13 @@ import retrofit.RetrofitError;
 public class SaveContactTask extends ProgressTask<User, Void, Contact> {
 
     private static final String TAG = "SaveContactTask";
-    private Locale locale;
+    private CountryInfo countryInfo;
 
     private RapidProServices rapidProServices;
 
-    public SaveContactTask(Context context, Locale locale) {
+    public SaveContactTask(Context context, CountryInfo countryInfo) {
         super(context, R.string.load_message_save_user);
-        this.locale = locale;
+        this.countryInfo = countryInfo;
         this.rapidProServices = new RapidProServices();
     }
 
@@ -47,7 +47,6 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     protected Contact doInBackground(User... params) {
         try {
             User user = params[0];
-            getLocaleByUserIfNeeded(user);
 
             String countryToken = getTokenFromProxy();
             UserManager.updateCountryToken(countryToken);
@@ -71,16 +70,10 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         return null;
     }
 
-    private void getLocaleByUserIfNeeded(User user) {
-        if(locale == null) {
-            locale = getLocaleByUser(user);
-        }
-    }
-
     @Nullable
     private String getTokenFromProxy() {
         try {
-            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(locale.getISO3Country());
+            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryInfo.getIsoAlpha3());
 
             ProxyServices proxyServices = new ProxyServices(getContext());
             ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
@@ -94,25 +87,7 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         List<Field> fields = rapidProServices.loadFields(token);
 
         ContactBuilder contactBuilder = new ContactBuilder(fields);
-        return contactBuilder.buildContactWithFields(user, locale);
-    }
-
-    @Nullable
-    private Locale getLocaleByUser(User user) {
-        Locale [] locales = Locale.getAvailableLocales();
-        for (Locale locale : locales) {
-            try {
-                if (hasUserISOCode(locale, user)) {
-                    return locale;
-                }
-            } catch(Exception ignored){}
-        }
-        return null;
-    }
-
-    private boolean hasUserISOCode(Locale locale, User user) {
-        return locale.getDisplayCountry() != null && locale.getISO3Country() != null
-                && locale.getISO3Country().equals(user.getCountry());
+        return contactBuilder.buildContactWithFields(user, countryInfo);
     }
 
 }

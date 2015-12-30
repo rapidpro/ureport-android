@@ -7,7 +7,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
@@ -26,18 +25,18 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
 
     private static final String TAG = "StatesLoader";
 
-    private final Locale locale;
+    private final CountryInfo countryInfo;
 
-    public LocationInfoLoader(Context context, Locale locale) {
+    public LocationInfoLoader(Context context, CountryInfo countryInfo) {
         super(context);
-        this.locale = locale;
+        this.countryInfo = countryInfo;
     }
 
     @Override
     public LocationInfo loadInBackground() {
         try {
             ProxyServices proxyServices = new ProxyServices(getContext());
-            ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(locale.getISO3Country());
+            ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(countryInfo.getIsoAlpha3());
 
             List<Boundary> boundaries = loadBoundariesByRapidPro(response.token);
             if(boundaries.size() > 1) {
@@ -92,10 +91,8 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
     private List<Location> loadGeonamesStates() {
         try {
             GeonamesServices services = new GeonamesServices();
-            List<CountryInfo> countryInfos = services.getCountryInfo(locale.getCountry());
 
-            if (countryInfos.size() > 0) {
-                CountryInfo countryInfo = countryInfos.get(0);
+            if (countryInfo != null) {
                 return services.getStates(countryInfo.getGeonameId());
             }
         } catch(Exception exception) {

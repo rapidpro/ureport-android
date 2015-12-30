@@ -25,10 +25,10 @@ import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
+import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
-import in.ureport.models.holders.UserLocale;
 import in.ureport.network.UserServices;
 
 /**
@@ -76,7 +76,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
     }
 
     @Override
-    public void onCountriesLoaded(List<UserLocale> data) {
+    public void onCountriesLoaded(List<CountryInfo> data) {
         selectCurrentUserLocale(data);
     }
 
@@ -99,13 +99,13 @@ public class SignUpFragment extends UserInfoBaseFragment {
         statusBarDesigner.setStatusBarColorById(getActivity(), color);
     }
 
-    private void selectCurrentUserLocale(List<UserLocale> userLocales) {
+    private void selectCurrentUserLocale(List<CountryInfo> countries) {
         Locale locale = Locale.getDefault();
-        UserLocale userLocale = new UserLocale(locale);
-        int userLocalePosition = userLocales.indexOf(userLocale);
+        CountryInfo countryInfo = new CountryInfo(locale.getISO3Country());
+        int countryPosition = countries.indexOf(countryInfo);
 
-        if(userLocalePosition >= 0) {
-            country.setSelection(userLocalePosition);
+        if(countryPosition >= 0) {
+            country.setSelection(countryPosition);
         }
     }
 
@@ -140,8 +140,8 @@ public class SignUpFragment extends UserInfoBaseFragment {
             user.setPicture(this.user.getPicture());
         }
 
-        UserLocale userLocale = getUserLocale();
-        String countryCode = userLocale.getLocale().getISO3Country();
+        CountryInfo countryInfo = getCountrySelected();
+        String countryCode = countryInfo.getIsoAlpha3();
         user.setCountry(countryCode);
         user.setCountryProgram(CountryProgramManager.getCountryProgramForCode(countryCode).getCode());
 
