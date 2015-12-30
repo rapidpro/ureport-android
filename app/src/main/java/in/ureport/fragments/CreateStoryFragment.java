@@ -219,6 +219,9 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void createStoryWithMediasAndSave(List<Media> medias) {
+        final ProgressDialog progressCreation = ProgressDialog.show(getActivity(), null
+                , getString(R.string.load_message_wait), true, true);
+
         final Story story = new Story();
         story.setTitle(title.getText().toString());
         story.setContributions(0);
@@ -234,6 +237,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         storyServices.saveStory(story, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                progressCreation.dismiss();
                 if (firebaseError == null && storyCreationListener != null) {
                     story.setKey(firebase.getKey());
 
