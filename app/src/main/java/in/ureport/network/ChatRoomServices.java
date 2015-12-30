@@ -115,7 +115,7 @@ public class ChatRoomServices extends ProgramServices {
     }
 
     private void loadExtraDataForChatRoom(final ChatRoom chatRoom, final String key, final ChatRoomInterface.OnChatRoomLoadedListener listener) {
-        loadChatRoomMembers(key, new ChatRoomInterface.OnChatMembersLoadedListener() {
+        loadChatRoomMembersWithData(key, new ChatRoomInterface.OnChatMembersLoadedListener() {
             @Override
             public void onChatMembersLoaded(final ChatMembers chatMembers) {
                 listener.onChatRoomLoaded(chatRoom, chatMembers);
@@ -156,6 +156,17 @@ public class ChatRoomServices extends ProgramServices {
     }
 
     public void loadChatRoomMembers(String key, final ChatRoomInterface.OnChatMembersLoadedListener listener) {
+        getDefaultRoot().child(membersPath).child(key)
+                .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        ChatMembers chatMembers = getChatMembersFromSnapshot(dataSnapshot);
+                        listener.onChatMembersLoaded(chatMembers);
+                    }
+                });
+    }
+
+    public void loadChatRoomMembersWithData(String key, final ChatRoomInterface.OnChatMembersLoadedListener listener) {
         getDefaultRoot().child(membersPath).child(key)
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override

@@ -8,15 +8,18 @@ import android.support.v4.view.ViewPager;
 import in.ureport.R;
 import in.ureport.fragments.SelectModeratorsFragment;
 import in.ureport.fragments.StoriesModerationFragment;
+import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
+import in.ureport.models.ChatRoom;
+import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.views.adapters.NavigationAdapter;
 
 /**
  * Created by johncordeiro on 16/09/15.
  */
-public class ModerationActivity extends BaseActivity {
+public class ModerationActivity extends BaseActivity implements OnUserStartChattingListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,5 +81,16 @@ public class ModerationActivity extends BaseActivity {
             navigationItems = new NavigationItem[]{storiesModeration};
         }
         return navigationItems;
+    }
+
+    @Override
+    public void onUserStartChatting(User user) {
+        if(UserManager.validateKeyAction(this)) {
+            Intent startChattingIntent = new Intent(this, MainActivity.class);
+            startChattingIntent.putExtra(MainActivity.EXTRA_USER, user);
+            startChattingIntent.setAction(MainActivity.ACTION_START_CHATTING);
+            startChattingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(startChattingIntent);
+        }
     }
 }

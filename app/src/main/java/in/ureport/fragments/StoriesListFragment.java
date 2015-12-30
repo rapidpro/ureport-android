@@ -62,8 +62,8 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     protected boolean publicType = true;
 
     private StoriesAdapter.OnPublishStoryListener onPublishStoryListener;
-    private OnUserStartChattingListener onUserStartChattingListener;
     private FloatingActionButtonListener floatingActionButtonListener;
+    protected OnUserStartChattingListener onUserStartChattingListener;
 
     protected StoriesAdapter storiesAdapter;
 

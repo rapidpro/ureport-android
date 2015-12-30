@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,8 @@ import in.ureport.R;
 import in.ureport.fragments.ListChatRoomsFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
+import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.listener.OnUserStartChattingListener;
@@ -31,6 +35,8 @@ import in.ureport.models.User;
 import in.ureport.models.Notification;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.models.holders.NavigationItem;
+import in.ureport.network.ChatRoomServices;
+import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
 import in.ureport.views.adapters.NavigationAdapter;
 import in.ureport.views.adapters.StoriesAdapter;
@@ -54,9 +60,13 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     public static final String ACTION_CONTRIBUTION_NOTIFICATION = "in.ureport.ContributionNotification";
     public static final String ACTION_OPEN_CHAT_NOTIFICATION = "in.ureport.ChatNotification";
     public static final String ACTION_OPEN_MESSAGE_NOTIFICATION = "in.ureport.MessageNotification";
+    public static final String ACTION_START_CHATTING = "in.ureport.StartChatting";
 
     public static final String EXTRA_FORCED_LOGIN = "forcedLogin";
     public static final String EXTRA_STORY = "story";
+    public static final String EXTRA_USER = "user";
+
+    private static final int LOAD_CHAT_TIME = 1000;
 
     private TextView notificationsAlert;
     private ViewPager pager;
@@ -66,6 +76,9 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
 
     private LocalNotificationManager localNotificationManager;
     private Story story;
+
+    private int roomMembersLoaded = 0;
+    private boolean chatRoomFound = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -229,6 +242,15 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         final String action = getIntent().getAction();
         if(action != null) {
             switch(action) {
+                case ACTION_START_CHATTING:
+                    pager.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            User user = getIntent().getParcelableExtra(EXTRA_USER);
+                            onUserStartChatting(user);
+                        }
+                    }, LOAD_CHAT_TIME);
+                    break;
                 case ACTION_OPEN_CHAT_NOTIFICATION:
                     pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
                     break;
@@ -382,29 +404,41 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     }
 
     @Override
-    public void onUserStartChatting(User user) {
-        if(UserManager.validateKeyAction(this) && listChatRoomsFragment.getChatRooms() != null) {
-            ChatRoom chatRoom = containsChatRoom(user);
-            if(chatRoom != null) {
-                listChatRoomsFragment.startChatRoom(chatRoom);
-            } else {
-                createChat(user);
-            }
+    public void onUserStartChatting(final User user) {
+        if(UserManager.validateKeyAction(this)) {
+            UserServices userServices = new UserServices();
+
+            userServices.loadChatRooms(UserManager.getUserId(), new ValueEventListenerAdapter() {
+                @Override
+                public void onDataChange(final DataSnapshot dataSnapshot) {
+                    super.onDataChange(dataSnapshot);
+                    roomMembersLoaded = 0;
+                    chatRoomFound = false;
+                    searchChatRoomWithUserOrCreate(dataSnapshot, user);
+                }
+            });
         }
     }
 
-    private ChatRoom containsChatRoom(User friend) {
-        User me = new User();
-        me.setKey(UserManager.getUserId());
+    private void searchChatRoomWithUserOrCreate(final DataSnapshot chatRoomsSnapshot, final User user) {
+        final ChatRoomServices chatRoomServices = new ChatRoomServices();
 
-        for (ChatRoomHolder existingChatRoom : listChatRoomsFragment.getChatRooms()) {
-            if(existingChatRoom.chatRoom.getType() == ChatRoom.Type.Individual
-            && existingChatRoom.members.getUsers().contains(me)
-            && existingChatRoom.members.getUsers().contains(friend)
-            && !me.equals(friend)) {
-                return existingChatRoom.chatRoom;
-            }
+        for (final DataSnapshot chatRoom : chatRoomsSnapshot.getChildren()) {
+            chatRoomServices.loadChatRoomMembers(chatRoom.getKey(), new ChatRoomInterface.OnChatMembersLoadedListener() {
+                @Override
+                public void onChatMembersLoaded(ChatMembers chatMembers) {
+                    roomMembersLoaded++;
+                    boolean needsChatCreation = !chatRoomFound && roomMembersLoaded >= chatRoomsSnapshot.getChildrenCount();
+
+                    if(chatMembers.getUsers().size() == 2
+                    && chatMembers.getUsers().contains(user)) {
+                        chatRoomFound = true;
+                        listChatRoomsFragment.startChatRoom(new ChatRoom(chatRoom.getKey()));
+                    } else if(needsChatCreation) {
+                        createChat(user);
+                    }
+                }
+            });
         }
-        return null;
     }
 }

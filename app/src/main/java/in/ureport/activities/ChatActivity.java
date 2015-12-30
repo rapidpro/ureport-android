@@ -132,7 +132,7 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
 
     @Override
     public void onJoinChatGroup(final GroupChatRoom groupChatRoom) {
-        chatRoomServices.loadChatRoomMembers(groupChatRoom.getKey(), new ChatRoomInterface.OnChatMembersLoadedListener() {
+        chatRoomServices.loadChatRoomMembersWithData(groupChatRoom.getKey(), new ChatRoomInterface.OnChatMembersLoadedListener() {
             @Override
             public void onChatMembersLoaded(ChatMembers chatMembers) {
                 joinChatGroup(chatMembers, groupChatRoom);
@@ -162,7 +162,7 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
     @Override
     public void onViewGroupInfo(final GroupChatRoom groupChatRoom) {
         ChatRoomServices chatRoomServices = new ChatRoomServices();
-        chatRoomServices.loadChatRoomMembers(groupChatRoom.getKey(), new ChatRoomInterface.OnChatMembersLoadedListener() {
+        chatRoomServices.loadChatRoomMembersWithData(groupChatRoom.getKey(), new ChatRoomInterface.OnChatMembersLoadedListener() {
             @Override
             public void onChatMembersLoaded(ChatMembers chatMembers) {
                 startGroupInfoActivity(groupChatRoom, chatMembers);
