@@ -160,9 +160,9 @@
     <string name="login_load_user_message">Loading user information...</string>
     <string name="user_confirmation_load_message">Verifying user...</string>
     <string name="user_registering_load_message">Registering user...</string>
-    <string name="caching_user_load_message">Caching user...</string>
-    <string name="error_email_already_exists">There is an user with this email. Choose another!</string>
-    <string name="error_nickname_already_exists">There is an user with the same nickname. Choose another!</string>
+    <string name="caching_user_load_message">Saving user...</string>
+    <string name="error_email_already_exists">That email is already being used. Please choose a different one!</string>
+    <string name="error_nickname_already_exists">That nickname is already being used. Please choose a different one!</string>
     <string name="publishing_story_load_message">Publishing story...</string>
     <string name="load_message_publishing_contribution">Publishing contribution...</string>
     <string name="date_now">right now</string>
@@ -189,9 +189,8 @@
     </string-array>
 
 <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="load_message_save_user">Saving user...</string>
-    <string name="error_no_internet">Please, connect to the internet before continue.</string>
+    <string name="error_no_internet">Please connect to an internet connection before you continue.</string>
     <string name="invite_contact_text">Chat with me on U-Report app! Download it here http://goo.gl/Xxyodt</string>
     <string name="ureporters_selected_maximum">The maximum number of users selected are %1$s</string>
     <string name="chat_private_media_permission_title">Media allowed</string>
@@ -229,7 +228,7 @@
     <string name="error_update_user">An error occurred during the update process</string>
     <string name="old_password_title">Old password</string>
     <string name="new_password">New password</string>
-    <string name="change_password_title">Inform below the current password and the new one</string>
+    <string name="change_password_title">Below write your current password, and then the new one.</string>
     <string name="error_change_password">The password is incorrect</string>
     <string name="title_poll_question_user">Hi %1$s!</string>
     <string name="poll_question_latest_results">Previous poll results</string>
@@ -252,7 +251,7 @@
     <string name="success_story_update_message">Story was updated with success!</string>
     <string name="message_story_publish_warning">Your story has been submitted to the U-Report team. Check back soon to see it published!</string>
     <string name="label_remove">Remove</string>
-    <string name="error_remove">An error occurred during the remove process</string>
+    <string name="error_remove">An error occurred during removing process</string>
     <string name="message_success_remove">The data was removed with success!</string>
     <string name="title_share_story">Share story using:</string>
     <string name="title_share_news">Share news using:</string>
@@ -311,7 +310,7 @@
     <string name="hint_youtube_link">Youtube link</string>
     <string name="error_video_load">An error occurred during the video load</string>
     <string name="title_click_to_play">Click to play</string>
-    <string name="message_story_disapproved">The story was disapproved with success!</string>
+    <string name="message_story_disapproved">This story has been successfully disapproved.</string>
     <string name="title_chat_message">New chat message</string>
     <string name="prompt_media_notification">media</string>
     <string name="error_message_permission">It\'s not possible to login with Google+ without permissions</string>

@@ -157,8 +157,8 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
   <string name="user_confirmation_load_message">Verificando usuário...</string>
   <string name="user_registering_load_message">Registrando usuário...</string>
   <string name="caching_user_load_message">Salvando usuário...</string>
-  <string name="error_email_already_exists">Existe um usuário com esse email. Escolha outro!</string>
-  <string name="error_nickname_already_exists">Existe um usuário com o mesmo apelido. Escolha outro!</string>
+  <string name="error_email_already_exists">Esse e-mail está sendo utilizado por outro usuário. Por favor escolha outro!</string>
+  <string name="error_nickname_already_exists">Esse apelido está sendo utilizado por outro usuário. Por favor escolha outro!</string>
   <string name="publishing_story_load_message">Publicando história...</string>
   <string name="load_message_publishing_contribution">Publicando contribuição...</string>
   <string name="date_now">agora</string>
@@ -182,7 +182,6 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
     <item>Youtube</item>
   </string-array>
   <!--TODO: Remove or change this placeholder text-->
-  <string name="hello_blank_fragment">Olá blank fragment</string>
   <string name="load_message_save_user">Salvando usuário...</string>
   <string name="error_no_internet">Por favor, conecte-se à internet antes de continuar</string>
   <string name="invite_contact_text">Converse comigo no aplicativo U-Report! Faça o download ele aqui http://goo.gl/Xxyodt</string>
@@ -300,4 +299,5 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
   <string name="message_story_disapproved">Essa história foi desaprovada com sucesso!</string>
   <string name="title_chat_message">Nova mensagem de chat</string>
   <string name="prompt_media_notification">media</string>
+  <string name="error_message_permission">Não é possível efetuar login com Google+ sem permissões</string>
 </resources>
