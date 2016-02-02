@@ -2,6 +2,7 @@ package in.ureport.network;
 
 import android.content.Context;
 
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import retrofit.RestAdapter;
 
@@ -19,6 +20,8 @@ public class ProxyServices {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint(context.getString(R.string.proxy_url))
                 .build();
+
+        if(BuildConfig.DEBUG) restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
 
         proxyApi = restAdapter.create(ProxyApi.class);
     }
