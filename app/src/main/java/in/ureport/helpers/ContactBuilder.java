@@ -53,7 +53,7 @@ public class ContactBuilder {
         return key.replace(":", "").replace("-", "");
     }
 
-    public Contact buildContactWithFields(User user, CountryInfo countryInfo) {
+    public Contact buildContactWithFields(User user, String countryCode) {
         Contact contact = buildContactWithoutFields(user);
         HashMap<String, Object> contactFields = new HashMap<>();
 
@@ -64,7 +64,7 @@ public class ContactBuilder {
         putValuesIfExists(user.getGender().toString(), contactFields, "gender");
         putValuesIfExists(user.getState(), contactFields, "state", "region", "province", "county");
         putValuesIfExists(user.getDistrict(), contactFields, "district", "lga");
-        putValuesIfExists(countryInfo.getCountryCode(), contactFields, "country");
+        putValuesIfExists(countryCode, contactFields, "country");
 
         contact.setFields(contactFields);
         return contact;

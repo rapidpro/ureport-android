@@ -28,9 +28,10 @@ import retrofit.RetrofitError;
 public class SaveContactTask extends ProgressTask<User, Void, Contact> {
 
     private static final String TAG = "SaveContactTask";
-    private CountryInfo countryInfo;
 
     private RapidProServices rapidProServices;
+
+    private CountryInfo countryInfo;
 
     public SaveContactTask(Context context, CountryInfo countryInfo) {
         super(context, R.string.load_message_save_user);
@@ -47,11 +48,12 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     protected Contact doInBackground(User... params) {
         try {
             User user = params[0];
+            String countryCode = countryInfo != null ? countryInfo.getIsoAlpha3() : user.getCountryProgram();
 
-            String countryToken = getTokenFromProxy();
+            String countryToken = getTokenFromProxy(countryCode);
             UserManager.updateCountryToken(countryToken);
             if (countryToken != null && !countryToken.isEmpty()) {
-                Contact contact = getContactForUser(user, countryToken);
+                Contact contact = getContactForUser(countryToken, user, countryCode);
                 try {
                     return rapidProServices.saveContact(countryToken, contact);
                 } catch (RetrofitError exception) {
@@ -71,9 +73,9 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     }
 
     @Nullable
-    private String getTokenFromProxy() {
+    private String getTokenFromProxy(String countryCode) {
         try {
-            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryInfo.getIsoAlpha3());
+            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryCode);
 
             ProxyServices proxyServices = new ProxyServices(getContext());
             ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
@@ -83,11 +85,11 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         }
     }
 
-    private Contact getContactForUser(User user, String token) {
+    private Contact getContactForUser(String token, User user, String countryCode) {
         List<Field> fields = rapidProServices.loadFields(token);
 
         ContactBuilder contactBuilder = new ContactBuilder(fields);
-        return contactBuilder.buildContactWithFields(user, countryInfo);
+        return contactBuilder.buildContactWithFields(user, countryCode);
     }
 
 }
