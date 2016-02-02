@@ -67,7 +67,7 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
     @NonNull
     private Date getMinimumDate() {
         Calendar calendar = Calendar.getInstance();
-        calendar.roll(Calendar.MONTH, -EARLY_MONTHS);
+        calendar.add(Calendar.MONTH, -EARLY_MONTHS);
         return calendar.getTime();
     }
 
