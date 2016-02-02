@@ -69,9 +69,9 @@ public class CountryProgramManager {
             countryPrograms.add(buildCountryProgram("GLOBAL", R.style.AppTheme, R.string.global_channel, "U-Report Global", 13, "UReportGlobal", "U-Reporters"));
             countryPrograms.add(buildCountryProgram("BDI", R.style.AppTheme_Burundi, INVALID_VALUE, "Burundi", 5, "UReportGlobal", null));
             countryPrograms.add(buildCountryProgram("CMR", R.style.AppTheme_Cameroun, INVALID_VALUE, "Cameroun", 10, "UReportCameroon", null));
-            countryPrograms.add(buildCountryProgram("CHL", R.style.AppTheme_Chile, INVALID_VALUE, "Chile", 12, "UReportChile", "UReporters"));
+            countryPrograms.add(buildCountryProgram("CHL", R.style.AppTheme_Chile, R.string.chile_channel, "Chile", 12, "ureportchile", "UReporters"));
             countryPrograms.add(buildCountryProgram("COD", R.style.AppTheme_Drc, INVALID_VALUE, "DRC", INVALID_VALUE, "UReportDRC", null));
-            countryPrograms.add(buildCountryProgram("IDN", R.style.AppTheme_Indonesia, INVALID_VALUE, "Indonesia", 15, "UReport_id", "UReporters_Indonesia"));
+            countryPrograms.add(buildCountryProgram("IDN", R.style.AppTheme_Indonesia, R.string.indonesia_channel, "Indonesia", 15, "UReport_id", "UReporters_Indonesia"));
             countryPrograms.add(buildCountryProgram("LBR", R.style.AppTheme_Liberia, INVALID_VALUE, "Liberia", 6, "UReportLiberia", null));
             countryPrograms.add(buildCountryProgram("MLI", R.style.AppTheme_Mali, INVALID_VALUE, "Mali", 3, "UReportMali", null));
             countryPrograms.add(buildCountryProgram("MEX", R.style.AppTheme_Mexico, INVALID_VALUE, "México",  9, "UreportMexico", null));
