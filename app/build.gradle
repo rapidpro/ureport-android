@@ -21,6 +21,10 @@ android {
             storePassword 'htaq3XVfSucCEbS'
         }
     }
+    lintOptions {
+        disable 'MissingTranslation'
+    }
+
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
     defaultConfig {
