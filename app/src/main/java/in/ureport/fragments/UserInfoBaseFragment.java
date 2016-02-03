@@ -268,7 +268,9 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
             case LOAD_STATES_ID:
                 LocationInfo locationInfo = (LocationInfo) data;
                 updateStateSpinner(locationInfo);
-                updateDistrictSpinner(locationInfo);
+
+                districts = locationInfo.getDistricts();
+                updateDistrictSpinnerForState((Location) state.getSelectedItem());
         }
     }
 
@@ -277,27 +279,29 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         onStatesLoaded(locationInfo.getStates());
     }
 
-    private void updateDistrictSpinner(LocationInfo locationInfo) {
-        containsDistrict = locationInfo.getDistricts() != null && !locationInfo.getDistricts().isEmpty();
-        if(containsDistrict) {
-            districts = locationInfo.getDistricts();
-            district.setVisibility(View.VISIBLE);
+    private void updateDistrictSpinnerForState(Location state) {
+        List<Location> districtsFromState = getDistrictsFromState(state);
+        containsDistrict = !districtsFromState.isEmpty();
 
-            Location stateSelectedItem = (Location) state.getSelectedItem();
-            updateDistrictsForState(stateSelectedItem);
+        if(containsDistrict) {
+            district.setVisibility(View.VISIBLE);
+            updateSpinnerLocation(district, districtsFromState);
         } else {
             district.setVisibility(View.GONE);
         }
     }
 
-    private void updateDistrictsForState(Location stateSelectedItem) {
+    @NonNull
+    private List<Location> getDistrictsFromState(Location stateSelectedItem) {
         List<Location> stateDistricts = new ArrayList<>();
-        for (Location location : districts) {
-            if(location.getParent() != null && location.getParent().equals(stateSelectedItem.getBoundary())) {
-                stateDistricts.add(location);
+        if(districts != null) {
+            for (Location location : districts) {
+                if(location.getParent() != null && location.getParent().equals(stateSelectedItem.getBoundary())) {
+                    stateDistricts.add(location);
+                }
             }
         }
-        updateSpinnerLocation(district, stateDistricts);
+        return stateDistricts;
     }
 
     private void updateSpinnerLocation(Spinner spinner, List<Location> locations) {
@@ -402,9 +406,8 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             Object item = parent.getItemAtPosition(position);
-            if (districts != null && item instanceof Location) {
-                Location state = (Location) item;
-                updateDistrictsForState(state);
+            if (item instanceof Location) {
+                updateDistrictSpinnerForState((Location) item);
             }
         }
 
