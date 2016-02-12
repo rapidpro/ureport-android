@@ -1,17 +1,23 @@
 package in.ureport.views.adapters;
 
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.util.List;
 
 import br.com.ilhasoft.support.tool.bitmap.BitmapLoader;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.IOManager;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 
@@ -36,6 +42,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private OnMediaViewListener onMediaViewListener;
 
     private BitmapLoader bitmapLoader;
+    private IOManager ioManager;
 
     public MediaAdapter(List<Media> mediaList, boolean editMode) {
         this.mediaList = mediaList;
@@ -58,6 +65,10 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void setupObjects(ViewGroup parent) {
         if(bitmapLoader == null) {
             bitmapLoader = new BitmapLoader(parent.getContext());
+        }
+
+        if(ioManager == null) {
+            ioManager = new IOManager(parent.getContext());
         }
     }
 
@@ -162,7 +173,11 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private void bindImage(Media media) {
             if(media instanceof LocalMedia) {
                 LocalMedia localMedia = (LocalMedia) media;
-                bitmapLoader.loadBitmapByUri(localMedia.getPath(), image, 100);
+                if(localMedia.getType() == Media.Type.VideoPhone) {
+                    image.setImageBitmap(localMedia.getThumbnail());
+                } else {
+                    bitmapLoader.loadBitmapByUri(localMedia.getPath(), image, 100);
+                }
             } else {
                 ImageLoader.loadGenericPictureToImageViewFit(image, media);
             }

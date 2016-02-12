@@ -649,8 +649,13 @@ public class ChatRoomFragment extends Fragment
     }
 
     @Override
-    public void onLoadLocalMedia(Uri uri) {
+    public void onLoadLocalImage(Uri uri) {
         sendMedia(uri);
+    }
+
+    @Override
+    public void onLoadLocalVideo(Uri uri) {
+
     }
 
     @Override

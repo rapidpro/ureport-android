@@ -14,7 +14,8 @@ public class Media implements Parcelable {
 
     public enum Type {
         Picture,
-        Video
+        Video,
+        VideoPhone
     }
 
     private String id;

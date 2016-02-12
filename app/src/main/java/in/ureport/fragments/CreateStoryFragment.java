@@ -36,6 +36,7 @@ import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.YoutubePicker;
 import in.ureport.helpers.YoutubeThumbnailHandler;
+import in.ureport.listener.OnPickMediaListener;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
@@ -54,7 +55,7 @@ import in.ureport.views.adapters.MediaAdapter;
  * Created by johncordeiro on 7/14/15.
  */
 public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaListener
-        , YoutubePicker.OnPickVideoListener {
+        , YoutubePicker.OnPickVideoListener, OnPickMediaListener {
 
     private static final String TAG = "CreateStoryFragment";
     public static final int MEDIA_GAP = 5;
@@ -97,8 +98,15 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         mediaSelector.onActivityResult(this, onLoadLocalMediaListener, requestCode, resultCode, data);
     }
 
-    private void addLocalMedia(Uri pictureUri) {
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mediaSelector.onRequestPermissionResult(this, requestCode, grantResults);
+    }
+
+    private void addLocalMedia(Uri pictureUri, Media.Type type) {
         LocalMedia media = new LocalMedia();
+        media.setType(type);
         media.setPath(pictureUri);
         addMedia(media);
     }
@@ -312,7 +320,14 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public void onMediaAddListener() {
-        mediaSelector.selectMedia(this);
+        PickMediaFragment pickMediaFragment = new PickMediaFragment();
+        pickMediaFragment.setOnPickMediaListener(this);
+        getFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .setCustomAnimations(R.anim.slide_in_top, R.anim.slide_out_bottom
+                        , R.anim.slide_in_top, R.anim.slide_out_bottom)
+                .add(R.id.details, pickMediaFragment)
+                .commit();
     }
 
     private View.OnClickListener onMarkerClickListener = new View.OnClickListener() {
@@ -325,8 +340,13 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
         @Override
-        public void onLoadLocalMedia(Uri uri) {
-            addLocalMedia(uri);
+        public void onLoadLocalImage(Uri uri) {
+            addLocalMedia(uri, Media.Type.Picture);
+        }
+
+        @Override
+        public void onLoadLocalVideo(Uri uri) {
+            addLocalMedia(uri, Media.Type.VideoPhone);
         }
     };
 
@@ -343,6 +363,36 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
                 , YoutubeThumbnailHandler.ThumbnailSizeClass.HighQuality));
 
         addMedia(videoMedia);
+    }
+
+    @Override
+    public void onPickFromCamera() {
+        mediaSelector.pickFromCamera(this);
+    }
+
+    @Override
+    public void onPickFromGallery() {
+        mediaSelector.pickFromGallery(this);
+    }
+
+    @Override
+    public void onPickVideo() {
+        mediaSelector.pickVideoFromCamera(this);
+    }
+
+    @Override
+    public void onPickFile() {
+
+    }
+
+    @Override
+    public void onPickAudioRecord() {
+
+    }
+
+    @Override
+    public void onPickYoutubeLink() {
+        mediaSelector.pickFromYoutube(this);
     }
 
     public interface StoryCreationListener {
