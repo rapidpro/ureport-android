@@ -22,6 +22,11 @@
     <color name="light_cyan_highlight">#01d1db</color>
     <color name="dark_cyan_highlight">#00bbc2</color>
 
+    <color name="orange">#FF881E</color>
+    <color name="dark_yellow">#ffc652</color>
+    <color name="purple">#c356d7</color>
+    <color name="red">#f65251</color>
+
     <string-array name="poll_colors">
         <item>#78c95d</item>
         <item>#b08f6d</item>

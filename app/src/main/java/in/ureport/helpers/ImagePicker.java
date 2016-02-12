@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +20,7 @@ public class ImagePicker {
 
     public static final int REQUEST_PICK_FROM_GALLERY = 1024;
     public static final int REQUEST_IMAGE_CAPTURE = 1;
+    public static final int REQUEST_VIDEO_FROM_GALLERY = 2048;
 
     public void pickImageFromGallery(Fragment fragment) {
         Intent intent = new Intent();
@@ -35,6 +34,13 @@ public class ImagePicker {
 
         intent.setType("image/*");
         fragment.startActivityForResult(intent, REQUEST_PICK_FROM_GALLERY);
+    }
+
+    public void pickVideoFromCamera(Fragment fragment) {
+        Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (videoIntent.resolveActivity(fragment.getActivity().getPackageManager()) != null) {
+            fragment.startActivityForResult(videoIntent, REQUEST_VIDEO_FROM_GALLERY);
+        }
     }
 
     public File pickImageFromCamera(Fragment fragment) throws IOException {

@@ -314,5 +314,12 @@
     <string name="title_chat_message">New chat message</string>
     <string name="prompt_media_notification">media</string>
     <string name="error_message_permission">It\'s not possible to login with Google+ without permissions</string>
+    <string name="title_camera">Camera</string>
+    <string name="title_gallery">Gallery</string>
+    <string name="title_video">Video</string>
+    <string name="title_file">File</string>
+    <string name="title_record">Record</string>
+    <string name="title_youtube">Youtube</string>
+    <string name="error_message_permission_external">It\'s necessary to give permissions to this action.</string>
 
 </resources>
