@@ -1,8 +1,6 @@
 package in.ureport.views.adapters;
 
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +8,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.List;
 
 import br.com.ilhasoft.support.tool.bitmap.BitmapLoader;
-import br.com.ilhasoft.support.tool.bitmap.IOManager;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.models.LocalMedia;
