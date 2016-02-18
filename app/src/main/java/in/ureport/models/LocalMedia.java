@@ -1,6 +1,5 @@
 package in.ureport.models;
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 
@@ -14,22 +13,12 @@ public class LocalMedia extends Media {
 
     private Uri path;
 
-    private Bitmap thumbnail;
-
     public Uri getPath() {
         return path;
     }
 
     public void setPath(Uri path) {
         this.path = path;
-    }
-
-    public Bitmap getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(Bitmap thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     @Override
@@ -41,7 +30,6 @@ public class LocalMedia extends Media {
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeParcelable(this.path, 0);
-        dest.writeParcelable(this.thumbnail, 0);
     }
 
     public LocalMedia() {
@@ -54,7 +42,6 @@ public class LocalMedia extends Media {
     protected LocalMedia(Parcel in) {
         super(in);
         this.path = in.readParcelable(Uri.class.getClassLoader());
-        this.thumbnail = in.readParcelable(Bitmap.class.getClassLoader());
     }
 
     public static final Creator<LocalMedia> CREATOR = new Creator<LocalMedia>() {

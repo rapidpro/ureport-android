@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -101,10 +102,24 @@ public class MediaViewFragment extends Fragment {
         mediaPager = (ViewPager) view.findViewById(R.id.mediaPager);
         mediaPager.addOnPageChangeListener(onPageChangeListener);
 
-        mediaViewAdapter = new MediaViewAdapter(getChildFragmentManager(), medias);
+        mediaViewAdapter = new MediaViewAdapter(getChildFragmentManager(), filterSupportedMedias());
         mediaPager.setAdapter(mediaViewAdapter);
         mediaPager.setCurrentItem(position);
         mediaPager.setPageTransformer(true, new DepthPageTransformer());
+    }
+
+    @NonNull
+    private List<Media> filterSupportedMedias() {
+        List<Media> medias = new ArrayList<>();
+        for (int i = 0; i < this.medias.size(); i++) {
+            Media media = this.medias.get(i);
+            if(media.getType() != Media.Type.File && media.getType() != Media.Type.Audio) {
+                medias.add(media);
+            } else if(position > 0 && position >= i) {
+                position--;
+            }
+        }
+        return medias;
     }
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {

@@ -15,6 +15,7 @@ import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.UserViewManager;
+import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.views.adapters.StoriesAdapter;
 
@@ -92,11 +93,35 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void bindImage(Story story) {
-        if(story.getCover() != null) {
-            ImageLoader.loadGenericPictureToImageViewFit(image, story.getCover());
+        Media cover = story.getCover();
+        if(cover != null) {
+            image.setBackgroundColor(itemView.getResources().getColor(android.R.color.transparent));
+            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
             image.setVisibility(View.VISIBLE);
+
+            switch (cover.getType()) {
+                case File:
+                    image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    image.setImageResource(R.drawable.ic_folder_white_24dp);
+                    image.setBackgroundColor(itemView.getResources().getColor(R.color.orange));
+                    break;
+                case Video: case VideoPhone:
+                    ImageLoader.loadGenericPictureToImageViewFit(image, getCoverUrl(story));
+                    break;
+                default:
+                    image.setVisibility(View.GONE);
+            }
         } else {
             image.setVisibility(View.GONE);
+        }
+    }
+
+    private String getCoverUrl(Story story) {
+        switch (story.getCover().getType()) {
+            case VideoPhone:
+                return story.getCover().getThumbnail();
+            default:
+                return story.getCover().getUrl();
         }
     }
 
