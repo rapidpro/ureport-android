@@ -222,6 +222,11 @@ public class ProfileFragment extends Fragment {
             // TODO: 2/5/16  
         }
 
+        @Override
+        public void onLoadFile(Uri uri) {
+            // TODO: 2/17/16
+        }
+
         private void transferMedia(final LocalMedia localMedia) {
             try {
                 final ProgressDialog progressUpload = ProgressDialog.show(getActivity(), null
@@ -240,6 +245,7 @@ public class ProfileFragment extends Fragment {
         private ProgressDialog progressUpload;
         private LocalMedia localMedia;
         public ImageTransferListener(ProgressDialog progressUpload, LocalMedia localMedia) {
+            super(Media.Type.Picture);
             this.progressUpload = progressUpload;
             this.localMedia = localMedia;
         }

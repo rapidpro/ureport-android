@@ -28,7 +28,8 @@ public class MediaSelector {
     public static final int POSITION_GALLERY = 0;
     public static final int POSITION_CAMERA = 1;
     public static final int POSITION_YOUTUBE = 2;
-    public static final int REQUEST_CODE_WRITE_EXTERNAL_PERMISSION = 201;
+    public static final int REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION = 201;
+    public static final int REQUEST_CODE_WRITE_EXTERNAL_VIDEO_PERMISSION = 202;
 
     private Context context;
 
@@ -78,34 +79,57 @@ public class MediaSelector {
             , int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
-                case ImagePicker.REQUEST_VIDEO_FROM_GALLERY:
+                case MediaPicker.REQUEST_VIDEO_FROM_CAMERA:
                     saveChoosenVideo(data, onLoadLocalMediaListener);
                     break;
-                case ImagePicker.REQUEST_PICK_FROM_GALLERY:
+                case MediaPicker.REQUEST_PICK_FROM_GALLERY:
                     saveChoosenPicture(data, onLoadLocalMediaListener);
                     break;
-                case ImagePicker.REQUEST_IMAGE_CAPTURE:
+                case MediaPicker.REQUEST_IMAGE_CAPTURE:
                     saveTakenPicture(fragment, onLoadLocalMediaListener);
+                    break;
+                case MediaPicker.REQUEST_FILE:
+                    saveFile(fragment, data, onLoadLocalMediaListener);
             }
         }
+    }
+
+    private void saveFile(Fragment fragment, Intent data, OnLoadLocalMediaListener onLoadLocalMediaListener) {
+        Uri dataUri = data.getData();
+        if(dataUri != null)
+            onLoadLocalMediaListener.onLoadFile(dataUri);
+        else
+            Toast.makeText(fragment.getContext(), R.string.error_get_file, Toast.LENGTH_SHORT).show();
     }
 
     public void onRequestPermissionResult(Fragment fragment, int requestCode, int [] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_WRITE_EXTERNAL_PERMISSION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            switch (requestCode) {
+                case REQUEST_CODE_WRITE_EXTERNAL_VIDEO_PERMISSION:
+                    pickVideoFromCamera(fragment);
+                case REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION:
                     pickFromCamera(fragment);
-                } else {
-                    Toast.makeText(fragment.getContext(), R.string.error_message_permission_external
-                            , Toast.LENGTH_SHORT).show();
-                }
             }
+        } else {
+            Toast.makeText(fragment.getContext(), R.string.error_message_permission_external
+                    , Toast.LENGTH_SHORT).show();
         }
     }
 
+    public void pickFile(Fragment fragment) {
+        MediaPicker mediaPicker = new MediaPicker();
+        mediaPicker.pickFile(fragment);
+    }
+
     public void pickVideoFromCamera(Fragment fragment) {
-        ImagePicker imagePicker = new ImagePicker();
-        imagePicker.pickVideoFromCamera(fragment);
+        if (ContextCompat.checkSelfPermission(fragment.getActivity()
+                , Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            fragment.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}
+                    , REQUEST_CODE_WRITE_EXTERNAL_VIDEO_PERMISSION);
+        } else {
+            MediaPicker mediaPicker = new MediaPicker();
+            mediaPicker.pickVideoFromCamera(fragment);
+        }
     }
 
     public void pickFromCamera(Fragment fragment) {
@@ -113,10 +137,10 @@ public class MediaSelector {
             if (ContextCompat.checkSelfPermission(fragment.getActivity()
             , Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 fragment.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}
-                        , REQUEST_CODE_WRITE_EXTERNAL_PERMISSION);
+                        , REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION);
             } else {
-                ImagePicker imagePicker = new ImagePicker();
-                imageFromCamera = imagePicker.pickImageFromCamera(fragment);
+                MediaPicker mediaPicker = new MediaPicker();
+                imageFromCamera = mediaPicker.pickImageFromCamera(fragment);
             }
         } catch(Exception exception) {
             showTakenPictureError(fragment);
@@ -125,14 +149,14 @@ public class MediaSelector {
     }
 
     public void pickFromGallery(Fragment fragment) {
-        ImagePicker imagePicker = new ImagePicker();
-        imagePicker.pickImageFromGallery(fragment);
+        MediaPicker mediaPicker = new MediaPicker();
+        mediaPicker.pickImageFromGallery(fragment);
     }
 
     public void pickFromYoutube(Fragment fragment) {
-        if(fragment instanceof YoutubePicker.OnPickVideoListener) {
+        if(fragment instanceof YoutubePicker.OnPickYoutubeVideoListener) {
             YoutubePicker youtubePicker = new YoutubePicker(context);
-            youtubePicker.pickVideoFromInput((YoutubePicker.OnPickVideoListener)fragment);
+            youtubePicker.pickVideoFromInput((YoutubePicker.OnPickYoutubeVideoListener)fragment);
         }
     }
 
@@ -185,5 +209,6 @@ public class MediaSelector {
     public interface OnLoadLocalMediaListener {
         void onLoadLocalImage(Uri uri);
         void onLoadLocalVideo(Uri uri);
+        void onLoadFile(Uri uri);
     }
 }

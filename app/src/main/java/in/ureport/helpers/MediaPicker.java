@@ -21,6 +21,7 @@ public class MediaPicker {
     public static final int REQUEST_PICK_FROM_GALLERY = 1024;
     public static final int REQUEST_IMAGE_CAPTURE = 1;
     public static final int REQUEST_VIDEO_FROM_CAMERA = 2048;
+    public static final int REQUEST_FILE = 3072;
 
     public static final int VIDEO_QUALITY = 0;
     public static final int VIDEO_DURATION_LIMIT = 20;
@@ -41,6 +42,15 @@ public class MediaPicker {
 
     public void pickVideoFromCamera(Fragment fragment) {
         pickVideoFromCamera(fragment, VIDEO_QUALITY, VIDEO_DURATION_LIMIT);
+    }
+
+    public void pickFile(Fragment fragment) {
+        Intent documentIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        documentIntent.setType("*/*");
+        documentIntent.addCategory(Intent.CATEGORY_OPENABLE);
+        fragment.startActivityForResult(Intent.createChooser(documentIntent, "Select a File to Upload"),
+                REQUEST_FILE);
+//        fragment.startActivityForResult(documentIntent, REQUEST_FILE);
     }
 
     public void pickVideoFromCamera(Fragment fragment, int videoQuality, int durationLimit) {
