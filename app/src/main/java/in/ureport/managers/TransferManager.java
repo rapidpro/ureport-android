@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.ilhasoft.support.tool.bitmap.IOManager;
+import in.ureport.R;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
@@ -44,7 +45,7 @@ public class TransferManager {
         String type = contentResolver.getType(uri);
 
         File file = new File(filePath);
-        if(type == null || type.startsWith("image")) {
+        if(type != null && type.startsWith("image")) {
             compressAndTransferImage(parent, transferListener, file);
         } else {
             transferFile(file, parent, transferListener);
@@ -116,6 +117,7 @@ public class TransferManager {
     private void transferFile(File compressedFile, String parent, TransferListenerAdapter transferListener) {
         String filename = getFilename(compressedFile, parent);
         transferListener.setFilename(filename);
+        transferListener.setBucket(context.getString(R.string.amazon_s3_bucket_id));
 
         TransferObserver observer = AmazonServicesManager.getTransferUtility()
                 .upload(AmazonServicesManager.BUCKET_ID, filename, compressedFile);
