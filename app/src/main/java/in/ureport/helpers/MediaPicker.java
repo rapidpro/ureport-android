@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 import br.com.ilhasoft.support.tool.bitmap.IOManager;
+import in.ureport.R;
 
 /**
  * Created by johncordeiro on 20/08/15.
@@ -23,7 +24,7 @@ public class MediaPicker {
     public static final int REQUEST_VIDEO_FROM_CAMERA = 2048;
     public static final int REQUEST_FILE = 3072;
 
-    public static final int VIDEO_QUALITY = 0;
+    public static final int VIDEO_QUALITY = 1;
     public static final int VIDEO_DURATION_LIMIT = 20;
 
     public void pickImageFromGallery(Fragment fragment) {
@@ -46,11 +47,17 @@ public class MediaPicker {
 
     public void pickFile(Fragment fragment) {
         Intent documentIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        if (Build.VERSION.SDK_INT >= 19) {
+            documentIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+            documentIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            documentIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        } else {
+            documentIntent.setAction(Intent.ACTION_GET_CONTENT);
+        }
+
         documentIntent.setType("*/*");
-        documentIntent.addCategory(Intent.CATEGORY_OPENABLE);
-        fragment.startActivityForResult(Intent.createChooser(documentIntent, "Select a File to Upload"),
-                REQUEST_FILE);
-//        fragment.startActivityForResult(documentIntent, REQUEST_FILE);
+        fragment.startActivityForResult(Intent.createChooser(documentIntent
+                , fragment.getString(R.string.prompt_file_upload)), REQUEST_FILE);
     }
 
     public void pickVideoFromCamera(Fragment fragment, int videoQuality, int durationLimit) {
@@ -66,7 +73,7 @@ public class MediaPicker {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(fragment.getActivity().getPackageManager()) != null) {
             IOManager ioManager = new IOManager(fragment.getActivity());
-            File pictureFile = ioManager.createFilePath();
+            File pictureFile = ioManager.createImageFilePath();
 
             if(pictureFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(pictureFile));
