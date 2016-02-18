@@ -10,15 +10,18 @@ import in.ureport.models.Media;
  */
 public abstract class TransferListenerAdapter implements TransferListener {
 
-    private static final String URL = "https://s3.amazonaws.com/ureport-app/%1$s";
+    private static final String URL = "https://s3.amazonaws.com/%1$s/%2$s";
 
     private String filename;
+    private String bucket;
 
     private Media.Type type;
     private String name;
 
     public TransferListenerAdapter(Media.Type type) {
         this.type = type;
+        this.filename = "file";
+        this.bucket = "ureport-app";
     }
 
     public TransferListenerAdapter(Media.Type type, String name) {
@@ -50,8 +53,12 @@ public abstract class TransferListenerAdapter implements TransferListener {
         this.filename = filename;
     }
 
+    public void setBucket(String bucket) {
+        this.bucket = bucket;
+    }
+
     public String getUrl() {
-        return String.format(URL, filename);
+        return String.format(URL, bucket, filename);
     }
 
     public String getKey() {
