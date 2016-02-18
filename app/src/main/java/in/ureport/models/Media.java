@@ -15,7 +15,9 @@ public class Media implements Parcelable {
     public enum Type {
         Picture,
         Video,
-        VideoPhone
+        VideoPhone,
+        File,
+        Audio
     }
 
     private String id;
@@ -25,6 +27,10 @@ public class Media implements Parcelable {
 
     @Expose
     private Type type;
+
+    private String thumbnail;
+
+    private String name;
 
     public String getId() {
         return id;
@@ -50,13 +56,30 @@ public class Media implements Parcelable {
         this.type = type;
     }
 
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Media() {
     }
 
-    public Media(String id, String url, Type type) {
+    public Media(String id, String url, Type type, String name) {
         this.id = id;
         this.url = url;
         this.type = type;
+        this.name = name;
     }
 
     @Override
@@ -83,6 +106,8 @@ public class Media implements Parcelable {
         dest.writeString(this.id);
         dest.writeString(this.url);
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
+        dest.writeString(this.thumbnail);
+        dest.writeString(this.name);
     }
 
     protected Media(Parcel in) {
@@ -90,6 +115,8 @@ public class Media implements Parcelable {
         this.url = in.readString();
         int tmpType = in.readInt();
         this.type = tmpType == -1 ? null : Media.Type.values()[tmpType];
+        this.thumbnail = in.readString();
+        this.name = in.readString();
     }
 
     public static final Creator<Media> CREATOR = new Creator<Media>() {

@@ -1,5 +1,7 @@
 package in.ureport.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.bitmap.IOManager;
 import in.ureport.R;
 import in.ureport.fragments.MediaViewFragment;
 import in.ureport.fragments.NewsViewFragment;
@@ -87,6 +90,13 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
                 .add(R.id.content, mediaViewFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void onFileMediaView(Media media) {
+        Intent viewFileIntent = new Intent(Intent.ACTION_VIEW);
+        viewFileIntent.setData(Uri.parse(media.getUrl()));
+        startActivity(viewFileIntent);
     }
 
     @Override

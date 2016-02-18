@@ -1,8 +1,6 @@
 package in.ureport.views.adapters;
 
-import android.graphics.Bitmap;
-import android.media.ThumbnailUtils;
-import android.provider.MediaStore;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,14 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.List;
 
 import br.com.ilhasoft.support.tool.bitmap.BitmapLoader;
+import br.com.ilhasoft.support.tool.bitmap.IOManager;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
-import in.ureport.managers.IOManager;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 
@@ -42,7 +41,6 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private OnMediaViewListener onMediaViewListener;
 
     private BitmapLoader bitmapLoader;
-    private IOManager ioManager;
 
     public MediaAdapter(List<Media> mediaList, boolean editMode) {
         this.mediaList = mediaList;
@@ -65,10 +63,6 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void setupObjects(ViewGroup parent) {
         if(bitmapLoader == null) {
             bitmapLoader = new BitmapLoader(parent.getContext());
-        }
-
-        if(ioManager == null) {
-            ioManager = new IOManager(parent.getContext());
         }
     }
 
@@ -132,16 +126,15 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private class MediaViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView image;
-
         private final View cover;
-        private final View coverUnselected;
         private final ImageView videoPlay;
+        private final TextView name;
 
         public MediaViewHolder(View itemView) {
             super(itemView);
+            name = (TextView) itemView.findViewById(R.id.name);
             image = (ImageView) itemView.findViewById(R.id.image);
             cover = itemView.findViewById(R.id.cover);
-            coverUnselected = itemView.findViewById(R.id.coverUnselected);
             videoPlay = (ImageView) itemView.findViewById(R.id.videoPlay);
 
             Button remove = (Button) itemView.findViewById(R.id.remove);
@@ -157,13 +150,15 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         private void bindCoverSelection(Media media) {
             if(editMode) {
-                coverUnselected.setVisibility(!isMediaSelected(media) ? View.VISIBLE : View.GONE);
-                cover.setVisibility(isMediaSelected(media) ? View.VISIBLE : View.GONE);
+                cover.setVisibility(isMediaSelected(media) ? View.VISIBLE : View.INVISIBLE);
             } else {
-                coverUnselected.setVisibility(View.GONE);
-                cover.setVisibility(View.GONE);
-                videoPlay.setVisibility(media.getType() == Media.Type.Video ? View.VISIBLE : View.GONE);
+                cover.setVisibility(View.INVISIBLE);
+                videoPlay.setVisibility(isVideoType(media) ? View.VISIBLE : View.GONE);
             }
+        }
+
+        private boolean isVideoType(Media media) {
+            return media.getType() == Media.Type.Video || media.getType() == Media.Type.VideoPhone;
         }
 
         private boolean isMediaSelected(Media media) {
@@ -171,23 +166,71 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         private void bindImage(Media media) {
+            resetDefaults();
+
             if(media instanceof LocalMedia) {
-                LocalMedia localMedia = (LocalMedia) media;
-                if(localMedia.getType() == Media.Type.VideoPhone) {
-                    image.setImageBitmap(localMedia.getThumbnail());
-                } else {
-                    bitmapLoader.loadBitmapByUri(localMedia.getPath(), image, 100);
-                }
+                bindLocalImage((LocalMedia) media);
             } else {
-                ImageLoader.loadGenericPictureToImageViewFit(image, media);
+                bindRemoteImage(media);
+            }
+        }
+
+        private void bindRemoteImage(Media media) {
+            switch (media.getType()) {
+                case File:
+                    bindFile(media);
+                    break;
+                default:
+                    ImageLoader.loadGenericPictureToImageViewFit(image, getCoverUrl(media));
+            }
+        }
+
+        private void bindLocalImage(LocalMedia media) {
+            switch (media.getType()) {
+                case VideoPhone:
+                    bitmapLoader.loadBitmapByVideoPath(media.getPath(), image, 100); break;
+                case File:
+                    bindFile(media);
+                    break;
+                default:
+                    bitmapLoader.loadBitmapByUri(media.getPath(), image, 100);
+            }
+        }
+
+        private void bindFile(Media media) {
+            name.setText(media.getName());
+            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            image.setImageResource(R.drawable.ic_folder_white_24dp);
+            image.setBackgroundColor(itemView.getResources().getColor(R.color.orange));
+        }
+
+        private void resetDefaults() {
+            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            image.setBackgroundColor(itemView.getResources().getColor(android.R.color.transparent));
+            name.setText(null);
+        }
+
+        private String getCoverUrl(Media media) {
+            switch (media.getType()) {
+                case VideoPhone:
+                    return media.getThumbnail();
+                default:
+                    return media.getUrl();
             }
         }
 
         private View.OnClickListener onItemViewClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onMediaViewListener != null)
-                    onMediaViewListener.onMediaView(mediaList, getLayoutPosition());
+                if (onMediaViewListener != null) {
+                    Media media = mediaList.get(getLayoutPosition());
+                    switch (media.getType()) {
+                        case File:
+                            onMediaViewListener.onFileMediaView(media); break;
+                        default:
+                            onMediaViewListener.onMediaView(mediaList, getLayoutPosition());
+                    }
+                }
             }
         };
 
@@ -242,5 +285,6 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public interface OnMediaViewListener {
         void onMediaView(List<Media> medias, int position);
+        void onFileMediaView(Media media);
     }
 }
