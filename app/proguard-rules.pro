@@ -16,6 +16,9 @@
 #   public *;
 #}
 
+#retrolambda
+-dontwarn java.lang.invoke.*
+
 # activeandroid
 -keep class com.activeandroid.** { *; }
 -keep class com.activeandroid.**.** { *; }

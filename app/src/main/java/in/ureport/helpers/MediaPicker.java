@@ -9,18 +9,21 @@ import android.support.v4.app.Fragment;
 import java.io.File;
 import java.io.IOException;
 
-import in.ureport.managers.IOManager;
+import br.com.ilhasoft.support.tool.bitmap.IOManager;
 
 /**
  * Created by johncordeiro on 20/08/15.
  */
-public class ImagePicker {
+public class MediaPicker {
 
-    private static final String TAG = "ImagePicker";
+    private static final String TAG = "MediaPicker";
 
     public static final int REQUEST_PICK_FROM_GALLERY = 1024;
     public static final int REQUEST_IMAGE_CAPTURE = 1;
-    public static final int REQUEST_VIDEO_FROM_GALLERY = 2048;
+    public static final int REQUEST_VIDEO_FROM_CAMERA = 2048;
+
+    public static final int VIDEO_QUALITY = 0;
+    public static final int VIDEO_DURATION_LIMIT = 20;
 
     public void pickImageFromGallery(Fragment fragment) {
         Intent intent = new Intent();
@@ -37,9 +40,15 @@ public class ImagePicker {
     }
 
     public void pickVideoFromCamera(Fragment fragment) {
+        pickVideoFromCamera(fragment, VIDEO_QUALITY, VIDEO_DURATION_LIMIT);
+    }
+
+    public void pickVideoFromCamera(Fragment fragment, int videoQuality, int durationLimit) {
         Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        videoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, videoQuality);
+        videoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, durationLimit);
         if (videoIntent.resolveActivity(fragment.getActivity().getPackageManager()) != null) {
-            fragment.startActivityForResult(videoIntent, REQUEST_VIDEO_FROM_GALLERY);
+            fragment.startActivityForResult(videoIntent, REQUEST_VIDEO_FROM_CAMERA);
         }
     }
 
