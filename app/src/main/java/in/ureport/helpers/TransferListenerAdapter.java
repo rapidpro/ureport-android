@@ -14,10 +14,22 @@ public abstract class TransferListenerAdapter implements TransferListener {
 
     private String filename;
 
+    private Media.Type type;
+    private String name;
+
+    public TransferListenerAdapter(Media.Type type) {
+        this.type = type;
+    }
+
+    public TransferListenerAdapter(Media.Type type, String name) {
+        this(type);
+        this.name = name;
+    }
+
     @Override
     public final void onStateChanged(int id, TransferState state) {
         if(state == TransferState.COMPLETED) {
-            onTransferFinished(new Media(getKey(), getUrl(), Media.Type.Picture));
+            onTransferFinished(new Media(getKey(), getUrl(), type, name));
         }
     }
 

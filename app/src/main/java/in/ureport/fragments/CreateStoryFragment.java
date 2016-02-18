@@ -25,12 +25,14 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
+import br.com.ilhasoft.support.tool.bitmap.IOManager;
 import in.ureport.R;
 import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.ValueEventListenerAdapter;
@@ -55,7 +57,7 @@ import in.ureport.views.adapters.MediaAdapter;
  * Created by johncordeiro on 7/14/15.
  */
 public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaListener
-        , YoutubePicker.OnPickVideoListener, OnPickMediaListener {
+        , YoutubePicker.OnPickYoutubeVideoListener, OnPickMediaListener {
 
     private static final String TAG = "CreateStoryFragment";
     public static final int MEDIA_GAP = 5;
@@ -73,6 +75,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     private MediaSelector mediaSelector;
     private YoutubeThumbnailHandler youtubeThumbnailHandler;
+    private IOManager ioManager;
 
     @Nullable
     @Override
@@ -104,13 +107,6 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         mediaSelector.onRequestPermissionResult(this, requestCode, grantResults);
     }
 
-    private void addLocalMedia(Uri pictureUri, Media.Type type) {
-        LocalMedia media = new LocalMedia();
-        media.setType(type);
-        media.setPath(pictureUri);
-        addMedia(media);
-    }
-
     private void addMedia(Media media) {
         mediaList.add(media);
         mediaAdapter.updateMediaList(mediaList);
@@ -120,6 +116,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         mediaList = new ArrayList<>();
         mediaSelector = new MediaSelector(getContext());
         youtubeThumbnailHandler = new YoutubeThumbnailHandler();
+        ioManager = new IOManager(getContext());
     }
 
     private void setupView(View view) {
@@ -209,12 +206,9 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
                     , getString(R.string.load_message_uploading_image), true, true);
 
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferMedias(mediaList, "story", new TransferManager.OnTransferMediasListener() {
-                @Override
-                public void onTransferMedias(List<Media> medias) {
-                    progressUpload.dismiss();
-                    createStoryWithMediasAndSave(medias);
-                }
+            transferManager.transferMedias(mediaList, "story", medias -> {
+                progressUpload.dismiss();
+                createStoryWithMediasAndSave(medias);
             });
         } catch(Exception exception) {
             showErrorImageUpload();
@@ -341,21 +335,44 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
         @Override
         public void onLoadLocalImage(Uri uri) {
-            addLocalMedia(uri, Media.Type.Picture);
+            addLocalMedia(uri, Media.Type.Picture, null);
         }
 
         @Override
         public void onLoadLocalVideo(Uri uri) {
-            addLocalMedia(uri, Media.Type.VideoPhone);
+            addLocalMedia(uri, Media.Type.VideoPhone, null);
+        }
+
+        @Override
+        public void onLoadFile(Uri uri) {
+            addLocalMedia(uri, Media.Type.File, getFilenameForUri(uri));
         }
     };
 
-    @Override
-    public void onPickVideo(String videoId, String videoUrl) {
-        addVideoMedia(videoId, videoUrl);
+    private void addLocalMedia(Uri pictureUri, Media.Type type, String name) {
+        LocalMedia media = new LocalMedia();
+        media.setType(type);
+        media.setPath(pictureUri);
+        media.setName(name);
+        addMedia(media);
     }
 
-    private void addVideoMedia(String videoId, String videoUrl) {
+    private String getFilenameForUri(Uri uri) {
+        try {
+            File file = new File(ioManager.getFilePathForUri(uri));
+            return file.getName();
+        } catch(Exception exception) {
+            Log.e(TAG, "bindImage: ", exception);
+        }
+        return null;
+    }
+
+    @Override
+    public void onPickYoutubeVideo(String videoId, String videoUrl) {
+        addYoutubeVideoMedia(videoId, videoUrl);
+    }
+
+    private void addYoutubeVideoMedia(String videoId, String videoUrl) {
         VideoMedia videoMedia = new VideoMedia();
         videoMedia.setId(videoId);
         videoMedia.setPath(videoUrl);
@@ -382,7 +399,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public void onPickFile() {
-
+        mediaSelector.pickFile(this);
     }
 
     @Override

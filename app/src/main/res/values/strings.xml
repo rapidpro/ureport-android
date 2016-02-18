@@ -321,5 +321,6 @@
     <string name="title_record">Record</string>
     <string name="title_youtube">Youtube</string>
     <string name="error_message_permission_external">It\'s necessary to give permissions to this action.</string>
+    <string name="error_get_file">An error occurred, get other file</string>
 
 </resources>
