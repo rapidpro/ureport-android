@@ -322,5 +322,8 @@
     <string name="title_youtube">Youtube</string>
     <string name="error_message_permission_external">It\'s necessary to give permissions to this action.</string>
     <string name="error_get_file">An error occurred, get other file</string>
+    <string name="prompt_file_upload">Select a File to Upload</string>
+    <string name="error_compressing_video">It was not possible to compress the video, try again</string>
+    <string name="message_compressing_video">Compressing video...</string>
 
 </resources>

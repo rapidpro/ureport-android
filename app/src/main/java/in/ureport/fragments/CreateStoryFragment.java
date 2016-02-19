@@ -51,6 +51,7 @@ import in.ureport.models.VideoMedia;
 import in.ureport.network.StoryServices;
 import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.network.UserServices;
+import in.ureport.tasks.CompressVideoTask;
 import in.ureport.views.adapters.MediaAdapter;
 
 /**
@@ -340,7 +341,26 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
         @Override
         public void onLoadLocalVideo(Uri uri) {
-            addLocalMedia(uri, Media.Type.VideoPhone, null);
+            new CompressVideoTask(getContext()) {
+                public ProgressDialog progressDialog;
+
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    progressDialog = ProgressDialog.show(getContext(), null
+                            , getString(R.string.message_compressing_video), true, false);
+                }
+
+                @Override
+                protected void onPostExecute(Uri uri) {
+                    progressDialog.dismiss();
+                    if(uri != null) {
+                        addLocalMedia(uri, Media.Type.VideoPhone, null);
+                    } else {
+                        Toast.makeText(getContext(), R.string.error_compressing_video, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }.execute(uri);
         }
 
         @Override
