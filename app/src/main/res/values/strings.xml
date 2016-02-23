@@ -325,5 +325,12 @@
     <string name="prompt_file_upload">Select a File to Upload</string>
     <string name="error_compressing_video">It was not possible to compress the video, try again</string>
     <string name="message_compressing_video">Compressing video...</string>
+    <string name="title_recorder">Recorder</string>
+    <string name="title_button_record">Record</string>
+    <string name="error_message_audio">It was not possible to record an audio. Try again!</string>
+    <string name="error_message_mic">There is a problem with your microphone. It\' not possible to record an audio,</string>
+    <string name="title_button_stop">Stop</string>
+    <string name="error_message_audio_play">It was not possible to play the audio. Try again.</string>
+    <string name="title_loading_audio">Loading audio</string>
 
 </resources>
