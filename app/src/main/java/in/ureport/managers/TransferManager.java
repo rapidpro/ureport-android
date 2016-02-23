@@ -3,7 +3,6 @@ package in.ureport.managers;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 
@@ -28,28 +27,12 @@ import in.ureport.tasks.CreateVideoThumbTask;
 public class TransferManager {
 
     private static final String FILENAME = "%1$s/%2$s%3$s";
+
     private Context context;
+    private boolean transferFailed = false;
 
     public TransferManager(Context context) {
         this.context = context;
-    }
-
-    @NonNull
-    public void transferFile(Uri uri, final String parent, final TransferListenerAdapter transferListener)
-            throws URISyntaxException, IllegalStateException, IOException {
-        IOManager ioManager = new IOManager(context);
-        String filePath = ioManager.getFilePathForUri(uri);
-        if (filePath == null) throw new IllegalStateException("File does not exists");
-
-        ContentResolver contentResolver = context.getContentResolver();
-        String type = contentResolver.getType(uri);
-
-        File file = new File(filePath);
-        if(type != null && type.startsWith("image")) {
-            compressAndTransferImage(parent, transferListener, file);
-        } else {
-            transferFile(file, parent, transferListener);
-        }
     }
 
     public void transferMedia(LocalMedia media, String parent, final TransferListenerAdapter transferListener)
@@ -62,6 +45,8 @@ public class TransferManager {
         final List<Media> mediasUploaded = new ArrayList<>();
 
         for (Media media : medias) {
+            if(transferFailed) break;
+
             if(!(media instanceof LocalMedia)) {
                 mediasUploaded.add(media);
                 continue;
@@ -80,7 +65,35 @@ public class TransferManager {
                         finishTransfer(media, medias, mediasUploaded, onTransferMediasListener);
                     }
                 }
+                @Override
+                public void onTransferWaitingNetwork() {
+                    super.onTransferWaitingNetwork();
+                    onTransferMediasListener.onWaitingConnection();
+                }
+                @Override
+                public void onTransferFailed() {
+                    super.onTransferFailed();
+                    transferFailed = true;
+                    onTransferMediasListener.onFailed();
+                }
             });
+        }
+    }
+
+    private void transferFile(Uri uri, final String parent, final TransferListenerAdapter transferListener)
+            throws URISyntaxException, IllegalStateException, IOException {
+        IOManager ioManager = new IOManager(context);
+        String filePath = ioManager.getFilePathForUri(uri);
+        if (filePath == null) throw new IllegalStateException("File does not exists");
+
+        ContentResolver contentResolver = context.getContentResolver();
+        String type = contentResolver.getType(uri);
+
+        File file = new File(filePath);
+        if(type != null && type.startsWith("image")) {
+            compressAndTransferImage(parent, transferListener, file);
+        } else {
+            transferFile(file, parent, transferListener);
         }
     }
 
@@ -135,13 +148,15 @@ public class TransferManager {
             , OnTransferMediasListener onTransferMediasListener) {
         mediasUploaded.add(media);
 
-        if(medias.size() == mediasUploaded.size()) {
+        if(medias.size() == mediasUploaded.size() && !transferFailed) {
             onTransferMediasListener.onTransferMedias(mediasUploaded);
         }
     }
 
     public interface OnTransferMediasListener {
         void onTransferMedias(List<Media> medias);
+        void onWaitingConnection();
+        void onFailed();
     }
 
 }

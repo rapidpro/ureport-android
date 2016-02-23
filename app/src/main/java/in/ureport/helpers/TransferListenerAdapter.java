@@ -36,6 +36,10 @@ public abstract class TransferListenerAdapter implements TransferListener {
             media.setUrl(getUrl());
 
             onTransferFinished(media);
+        } else if(state == TransferState.WAITING_FOR_NETWORK) {
+            onTransferWaitingNetwork();
+        } else if (state == TransferState.FAILED) {
+            onTransferFailed();
         }
     }
 
@@ -49,8 +53,11 @@ public abstract class TransferListenerAdapter implements TransferListener {
 
     }
 
-    public void onTransferFinished(Media media) {
-    }
+    public void onTransferFinished(Media media) {}
+
+    public void onTransferFailed(){}
+
+    public void onTransferWaitingNetwork(){}
 
     public void setFilename(String filename) {
         this.filename = filename;

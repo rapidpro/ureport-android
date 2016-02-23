@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -205,17 +206,39 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private void uploadMediasAndCreateStory() {
         try {
             final ProgressDialog progressUpload = ProgressDialog.show(getActivity(), null
-                    , getString(R.string.load_message_uploading_image), true, true);
+                    , getString(R.string.load_message_uploading_image), true, false);
 
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferMedias(mediaList, "story", medias -> {
-                progressUpload.dismiss();
-                createStoryWithMediasAndSave(medias);
+            transferManager.transferMedias(mediaList, "story", new TransferManager.OnTransferMediasListener() {
+                @Override
+                public void onTransferMedias(List<Media> medias) {
+                    progressUpload.dismiss();
+                    createStoryWithMediasAndSave(medias);
+                }
+
+                @Override
+                public void onWaitingConnection() {
+                    progressUpload.setMessage(getString(R.string.load_message_waiting_connection));
+                }
+
+                @Override
+                public void onFailed() {
+                    progressUpload.dismiss();
+                    displayMediaUploadError();
+                }
             });
         } catch(Exception exception) {
             showErrorImageUpload();
             Log.e(TAG, "uploadMediasAndCreateStory ", exception);
         }
+    }
+
+    private void displayMediaUploadError() {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setMessage(R.string.error_media_upload)
+                .setPositiveButton(R.string.confirm_neutral_dialog_button, null)
+                .create();
+        alertDialog.show();
     }
 
     private void showErrorImageUpload() {
