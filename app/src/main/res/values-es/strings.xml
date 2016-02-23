@@ -187,7 +187,7 @@ Las celebridades de UNICEF tienen una amplia gama de talentos y logros, pero tod
   <string name="search_title">Buscar</string>
   <string name="search_hint_users">Buscar usuarios</string>
   <string name="error_image_upload">No fue posible cargar esta imagen. Por favor selecciona otra.</string>
-  <string name="load_message_uploading_image">Subiendo imagen...</string>
+  <string name="load_message_uploading_image">Subiendo archivos...</string>
   <string name="chat_room_removed_user_name">Usuario removido</string>
   <string name="error_full_group">Este grupo ya está completo. Por favor selecciona otro.</string>
   <string name="error_already_join_group">Ya eres miembro de este equipo.</string>

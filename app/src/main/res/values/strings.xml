@@ -197,7 +197,7 @@
     <string name="search_title">Search</string>
     <string name="search_hint_users">Search users</string>
     <string name="error_image_upload">It was not possible to upload this image, choose another!</string>
-    <string name="load_message_uploading_image">Uploading image...</string>
+    <string name="load_message_uploading_image">Uploading media...</string>
     <string name="chat_room_removed_user_name">Removed user</string>
     <string name="error_full_group">This group is full of users! Join another.</string>
     <string name="error_already_join_group">You already are member of this group.</string>
@@ -332,5 +332,7 @@
     <string name="title_button_stop">Stop</string>
     <string name="error_message_audio_play">It was not possible to play the audio. Try again.</string>
     <string name="title_loading_audio">Loading audio</string>
+    <string name="error_media_upload">The media upload was failed. Please check your connection and try again.</string>
+    <string name="load_message_waiting_connection">Waiting connection...</string>
 
 </resources>

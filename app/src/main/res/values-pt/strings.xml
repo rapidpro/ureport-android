@@ -190,7 +190,7 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
   <string name="search_title">Buscar</string>
   <string name="search_hint_users">Buscar usuários</string>
   <string name="error_image_upload">Não foi possível fazer o upload dessa imagem, escolha outra!</string>
-  <string name="load_message_uploading_image">Imagem em upload...</string>
+  <string name="load_message_uploading_image">Fazendo upload de arquivos...</string>
   <string name="chat_room_removed_user_name">Usuário removido</string>
   <string name="error_full_group">Esse grupo está lotado de usuários! Entre em outro.</string>
   <string name="error_already_join_group">Você já é membro deste grupo.</string>
