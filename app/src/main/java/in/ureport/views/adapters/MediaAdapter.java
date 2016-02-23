@@ -13,6 +13,7 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.bitmap.BitmapLoader;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.helpers.TimeFormatter;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 
@@ -177,7 +178,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     bindGeneric(R.drawable.ic_folder_white_24dp, R.color.orange);
                     break;
                 case Audio:
-                    bindGeneric(R.drawable.ic_music_note_white_24dp, R.color.light_green_highlight);
+                    bindAudio(media);
                     break;
                 default:
                     ImageLoader.loadGenericPictureToImageViewFit(image, getCoverUrl(media));
@@ -192,10 +193,19 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     name.setText(media.getName());
                     bindGeneric(R.drawable.ic_folder_white_24dp, R.color.orange); break;
                 case Audio:
-                    bindGeneric(R.drawable.ic_music_note_white_24dp, R.color.light_green_highlight); break;
+                    bindAudio(media);
+                    break;
                 default:
                     bitmapLoader.loadBitmapByUri(media.getPath(), image, 100);
             }
+        }
+
+        private void bindAudio(Media media) {
+            if(media.getMetadata() != null && media.getMetadata().containsKey(Media.KEY_DURATION)) {
+                int duration = (Integer)media.getMetadata().get(Media.KEY_DURATION);
+                name.setText(TimeFormatter.getDurationString(duration));
+            }
+            bindGeneric(R.drawable.ic_music_note_white_24dp, R.color.light_green_highlight);
         }
 
         private void bindGeneric(int imageResource, int color) {
