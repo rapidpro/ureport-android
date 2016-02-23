@@ -227,22 +227,30 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         public void onChildRemoved(DataSnapshot dataSnapshot) {
             super.onChildRemoved(dataSnapshot);
             Story story = getStoryFromSnapshot(dataSnapshot);
-            removeStory(story);
+            if(story != null)
+                removeStory(story);
         }
     };
 
     private void updateStoryFromSnapshot(DataSnapshot dataSnapshot) {
         final Story story = getStoryFromSnapshot(dataSnapshot);
 
-        addStory(story);
-        loadStoryData(story);
+        if(story != null) {
+            addStory(story);
+            loadStoryData(story);
+        }
     }
 
-    @NonNull
+    @Nullable
     private Story getStoryFromSnapshot(DataSnapshot dataSnapshot) {
-        final Story story = dataSnapshot.getValue(Story.class);
-        story.setKey(dataSnapshot.getKey());
-        return story;
+        try {
+            final Story story = dataSnapshot.getValue(Story.class);
+            story.setKey(dataSnapshot.getKey());
+            return story;
+        } catch(Exception exception) {
+            Log.e(TAG, "getStoryFromSnapshot: ", exception);
+        }
+        return null;
     }
 
     private void loadStoryData(final Story story) {
