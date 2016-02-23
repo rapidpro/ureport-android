@@ -58,7 +58,7 @@ public class PickMediaFragment extends Fragment {
 
         ViewGroup audioGroup = (ViewGroup) view.findViewById(R.id.audio);
         setupValuesForGroup(audioGroup, onAudioClickListener, R.color.light_green_highlight
-                , R.drawable.ic_mic_white_24dp, R.string.title_record);
+                , R.drawable.ic_music_note_white_24dp, R.string.title_record);
 
         ViewGroup youtubeGroup = (ViewGroup) view.findViewById(R.id.youtube);
         setupValuesForGroup(youtubeGroup, onYoutubeClickListener, R.color.red
@@ -86,14 +86,19 @@ public class PickMediaFragment extends Fragment {
     private View.OnClickListener onBackgroundClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            getFragmentManager().popBackStack();
+            dismiss();
         }
     };
+
+    public void dismiss() {
+        getFragmentManager().popBackStack();
+    }
 
     private View.OnClickListener onCameraClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             onPickMediaListener.onPickFromCamera();
+            dismiss();
         }
     };
 
@@ -101,6 +106,7 @@ public class PickMediaFragment extends Fragment {
         @Override
         public void onClick(View view) {
             onPickMediaListener.onPickFromGallery();
+            dismiss();
         }
     };
 
@@ -108,6 +114,7 @@ public class PickMediaFragment extends Fragment {
         @Override
         public void onClick(View view) {
             onPickMediaListener.onPickVideo();
+            dismiss();
         }
     };
 
@@ -115,6 +122,7 @@ public class PickMediaFragment extends Fragment {
         @Override
         public void onClick(View view) {
             onPickMediaListener.onPickFile();
+            dismiss();
         }
     };
 
@@ -122,6 +130,7 @@ public class PickMediaFragment extends Fragment {
         @Override
         public void onClick(View view) {
             onPickMediaListener.onPickAudioRecord();
+            dismiss();
         }
     };
 
@@ -129,6 +138,7 @@ public class PickMediaFragment extends Fragment {
         @Override
         public void onClick(View view) {
             onPickMediaListener.onPickYoutubeLink();
+            dismiss();
         }
     };
 
