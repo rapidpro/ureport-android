@@ -74,7 +74,7 @@ public class CountryProgramManager {
             countryPrograms.add(buildCountryProgram("IDN", R.style.AppTheme_Indonesia, R.string.indonesia_channel, "Indonesia", 15, "UReport_id", "UReporters_Indonesia"));
             countryPrograms.add(buildCountryProgram("LBR", R.style.AppTheme_Liberia, INVALID_VALUE, "Liberia", 6, "UReportLiberia", null));
             countryPrograms.add(buildCountryProgram("MLI", R.style.AppTheme_Mali, INVALID_VALUE, "Mali", 3, "UReportMali", null));
-            countryPrograms.add(buildCountryProgram("MEX", R.style.AppTheme_Mexico, INVALID_VALUE, "México",  9, "UreportMexico", null));
+            countryPrograms.add(buildCountryProgram("MEX", R.style.AppTheme_Mexico, R.string.mexico_channel, "México",  9, "UReportMexico", "UReporters"));
 //            countryPrograms.add(buildCountryProgram("MMR", R.style.AppTheme_Myanmar, INVALID_VALUE, "Myanmar",  INVALID_VALUE, "UReportMyanmar", "UReporters"));
             countryPrograms.add(buildCountryProgram("NGA", R.style.AppTheme_Nigeria, R.string.nigeria_channel, "Nigeria", 1, "UReportNigeria", "UReporters"));
             countryPrograms.add(buildCountryProgram("PAK", R.style.AppTheme_Pakistan, INVALID_VALUE, "Pakistan", 16, "PakAvaz", null));
@@ -82,7 +82,7 @@ public class CountryProgramManager {
             countryPrograms.add(buildCountryProgram("SEN", R.style.AppTheme_Senegal, INVALID_VALUE, "Sénégal", 14, "ureportsenegal", null));
             countryPrograms.add(buildCountryProgram("SLE", R.style.AppTheme_SierraLeone, INVALID_VALUE, "Sierra Leone", 7, "UreportSL", null));
             countryPrograms.add(buildCountryProgram("SWZ", R.style.AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4, "Ureportszd", null));
-            countryPrograms.add(buildCountryProgram("UGA", R.style.AppTheme_Uganda, INVALID_VALUE, "Uganda", INVALID_VALUE, "UReportUganda", null));
+            countryPrograms.add(buildCountryProgram("UGA", R.style.AppTheme_Uganda, R.string.uganda_channel, "Uganda", 18, "UReportUganda", "U-Reporters"));
             countryPrograms.add(buildCountryProgram("ZMB", R.style.AppTheme_Zambia, INVALID_VALUE, "Zambia", INVALID_VALUE, "ZambiaUReport", null));
             countryPrograms.add(buildCountryProgram("ZWE", R.style.AppTheme_Zimbabwe, INVALID_VALUE, "Zimbabwe", 2, "Ureportzim", null));
         }
