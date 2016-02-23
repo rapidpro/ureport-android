@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -182,9 +183,11 @@ public class MediaSelector {
                             Manifest.permission.RECORD_AUDIO}
                     , REQUEST_CODE_AUDIO_PERMISSION);
         } else if (fragment instanceof OnLoadLocalMediaListener) {
+            FragmentTransaction transaction = fragment.getActivity().getSupportFragmentManager().beginTransaction();
+
             RecordAudioFragment recordAudioFragment = new RecordAudioFragment();
             recordAudioFragment.setOnLoadLocalMediaListener((OnLoadLocalMediaListener) fragment);
-            recordAudioFragment.show(fragment.getActivity().getSupportFragmentManager(), "recordAudioFragment");
+            recordAudioFragment.show(transaction, "recordAudioFragment");
         }
     }
 
