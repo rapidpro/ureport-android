@@ -68,6 +68,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':support-android')
     compile project(':flow-runner')
+    compile project(':video-compressor')
     compile('com.twitter.sdk.android:twitter:1.7.0@aar') {
         transitive = true;
     }
@@ -80,7 +81,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.1.0'
     compile 'com.android.support:cardview-v7:23.1.0'
     compile 'com.android.support:preference-v7:23.1.0'
-    compile 'com.firebase:firebase-client-android:2.5.0'
+    compile 'com.firebase:firebase-client-android:2.5.2'
     compile 'com.facebook.android:facebook-android-sdk:4.5.0'
     compile 'de.hdodenhof:circleimageview:1.3.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
