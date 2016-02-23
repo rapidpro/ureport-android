@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ public class PickMediaFragment extends Fragment {
 
     private OnPickMediaListener onPickMediaListener;
 
+    private ImageView background;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,9 +39,9 @@ public class PickMediaFragment extends Fragment {
     }
 
     private void setupView(View view) {
-        ImageView background = (ImageView) view.findViewById(R.id.background);
+        background = (ImageView) view.findViewById(R.id.background);
         background.setOnClickListener(onBackgroundClickListener);
-        animateBackground(background);
+        showBackground(background);
 
         ViewGroup cameraGroup = (ViewGroup) view.findViewById(R.id.camera);
         setupValuesForGroup(cameraGroup, onCameraClickListener, R.color.primary_color
@@ -65,10 +68,18 @@ public class PickMediaFragment extends Fragment {
                 , R.drawable.ic_play_arrow_white_24dp, R.string.title_youtube);
     }
 
-    private void animateBackground(ImageView background) {
+    private void showBackground(ImageView background) {
+        animateBackground(background, 0, 1);
+    }
+
+    private void hideBackground(ImageView background) {
+        animateBackground(background, 1, 0);
+    }
+
+    private void animateBackground(ImageView background, int alphaPre, int alphaPos) {
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
-            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(background, "alpha", 0, 1);
-            objectAnimator.setStartDelay(300);
+            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(background, "alpha", alphaPre, alphaPos);
+            objectAnimator.setStartDelay(400);
             objectAnimator.start();
         }
     }
@@ -91,7 +102,11 @@ public class PickMediaFragment extends Fragment {
     };
 
     public void dismiss() {
-        getFragmentManager().popBackStack();
+        hideBackground(background);
+        getFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                .remove(this)
+                .commit();
     }
 
     private View.OnClickListener onCameraClickListener = new View.OnClickListener() {
@@ -145,4 +160,5 @@ public class PickMediaFragment extends Fragment {
     public void setOnPickMediaListener(OnPickMediaListener onPickMediaListener) {
         this.onPickMediaListener = onPickMediaListener;
     }
+
 }

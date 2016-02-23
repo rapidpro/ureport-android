@@ -343,9 +343,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         pickMediaFragment.setOnPickMediaListener(this);
         getFragmentManager().beginTransaction()
                 .addToBackStack(null)
-                .setCustomAnimations(R.anim.slide_in_top, R.anim.slide_out_bottom
-                        , R.anim.slide_in_top, R.anim.slide_out_bottom)
-                .add(R.id.details, pickMediaFragment)
+                .setCustomAnimations(R.anim.slide_in_top, R.anim.slide_out_bottom, R.anim.slide_out_bottom, R.anim.slide_in_top)
+                .replace(R.id.details, pickMediaFragment)
                 .commit();
     }
 
