@@ -1,6 +1,7 @@
 package in.ureport.views.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -175,7 +176,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private void bindRemoteImage(Media media) {
             switch (media.getType()) {
                 case File:
-                    bindGeneric(R.drawable.ic_folder_white_24dp, R.color.orange);
+                    bindFile(media);
                     break;
                 case Audio:
                     bindAudio(media);
@@ -190,8 +191,8 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 case VideoPhone:
                     bitmapLoader.loadBitmapByVideoPath(media.getPath(), image, 100); break;
                 case File:
-                    name.setText(media.getName());
-                    bindGeneric(R.drawable.ic_folder_white_24dp, R.color.orange); break;
+                    bindFile(media);
+                    break;
                 case Audio:
                     bindAudio(media);
                     break;
@@ -200,12 +201,25 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             }
         }
 
+        private void bindFile(Media media) {
+            if(containsMetadata(media, Media.KEY_FILENAME)) {
+                String filename = (String)media.getMetadata().get(Media.KEY_FILENAME);
+                name.setText(filename);
+            }
+            bindGeneric(R.drawable.ic_folder_white_24dp, R.color.orange);
+        }
+
         private void bindAudio(Media media) {
-            if(media.getMetadata() != null && media.getMetadata().containsKey(Media.KEY_DURATION)) {
+            if(containsMetadata(media, Media.KEY_DURATION)) {
                 int duration = (Integer)media.getMetadata().get(Media.KEY_DURATION);
                 name.setText(TimeFormatter.getDurationString(duration));
+                name.setGravity(Gravity.END | Gravity.RIGHT);
             }
             bindGeneric(R.drawable.ic_music_note_white_24dp, R.color.light_green_highlight);
+        }
+
+        private boolean containsMetadata(Media media, String metadataKey) {
+            return media.getMetadata() != null && media.getMetadata().containsKey(metadataKey);
         }
 
         private void bindGeneric(int imageResource, int color) {
@@ -217,6 +231,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private void resetDefaults() {
             image.setScaleType(ImageView.ScaleType.CENTER_CROP);
             image.setBackgroundColor(itemView.getResources().getColor(android.R.color.transparent));
+            name.setGravity(Gravity.CENTER_HORIZONTAL);
             name.setText(null);
         }
 

@@ -16,6 +16,7 @@ import java.util.Map;
 public class Media implements Parcelable {
 
     public static final String KEY_DURATION = "duration";
+    public static final String KEY_FILENAME = "filename";
 
     public enum Type {
         Picture,
@@ -34,8 +35,6 @@ public class Media implements Parcelable {
     private Type type;
 
     private String thumbnail;
-
-    private String name;
 
     private HashMap<String, Object> metadata;
 
@@ -71,14 +70,6 @@ public class Media implements Parcelable {
         this.thumbnail = thumbnail;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public HashMap<String, Object> getMetadata() {
         return metadata;
     }
@@ -94,12 +85,10 @@ public class Media implements Parcelable {
         this.id = id;
         this.url = url;
         this.type = type;
-        this.name = name;
     }
 
     public Media(LocalMedia localMedia) {
         this.type = localMedia.getType();
-        this.name = localMedia.getName();
         this.metadata = localMedia.getMetadata();
     }
 
@@ -128,7 +117,6 @@ public class Media implements Parcelable {
         dest.writeString(this.url);
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
         dest.writeString(this.thumbnail);
-        dest.writeString(this.name);
         dest.writeSerializable(this.metadata);
     }
 
@@ -138,7 +126,6 @@ public class Media implements Parcelable {
         int tmpType = in.readInt();
         this.type = tmpType == -1 ? null : Media.Type.values()[tmpType];
         this.thumbnail = in.readString();
-        this.name = in.readString();
         this.metadata = (HashMap<String, Object>) in.readSerializable();
     }
 

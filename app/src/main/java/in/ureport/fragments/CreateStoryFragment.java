@@ -359,7 +359,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public void onLoadLocalImage(Uri uri) {
-        addLocalMedia(uri, Media.Type.Picture, null, null);
+        addLocalMedia(uri, Media.Type.Picture, null);
     }
 
     @Override
@@ -378,7 +378,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             protected void onPostExecute(Uri uri) {
                 progressDialog.dismiss();
                 if(uri != null) {
-                    addLocalMedia(uri, Media.Type.VideoPhone, null, null);
+                    addLocalMedia(uri, Media.Type.VideoPhone, null);
                 } else {
                     Toast.makeText(getContext(), R.string.error_compressing_video, Toast.LENGTH_SHORT).show();
                 }
@@ -388,7 +388,10 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public void onLoadFile(Uri uri) {
-        addLocalMedia(uri, Media.Type.File, getFilenameForUri(uri), null);
+        HashMap<String, Object> metadata = new HashMap<>();
+        metadata.put(Media.KEY_FILENAME, getFilenameForUri(uri));
+
+        addLocalMedia(uri, Media.Type.File, metadata);
     }
 
     @Override
@@ -396,14 +399,13 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         HashMap<String, Object> metadata = new HashMap<>();
         metadata.put(Media.KEY_DURATION, duration);
 
-        addLocalMedia(uri, Media.Type.Audio, null, metadata);
+        addLocalMedia(uri, Media.Type.Audio, metadata);
     }
 
-    private void addLocalMedia(Uri pictureUri, Media.Type type, String name, HashMap<String, Object> metadata) {
+    private void addLocalMedia(Uri pictureUri, Media.Type type, HashMap<String, Object> metadata) {
         LocalMedia media = new LocalMedia();
         media.setType(type);
         media.setPath(pictureUri);
-        media.setName(name);
         media.setMetadata(metadata);
         addMedia(media);
     }
