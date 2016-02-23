@@ -46,6 +46,7 @@ public class RecordAudioFragment extends DialogFragment {
     private static final int PAUSED_STATUS = 1;
     public static final int INTERVAL_MILLIS = 100;
     public static final String EXTRA_MEDIA = "media";
+    private static final String AUDIO_EXTENSION = ".mp4";
 
     private TextView startTime;
     private TextView endTime;
@@ -76,6 +77,11 @@ public class RecordAudioFragment extends DialogFragment {
         RecordAudioFragment fragment = new RecordAudioFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Nullable
@@ -147,7 +153,7 @@ public class RecordAudioFragment extends DialogFragment {
         try {
             switch(recordingStatus) {
                 case IDLE_STATUS:
-                    recordedAudio = ioManager.createAudioFilePath();
+                    recordedAudio = ioManager.createAudioFilePath(AUDIO_EXTENSION);
                     startRecording();
                     break;
                 case RECORDING_STATUS:
@@ -155,7 +161,7 @@ public class RecordAudioFragment extends DialogFragment {
                     break;
                 case READY_STATUS:
                     if(onLoadLocalMediaListener != null)
-                        onLoadLocalMediaListener.onLoadAudio(Uri.fromFile(recordedAudio), duration + 1);
+                        onLoadLocalMediaListener.onLoadAudio(Uri.fromFile(recordedAudio), duration);
                     dismiss();
             }
         } catch (Exception exception) {
@@ -176,8 +182,10 @@ public class RecordAudioFragment extends DialogFragment {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setOutputFile(recordedAudio.getAbsolutePath());
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mediaRecorder.setAudioEncodingBitRate(32);
+        mediaRecorder.setAudioSamplingRate(44100);
+        mediaRecorder.setOutputFile(recordedAudio.getAbsolutePath());
         mediaRecorder.setMaxDuration(MAX_DURATION_MS);
 
         try {
@@ -225,7 +233,10 @@ public class RecordAudioFragment extends DialogFragment {
 
         progress.setProgress(0);
         startTime.setText(TimeFormatter.getDurationString(0));
-        endTime.setText(TimeFormatter.getDurationString(duration));
+        if(mediaPlayer != null)
+            endTime.setText(TimeFormatter.getDurationStringFromMillis(mediaPlayer.getDuration()));
+        else
+            endTime.setText(TimeFormatter.getDurationString(duration));
     }
 
     private void startProgressTimer(final int milliseconds) {
