@@ -174,7 +174,10 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private void bindRemoteImage(Media media) {
             switch (media.getType()) {
                 case File:
-                    bindFile(media);
+                    bindGeneric(R.drawable.ic_folder_white_24dp, R.color.orange);
+                    break;
+                case Audio:
+                    bindGeneric(R.drawable.ic_music_note_white_24dp, R.color.light_green_highlight);
                     break;
                 default:
                     ImageLoader.loadGenericPictureToImageViewFit(image, getCoverUrl(media));
@@ -186,18 +189,19 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 case VideoPhone:
                     bitmapLoader.loadBitmapByVideoPath(media.getPath(), image, 100); break;
                 case File:
-                    bindFile(media);
-                    break;
+                    name.setText(media.getName());
+                    bindGeneric(R.drawable.ic_folder_white_24dp, R.color.orange); break;
+                case Audio:
+                    bindGeneric(R.drawable.ic_music_note_white_24dp, R.color.light_green_highlight); break;
                 default:
                     bitmapLoader.loadBitmapByUri(media.getPath(), image, 100);
             }
         }
 
-        private void bindFile(Media media) {
-            name.setText(media.getName());
+        private void bindGeneric(int imageResource, int color) {
             image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            image.setImageResource(R.drawable.ic_folder_white_24dp);
-            image.setBackgroundColor(itemView.getResources().getColor(R.color.orange));
+            image.setImageResource(imageResource);
+            image.setBackgroundColor(itemView.getResources().getColor(color));
         }
 
         private void resetDefaults() {
@@ -223,6 +227,8 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     switch (media.getType()) {
                         case File:
                             onMediaViewListener.onFileMediaView(media); break;
+                        case Audio:
+                            onMediaViewListener.onAudioMediaView(media); break;
                         default:
                             onMediaViewListener.onMediaView(mediaList, getLayoutPosition());
                     }
@@ -282,5 +288,6 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public interface OnMediaViewListener {
         void onMediaView(List<Media> medias, int position);
         void onFileMediaView(Media media);
+        void onAudioMediaView(Media media);
     }
 }

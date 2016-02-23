@@ -13,6 +13,7 @@ import br.com.ilhasoft.support.tool.bitmap.IOManager;
 import in.ureport.R;
 import in.ureport.fragments.MediaViewFragment;
 import in.ureport.fragments.NewsViewFragment;
+import in.ureport.fragments.RecordAudioFragment;
 import in.ureport.fragments.StoryViewFragment;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.Media;
@@ -97,6 +98,12 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
         Intent viewFileIntent = new Intent(Intent.ACTION_VIEW);
         viewFileIntent.setData(Uri.parse(media.getUrl()));
         startActivity(viewFileIntent);
+    }
+
+    @Override
+    public void onAudioMediaView(Media media) {
+        RecordAudioFragment recordAudioFragment = RecordAudioFragment.newInstance(media);
+        recordAudioFragment.show(getSupportFragmentManager(), "recordAudioFragment");
     }
 
     @Override

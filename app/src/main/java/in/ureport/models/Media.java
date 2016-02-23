@@ -6,11 +6,16 @@ import android.os.Parcelable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by johncordeiro on 20/08/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Media implements Parcelable {
+
+    public static final String KEY_DURATION = "duration";
 
     public enum Type {
         Picture,
@@ -31,6 +36,8 @@ public class Media implements Parcelable {
     private String thumbnail;
 
     private String name;
+
+    private HashMap<String, Object> metadata;
 
     public String getId() {
         return id;
@@ -72,6 +79,14 @@ public class Media implements Parcelable {
         this.name = name;
     }
 
+    public HashMap<String, Object> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(HashMap<String, Object> metadata) {
+        this.metadata = metadata;
+    }
+
     public Media() {
     }
 
@@ -80,6 +95,12 @@ public class Media implements Parcelable {
         this.url = url;
         this.type = type;
         this.name = name;
+    }
+
+    public Media(LocalMedia localMedia) {
+        this.type = localMedia.getType();
+        this.name = localMedia.getName();
+        this.metadata = localMedia.getMetadata();
     }
 
     @Override
@@ -108,6 +129,7 @@ public class Media implements Parcelable {
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
         dest.writeString(this.thumbnail);
         dest.writeString(this.name);
+        dest.writeSerializable(this.metadata);
     }
 
     protected Media(Parcel in) {
@@ -117,6 +139,7 @@ public class Media implements Parcelable {
         this.type = tmpType == -1 ? null : Media.Type.values()[tmpType];
         this.thumbnail = in.readString();
         this.name = in.readString();
+        this.metadata = (HashMap<String, Object>) in.readSerializable();
     }
 
     public static final Creator<Media> CREATOR = new Creator<Media>() {

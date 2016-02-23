@@ -68,7 +68,7 @@ public class TransferManager {
             }
 
             final LocalMedia localMedia = (LocalMedia) media;
-            transferFile(localMedia.getPath(), parent, new TransferListenerAdapter(localMedia.getType(), localMedia.getName()) {
+            transferFile(localMedia.getPath(), parent, new TransferListenerAdapter(localMedia) {
                 @Override
                 public void onTransferFinished(Media media) {
                     super.onTransferFinished(media);
@@ -91,7 +91,10 @@ public class TransferManager {
             protected void onPostExecute(File videoThumbFile) {
                 super.onPostExecute(videoThumbFile);
 
-                transferFile(videoThumbFile, parent, new TransferListenerAdapter(Media.Type.Picture) {
+                LocalMedia newLocalMedia = new LocalMedia();
+                newLocalMedia.setType(Media.Type.Picture);
+
+                transferFile(videoThumbFile, parent, new TransferListenerAdapter(newLocalMedia) {
                     @Override
                     public void onTransferFinished(Media videoThumbnail) {
                         super.onTransferFinished(videoThumbnail);

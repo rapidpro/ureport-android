@@ -45,6 +45,7 @@ import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.GroupChatRoom;
+import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
@@ -299,8 +300,11 @@ public class CreateGroupFragment extends Fragment {
             final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_uploading_image)
                     , true, false);
 
+            LocalMedia localMedia = new LocalMedia(pictureUri);
+            localMedia.setType(Media.Type.Picture);
+
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferFile(pictureUri, GROUP_CHAT_FOLDER, new TransferListenerAdapter(Media.Type.Picture) {
+            transferManager.transferMedia(localMedia, GROUP_CHAT_FOLDER, new TransferListenerAdapter(localMedia) {
                 @Override
                 public void onTransferFinished(Media media) {
                     super.onTransferFinished(media);

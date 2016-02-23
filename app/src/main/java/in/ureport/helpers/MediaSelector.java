@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.io.File;
 
 import in.ureport.R;
+import in.ureport.fragments.RecordAudioFragment;
 import in.ureport.listener.OnMediaSelectedListener;
 
 /**
@@ -30,6 +31,7 @@ public class MediaSelector {
     public static final int POSITION_YOUTUBE = 2;
     public static final int REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION = 201;
     public static final int REQUEST_CODE_WRITE_EXTERNAL_VIDEO_PERMISSION = 202;
+    public static final int REQUEST_CODE_AUDIO_PERMISSION = 203;
 
     private Context context;
 
@@ -103,17 +105,30 @@ public class MediaSelector {
     }
 
     public void onRequestPermissionResult(Fragment fragment, int requestCode, int [] grantResults) {
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (grantResults.length > 0 && allPermissionsGranted(grantResults)) {
             switch (requestCode) {
                 case REQUEST_CODE_WRITE_EXTERNAL_VIDEO_PERMISSION:
-                    pickVideoFromCamera(fragment);
+                    pickVideoFromCamera(fragment); break;
                 case REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION:
-                    pickFromCamera(fragment);
+                    pickFromCamera(fragment); break;
+                case REQUEST_CODE_AUDIO_PERMISSION:
+                    pickAudio(fragment);
             }
         } else {
             Toast.makeText(fragment.getContext(), R.string.error_message_permission_external
                     , Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private boolean allPermissionsGranted(int[] grantResults) {
+        boolean granted = true;
+        for (int grantResult : grantResults) {
+            if(grantResult != PackageManager.PERMISSION_GRANTED) {
+                granted = false;
+                break;
+            }
+        }
+        return granted;
     }
 
     public void pickFile(Fragment fragment) {
@@ -157,6 +172,19 @@ public class MediaSelector {
         if(fragment instanceof YoutubePicker.OnPickYoutubeVideoListener) {
             YoutubePicker youtubePicker = new YoutubePicker(context);
             youtubePicker.pickVideoFromInput((YoutubePicker.OnPickYoutubeVideoListener)fragment);
+        }
+    }
+
+    public void pickAudio(Fragment fragment) {
+        if (ContextCompat.checkSelfPermission(fragment.getActivity()
+                , Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            fragment.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.RECORD_AUDIO}
+                    , REQUEST_CODE_AUDIO_PERMISSION);
+        } else if (fragment instanceof OnLoadLocalMediaListener) {
+            RecordAudioFragment recordAudioFragment = new RecordAudioFragment();
+            recordAudioFragment.setOnLoadLocalMediaListener((OnLoadLocalMediaListener) fragment);
+            recordAudioFragment.show(fragment.getActivity().getSupportFragmentManager(), "recordAudioFragment");
         }
     }
 
@@ -210,5 +238,6 @@ public class MediaSelector {
         void onLoadLocalImage(Uri uri);
         void onLoadLocalVideo(Uri uri);
         void onLoadFile(Uri uri);
+        void onLoadAudio(Uri uri, int duration);
     }
 }

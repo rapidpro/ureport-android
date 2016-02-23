@@ -3,6 +3,7 @@ package in.ureport.helpers;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 
+import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 
 /**
@@ -15,24 +16,26 @@ public abstract class TransferListenerAdapter implements TransferListener {
     private String filename;
     private String bucket;
 
-    private Media.Type type;
-    private String name;
+    private LocalMedia localMedia;
 
-    public TransferListenerAdapter(Media.Type type) {
-        this.type = type;
+    private TransferListenerAdapter() {
         this.filename = "file";
         this.bucket = "ureport-app";
     }
 
-    public TransferListenerAdapter(Media.Type type, String name) {
-        this(type);
-        this.name = name;
+    public TransferListenerAdapter(LocalMedia localMedia) {
+        this();
+        this.localMedia = localMedia;
     }
 
     @Override
     public final void onStateChanged(int id, TransferState state) {
         if(state == TransferState.COMPLETED) {
-            onTransferFinished(new Media(getKey(), getUrl(), type, name));
+            Media media = new Media(localMedia);
+            media.setId(getKey());
+            media.setUrl(getUrl());
+
+            onTransferFinished(media);
         }
     }
 

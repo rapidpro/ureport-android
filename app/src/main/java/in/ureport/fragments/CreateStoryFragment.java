@@ -28,6 +28,7 @@ import com.firebase.client.FirebaseError;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
@@ -58,7 +59,7 @@ import in.ureport.views.adapters.MediaAdapter;
  * Created by johncordeiro on 7/14/15.
  */
 public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaListener
-        , YoutubePicker.OnPickYoutubeVideoListener, OnPickMediaListener {
+        , YoutubePicker.OnPickYoutubeVideoListener, OnPickMediaListener, MediaSelector.OnLoadLocalMediaListener {
 
     private static final String TAG = "CreateStoryFragment";
     public static final int MEDIA_GAP = 5;
@@ -99,7 +100,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mediaSelector.onActivityResult(this, onLoadLocalMediaListener, requestCode, resultCode, data);
+        mediaSelector.onActivityResult(this, this, requestCode, resultCode, data);
     }
 
     @Override
@@ -333,47 +334,54 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         }
     };
 
-    private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
-        @Override
-        public void onLoadLocalImage(Uri uri) {
-            addLocalMedia(uri, Media.Type.Picture, null);
-        }
+    @Override
+    public void onLoadLocalImage(Uri uri) {
+        addLocalMedia(uri, Media.Type.Picture, null, null);
+    }
 
-        @Override
-        public void onLoadLocalVideo(Uri uri) {
-            new CompressVideoTask(getContext()) {
-                public ProgressDialog progressDialog;
+    @Override
+    public void onLoadLocalVideo(Uri uri) {
+        new CompressVideoTask(getContext()) {
+            public ProgressDialog progressDialog;
 
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                    progressDialog = ProgressDialog.show(getContext(), null
-                            , getString(R.string.message_compressing_video), true, false);
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = ProgressDialog.show(getContext(), null
+                        , getString(R.string.message_compressing_video), true, false);
+            }
+
+            @Override
+            protected void onPostExecute(Uri uri) {
+                progressDialog.dismiss();
+                if(uri != null) {
+                    addLocalMedia(uri, Media.Type.VideoPhone, null, null);
+                } else {
+                    Toast.makeText(getContext(), R.string.error_compressing_video, Toast.LENGTH_SHORT).show();
                 }
+            }
+        }.execute(uri);
+    }
 
-                @Override
-                protected void onPostExecute(Uri uri) {
-                    progressDialog.dismiss();
-                    if(uri != null) {
-                        addLocalMedia(uri, Media.Type.VideoPhone, null);
-                    } else {
-                        Toast.makeText(getContext(), R.string.error_compressing_video, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }.execute(uri);
-        }
+    @Override
+    public void onLoadFile(Uri uri) {
+        addLocalMedia(uri, Media.Type.File, getFilenameForUri(uri), null);
+    }
 
-        @Override
-        public void onLoadFile(Uri uri) {
-            addLocalMedia(uri, Media.Type.File, getFilenameForUri(uri));
-        }
-    };
+    @Override
+    public void onLoadAudio(Uri uri, int duration) {
+        HashMap<String, Object> metadata = new HashMap<>();
+        metadata.put(Media.KEY_DURATION, duration);
 
-    private void addLocalMedia(Uri pictureUri, Media.Type type, String name) {
+        addLocalMedia(uri, Media.Type.Audio, null, metadata);
+    }
+
+    private void addLocalMedia(Uri pictureUri, Media.Type type, String name, HashMap<String, Object> metadata) {
         LocalMedia media = new LocalMedia();
         media.setType(type);
         media.setPath(pictureUri);
         media.setName(name);
+        media.setMetadata(metadata);
         addMedia(media);
     }
 
@@ -424,7 +432,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public void onPickAudioRecord() {
-
+        mediaSelector.pickAudio(this);
     }
 
     @Override

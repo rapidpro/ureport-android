@@ -171,13 +171,14 @@ public class ChatRoomFragment extends Fragment
 
     private void sendMedia(Uri pictureUri) {
         LocalMedia media = new LocalMedia();
+        media.setType(Media.Type.Picture);
         media.setPath(pictureUri);
 
         final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
                 , getString(R.string.load_message_uploading_image), true);
         try {
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferMedia(media, MEDIA_PARENT, new TransferListenerAdapter(Media.Type.Picture) {
+            transferManager.transferMedia(media, MEDIA_PARENT, new TransferListenerAdapter(media) {
                 @Override
                 public void onTransferFinished(Media media) {
                     super.onTransferFinished(media);
@@ -660,6 +661,11 @@ public class ChatRoomFragment extends Fragment
 
     @Override
     public void onLoadFile(Uri uri) {
+
+    }
+
+    @Override
+    public void onLoadAudio(Uri uri, int duration) {
 
     }
 
