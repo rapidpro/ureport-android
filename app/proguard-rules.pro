@@ -16,6 +16,10 @@
 #   public *;
 #}
 
+#video-compressor
+-dontwarn com.googlecode.mp4parser.*
+-dontwarn com.googlecode.mp4parser.authoring.tracks.mjpeg.OneJpegPerIframe
+
 #retrolambda
 -dontwarn java.lang.invoke.*
 
