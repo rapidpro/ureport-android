@@ -103,10 +103,7 @@ public class PickMediaFragment extends Fragment {
 
     public void dismiss() {
         hideBackground(background);
-        getFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                .remove(this)
-                .commit();
+        getFragmentManager().popBackStack();
     }
 
     private View.OnClickListener onCameraClickListener = new View.OnClickListener() {
