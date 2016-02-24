@@ -117,8 +117,18 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private void selectFirstMediaIfNeeded(List<Media> mediaList) {
         if(mediaList != null && mediaList.size() > 0 && selectedMedia == null) {
-            selectedMedia = mediaList.get(0);
+            for (int i = 0; i < mediaList.size(); i++) {
+                Media media = mediaList.get(i);
+                if(isSelectable(media)) {
+                    selectedMedia = media;
+                    break;
+                }
+            }
         }
+    }
+
+    private boolean isSelectable(Media media) {
+        return media.getType() != Media.Type.File && media.getType() != Media.Type.Audio;
     }
 
     private class MediaViewHolder extends RecyclerView.ViewHolder {
@@ -264,13 +274,16 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private View.OnClickListener onItemSelectClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Media selectedMedia = MediaAdapter.this.selectedMedia;
+                Media currentSelectedMedia = MediaAdapter.this.selectedMedia;
+                Media newSelectedMedia = mediaList.get(getCorrectPosition(getLayoutPosition()));
 
-                MediaAdapter.this.selectedMedia = mediaList.get(getCorrectPosition(getLayoutPosition()));
-                notifyItemChanged(getLayoutPosition());
+                if(isMediaSelected(newSelectedMedia)) {
+                    MediaAdapter.this.selectedMedia = newSelectedMedia;
+                    notifyItemChanged(getLayoutPosition());
 
-                if(selectedMedia != null && mediaList.indexOf(selectedMedia) >= 0) {
-                    notifyItemChanged(mediaList.indexOf(selectedMedia)+1);
+                    if (currentSelectedMedia != null && mediaList.indexOf(currentSelectedMedia) >= 0) {
+                        notifyItemChanged(mediaList.indexOf(currentSelectedMedia) + 1);
+                    }
                 }
             }
         };
