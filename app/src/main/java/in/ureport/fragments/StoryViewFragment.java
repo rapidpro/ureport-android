@@ -70,6 +70,9 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private ContributionAdapter contributionAdapter;
     private TextView contributions;
     private Button contribute;
+    private View mediaBottomLine;
+    private TextView likeCount;
+    private TextView likeThisStory;
     private EditText contribution;
     private TextView author;
     private ImageView picture;
@@ -80,6 +83,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private UserServices userServices;
 
     private MediaAdapter.OnMediaViewListener onMediaViewListener;
+    private int storyLikeCount;
 
     public static StoryViewFragment newInstance(Story story, User user) {
         return newInstance(story, user, true);
@@ -134,6 +138,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
                 super.onDataChange(dataSnapshot);
 
                 story = dataSnapshot.getValue(Story.class);
+                story.setKey(dataSnapshot.getKey());
                 setupView(view);
                 loadData();
             }
@@ -164,6 +169,32 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private void loadData() {
         contributionServices.addChildEventListener(story, contributionChildEventListener);
         loadUserIfNeeded();
+        checkLikeForUser();
+        loadStoryLikesCount();
+    }
+
+    private void loadStoryLikesCount() {
+        storyServices.loadStoryLikeCount(story, new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                updateLikes((int)dataSnapshot.getChildrenCount());
+            }
+        });
+    }
+
+    private void updateLikes(int likesCount) {
+        storyLikeCount = likesCount;
+        likeCount.setText(getResources().getQuantityString(R.plurals.like_count, storyLikeCount, storyLikeCount));
+    }
+
+    private void checkLikeForUser() {
+        storyServices.checkLikeForUser(story, new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                likeThisStory.setSelected(dataSnapshot.exists());
+            }
+        });
     }
 
     private void loadUserIfNeeded() {
@@ -202,12 +233,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         content.setText(story.getContent());
 
         final NestedScrollView scrollView = (NestedScrollView) view.findViewById(R.id.scrollView);
-        scrollView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                scrollView.fullScroll(View.FOCUS_UP);
-            }
-        }, 200);
+        scrollView.postDelayed(() -> scrollView.fullScroll(View.FOCUS_UP), 200);
 
         TextView markers = (TextView) view.findViewById(R.id.markers);
         setupMarkers(markers);
@@ -225,11 +251,16 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         contribute = (Button) view.findViewById(R.id.contribute);
         contribute.setOnClickListener(onContributeClickListener);
 
+        likeThisStory = (TextView) view.findViewById(R.id.likeThisStory);
+        likeThisStory.setOnClickListener(onLikeClickListener);
+
         Button addContribution = (Button) view.findViewById(R.id.addContribution);
         addContribution.setOnClickListener(onAddContributionClickListener);
 
         contribution = (EditText) view.findViewById(R.id.contribution);
         contribution.setOnEditorActionListener(onDescriptionEditorActionListener);
+
+        likeCount = (TextView) view.findViewById(R.id.likeCount);
 
         RecyclerView contributionList = (RecyclerView) view.findViewById(R.id.contributionList);
         ((SimpleItemAnimator) contributionList.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -238,6 +269,8 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         contributionAdapter = new ContributionAdapter();
         contributionAdapter.setOnContributionRemoveListener(this);
         contributionList.setAdapter(contributionAdapter);
+
+        mediaBottomLine = view.findViewById(R.id.mediaBottomLine);
 
         RecyclerView mediaList = (RecyclerView) view.findViewById(R.id.mediaList);
         setupMediaList(mediaList);
@@ -277,6 +310,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
     private void setupMediaList(RecyclerView mediaList) {
         if(story.getMedias() != null && story.getMedias().size() > 0) {
+            mediaBottomLine.setVisibility(View.VISIBLE);
             mediaList.setVisibility(View.VISIBLE);
             mediaList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -290,6 +324,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
             adapter.setOnMediaViewListener(onMediaViewListener);
             mediaList.setAdapter(adapter);
         } else {
+            mediaBottomLine.setVisibility(View.GONE);
             mediaList.setVisibility(View.GONE);
         }
     }
@@ -489,6 +524,31 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
     private void displayToast(@StringRes int messageId) {
         Toast.makeText(getActivity(), messageId, Toast.LENGTH_SHORT).show();
+    }
+
+    private View.OnClickListener onLikeClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(UserManager.validateKeyAction(getActivity())) {
+                boolean selected = view.isSelected();
+                view.setSelected(!selected);
+
+                storyLikeCount += selected ? -1 : 1;
+                updateLikes(storyLikeCount);
+
+                toggleLike(view, selected);
+            }
+        }
+    };
+
+    private void toggleLike(View view, boolean selected) {
+        if(selected) {
+            storyServices.removeStoryLike(story, user
+                    , (FirebaseError firebaseError, Firebase firebase) -> view.setSelected(false));
+        } else {
+            storyServices.addStoryLike(story, user
+                    , (FirebaseError firebaseError, Firebase firebase) -> view.setSelected(true));
+        }
     }
 
     public interface OnAfterLoadUserListener {

@@ -334,5 +334,17 @@
     <string name="title_loading_audio">Loading audio</string>
     <string name="error_media_upload">The media upload was failed. Please check your connection and try again.</string>
     <string name="load_message_waiting_connection">Waiting connection...</string>
+    <string name="like_this_story">Like this story</string>
+
+    <plurals name="files_attached">
+        <item quantity="one">%1$s file attached</item>
+        <item quantity="other">%1$s files attached</item>
+    </plurals>
+
+    <plurals name="like_count">
+        <item quantity="zero">No likes</item>
+        <item quantity="one">%1$d like</item>
+        <item quantity="other">%1$d likes</item>
+    </plurals>
 
 </resources>
