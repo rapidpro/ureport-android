@@ -31,11 +31,11 @@ public class TransferManager {
     private Context context;
     private boolean transferFailed = false;
 
-    private final List<TransferListenerAdapter> transfersRetained;
+    private static List<TransferListenerAdapter> transfersRetained;
 
     public TransferManager(Context context) {
         this.context = context;
-        this.transfersRetained = new ArrayList<>();
+        transfersRetained = new ArrayList<>();
     }
 
     public void transferMedia(LocalMedia media, String parent, final TransferListenerAdapter transferListener)
