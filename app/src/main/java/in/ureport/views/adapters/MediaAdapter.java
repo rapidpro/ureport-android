@@ -119,7 +119,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if(mediaList != null && mediaList.size() > 0 && selectedMedia == null) {
             for (int i = 0; i < mediaList.size(); i++) {
                 Media media = mediaList.get(i);
-                if(isSelectable(media)) {
+                if(isMediaSelectable(media)) {
                     selectedMedia = media;
                     break;
                 }
@@ -127,7 +127,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    private boolean isSelectable(Media media) {
+    private boolean isMediaSelectable(Media media) {
         return media.getType() != Media.Type.File && media.getType() != Media.Type.Audio;
     }
 
@@ -277,7 +277,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 Media currentSelectedMedia = MediaAdapter.this.selectedMedia;
                 Media newSelectedMedia = mediaList.get(getCorrectPosition(getLayoutPosition()));
 
-                if(isMediaSelected(newSelectedMedia)) {
+                if(isMediaSelectable(newSelectedMedia)) {
                     MediaAdapter.this.selectedMedia = newSelectedMedia;
                     notifyItemChanged(getLayoutPosition());
 
