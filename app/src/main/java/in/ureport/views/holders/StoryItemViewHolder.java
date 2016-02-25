@@ -34,7 +34,9 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView title;
     private final TextView author;
     private final TextView markers;
+    private final TextView filesAttached;
     private final TextView contributions;
+    private final TextView likeCountText;
     private final TextView summary;
     private final Button readFullStory;
 
@@ -55,7 +57,9 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         title = (TextView) itemView.findViewById(R.id.title);
         author = (TextView) itemView.findViewById(R.id.tags);
         markers = (TextView) itemView.findViewById(R.id.markers);
+        filesAttached = (TextView) itemView.findViewById(R.id.filesAttached);
         contributions = (TextView) itemView.findViewById(R.id.contributors);
+        likeCountText = (TextView) itemView.findViewById(R.id.likeCountText);
         summary = (TextView) itemView.findViewById(R.id.summary);
 
         readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
@@ -74,6 +78,8 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         bindAuthor(story);
         bindImage(story);
         bindMarkers(story);
+        bindFilesAttached(story);
+        bindLikes(story);
 
         summary.setText(story.getContent());
         title.setText(story.getTitle());
@@ -81,6 +87,28 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
         picture.setOnClickListener(onUserClickListener);
         author.setOnClickListener(onUserClickListener);
+    }
+
+    private void bindLikes(Story story) {
+        if(story.getLikes() != null && story.getLikes() > 0) {
+            String likes = itemView.getResources().getQuantityString(R.plurals.like_count
+                    , story.getLikes(), story.getLikes());
+            likeCountText.setText(likes);
+            likeCountText.setVisibility(View.VISIBLE);
+        } else {
+            likeCountText.setVisibility(View.GONE);
+        }
+    }
+
+    private void bindFilesAttached(Story story) {
+        if(story.getMedias() != null && story.getMedias().size() > 0) {
+            String filesAttachedText = itemView.getResources().getQuantityString(R.plurals.files_attached
+                    , story.getMedias().size(), story.getMedias().size());
+            filesAttached.setText(filesAttachedText);
+            filesAttached.setVisibility(View.VISIBLE);
+        } else {
+            filesAttached.setVisibility(View.GONE);
+        }
     }
 
     private void bindMarkers(Story story) {
