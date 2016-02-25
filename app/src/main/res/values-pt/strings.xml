@@ -300,4 +300,24 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
   <string name="title_chat_message">Nova mensagem de chat</string>
   <string name="prompt_media_notification">media</string>
   <string name="error_message_permission">Não é possível efetuar login com Google+ sem permissões</string>
+  <string name="error_compressing_video">Não foi possível comprimir o vídeo, tente novamente</string>
+  <string name="error_get_file">Ocorreu um erro, tente com outro arquivo</string>
+  <string name="error_media_upload">O upload da mídia falhou. Verifique sua conexão e tente novamente.</string>
+  <string name="error_message_audio">Não foi possível gravar o áudio. Tente novamente!</string>
+  <string name="error_message_audio_play">Não foi possível reproduzir o áudio. Tente novamente.</string>
+  <string name="error_message_mic">Há um problema com seu microfone. Não foi possível gravar o áudio.</string>
+  <string name="error_message_permission_external">É necessário dar permissão para essa ação.</string>
+  <string name="load_message_waiting_connection">Esperando conexão...</string>
+  <string name="message_compressing_video">Comprimindo vídeo...</string>
+  <string name="prompt_file_upload">Selecione um arquivo</string>
+  <string name="title_button_record">Gravar</string>
+  <string name="title_button_stop">Parar</string>
+  <string name="title_camera">Câmera</string>
+  <string name="title_file">Arquivo</string>
+  <string name="title_gallery">Galeria</string>
+  <string name="title_loading_audio">Carregando áudio</string>
+  <string name="title_record">Gravar</string>
+  <string name="title_recorder">Gravador</string>
+  <string name="title_video">Vídeo</string>
+  <string name="title_youtube">Youtube</string>
 </resources>
