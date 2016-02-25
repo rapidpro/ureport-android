@@ -100,12 +100,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
             image.setVisibility(View.VISIBLE);
 
             switch (cover.getType()) {
-                case File:
-                    image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-                    image.setImageResource(R.drawable.ic_folder_white_24dp);
-                    image.setBackgroundColor(itemView.getResources().getColor(R.color.orange));
-                    break;
-                case Video: case VideoPhone:
+                case Video: case VideoPhone: case Picture:
                     ImageLoader.loadGenericPictureToImageViewFit(image, getCoverUrl(story));
                     break;
                 default:
