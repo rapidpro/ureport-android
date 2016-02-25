@@ -5,7 +5,6 @@ import com.activeandroid.query.Select;
 
 import java.util.List;
 
-import br.com.ilhasoft.support.db.business.AbstractBusiness;
 import in.ureport.db.repository.ChatNotificationRepository;
 import in.ureport.models.db.ChatNotification;
 
