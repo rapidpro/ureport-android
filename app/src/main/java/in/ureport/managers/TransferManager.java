@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.ilhasoft.support.tool.bitmap.IOManager;
 import in.ureport.R;
@@ -43,20 +45,20 @@ public class TransferManager {
         transferFile(media.getType(), media.getPath(), parent, transferListener);
     }
 
-    public void transferMedias(final List<Media> medias, final String parent, final OnTransferMediasListener onTransferMediasListener)
-            throws URISyntaxException, IllegalStateException, IOException {
-        final List<Media> mediasUploaded = new ArrayList<>();
+    public void transferMedias(final List<Media> mediasToUpload, final String parent
+            , final OnTransferMediasListener onTransferMediasListener) throws URISyntaxException, IllegalStateException, IOException {
+        final Map<LocalMedia, Media> mediasUploaded = new HashMap<>();
 
-        for (Media media : medias) {
+        for (Media media : mediasToUpload) {
             if(transferFailed) break;
 
             if(!(media instanceof LocalMedia)) {
-                mediasUploaded.add(media);
+                mediasUploaded.put(new LocalMedia(Uri.parse(media.getUrl())), media);
                 continue;
             }
 
             final LocalMedia localMedia = (LocalMedia) media;
-            TransferListenerAdapter transferListenerAdapter = createTransferListener(medias, parent
+            TransferListenerAdapter transferListenerAdapter = createTransferListener(mediasToUpload, parent
                     , onTransferMediasListener, mediasUploaded, localMedia);
             transfersRetained.add(transferListenerAdapter);
             transferFile(localMedia.getType(), localMedia.getPath(), parent, transferListenerAdapter);
@@ -64,17 +66,18 @@ public class TransferManager {
     }
 
     @NonNull
-    private TransferListenerAdapter createTransferListener(final List<Media> medias, final String parent, final OnTransferMediasListener onTransferMediasListener, final List<Media> mediasUploaded, final LocalMedia localMedia) {
+    private TransferListenerAdapter createTransferListener(final List<Media> mediasToUpload, final String parent
+            , final OnTransferMediasListener onTransferMediasListener, final Map<LocalMedia, Media> mediasUploaded, final LocalMedia localMedia) {
         return new TransferListenerAdapter(localMedia) {
             @Override
-            public void onTransferFinished(Media media) {
-                super.onTransferFinished(media);
+            public void onTransferFinished(Media newMedia) {
+                super.onTransferFinished(newMedia);
                 localMedia.setId(getKey());
 
-                if(media.getType() == Media.Type.VideoPhone) {
-                    transferVideoWithThumbnail(media, localMedia, parent, mediasUploaded, medias, onTransferMediasListener);
+                if(newMedia.getType() == Media.Type.VideoPhone) {
+                    transferVideoWithThumbnail(newMedia, localMedia, parent, mediasUploaded, mediasToUpload, onTransferMediasListener);
                 } else {
-                    finishTransfer(media, medias, mediasUploaded, onTransferMediasListener);
+                    finishTransfer(localMedia, newMedia, mediasToUpload, mediasUploaded, onTransferMediasListener);
                 }
             }
             @Override
@@ -106,21 +109,21 @@ public class TransferManager {
     }
 
     private void transferVideoWithThumbnail(Media media, LocalMedia localMedia, String parent
-            , List<Media> mediasUploaded, List<Media> medias, OnTransferMediasListener onTransferMediasListener) {
+            , Map<LocalMedia, Media> mediasUploaded, List<Media> medias, OnTransferMediasListener onTransferMediasListener) {
         new CreateVideoThumbTask(context) {
             @Override
             protected void onPostExecute(File videoThumbFile) {
                 super.onPostExecute(videoThumbFile);
 
-                LocalMedia newLocalMedia = new LocalMedia();
-                newLocalMedia.setType(Media.Type.Picture);
+                LocalMedia thumbnailLocalMedia = new LocalMedia();
+                thumbnailLocalMedia.setType(Media.Type.Picture);
 
-                transferFile(videoThumbFile, parent, new TransferListenerAdapter(newLocalMedia) {
+                transferFile(videoThumbFile, parent, new TransferListenerAdapter(thumbnailLocalMedia) {
                     @Override
                     public void onTransferFinished(Media videoThumbnail) {
                         super.onTransferFinished(videoThumbnail);
                         media.setThumbnail(videoThumbnail.getUrl());
-                        finishTransfer(media, medias, mediasUploaded, onTransferMediasListener);
+                        finishTransfer(localMedia, media, medias, mediasUploaded, onTransferMediasListener);
                     }
                 });
             }
@@ -152,17 +155,17 @@ public class TransferManager {
         return String.format(FILENAME, parent, new Date().getTime(), compressedFile.getName());
     }
 
-    private void finishTransfer(Media media, List<Media> medias, List<Media> mediasUploaded
-            , OnTransferMediasListener onTransferMediasListener) {
-        mediasUploaded.add(media);
+    private void finishTransfer(LocalMedia localMedia, Media newMedia, List<Media> mediasToUpload
+            , Map<LocalMedia, Media> mediasUploaded, OnTransferMediasListener onTransferMediasListener) {
+        mediasUploaded.put(localMedia, newMedia);
 
-        if(medias.size() == mediasUploaded.size() && !transferFailed) {
+        if(mediasToUpload.size() == mediasUploaded.size() && !transferFailed) {
             onTransferMediasListener.onTransferMedias(mediasUploaded);
         }
     }
 
     public interface OnTransferMediasListener {
-        void onTransferMedias(List<Media> medias);
+        void onTransferMedias(Map<LocalMedia, Media> medias);
         void onWaitingConnection();
         void onFailed();
     }

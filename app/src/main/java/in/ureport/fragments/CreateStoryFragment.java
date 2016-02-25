@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
@@ -187,7 +188,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             if(mediasToUpload.size() > 0) {
                 uploadMediasAndCreateStory();
             } else {
-                createStoryWithMediasAndSave(mediaList);
+                createStoryWithMediasAndSave(mediaList, null);
             }
         }
     }
@@ -211,9 +212,9 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             TransferManager transferManager = new TransferManager(getActivity());
             transferManager.transferMedias(mediaList, "story", new TransferManager.OnTransferMediasListener() {
                 @Override
-                public void onTransferMedias(List<Media> medias) {
+                public void onTransferMedias(Map<LocalMedia, Media> medias) {
                     progressUpload.dismiss();
-                    createStoryWithMediasAndSave(medias);
+                    createStoryWithMediasAndSave(new ArrayList<>(medias.values()), getCoverFromMediasUploaded(medias));
                 }
 
                 @Override
@@ -245,7 +246,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         Toast.makeText(getActivity(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
     }
 
-    private void createStoryWithMediasAndSave(List<Media> medias) {
+    private void createStoryWithMediasAndSave(List<Media> medias, Media cover) {
         final ProgressDialog progressCreation = ProgressDialog.show(getActivity(), null
                 , getString(R.string.load_message_wait), true, true);
 
@@ -255,7 +256,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         story.setContent(content.getText().toString());
         story.setCreatedDate(new Date());
         story.setMedias(medias.size() > 0 ? medias : null);
-        story.setCover(getCoverFromMediasUploaded(medias));
+        story.setCover(cover);
 
         String markersText = markers.getText().toString();
         story.setMarkers(markersText.length() == 0 ? "" : markersText);
@@ -296,13 +297,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     @Nullable
-    private Media getCoverFromMediasUploaded(List<Media> medias) {
-        Media cover = null;
-        int indexOfCover = mediaList.indexOf(mediaAdapter.getSelectedMedia());
-        if(indexOfCover >= 0) {
-            cover = medias.get(indexOfCover);
-        }
-        return cover;
+    private Media getCoverFromMediasUploaded(Map<LocalMedia, Media> medias) {
+        return medias.get(mediaAdapter.getSelectedMedia());
     }
 
     private boolean isFieldsValid() {
