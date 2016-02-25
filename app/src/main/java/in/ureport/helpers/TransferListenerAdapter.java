@@ -1,5 +1,7 @@
 package in.ureport.helpers;
 
+import android.util.Log;
+
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 
@@ -10,6 +12,8 @@ import in.ureport.models.Media;
  * Created by johncordeiro on 20/08/15.
  */
 public abstract class TransferListenerAdapter implements TransferListener {
+
+    private static final String TAG = "TransferListenerAdapter";
 
     private static final String URL = "https://s3.amazonaws.com/%1$s/%2$s";
 
@@ -30,6 +34,7 @@ public abstract class TransferListenerAdapter implements TransferListener {
 
     @Override
     public final void onStateChanged(int id, TransferState state) {
+        Log.i(TAG, "onStateChanged: id: " + id + " state: " + state);
         if(state == TransferState.COMPLETED) {
             Media media = new Media(localMedia);
             media.setId(getKey());
@@ -50,7 +55,7 @@ public abstract class TransferListenerAdapter implements TransferListener {
 
     @Override
     public void onError(int id, Exception ex) {
-
+        Log.e(TAG, "Uploading error! Transfer ID: " + id, ex);
     }
 
     public void onTransferFinished(Media media) {}

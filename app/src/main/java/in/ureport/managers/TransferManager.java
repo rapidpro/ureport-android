@@ -1,8 +1,8 @@
 package in.ureport.managers;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
 
@@ -31,13 +31,16 @@ public class TransferManager {
     private Context context;
     private boolean transferFailed = false;
 
+    private final List<TransferListenerAdapter> transfersRetained;
+
     public TransferManager(Context context) {
         this.context = context;
+        this.transfersRetained = new ArrayList<>();
     }
 
     public void transferMedia(LocalMedia media, String parent, final TransferListenerAdapter transferListener)
             throws URISyntaxException, IllegalStateException, IOException {
-        transferFile(media.getPath(), parent, transferListener);
+        transferFile(media.getType(), media.getPath(), parent, transferListener);
     }
 
     public void transferMedias(final List<Media> medias, final String parent, final OnTransferMediasListener onTransferMediasListener)
@@ -53,44 +56,49 @@ public class TransferManager {
             }
 
             final LocalMedia localMedia = (LocalMedia) media;
-            transferFile(localMedia.getPath(), parent, new TransferListenerAdapter(localMedia) {
-                @Override
-                public void onTransferFinished(Media media) {
-                    super.onTransferFinished(media);
-                    localMedia.setId(getKey());
-
-                    if(media.getType() == Media.Type.VideoPhone) {
-                        transferVideoWithThumbnail(media, localMedia, parent, mediasUploaded, medias, onTransferMediasListener);
-                    } else {
-                        finishTransfer(media, medias, mediasUploaded, onTransferMediasListener);
-                    }
-                }
-                @Override
-                public void onTransferWaitingNetwork() {
-                    super.onTransferWaitingNetwork();
-                    onTransferMediasListener.onWaitingConnection();
-                }
-                @Override
-                public void onTransferFailed() {
-                    super.onTransferFailed();
-                    transferFailed = true;
-                    onTransferMediasListener.onFailed();
-                }
-            });
+            TransferListenerAdapter transferListenerAdapter = createTransferListener(medias, parent
+                    , onTransferMediasListener, mediasUploaded, localMedia);
+            transfersRetained.add(transferListenerAdapter);
+            transferFile(localMedia.getType(), localMedia.getPath(), parent, transferListenerAdapter);
         }
     }
 
-    private void transferFile(Uri uri, final String parent, final TransferListenerAdapter transferListener)
+    @NonNull
+    private TransferListenerAdapter createTransferListener(final List<Media> medias, final String parent, final OnTransferMediasListener onTransferMediasListener, final List<Media> mediasUploaded, final LocalMedia localMedia) {
+        return new TransferListenerAdapter(localMedia) {
+            @Override
+            public void onTransferFinished(Media media) {
+                super.onTransferFinished(media);
+                localMedia.setId(getKey());
+
+                if(media.getType() == Media.Type.VideoPhone) {
+                    transferVideoWithThumbnail(media, localMedia, parent, mediasUploaded, medias, onTransferMediasListener);
+                } else {
+                    finishTransfer(media, medias, mediasUploaded, onTransferMediasListener);
+                }
+            }
+            @Override
+            public void onTransferWaitingNetwork() {
+                super.onTransferWaitingNetwork();
+                onTransferMediasListener.onWaitingConnection();
+            }
+            @Override
+            public void onTransferFailed() {
+                super.onTransferFailed();
+                transferFailed = true;
+                onTransferMediasListener.onFailed();
+            }
+        };
+    }
+
+    private void transferFile(Media.Type type, Uri uri, final String parent, final TransferListenerAdapter transferListener)
             throws URISyntaxException, IllegalStateException, IOException {
         IOManager ioManager = new IOManager(context);
         String filePath = ioManager.getFilePathForUri(uri);
         if (filePath == null) throw new IllegalStateException("File does not exists");
 
-        ContentResolver contentResolver = context.getContentResolver();
-        String type = contentResolver.getType(uri);
-
         File file = new File(filePath);
-        if(type != null && type.startsWith("image")) {
+        if(type == Media.Type.Picture) {
             compressAndTransferImage(parent, transferListener, file);
         } else {
             transferFile(file, parent, transferListener);
