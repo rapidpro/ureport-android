@@ -49,6 +49,18 @@
         <item name="colorAccent">#005e00</item>
     </style>
 
+    <style name="AppTheme.Brasil" parent="AppTheme">
+        <item name="colorPrimary">#00a200</item>
+        <item name="colorPrimaryDark">#008300</item>
+        <item name="colorAccent">#006300</item>
+    </style>
+
+    <style name="AppTheme.Ireland" parent="AppTheme">
+        <item name="colorPrimary">#00a200</item>
+        <item name="colorPrimaryDark">#008300</item>
+        <item name="colorAccent">#006300</item>
+    </style>
+
     <style name="AppTheme.Myanmar" parent="AppTheme">
         <item name="colorPrimary">#00a400</item>
         <item name="colorPrimaryDark">#007200</item>

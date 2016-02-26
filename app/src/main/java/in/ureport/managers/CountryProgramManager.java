@@ -11,6 +11,40 @@ import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.models.CountryProgram;
 
+import static in.ureport.R.string.brasil_channel;
+import static in.ureport.R.string.chile_channel;
+import static in.ureport.R.string.global_channel;
+import static in.ureport.R.string.indonesia_channel;
+import static in.ureport.R.string.ireland_channel;
+import static in.ureport.R.string.mexico_channel;
+import static in.ureport.R.string.nigeria_channel;
+import static in.ureport.R.string.rapidpro_host_address1;
+import static in.ureport.R.string.rapidpro_host_address2;
+import static in.ureport.R.string.uganda_channel;
+import static in.ureport.R.string.ureport_host_address1;
+import static in.ureport.R.string.ureport_host_address2;
+
+import static in.ureport.R.style.AppTheme;
+import static in.ureport.R.style.AppTheme_Brasil;
+import static in.ureport.R.style.AppTheme_Burundi;
+import static in.ureport.R.style.AppTheme_Cameroun;
+import static in.ureport.R.style.AppTheme_Chile;
+import static in.ureport.R.style.AppTheme_Drc;
+import static in.ureport.R.style.AppTheme_Indonesia;
+import static in.ureport.R.style.AppTheme_Ireland;
+import static in.ureport.R.style.AppTheme_Liberia;
+import static in.ureport.R.style.AppTheme_Mali;
+import static in.ureport.R.style.AppTheme_Mexico;
+import static in.ureport.R.style.AppTheme_Nigeria;
+import static in.ureport.R.style.AppTheme_Pakistan;
+import static in.ureport.R.style.AppTheme_RepubliqueCentrafricaine;
+import static in.ureport.R.style.AppTheme_Senegal;
+import static in.ureport.R.style.AppTheme_SierraLeone;
+import static in.ureport.R.style.AppTheme_Swaiziland;
+import static in.ureport.R.style.AppTheme_Uganda;
+import static in.ureport.R.style.AppTheme_Zambia;
+import static in.ureport.R.style.AppTheme_Zimbabwe;
+
 /**
  * Created by johncordeiro on 7/23/15.
  */
@@ -66,33 +100,55 @@ public class CountryProgramManager {
     public static List<CountryProgram> getAvailableCountryPrograms() {
         if(countryPrograms == null) {
             countryPrograms = new ArrayList<>();
-            countryPrograms.add(buildCountryProgram("GLOBAL", R.style.AppTheme, R.string.global_channel, "U-Report Global", 13, "UReportGlobal", "U-Reporters"));
-            countryPrograms.add(buildCountryProgram("BDI", R.style.AppTheme_Burundi, INVALID_VALUE, "Burundi", 5, "UReportGlobal", null));
-            countryPrograms.add(buildCountryProgram("CMR", R.style.AppTheme_Cameroun, INVALID_VALUE, "Cameroun", 10, "UReportCameroon", null));
-            countryPrograms.add(buildCountryProgram("CHL", R.style.AppTheme_Chile, R.string.chile_channel, "Chile", 12, "ureportchile", "UReporters"));
-            countryPrograms.add(buildCountryProgram("COD", R.style.AppTheme_Drc, INVALID_VALUE, "DRC", INVALID_VALUE, "UReportDRC", null));
-            countryPrograms.add(buildCountryProgram("IDN", R.style.AppTheme_Indonesia, R.string.indonesia_channel, "Indonesia", 15, "UReport_id", "UReporters_Indonesia"));
-            countryPrograms.add(buildCountryProgram("LBR", R.style.AppTheme_Liberia, INVALID_VALUE, "Liberia", 6, "UReportLiberia", null));
-            countryPrograms.add(buildCountryProgram("MLI", R.style.AppTheme_Mali, INVALID_VALUE, "Mali", 3, "UReportMali", null));
-            countryPrograms.add(buildCountryProgram("MEX", R.style.AppTheme_Mexico, R.string.mexico_channel, "México",  9, "UReportMexico", "UReporters"));
+            countryPrograms.add(buildCountryProgram("GLOBAL", AppTheme, global_channel, "U-Report Global", 13
+                    , rapidpro_host_address1, ureport_host_address1, "UReportGlobal", "U-Reporters"));
+            countryPrograms.add(buildCountryProgram("BRA", AppTheme_Brasil, brasil_channel, "Brasil", 1
+                    , rapidpro_host_address2, ureport_host_address2, "ureportbrasil", "UReport Brasil"));
+            countryPrograms.add(buildCountryProgram("BDI", AppTheme_Burundi, INVALID_VALUE, "Burundi", 5
+                    , rapidpro_host_address1, ureport_host_address1, "UReportGlobal", null));
+            countryPrograms.add(buildCountryProgram("CMR", AppTheme_Cameroun, INVALID_VALUE, "Cameroun", 10
+                    , rapidpro_host_address1, ureport_host_address1, "UReportCameroon", null));
+            countryPrograms.add(buildCountryProgram("CHL", AppTheme_Chile, chile_channel, "Chile", 12
+                    , rapidpro_host_address1, ureport_host_address1, "ureportchile", "UReporters"));
+            countryPrograms.add(buildCountryProgram("COD", AppTheme_Drc, INVALID_VALUE, "DRC", INVALID_VALUE
+                    , rapidpro_host_address1, ureport_host_address1, "UReportDRC", null));
+            countryPrograms.add(buildCountryProgram("IDN", AppTheme_Indonesia, indonesia_channel, "Indonesia", 15
+                    , rapidpro_host_address1, ureport_host_address1, "UReport_id", "UReporters_Indonesia"));
+            countryPrograms.add(buildCountryProgram("IRL", AppTheme_Ireland, ireland_channel, "Ireland", 2
+                    , rapidpro_host_address2, ureport_host_address2, "UReportIRL", "U-Reporters"));
+            countryPrograms.add(buildCountryProgram("LBR", AppTheme_Liberia, INVALID_VALUE, "Liberia", 6
+                    , rapidpro_host_address1, ureport_host_address1, "UReportLiberia", null));
+            countryPrograms.add(buildCountryProgram("MLI", AppTheme_Mali, INVALID_VALUE, "Mali", 3
+                    , rapidpro_host_address1, ureport_host_address1, "UReportMali", null));
+            countryPrograms.add(buildCountryProgram("MEX", AppTheme_Mexico, mexico_channel, "México", 9
+                    , rapidpro_host_address1, ureport_host_address1, "UReportMexico", "UReporters"));
 //            countryPrograms.add(buildCountryProgram("MMR", R.style.AppTheme_Myanmar, INVALID_VALUE, "Myanmar",  INVALID_VALUE, "UReportMyanmar", "UReporters"));
-            countryPrograms.add(buildCountryProgram("NGA", R.style.AppTheme_Nigeria, R.string.nigeria_channel, "Nigeria", 1, "UReportNigeria", "UReporters"));
-            countryPrograms.add(buildCountryProgram("PAK", R.style.AppTheme_Pakistan, INVALID_VALUE, "Pakistan", 16, "PakAvaz", null));
-            countryPrograms.add(buildCountryProgram("CAF", R.style.AppTheme_RepubliqueCentrafricaine, INVALID_VALUE, "République Centrafricaine", 8, "Ureport_rca", null));
-            countryPrograms.add(buildCountryProgram("SEN", R.style.AppTheme_Senegal, INVALID_VALUE, "Sénégal", 14, "ureportsenegal", null));
-            countryPrograms.add(buildCountryProgram("SLE", R.style.AppTheme_SierraLeone, INVALID_VALUE, "Sierra Leone", 7, "UreportSL", null));
-            countryPrograms.add(buildCountryProgram("SWZ", R.style.AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4, "Ureportszd", null));
-            countryPrograms.add(buildCountryProgram("UGA", R.style.AppTheme_Uganda, R.string.uganda_channel, "Uganda", 18, "UReportUganda", "U-Reporters"));
-            countryPrograms.add(buildCountryProgram("ZMB", R.style.AppTheme_Zambia, INVALID_VALUE, "Zambia", INVALID_VALUE, "ZambiaUReport", null));
-            countryPrograms.add(buildCountryProgram("ZWE", R.style.AppTheme_Zimbabwe, INVALID_VALUE, "Zimbabwe", 2, "Ureportzim", null));
+            countryPrograms.add(buildCountryProgram("NGA", AppTheme_Nigeria, nigeria_channel, "Nigeria", 1
+                    , rapidpro_host_address1, ureport_host_address1, "UReportNigeria", "UReporters"));
+            countryPrograms.add(buildCountryProgram("PAK", AppTheme_Pakistan, INVALID_VALUE, "Pakistan", 16
+                    , rapidpro_host_address1, ureport_host_address1, "PakAvaz", null));
+            countryPrograms.add(buildCountryProgram("CAF", AppTheme_RepubliqueCentrafricaine, INVALID_VALUE, "République Centrafricaine", 8
+                    , rapidpro_host_address1, ureport_host_address1, "Ureport_rca", null));
+            countryPrograms.add(buildCountryProgram("SEN", AppTheme_Senegal, INVALID_VALUE, "Sénégal", 14
+                    , rapidpro_host_address1, ureport_host_address1, "ureportsenegal", null));
+            countryPrograms.add(buildCountryProgram("SLE", AppTheme_SierraLeone, INVALID_VALUE, "Sierra Leone", 7
+                    , rapidpro_host_address1, ureport_host_address1, "UreportSL", null));
+            countryPrograms.add(buildCountryProgram("SWZ", AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4
+                    , rapidpro_host_address1, ureport_host_address1, "Ureportszd", null));
+            countryPrograms.add(buildCountryProgram("UGA", AppTheme_Uganda, uganda_channel, "Uganda", 18
+                    , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "U-Reporters"));
+            countryPrograms.add(buildCountryProgram("ZMB", AppTheme_Zambia, INVALID_VALUE, "Zambia", INVALID_VALUE
+                    , rapidpro_host_address1, ureport_host_address1, "ZambiaUReport", null));
+            countryPrograms.add(buildCountryProgram("ZWE", AppTheme_Zimbabwe, INVALID_VALUE, "Zimbabwe", 2
+                    , rapidpro_host_address1, ureport_host_address1, "Ureportzim", null));
         }
         return countryPrograms;
     }
 
     @NonNull
     private static CountryProgram buildCountryProgram(String global, int appTheme, int channel, String name, int organization
-            , String twitter, String group) {
-        return new CountryProgram(global, appTheme, channel, name, organization, twitter, group);
+            , int rapidproEndpoint, int ureportEndpoint, String twitter, String group) {
+        return new CountryProgram(global, appTheme, channel, name, organization, rapidproEndpoint, ureportEndpoint, twitter, group);
     }
 
 }
