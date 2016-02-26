@@ -36,12 +36,10 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     public SaveContactTask(Context context, CountryInfo countryInfo) {
         super(context, R.string.load_message_save_user);
         this.countryInfo = countryInfo;
-        this.rapidProServices = new RapidProServices();
     }
 
     public SaveContactTask(Context context) {
         super(context);
-        this.rapidProServices = new RapidProServices();
     }
 
     @Override
@@ -49,6 +47,10 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         try {
             User user = params[0];
             String countryCode = countryInfo != null ? countryInfo.getIsoAlpha3() : user.getCountryProgram();
+
+            String rapidproEndpoint = getContext().getString(CountryProgramManager
+                    .getCountryProgramForCode(countryCode).getRapidproEndpoint());
+            this.rapidProServices = new RapidProServices(rapidproEndpoint);
 
             String countryToken = getTokenFromProxy(countryCode);
             UserManager.updateCountryToken(countryToken);

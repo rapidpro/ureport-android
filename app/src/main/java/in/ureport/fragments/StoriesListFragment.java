@@ -3,7 +3,6 @@ package in.ureport.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -138,7 +137,8 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         storyServices = new StoryServices();
         userServices = new UserServices();
         contributionServices = new ContributionServices();
-        ureportServices = new UreportServices();
+        String ureportEndpoint = getString(CountryProgramManager.getCurrentCountryProgram().getUreportEndpoint());
+        ureportServices = new UreportServices(ureportEndpoint);
     }
 
     public void loadData() {

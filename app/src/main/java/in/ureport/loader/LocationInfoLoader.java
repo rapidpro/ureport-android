@@ -8,6 +8,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.ureport.managers.CountryProgramManager;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.LocationInfo;
@@ -52,7 +54,8 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
 
     @NonNull
     private List<Boundary> loadBoundariesByRapidPro(String apiToken) {
-        RapidProServices rapidProServices = new RapidProServices();
+        CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryInfo.getIsoAlpha3());
+        RapidProServices rapidProServices = new RapidProServices(getContext().getString(countryProgram.getRapidproEndpoint()));
 
         List<Boundary> boundaries = new ArrayList<>();
         Response<Boundary> response;

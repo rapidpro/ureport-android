@@ -20,11 +20,11 @@ public class UreportServices {
 
     private static final String TAG = "UreportServices";
 
-    private static final String ENDPOINT = "http://ureport.in/api/v1";
-
+    private final String endpoint;
     private final UreportApi service;
 
-    public UreportServices() {
+    public UreportServices(String endpoint) {
+        this.endpoint = endpoint;
         RestAdapter restAdapter = buildRestAdapter();
         if(BuildConfig.DEBUG) restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
         service = restAdapter.create(UreportApi.class);
@@ -37,7 +37,7 @@ public class UreportServices {
                 .create();
 
         return new RestAdapter.Builder()
-                    .setEndpoint(ENDPOINT)
+                    .setEndpoint(endpoint)
                     .setConverter(new GsonConverter(gson))
                     .build();
     }

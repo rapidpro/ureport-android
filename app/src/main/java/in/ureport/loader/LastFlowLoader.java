@@ -13,6 +13,7 @@ import in.ureport.flowrunner.managers.FlowRunnerManager;
 import in.ureport.flowrunner.models.FlowDefinition;
 import in.ureport.flowrunner.models.FlowRun;
 import in.ureport.helpers.ContactBuilder;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.flowrunner.models.Contact;
 import in.ureport.network.ProxyApi;
@@ -28,17 +29,19 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
 
     private static final int EARLY_MONTHS = 1;
 
-    private final RapidProServices rapidProServices;
+    private RapidProServices rapidProServices;
 
     public LastFlowLoader(Context context) {
         super(context);
-        this.rapidProServices = new RapidProServices();
     }
 
     @Override
     public FlowDefinition loadInBackground() {
         try {
             loadCountryTokenIfNeeded();
+            String rapidproEndpoint = getContext().getString(CountryProgramManager
+                    .getCurrentCountryProgram().getRapidproEndpoint());
+            this.rapidProServices = new RapidProServices(rapidproEndpoint);
 
             Contact contact = loadContact();
             List<FlowRun> flowRuns = rapidProServices.loadRuns(getApiToken(), UserManager.getUserRapidUuid(), getMinimumDate());
