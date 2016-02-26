@@ -1,6 +1,7 @@
 package in.ureport.fragments;
 
 import android.content.DialogInterface;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
@@ -306,6 +307,8 @@ public class RecordAudioFragment extends DialogFragment {
                     mediaPlayer.setDataSource(media.getUrl());
                 else
                     mediaPlayer.setDataSource(recordedAudio.getAbsolutePath());
+
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.prepareAsync();
 
                 loadingContainer.setVisibility(View.VISIBLE);
