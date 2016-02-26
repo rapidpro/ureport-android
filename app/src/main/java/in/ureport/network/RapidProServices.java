@@ -28,13 +28,13 @@ public class RapidProServices {
 
     private static final String TAG = "RapidProServices";
 
-    private static final String ENDPOINT = "https://api.rapidpro.io/api/v1";
-
+    private final String endpoint;
     private final RapidProApi service;
 
     private GsonDateTypeAdapter gsonDateTypeAdapter;
 
-    public RapidProServices() {
+    public RapidProServices(String endpoint) {
+        this.endpoint = endpoint;
         RestAdapter restAdapter = buildRestAdapter();
         if(BuildConfig.DEBUG) restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
         service = restAdapter.create(RapidProApi.class);
@@ -92,7 +92,7 @@ public class RapidProServices {
                 .create();
 
         return new RestAdapter.Builder()
-                    .setEndpoint(ENDPOINT)
+                    .setEndpoint(endpoint)
                     .setConverter(new GsonConverter(gson))
                     .build();
     }

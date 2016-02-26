@@ -40,7 +40,10 @@ public class SendFlowReponsesTask extends ProgressTask<FlowStepSet, Void, Boolea
             CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
             ContactBuilder contactBuilder = new ContactBuilder();
 
-            RapidProServices services = new RapidProServices();
+            String rapidproEndpoint = getContext().getString(CountryProgramManager
+                    .getCurrentCountryProgram().getRapidproEndpoint());
+            RapidProServices services = new RapidProServices(rapidproEndpoint);
+
             for (FlowStep flowStep : flowStepSet.getSteps()) {
                 services.sendReceivedMessage(UserManager.getCountryToken()
                         , getContext().getString(countryProgram.getChannel())

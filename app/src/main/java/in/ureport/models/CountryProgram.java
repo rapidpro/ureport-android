@@ -23,17 +23,25 @@ public class CountryProgram {
 
     private int organization;
 
+    @StringRes
+    private int rapidproEndpoint;
+
+    @StringRes
+    private int ureportEndpoint;
+
     private String twitter;
 
     private String group;
 
     public CountryProgram(String code, @StyleRes int theme, @StringRes int channel
-            , String name, int organization, String twitter, String group) {
+            , String name, int organization, int rapidproEndpoint, int ureportEndpoint, String twitter, String group) {
         this.code = code;
         this.theme = theme;
         this.channel = channel;
         this.name = name;
         this.organization = organization;
+        this.rapidproEndpoint = rapidproEndpoint;
+        this.ureportEndpoint = ureportEndpoint;
         this.twitter = twitter;
         this.group = group;
     }
@@ -91,6 +99,22 @@ public class CountryProgram {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public int getRapidproEndpoint() {
+        return rapidproEndpoint;
+    }
+
+    public void setRapidproEndpoint(int rapidproEndpoint) {
+        this.rapidproEndpoint = rapidproEndpoint;
+    }
+
+    public int getUreportEndpoint() {
+        return ureportEndpoint;
+    }
+
+    public void setUreportEndpoint(int ureportEndpoint) {
+        this.ureportEndpoint = ureportEndpoint;
     }
 
     public String getTwitter() {
