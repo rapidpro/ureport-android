@@ -2,8 +2,8 @@ package in.ureport.tasks;
 
 import android.content.Context;
 
-import br.com.ilhasoft.support.db.business.AbstractBusiness;
-import br.com.ilhasoft.support.db.repository.AbstractRepository;
+import in.ureport.db.business.AbstractBusiness;
+import in.ureport.db.repository.AbstractRepository;
 import in.ureport.managers.LocalNotificationManager;
 import in.ureport.models.db.MessageNotification;
 

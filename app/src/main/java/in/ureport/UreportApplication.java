@@ -1,6 +1,6 @@
 package in.ureport;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.activeandroid.ActiveAndroid;
 
@@ -15,7 +15,7 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by johncordeiro on 7/9/15.
  */
-public class UreportApplication extends Application {
+public class UreportApplication extends MultiDexApplication {
 
     @Override
     public void onCreate() {

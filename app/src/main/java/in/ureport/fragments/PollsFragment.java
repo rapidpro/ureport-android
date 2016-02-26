@@ -10,6 +10,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import br.com.ilhasoft.support.manager.WrapLinearLayoutManager;
 import in.ureport.R;
 import in.ureport.activities.BaseActivity;
 import in.ureport.activities.PollResultsActivity;
@@ -142,7 +142,10 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
 
         pollsList = (RecyclerView) view.findViewById(R.id.pollsList);
-        pollsList.setLayoutManager(new WrapLinearLayoutManager(getActivity()));
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.setAutoMeasureEnabled(true);
+        pollsList.setLayoutManager(linearLayoutManager);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         title = (TextView) view.findViewById(R.id.title);

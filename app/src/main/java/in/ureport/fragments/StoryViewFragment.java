@@ -47,7 +47,6 @@ import in.ureport.network.StoryServices;
 import in.ureport.network.UserServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.SpaceItemDecoration;
-import in.ureport.helpers.WrapLinearLayoutManager;
 import in.ureport.tasks.CleanContributionNotificationTask;
 import in.ureport.tasks.SendGcmContributionTask;
 import in.ureport.tasks.ShareStoryTask;
@@ -233,7 +232,10 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
         RecyclerView contributionList = (RecyclerView) view.findViewById(R.id.contributionList);
         ((SimpleItemAnimator) contributionList.getItemAnimator()).setSupportsChangeAnimations(false);
-        contributionList.setLayoutManager(new WrapLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext()
+                , LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.setAutoMeasureEnabled(true);
+        contributionList.setLayoutManager(linearLayoutManager);
 
         contributionAdapter = new ContributionAdapter();
         contributionAdapter.setOnContributionRemoveListener(this);

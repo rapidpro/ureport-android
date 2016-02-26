@@ -13,7 +13,6 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.HashtagBubble;
-import in.ureport.helpers.WrapLinearLayoutManager;
 import in.ureport.models.ItemKeyword;
 import in.ureport.models.MultipleResult;
 import in.ureport.models.PollResult;
@@ -121,8 +120,10 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public MultipleResultViewHolder(View itemView) {
             super(itemView);
             choicesList = (RecyclerView) itemView.findViewById(R.id.choicesList);
-            choicesList.setLayoutManager(new WrapLinearLayoutManager(itemView.getContext()
-                    , LinearLayoutManager.VERTICAL, false));
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(itemView.getContext());
+            linearLayoutManager.setAutoMeasureEnabled(true);
+            choicesList.setLayoutManager(linearLayoutManager);
         }
 
         @Override
