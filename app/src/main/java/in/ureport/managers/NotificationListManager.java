@@ -9,14 +9,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
-import br.com.ilhasoft.support.db.business.AbstractBusiness;
-import br.com.ilhasoft.support.db.repository.AbstractRepository;
 import in.ureport.R;
 import in.ureport.activities.ChatRoomActivity;
 import in.ureport.activities.MainActivity;
 import in.ureport.activities.StoryViewActivity;
+import in.ureport.db.business.AbstractBusiness;
 import in.ureport.db.business.ChatNotificationBusiness;
 import in.ureport.db.business.ContributionNotificationBusiness;
+import in.ureport.db.repository.AbstractRepository;
 import in.ureport.db.repository.ChatNotificationRepository;
 import in.ureport.db.repository.ContributionNotificationRepository;
 import in.ureport.listener.OnNotificationSelectedListener;

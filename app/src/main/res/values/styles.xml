@@ -34,6 +34,7 @@
     </style>
 
     <style name="AppTheme.TextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textAllCaps" tools:targetApi="ice_cream_sandwich">false</item>
         <item name="textAllCaps">false</item>
     </style>
 
