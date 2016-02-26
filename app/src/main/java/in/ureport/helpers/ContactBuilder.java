@@ -11,8 +11,11 @@ import java.util.Map;
 
 import in.ureport.models.User;
 import in.ureport.flowrunner.models.Contact;
-import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.rapidpro.Field;
+
+import static java.util.Calendar.DATE;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 
 /**
  * Created by johncordeiro on 24/09/15.
@@ -60,10 +63,11 @@ public class ContactBuilder {
         putValuesIfExists(user.getEmail(), contactFields, "email", "e_mail");
         putValuesIfExists(user.getNickname(), contactFields, "nickname", "nick_name");
         putValuesIfExists(user.getBirthday(), contactFields, "birthday", "birthdate", "birth_day");
-        putValuesIfExists(getBorn(user), contactFields, "born");
+        putValuesIfExists(getBorn(user), contactFields, "year_of_birth", "born");
+        putValuesIfExists(getAge(user), contactFields, "age");
         putValuesIfExists(user.getGender().toString(), contactFields, "gender");
         putValuesIfExists(user.getState(), contactFields, "state", "region", "province", "county");
-        putValuesIfExists(user.getDistrict(), contactFields, "district", "lga");
+        putValuesIfExists(user.getDistrict(), contactFields, "location", "district", "lga");
         putValuesIfExists(countryCode, contactFields, "country");
 
         contact.setFields(contactFields);
@@ -85,7 +89,25 @@ public class ContactBuilder {
         if(user.getBirthday() != null) {
             Calendar calendarBirthday = Calendar.getInstance();
             calendarBirthday.setTime(user.getBirthday());
-            return String.valueOf(calendarBirthday.get(Calendar.YEAR));
+            return String.valueOf(calendarBirthday.get(YEAR));
+        }
+        return null;
+    }
+
+    @Nullable
+    private String getAge(User user) {
+        if(user.getBirthday() != null) {
+            Calendar a = Calendar.getInstance();
+            a.setTime(user.getBirthday());
+
+            Calendar b = Calendar.getInstance();
+
+            int diff = b.get(YEAR) - a.get(YEAR);
+            if (a.get(MONTH) > b.get(MONTH) ||
+                    (a.get(MONTH) == b.get(MONTH) && a.get(DATE) > b.get(DATE))) {
+                diff--;
+            }
+            return String.valueOf(diff);
         }
         return null;
     }
