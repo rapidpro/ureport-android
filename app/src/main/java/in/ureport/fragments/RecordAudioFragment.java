@@ -47,7 +47,7 @@ public class RecordAudioFragment extends DialogFragment {
     private static final int PAUSED_STATUS = 1;
     public static final int INTERVAL_MILLIS = 100;
     public static final String EXTRA_MEDIA = "media";
-    private static final String AUDIO_EXTENSION = ".mp4";
+    private static final String AUDIO_EXTENSION = ".3gp";
 
     private TextView startTime;
     private TextView endTime;
@@ -183,7 +183,7 @@ public class RecordAudioFragment extends DialogFragment {
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         mediaRecorder.setAudioEncodingBitRate(32);
         mediaRecorder.setAudioSamplingRate(44100);
         mediaRecorder.setOutputFile(recordedAudio.getAbsolutePath());
