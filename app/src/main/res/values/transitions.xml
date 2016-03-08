@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="transition_profile_picture">profilePicture</string>
-    <string name="transition_profile_nickname">profileNickname</string>
-    <string name="transition_story_markers">storyMarkers</string>
-    <string name="transition_story_title">storyTitle</string>
-    <string name="transition_story_contributions">storyContributions</string>
+    <string name="transition_profile_picture" translatable="false">profilePicture</string>
+    <string name="transition_profile_nickname" translatable="false">profileNickname</string>
+    <string name="transition_story_markers" translatable="false">storyMarkers</string>
+    <string name="transition_story_title" translatable="false">storyTitle</string>
+    <string name="transition_story_contributions" translatable="false">storyContributions</string>
 
-    <string name="transition_media">media</string>
-    <string name="transition_media_layer">mediaLayer</string>
-    <string name="transition_news_category">category</string>
-    <string name="transition_tags">tags</string>
+    <string name="transition_media" translatable="false">media</string>
+    <string name="transition_media_layer" translatable="false">mediaLayer</string>
+    <string name="transition_news_category" translatable="false">category</string>
+    <string name="transition_tags" translatable="false">tags</string>
 </resources>
