@@ -7,7 +7,7 @@
 
     <string name="tutorial1_example_title" translatable="false">Water and Sanation</string>
     <string name="tutorial1_example_markers" translatable="false">Water, Child Protection, Education</string>
-    <string name="tutorial1_example_content" translatable="false">Hi, tell us what's going on</string>
+    <string name="tutorial1_example_content" translatable="false">Hi, tell us what\'s going on</string>
     <string name="tutorial1_example_info" translatable="false">40 contributions</string>
     <string name="tutorial1_example_contribute" translatable="false">Contribute to this story</string>
 
