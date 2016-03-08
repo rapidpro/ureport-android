@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="tutorial_title1">Створити Історію</string>
+  <string name="tutorial_description1">Додавайте гучності своєму голосу та розповідайте, що відбувається у вашому суспільстві, створюючи історії та обговорюючи їх з іншими</string>
+  <string name="tutorial_title2">Відповідати на опитування</string>
+  <string name="tutorial_description2">Кожного тижня Ви та мільони інших Ю-Репортерів відповідають на важливі для молоді питання. Результати відкриті для всіх</string>
+  <string name="tutorial_title3">Безкоштовний чат</string>
+  <string name="tutorial_description3">Спілкуйтеся з іншими U-репортерами та приєднуйтеся до груп у чаті для обговорення проблем молоді</string>
+</resources>

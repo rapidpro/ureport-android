@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="markers">
+        <item>Адвокація</item>
+        <item>Захист прав дітей</item>
+        <item>Освіта</item>
+        <item>Кризова ситуація</item>
+        <item>Здоров\'я</item>
+        <item>ВІЛ/СНІД</item>
+        <item>Харчування</item>
+        <item>Політика</item>
+        <item>Соціальна політика</item>
+        <item>Гігієна і санітарія</item>
+        <item>Насильство</item>
+    </string-array>
+</resources>
