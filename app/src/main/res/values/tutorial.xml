@@ -1,16 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
-    
-    <string name="tutorial_title1">Create Stories</string>
-    <string name="tutorial_description1">Amplify your voice and share what is happening in your community by creating stories and commenting on others</string>
+
+    <string name="tutorial_title1" translatable="false">Create Stories</string>
+    <string name="tutorial_description1" translatable="false">Amplify your voice and share what is happening in your community by creating stories and commenting on others</string>
     <color name="tutorial_background1">#8000cff6</color>
 
-    <string name="tutorial_title2">Answer Polls</string>
-    <string name="tutorial_description2">Each week you and millions of other U&#x2011;Reporters can answer polls about issues impacting young people in your community. Results will always be shared</string>
+    <string name="tutorial1_example_title" translatable="false">Water and Sanation</string>
+    <string name="tutorial1_example_markers" translatable="false">Water, Child Protection, Education</string>
+    <string name="tutorial1_example_content" translatable="false">Hi, tell us what's going on</string>
+    <string name="tutorial1_example_info" translatable="false">40 contributions</string>
+    <string name="tutorial1_example_contribute" translatable="false">Contribute to this story</string>
+
+    <string name="tutorial_title2" translatable="false">Answer Polls</string>
+    <string name="tutorial_description2" translatable="false">Each week you and millions of other U&#x2011;Reporters can answer polls about issues impacting young people in your community. Results will always be shared</string>
     <color name="tutorial_background2">#c8ffa500</color>
 
-    <string name="tutorial_title3">Chat for Free</string>
-    <string name="tutorial_description3">Chat with other U-Reporters and follow Group Chats around youth issues</string>
+    <string name="tutorial2_example_title" translatable="false">Current Poll</string>
+    <string name="tutorial2_example_subtitle" translatable="false">Water and Sanation</string>
+    <string name="tutorial2_example_content" translatable="false">The non functional water sources you reported to the concerned authorities, has any action been taken to repair them?</string>
+    <string name="tutorial2_example_accept" translatable="false">Yes</string>
+    <string name="tutorial2_example_reject" translatable="false">No</string>
+    <string name="tutorial2_example_finish" translatable="false">Send</string>
+
+    <string name="tutorial_title3" translatable="false">Chat for Free</string>
+    <string name="tutorial_description3" translatable="false">Chat with other U-Reporters and follow Group Chats around youth issues</string>
     <color name="tutorial_background3">#8000d400</color>
-    
+
+    <string name="tutorial3_first_message" translatable="false">did u see that the teacher did not show up to school today?</string>
+    <string name="tutorial3_second_message" translatable="false">Ah yes! Where was he, look the classroom emptied</string>
+
+    <string name="tutorial_example_message3" translatable="false">Current Poll</string>
+
 </resources>
