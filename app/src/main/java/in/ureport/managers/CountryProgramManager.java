@@ -22,6 +22,7 @@ import static in.ureport.R.string.rapidpro_host_address1;
 import static in.ureport.R.string.rapidpro_host_address2;
 import static in.ureport.R.string.uganda_channel;
 import static in.ureport.R.string.ukraine_channel;
+import static in.ureport.R.string.unitedkingdom_channel;
 import static in.ureport.R.string.ureport_host_address1;
 import static in.ureport.R.string.ureport_host_address2;
 
@@ -44,6 +45,7 @@ import static in.ureport.R.style.AppTheme_SierraLeone;
 import static in.ureport.R.style.AppTheme_Swaiziland;
 import static in.ureport.R.style.AppTheme_Uganda;
 import static in.ureport.R.style.AppTheme_Ukraine;
+import static in.ureport.R.style.AppTheme_UnitedKingdom;
 import static in.ureport.R.style.AppTheme_Zambia;
 import static in.ureport.R.style.AppTheme_Zimbabwe;
 
@@ -141,6 +143,8 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "U-Reporters"));
 			countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
 					, rapidpro_host_address1, ureport_host_address1, "ureportukraine", "UReporters"));
+            countryPrograms.add(buildCountryProgram("GBR", AppTheme_UnitedKingdom, unitedkingdom_channel, "United Kingdom", INVALID_VALUE
+                    , rapidpro_host_address2, ureport_host_address2, "UReportUK", "U-Reporters"));
             countryPrograms.add(buildCountryProgram("ZMB", AppTheme_Zambia, INVALID_VALUE, "Zambia", INVALID_VALUE
                     , rapidpro_host_address1, ureport_host_address1, "ZambiaUReport", null));
             countryPrograms.add(buildCountryProgram("ZWE", AppTheme_Zimbabwe, INVALID_VALUE, "Zimbabwe", 2
