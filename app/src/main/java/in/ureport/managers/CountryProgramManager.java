@@ -83,6 +83,7 @@ public class CountryProgramManager {
             countryPrograms.add(buildCountryProgram("SLE", R.style.AppTheme_SierraLeone, INVALID_VALUE, "Sierra Leone", 7, "UreportSL", null));
             countryPrograms.add(buildCountryProgram("SWZ", R.style.AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4, "Ureportszd", null));
             countryPrograms.add(buildCountryProgram("UGA", R.style.AppTheme_Uganda, R.string.uganda_channel, "Uganda", 18, "UReportUganda", "U-Reporters"));
+            countryPrograms.add(buildCountryProgram("UKR", R.style.AppTheme_Ukraine, R.string.ukraine_channel, "Ukraine", 19, "ureportukraine", "UReporters"));
             countryPrograms.add(buildCountryProgram("ZMB", R.style.AppTheme_Zambia, INVALID_VALUE, "Zambia", INVALID_VALUE, "ZambiaUReport", null));
             countryPrograms.add(buildCountryProgram("ZWE", R.style.AppTheme_Zimbabwe, INVALID_VALUE, "Zimbabwe", 2, "Ureportzim", null));
         }
