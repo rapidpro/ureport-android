@@ -6,15 +6,24 @@ import android.os.Parcelable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by johncordeiro on 20/08/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Media implements Parcelable {
 
+    public static final String KEY_DURATION = "duration";
+    public static final String KEY_FILENAME = "filename";
+
     public enum Type {
         Picture,
-        Video
+        Video,
+        VideoPhone,
+        File,
+        Audio
     }
 
     private String id;
@@ -24,6 +33,10 @@ public class Media implements Parcelable {
 
     @Expose
     private Type type;
+
+    private String thumbnail;
+
+    private HashMap<String, Object> metadata;
 
     public String getId() {
         return id;
@@ -49,13 +62,34 @@ public class Media implements Parcelable {
         this.type = type;
     }
 
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    public HashMap<String, Object> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(HashMap<String, Object> metadata) {
+        this.metadata = metadata;
+    }
+
     public Media() {
     }
 
-    public Media(String id, String url, Type type) {
+    public Media(String id, String url, Type type, String name) {
         this.id = id;
         this.url = url;
         this.type = type;
+    }
+
+    public Media(LocalMedia localMedia) {
+        this.type = localMedia.getType();
+        this.metadata = localMedia.getMetadata();
     }
 
     @Override
@@ -82,6 +116,8 @@ public class Media implements Parcelable {
         dest.writeString(this.id);
         dest.writeString(this.url);
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
+        dest.writeString(this.thumbnail);
+        dest.writeSerializable(this.metadata);
     }
 
     protected Media(Parcel in) {
@@ -89,6 +125,8 @@ public class Media implements Parcelable {
         this.url = in.readString();
         int tmpType = in.readInt();
         this.type = tmpType == -1 ? null : Media.Type.values()[tmpType];
+        this.thumbnail = in.readString();
+        this.metadata = (HashMap<String, Object>) in.readSerializable();
     }
 
     public static final Creator<Media> CREATOR = new Creator<Media>() {

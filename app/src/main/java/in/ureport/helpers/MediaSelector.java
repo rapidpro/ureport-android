@@ -1,11 +1,15 @@
 package in.ureport.helpers;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
@@ -13,6 +17,7 @@ import android.widget.Toast;
 import java.io.File;
 
 import in.ureport.R;
+import in.ureport.fragments.RecordAudioFragment;
 import in.ureport.listener.OnMediaSelectedListener;
 
 /**
@@ -25,6 +30,9 @@ public class MediaSelector {
     public static final int POSITION_GALLERY = 0;
     public static final int POSITION_CAMERA = 1;
     public static final int POSITION_YOUTUBE = 2;
+    public static final int REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION = 201;
+    public static final int REQUEST_CODE_WRITE_EXTERNAL_VIDEO_PERMISSION = 202;
+    public static final int REQUEST_CODE_AUDIO_PERMISSION = 203;
 
     private Context context;
 
@@ -74,18 +82,118 @@ public class MediaSelector {
             , int requestCode, int resultCode, Intent data) {
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
-                case ImagePicker.REQUEST_PICK_FROM_GALLERY:
+                case MediaPicker.REQUEST_VIDEO_FROM_CAMERA:
+                    saveChoosenVideo(data, onLoadLocalMediaListener);
+                    break;
+                case MediaPicker.REQUEST_PICK_FROM_GALLERY:
                     saveChoosenPicture(data, onLoadLocalMediaListener);
                     break;
-                case ImagePicker.REQUEST_IMAGE_CAPTURE:
+                case MediaPicker.REQUEST_IMAGE_CAPTURE:
                     saveTakenPicture(fragment, onLoadLocalMediaListener);
+                    break;
+                case MediaPicker.REQUEST_FILE:
+                    saveFile(fragment, data, onLoadLocalMediaListener);
             }
+        }
+    }
+
+    private void saveFile(Fragment fragment, Intent data, OnLoadLocalMediaListener onLoadLocalMediaListener) {
+        Uri dataUri = data.getData();
+        if(dataUri != null)
+            onLoadLocalMediaListener.onLoadFile(dataUri);
+        else
+            Toast.makeText(fragment.getContext(), R.string.error_get_file, Toast.LENGTH_SHORT).show();
+    }
+
+    public void onRequestPermissionResult(Fragment fragment, int requestCode, int [] grantResults) {
+        if (grantResults.length > 0 && allPermissionsGranted(grantResults)) {
+            switch (requestCode) {
+                case REQUEST_CODE_WRITE_EXTERNAL_VIDEO_PERMISSION:
+                    pickVideoFromCamera(fragment); break;
+                case REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION:
+                    pickFromCamera(fragment); break;
+                case REQUEST_CODE_AUDIO_PERMISSION:
+                    pickAudio(fragment);
+            }
+        } else {
+            Toast.makeText(fragment.getContext(), R.string.error_message_permission_external
+                    , Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean allPermissionsGranted(int[] grantResults) {
+        boolean granted = true;
+        for (int grantResult : grantResults) {
+            if(grantResult != PackageManager.PERMISSION_GRANTED) {
+                granted = false;
+                break;
+            }
+        }
+        return granted;
+    }
+
+    public void pickFile(Fragment fragment) {
+        MediaPicker mediaPicker = new MediaPicker();
+        mediaPicker.pickFile(fragment);
+    }
+
+    public void pickVideoFromCamera(Fragment fragment) {
+        if (ContextCompat.checkSelfPermission(fragment.getActivity()
+                , Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            fragment.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}
+                    , REQUEST_CODE_WRITE_EXTERNAL_VIDEO_PERMISSION);
+        } else {
+            MediaPicker mediaPicker = new MediaPicker();
+            mediaPicker.pickVideoFromCamera(fragment);
+        }
+    }
+
+    public void pickFromCamera(Fragment fragment) {
+        try {
+            if (ContextCompat.checkSelfPermission(fragment.getActivity()
+            , Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                fragment.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}
+                        , REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION);
+            } else {
+                MediaPicker mediaPicker = new MediaPicker();
+                imageFromCamera = mediaPicker.pickImageFromCamera(fragment);
+            }
+        } catch(Exception exception) {
+            showTakenPictureError(fragment);
+            Log.e(TAG, "onClick ", exception);
+        }
+    }
+
+    public void pickFromGallery(Fragment fragment) {
+        MediaPicker mediaPicker = new MediaPicker();
+        mediaPicker.pickImageFromGallery(fragment);
+    }
+
+    public void pickFromYoutube(Fragment fragment) {
+        if(fragment instanceof YoutubePicker.OnPickYoutubeVideoListener) {
+            YoutubePicker youtubePicker = new YoutubePicker(context);
+            youtubePicker.pickVideoFromInput((YoutubePicker.OnPickYoutubeVideoListener)fragment);
+        }
+    }
+
+    public void pickAudio(Fragment fragment) {
+        if (ContextCompat.checkSelfPermission(fragment.getActivity()
+                , Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            fragment.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.RECORD_AUDIO}
+                    , REQUEST_CODE_AUDIO_PERMISSION);
+        } else if (fragment instanceof OnLoadLocalMediaListener) {
+            FragmentTransaction transaction = fragment.getActivity().getSupportFragmentManager().beginTransaction();
+
+            RecordAudioFragment recordAudioFragment = new RecordAudioFragment();
+            recordAudioFragment.setOnLoadLocalMediaListener((OnLoadLocalMediaListener) fragment);
+            recordAudioFragment.show(transaction, "recordAudioFragment");
         }
     }
 
     private void saveTakenPicture(Fragment fragment, OnLoadLocalMediaListener onLoadLocalMediaListener) {
         if(imageFromCamera != null) {
-            onLoadLocalMediaListener.onLoadLocalMedia(Uri.fromFile(imageFromCamera));
+            onLoadLocalMediaListener.onLoadLocalImage(Uri.fromFile(imageFromCamera));
         } else {
             showTakenPictureError(fragment);
         }
@@ -94,29 +202,13 @@ public class MediaSelector {
     private void saveChoosenPicture(Intent data, OnLoadLocalMediaListener onLoadLocalMediaListener) {
         Uri pictureUri = data.getData();
         if(pictureUri != null)
-            onLoadLocalMediaListener.onLoadLocalMedia(pictureUri);
+            onLoadLocalMediaListener.onLoadLocalImage(pictureUri);
     }
 
-    private void pickFromCamera(Fragment fragment) {
-        try {
-            ImagePicker imagePicker = new ImagePicker();
-            imageFromCamera = imagePicker.pickImageFromCamera(fragment);
-        } catch(Exception exception) {
-            showTakenPictureError(fragment);
-            Log.e(TAG, "onClick ", exception);
-        }
-    }
-
-    private void pickFromGallery(Fragment fragment) {
-        ImagePicker imagePicker = new ImagePicker();
-        imagePicker.pickImageFromGallery(fragment);
-    }
-
-    private void pickFromYoutube(Fragment fragment) {
-        if(fragment instanceof YoutubePicker.OnPickVideoListener) {
-            YoutubePicker youtubePicker = new YoutubePicker(context);
-            youtubePicker.pickVideoFromInput((YoutubePicker.OnPickVideoListener)fragment);
-        }
+    private void saveChoosenVideo(Intent data, OnLoadLocalMediaListener onLoadLocalMediaListener) {
+        Uri videoUri = data.getData();
+        if(videoUri != null)
+            onLoadLocalMediaListener.onLoadLocalVideo(videoUri);
     }
 
     private void showTakenPictureError(Fragment fragment) {
@@ -146,6 +238,9 @@ public class MediaSelector {
     }
 
     public interface OnLoadLocalMediaListener {
-        void onLoadLocalMedia(Uri uri);
+        void onLoadLocalImage(Uri uri);
+        void onLoadLocalVideo(Uri uri);
+        void onLoadFile(Uri uri);
+        void onLoadAudio(Uri uri, int duration);
     }
 }

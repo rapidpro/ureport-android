@@ -168,12 +168,11 @@ public class Story implements Parcelable {
         if (o == null || getClass() != o.getClass()) return false;
 
         Story story = (Story) o;
-        return key.equals(story.key);
-
+        return key != null ? key.equals(story.key) : story.key == null;
     }
 
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return key != null ? key.hashCode() : 0;
     }
 }

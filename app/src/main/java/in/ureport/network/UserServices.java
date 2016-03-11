@@ -1,6 +1,7 @@
 package in.ureport.network;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -26,6 +27,8 @@ import in.ureport.models.User;
  * Created by johncordeiro on 14/08/15.
  */
 public class UserServices extends ProgramServices {
+
+    private static final String TAG = "UserServices";
 
     private static final String userPath = "user";
     private static final String userModeratorPath = "user_moderator";
@@ -74,9 +77,13 @@ public class UserServices extends ProgramServices {
 
         List<User> users = new ArrayList<>();
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-            User user = snapshot.getValue(User.class);
-            if(!snapshot.getKey().equals(currentUserKey) && (user.getPublicProfile() == null || user.getPublicProfile())) {
-                users.add(user);
+            try {
+                User user = snapshot.getValue(User.class);
+                if (!snapshot.getKey().equals(currentUserKey) && (user.getPublicProfile() == null || user.getPublicProfile())) {
+                    users.add(user);
+                }
+            } catch(Exception exception) {
+                Log.e(TAG, "handleDataResponse: ", exception);
             }
         }
 

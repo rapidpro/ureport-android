@@ -71,7 +71,7 @@ import in.ureport.views.adapters.ChatMessagesAdapter;
  * Created by johncordeiro on 7/21/15.
  */
 public class ChatRoomFragment extends Fragment
-        implements ChatMessagesAdapter.OnChatMessageSelectedListener, MediaSelector.OnLoadLocalMediaListener, YoutubePicker.OnPickVideoListener {
+        implements ChatMessagesAdapter.OnChatMessageSelectedListener, MediaSelector.OnLoadLocalMediaListener, YoutubePicker.OnPickYoutubeVideoListener {
 
     private static final String TAG = "ChatRoomFragment";
 
@@ -171,13 +171,14 @@ public class ChatRoomFragment extends Fragment
 
     private void sendMedia(Uri pictureUri) {
         LocalMedia media = new LocalMedia();
+        media.setType(Media.Type.Picture);
         media.setPath(pictureUri);
 
         final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
                 , getString(R.string.load_message_uploading_image), true);
         try {
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferMedia(media, MEDIA_PARENT, new TransferListenerAdapter() {
+            transferManager.transferMedia(media, MEDIA_PARENT, new TransferListenerAdapter(media) {
                 @Override
                 public void onTransferFinished(Media media) {
                     super.onTransferFinished(media);
@@ -649,12 +650,27 @@ public class ChatRoomFragment extends Fragment
     }
 
     @Override
-    public void onLoadLocalMedia(Uri uri) {
+    public void onLoadLocalImage(Uri uri) {
         sendMedia(uri);
     }
 
     @Override
-    public void onPickVideo(String videoId, String videoUrl) {
+    public void onLoadLocalVideo(Uri uri) {
+
+    }
+
+    @Override
+    public void onLoadFile(Uri uri) {
+
+    }
+
+    @Override
+    public void onLoadAudio(Uri uri, int duration) {
+
+    }
+
+    @Override
+    public void onPickYoutubeVideo(String videoId, String videoUrl) {
         VideoMedia videoMedia = new VideoMedia();
         videoMedia.setId(videoId);
         videoMedia.setPath(videoUrl);

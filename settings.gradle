@@ -1,2 +1,2 @@
-include ':app', ':flow-runner'
+include ':app', ':flow-runner', ':video-compressor'
 include ':support-android'

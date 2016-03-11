@@ -42,6 +42,9 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {}
+
+    @Override
     public boolean onSupportNavigateUp() {
         if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
