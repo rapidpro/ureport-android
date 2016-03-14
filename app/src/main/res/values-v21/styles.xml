@@ -14,6 +14,7 @@
 
                 <item name="android:windowEnterTransition">@transition/activity_fade_out</item>
                 <item name="android:windowExitTransition">@transition/activity_fade_in</item>
+                <item name="android:spinnerStyle">@style/Widget.AppCompat.Spinner.Underlined</item>
         </style>
 
         <style name="AppTheme.Button" parent="@android:style/Widget.Material.Light.Button">
