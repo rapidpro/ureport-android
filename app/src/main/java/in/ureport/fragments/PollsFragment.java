@@ -121,6 +121,7 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
         super.onDestroyView();
         FlowManager.enableFlowNotificiation();
         getActivity().unregisterReceiver(onReloadNotifications);
+        if(onPollsLoadedListener != null) pollServices.removePollsListener(onPollsLoadedListener);
     }
 
     private void loadData() {

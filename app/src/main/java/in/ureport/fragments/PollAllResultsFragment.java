@@ -69,6 +69,12 @@ public class PollAllResultsFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(onPollServicesLoadedListener != null) pollServices.removePollsResultsListener(poll, onPollServicesLoadedListener);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.label_poll_results);
