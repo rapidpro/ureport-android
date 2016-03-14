@@ -21,6 +21,8 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.GameficationManager;
 import in.ureport.managers.UserManager;
+import in.ureport.models.Media;
+import in.ureport.models.Story;
 import in.ureport.models.User;
 
 /**
@@ -95,12 +97,12 @@ public class UserServices extends ProgramServices {
                 .runTransaction(new ValueIncrementerTransaction(GameficationManager.CONTRIBUTION_POINTS));
     }
 
-    public void incrementStoryCount() {
+    public void incrementStoryCount(Story story) {
         FirebaseManager.getReference().child(userPath).child(UserManager.getUserId()).child("stories")
                 .runTransaction(new ValueIncrementerTransaction(1));
 
         FirebaseManager.getReference().child(userPath).child(UserManager.getUserId()).child("points")
-                .runTransaction(new ValueIncrementerTransaction(GameficationManager.STORIES_POINTS));
+                .runTransaction(new ValueIncrementerTransaction(GameficationManager.getPointsForStory(story)));
     }
 
     public void loadRanking(final OnLoadAllUsersListener onLoadAllUsersListener) {

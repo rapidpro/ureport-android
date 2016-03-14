@@ -269,7 +269,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
                 if (firebaseError == null && storyCreationListener != null) {
                     story.setKey(firebase.getKey());
 
-                    incrementStoryCount();
+                    incrementStoryCount(story);
                     storyCreationListener.onStoryCreated(story);
                     registerAuthorToGcm(story);
                 }
@@ -291,9 +291,9 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         });
     }
 
-    private void incrementStoryCount() {
+    private void incrementStoryCount(Story story) {
         UserServices userServices = new UserServices();
-        userServices.incrementStoryCount();
+        userServices.incrementStoryCount(story);
     }
 
     @Nullable
