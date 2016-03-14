@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -54,6 +55,7 @@ public class RecordAudioFragment extends DialogFragment {
     private ImageView play;
     private SeekBar progress;
     private TextView mainAction;
+    private TextView cancel;
     private View loadingContainer;
 
     private Handler handler;
@@ -108,6 +110,7 @@ public class RecordAudioFragment extends DialogFragment {
     }
 
     private void setupView(View view) {
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         loadingContainer = view.findViewById(R.id.loadingContainer);
 
         startTime = (TextView) view.findViewById(R.id.startTime);
@@ -126,7 +129,7 @@ public class RecordAudioFragment extends DialogFragment {
         mainAction = (TextView) view.findViewById(R.id.mainAction);
         mainAction.setOnClickListener(onMainClickListener);
 
-        TextView cancel = (TextView) view.findViewById(R.id.cancel);
+        cancel = (TextView) view.findViewById(R.id.cancel);
         cancel.setOnClickListener(v -> dismiss());
     }
 
@@ -206,6 +209,7 @@ public class RecordAudioFragment extends DialogFragment {
     }
 
     private void switchRecordingStatus(int status) {
+        cancel.setText(R.string.cancel_dialog_button);
         recordingStatus = status;
         switch (status) {
             case IDLE_STATUS:
@@ -223,6 +227,7 @@ public class RecordAudioFragment extends DialogFragment {
                 prepareToPlay();
                 break;
             case PLAYER_STATUS:
+                cancel.setText(R.string.prompt_done);
                 mainAction.setVisibility(View.GONE);
                 switchPlaybackStatus(PLAYING_STATUS);
                 loadAudio();

@@ -334,5 +334,6 @@
     <string name="title_loading_audio">Loading audio</string>
     <string name="error_media_upload">The media upload was failed. Please check your connection and try again.</string>
     <string name="load_message_waiting_connection">Waiting connection...</string>
+    <string name="prompt_done">Done</string>
 
 </resources>

@@ -317,4 +317,5 @@ Las celebridades de UNICEF tienen una amplia gama de talentos y logros, pero tod
   <string name="prompt_file_upload">Seleccione un archivo para cargar</string>
   <string name="title_video">Vídeo</string>
   <string name="title_youtube">Youtube</string>
+  <string name="prompt_done">Hecho</string>
 </resources>
