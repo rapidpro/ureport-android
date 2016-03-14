@@ -92,8 +92,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:paddingLeft="@dimen/spinner_padding_left"
-                android:paddingStart="@dimen/spinner_padding_left"
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                android:paddingStart="@dimen/spinner_padding_left" />
 
             <Spinner
                 android:id="@+id/state"
@@ -104,8 +103,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:paddingLeft="@dimen/spinner_padding_left"
-                android:paddingStart="@dimen/spinner_padding_left"
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                android:paddingStart="@dimen/spinner_padding_left" />
 
             <Spinner
                 android:id="@+id/district"
@@ -118,8 +116,7 @@
                 android:paddingLeft="@dimen/spinner_padding_left"
                 android:paddingStart="@dimen/spinner_padding_left"
                 android:visibility="gone"
-                tools:visibility="visible"
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                tools:visibility="visible" />
 
             <Spinner
                 android:id="@+id/gender"
@@ -131,8 +128,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:paddingLeft="@dimen/spinner_padding_left"
-                android:paddingStart="@dimen/spinner_padding_left"
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                android:paddingStart="@dimen/spinner_padding_left" />
 
             <Button
                 android:id="@+id/confirm"
