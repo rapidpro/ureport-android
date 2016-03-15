@@ -321,4 +321,5 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
   <string name="title_video">Vídeo</string>
   <string name="title_youtube">Youtube</string>
   <string name="prompt_done">Pronto</string>
+  <string name="message_upload_cancel">Seu upload foi cancelado!</string>
 </resources>
