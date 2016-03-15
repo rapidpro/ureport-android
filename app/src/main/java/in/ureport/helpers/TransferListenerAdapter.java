@@ -34,7 +34,7 @@ public abstract class TransferListenerAdapter implements TransferListener {
 
     @Override
     public final void onStateChanged(int id, TransferState state) {
-        Log.i(TAG, "onStateChanged: id: " + id + " state: " + state);
+        Log.i(TAG, "onStateChanged: id: " + id + " state: " + state + " filename: " + filename);
         if(state == TransferState.COMPLETED) {
             Media media = new Media(localMedia);
             media.setId(getKey());

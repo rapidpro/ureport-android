@@ -128,14 +128,21 @@ public class TransferManager {
                 LocalMedia thumbnailLocalMedia = new LocalMedia();
                 thumbnailLocalMedia.setType(Media.Type.Picture);
 
-                transferFile(videoThumbFile, parent, new TransferListenerAdapter(thumbnailLocalMedia) {
-                    @Override
-                    public void onTransferFinished(Media videoThumbnail) {
-                        super.onTransferFinished(videoThumbnail);
-                        media.setThumbnail(videoThumbnail.getUrl());
-                        finishTransfer(localMedia, media, medias, mediasUploaded, onTransferMediasListener);
-                    }
-                });
+                TransferListenerAdapter thumbnailTransferListener = createVideoThumbnailListener(thumbnailLocalMedia);
+                transfersRetained.add(thumbnailTransferListener);
+                transferFile(videoThumbFile, parent, thumbnailTransferListener);
+            }
+
+            @NonNull
+            private TransferListenerAdapter createVideoThumbnailListener(final LocalMedia thumbnailLocalMedia) {
+                return new TransferListenerAdapter(thumbnailLocalMedia) {
+                                @Override
+                                public void onTransferFinished(Media videoThumbnail) {
+                                    super.onTransferFinished(videoThumbnail);
+                                    media.setThumbnail(videoThumbnail.getUrl());
+                                    finishTransfer(localMedia, media, medias, mediasUploaded, onTransferMediasListener);
+                                }
+                            };
             }
         }.execute(localMedia.getPath());
     }
