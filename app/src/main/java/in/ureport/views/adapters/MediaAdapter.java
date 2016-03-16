@@ -264,6 +264,8 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                             onMediaViewListener.onFileMediaView(media); break;
                         case Audio:
                             onMediaViewListener.onAudioMediaView(media); break;
+                        case VideoPhone:
+                            onMediaViewListener.onVideoMediaView(media); break;
                         default:
                             onMediaViewListener.onMediaView(mediaList, getLayoutPosition());
                     }
@@ -325,6 +327,7 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public interface OnMediaViewListener {
         void onMediaView(List<Media> medias, int position);
+        void onVideoMediaView(Media media);
         void onFileMediaView(Media media);
         void onAudioMediaView(Media media);
     }

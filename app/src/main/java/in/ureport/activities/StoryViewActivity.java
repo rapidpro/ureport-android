@@ -3,13 +3,13 @@ package in.ureport.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.ilhasoft.support.tool.bitmap.IOManager;
 import in.ureport.R;
 import in.ureport.fragments.MediaViewFragment;
 import in.ureport.fragments.NewsViewFragment;
@@ -86,11 +86,13 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
     @Override
     public void onMediaView(List<Media> medias, int position) {
         MediaViewFragment mediaViewFragment = MediaViewFragment.newInstance((ArrayList<Media>)medias, position);
-        getSupportFragmentManager().beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .add(R.id.content, mediaViewFragment)
-                .addToBackStack(null)
-                .commit();
+        addFragment(mediaViewFragment);
+    }
+
+    @Override
+    public void onVideoMediaView(Media media) {
+        MediaViewFragment mediaViewFragment = MediaViewFragment.newInstance(media);
+        addFragment(mediaViewFragment);
     }
 
     @Override
@@ -109,5 +111,13 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
     @Override
     public void onCloseMediaView() {
         getSupportFragmentManager().popBackStack();
+    }
+
+    private void addFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .add(R.id.content, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

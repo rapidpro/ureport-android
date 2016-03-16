@@ -93,24 +93,16 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
     }
 
     @Override
-    public void onStoryCreated(Story story) {
+    public void onStoryCreated(final Story story) {
         UserViewManager userViewManager = new UserViewManager(this);
-        userViewManager.showStoryPublishingWarning(new OnCloseDialogListener() {
-            @Override
-            public void onCloseGamefication() {
-                showPointsEarningAndClose();
-            }
-        });
+        userViewManager.showStoryPublishingWarning(() -> showPointsEarningAndClose(story));
     }
 
-    private void showPointsEarningAndClose() {
+    private void showPointsEarningAndClose(final Story story) {
         GameficationManager gameficationManager = new GameficationManager(this);
-        gameficationManager.showGameficationAlert(new OnCloseDialogListener() {
-            @Override
-            public void onCloseGamefication() {
-                setResult(Activity.RESULT_OK);
-                finish();
-            }
+        gameficationManager.showGameficationAlert(story, () -> {
+            setResult(Activity.RESULT_OK);
+            finish();
         });
     }
 

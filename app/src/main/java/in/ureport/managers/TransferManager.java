@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
+import com.amazonaws.mobileconnectors.s3.transferutility.TransferType;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +33,7 @@ public class TransferManager {
 
     private Context context;
     private boolean transferFailed = false;
+    private boolean transferCancelled = false;
 
     private static List<TransferListenerAdapter> transfersRetained;
 
@@ -45,12 +47,20 @@ public class TransferManager {
         transferFile(media.getType(), media.getPath(), parent, transferListener);
     }
 
+    public void cancelTransfer() {
+        AmazonServicesManager.getTransferUtility().cancelAllWithType(TransferType.ANY);
+        transferCancelled = true;
+    }
+
     public void transferMedias(final List<Media> mediasToUpload, final String parent
             , final OnTransferMediasListener onTransferMediasListener) throws URISyntaxException, IllegalStateException, IOException {
         final Map<LocalMedia, Media> mediasUploaded = new HashMap<>();
 
+        transferFailed = false;
+        transferCancelled = false;
+
         for (Media media : mediasToUpload) {
-            if(transferFailed) break;
+            if(transferFailed || transferCancelled) break;
 
             if(!(media instanceof LocalMedia)) {
                 mediasUploaded.put(new LocalMedia(Uri.parse(media.getUrl())), media);
@@ -60,7 +70,6 @@ public class TransferManager {
             final LocalMedia localMedia = (LocalMedia) media;
             TransferListenerAdapter transferListenerAdapter = createTransferListener(mediasToUpload, parent
                     , onTransferMediasListener, mediasUploaded, localMedia);
-            transfersRetained.add(transferListenerAdapter);
             transferFile(localMedia.getType(), localMedia.getPath(), parent, transferListenerAdapter);
         }
     }
@@ -118,14 +127,20 @@ public class TransferManager {
                 LocalMedia thumbnailLocalMedia = new LocalMedia();
                 thumbnailLocalMedia.setType(Media.Type.Picture);
 
-                transferFile(videoThumbFile, parent, new TransferListenerAdapter(thumbnailLocalMedia) {
-                    @Override
-                    public void onTransferFinished(Media videoThumbnail) {
-                        super.onTransferFinished(videoThumbnail);
-                        media.setThumbnail(videoThumbnail.getUrl());
-                        finishTransfer(localMedia, media, medias, mediasUploaded, onTransferMediasListener);
-                    }
-                });
+                TransferListenerAdapter thumbnailTransferListener = createVideoThumbnailListener(thumbnailLocalMedia);
+                transferFile(videoThumbFile, parent, thumbnailTransferListener);
+            }
+
+            @NonNull
+            private TransferListenerAdapter createVideoThumbnailListener(final LocalMedia thumbnailLocalMedia) {
+                return new TransferListenerAdapter(thumbnailLocalMedia) {
+                                @Override
+                                public void onTransferFinished(Media videoThumbnail) {
+                                    super.onTransferFinished(videoThumbnail);
+                                    media.setThumbnail(videoThumbnail.getUrl());
+                                    finishTransfer(localMedia, media, medias, mediasUploaded, onTransferMediasListener);
+                                }
+                            };
             }
         }.execute(localMedia.getPath());
     }
@@ -148,6 +163,7 @@ public class TransferManager {
 
         TransferObserver observer = AmazonServicesManager.getTransferUtility()
                 .upload(AmazonServicesManager.BUCKET_ID, filename, compressedFile);
+        transfersRetained.add(transferListener);
         observer.setTransferListener(transferListener);
     }
 

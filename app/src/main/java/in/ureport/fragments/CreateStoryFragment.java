@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -206,10 +207,15 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     private void uploadMediasAndCreateStory() {
         try {
-            final ProgressDialog progressUpload = ProgressDialog.show(getActivity(), null
-                    , getString(R.string.load_message_uploading_image), true, false);
+            final TransferManager transferManager = new TransferManager(getActivity());
 
-            TransferManager transferManager = new TransferManager(getActivity());
+            final ProgressDialog progressUpload = ProgressDialog.show(getActivity(), null
+                    , getString(R.string.load_message_uploading_image), true, true);
+            progressUpload.setOnCancelListener((DialogInterface dialog) -> {
+                transferManager.cancelTransfer();
+                Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
+            });
+
             transferManager.transferMedias(mediaList, "story", new TransferManager.OnTransferMediasListener() {
                 @Override
                 public void onTransferMedias(Map<LocalMedia, Media> medias) {
@@ -269,7 +275,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
                 if (firebaseError == null && storyCreationListener != null) {
                     story.setKey(firebase.getKey());
 
-                    incrementStoryCount();
+                    incrementStoryCount(story);
                     storyCreationListener.onStoryCreated(story);
                     registerAuthorToGcm(story);
                 }
@@ -291,9 +297,9 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         });
     }
 
-    private void incrementStoryCount() {
+    private void incrementStoryCount(Story story) {
         UserServices userServices = new UserServices();
-        userServices.incrementStoryCount();
+        userServices.incrementStoryCount(story);
     }
 
     @Nullable
