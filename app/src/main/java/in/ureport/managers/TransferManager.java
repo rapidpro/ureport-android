@@ -70,7 +70,6 @@ public class TransferManager {
             final LocalMedia localMedia = (LocalMedia) media;
             TransferListenerAdapter transferListenerAdapter = createTransferListener(mediasToUpload, parent
                     , onTransferMediasListener, mediasUploaded, localMedia);
-            transfersRetained.add(transferListenerAdapter);
             transferFile(localMedia.getType(), localMedia.getPath(), parent, transferListenerAdapter);
         }
     }
@@ -129,7 +128,6 @@ public class TransferManager {
                 thumbnailLocalMedia.setType(Media.Type.Picture);
 
                 TransferListenerAdapter thumbnailTransferListener = createVideoThumbnailListener(thumbnailLocalMedia);
-                transfersRetained.add(thumbnailTransferListener);
                 transferFile(videoThumbFile, parent, thumbnailTransferListener);
             }
 
@@ -165,6 +163,7 @@ public class TransferManager {
 
         TransferObserver observer = AmazonServicesManager.getTransferUtility()
                 .upload(AmazonServicesManager.BUCKET_ID, filename, compressedFile);
+        transfersRetained.add(transferListener);
         observer.setTransferListener(transferListener);
     }
 
