@@ -12,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +93,7 @@ public class MediaViewFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getActivity().setTitle("");
 
-        if(medias.size() == 1) {
+        if(medias.size() == 1 && containsVideoMedia()) {
             MediaFragment mediaFragment = MediaFragment.newInstance(medias.get(0));
             getChildFragmentManager().beginTransaction().add(R.id.container, mediaFragment).commit();
         } else {
@@ -106,6 +105,14 @@ public class MediaViewFragment extends Fragment {
             mediaPager.setCurrentItem(position);
             mediaPager.setPageTransformer(true, new DepthPageTransformer());
         }
+    }
+
+    private boolean containsVideoMedia() {
+        for (Media media : medias) {
+            if (media.getType() == Media.Type.VideoPhone)
+                return true;
+        }
+        return false;
     }
 
     @NonNull
@@ -146,12 +153,9 @@ public class MediaViewFragment extends Fragment {
     };
 
     private void closeMediaViewFragmentDelayed() {
-        mediaPager.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(onCloseMediaViewListener != null)
-                    onCloseMediaViewListener.onCloseMediaView();
-            }
+        mediaPager.postDelayed(() -> {
+            if(onCloseMediaViewListener != null)
+                onCloseMediaViewListener.onCloseMediaView();
         }, 500);
     }
 
