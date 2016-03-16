@@ -2,10 +2,8 @@ package in.ureport.network;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
-import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
@@ -16,6 +14,7 @@ import in.ureport.models.User;
 public class StoryServices extends ProgramServices {
 
     private static final String storyPath = "story";
+    private static final String storyLikePath = "story_like";
     private static final String storyModeratePath = "story_moderate";
     private static final String storyDisapprovedPath = "story_disapproved";
 
@@ -27,6 +26,29 @@ public class StoryServices extends ProgramServices {
 
     public void loadStory(final Story story, ValueEventListener listener) {
         getDefaultRoot().child(storyPath).child(story.getKey()).addListenerForSingleValueEvent(listener);
+    }
+
+    public void loadStoryLikeCount(final Story story, ValueEventListener listener) {
+        getDefaultRoot().child(storyLikePath)
+                .child(story.getKey()).addListenerForSingleValueEvent(listener);
+    }
+
+    public void addStoryLike(Story story, User user, Firebase.CompletionListener listener) {
+        getDefaultRoot().child(storyLikePath).child(story.getKey())
+                .child(user.getKey()).setValue(true, listener);
+    }
+
+    public void removeStoryLike(Story story, User user, Firebase.CompletionListener listener) {
+        getDefaultRoot().child(storyLikePath).child(story.getKey())
+                .child(user.getKey()).removeValue(listener);
+    }
+
+    public void checkLikeForUser(Story story, ValueEventListener listener) {
+        String userId = UserManager.getUserId();
+        if(userId != null) {
+            getDefaultRoot().child(storyLikePath).child(story.getKey())
+                    .child(userId).addListenerForSingleValueEvent(listener);
+        }
     }
 
     public void approveStory(Story story, Firebase.CompletionListener listener) {

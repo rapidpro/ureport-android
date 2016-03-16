@@ -22,7 +22,6 @@ import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
-import in.ureport.listener.OnStoryContributionCountListener;
 import in.ureport.helpers.RecyclerScrollListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.CountryProgramManager;
@@ -254,11 +253,16 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     private void loadStoryData(final Story story) {
-        contributionServices.getContributionCount(story, new OnStoryContributionCountListener() {
+        contributionServices.getContributionCount(story, count -> {
+            story.setContributions(Long.valueOf(count).intValue());
+            loadUsersFromStory(story, onAfterStoryLoadedListener);
+        });
+
+        storyServices.loadStoryLikeCount(story, new ValueEventListenerAdapter() {
             @Override
-            public void onStoryContributionCountListener(long count) {
-                story.setContributions(Long.valueOf(count).intValue());
-                loadUsersFromStory(story, onAfterStoryLoadedListener);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                story.setLikes(dataSnapshot.exists() ? (int) dataSnapshot.getChildrenCount() : 0);
             }
         });
     }
