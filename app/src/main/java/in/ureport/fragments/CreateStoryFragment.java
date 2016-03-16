@@ -75,6 +75,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private EditText markers;
     private EditText title;
     private EditText content;
+    private MenuItem publishItem;
 
     private StoryCreationListener storyCreationListener;
 
@@ -159,12 +160,14 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_create_story, menu);
+        publishItem = menu.findItem(R.id.publish);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.publish:
+                item.setEnabled(false);
                 publishStory();
                 return true;
         }
@@ -191,7 +194,14 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             } else {
                 createStoryWithMediasAndSave(mediaList, null);
             }
+        } else {
+            finishPublishing();
         }
+    }
+
+    private void finishPublishing() {
+        if(publishItem != null)
+            publishItem.setEnabled(true);
     }
 
     @NonNull
@@ -212,6 +222,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             final ProgressDialog progressUpload = ProgressDialog.show(getActivity(), null
                     , getString(R.string.load_message_uploading_image), true, true);
             progressUpload.setOnCancelListener((DialogInterface dialog) -> {
+                finishPublishing();
                 transferManager.cancelTransfer();
                 Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
             });
@@ -241,6 +252,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void displayMediaUploadError() {
+        finishPublishing();
+
         AlertDialog alertDialog = new AlertDialog.Builder(getContext())
                 .setMessage(R.string.error_media_upload)
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, null)
@@ -249,6 +262,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void showErrorImageUpload() {
+        finishPublishing();
         Toast.makeText(getActivity(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
     }
 
@@ -271,6 +285,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         storyServices.saveStory(story, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                finishPublishing();
                 progressCreation.dismiss();
                 if (firebaseError == null && storyCreationListener != null) {
                     story.setKey(firebase.getKey());

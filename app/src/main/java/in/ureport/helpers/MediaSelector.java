@@ -33,6 +33,7 @@ public class MediaSelector {
     public static final int REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION = 201;
     public static final int REQUEST_CODE_WRITE_EXTERNAL_VIDEO_PERMISSION = 202;
     public static final int REQUEST_CODE_AUDIO_PERMISSION = 203;
+    public static final int REQUEST_CODE_READ_EXTERNAL_VIDEO_PERMISSION = 204;
 
     private Context context;
 
@@ -113,7 +114,9 @@ public class MediaSelector {
                 case REQUEST_CODE_WRITE_EXTERNAL_IMAGE_PERMISSION:
                     pickFromCamera(fragment); break;
                 case REQUEST_CODE_AUDIO_PERMISSION:
-                    pickAudio(fragment);
+                    pickAudio(fragment); break;
+                case REQUEST_CODE_READ_EXTERNAL_VIDEO_PERMISSION:
+                    pickFile(fragment);
             }
         } else {
             Toast.makeText(fragment.getContext(), R.string.error_message_permission_external
@@ -133,8 +136,14 @@ public class MediaSelector {
     }
 
     public void pickFile(Fragment fragment) {
-        MediaPicker mediaPicker = new MediaPicker();
-        mediaPicker.pickFile(fragment);
+        if (ContextCompat.checkSelfPermission(fragment.getActivity()
+                , Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            fragment.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}
+                    , REQUEST_CODE_READ_EXTERNAL_VIDEO_PERMISSION);
+        } else {
+            MediaPicker mediaPicker = new MediaPicker();
+            mediaPicker.pickFile(fragment);
+        }
     }
 
     public void pickVideoFromCamera(Fragment fragment) {
