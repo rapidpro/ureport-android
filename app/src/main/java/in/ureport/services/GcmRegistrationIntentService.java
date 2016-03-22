@@ -72,10 +72,14 @@ public class GcmRegistrationIntentService extends IntentService {
                 super.onDataChange(dataSnapshot);
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Story story = snapshot.getValue(Story.class);
+                        try {
+                            Story story = snapshot.getValue(Story.class);
 
-                        GcmTopicManager gcmTopicManager = new GcmTopicManager(getApplicationContext());
-                        gcmTopicManager.registerToStoryTopic(user, story);
+                            GcmTopicManager gcmTopicManager = new GcmTopicManager(getApplicationContext());
+                            gcmTopicManager.registerToStoryTopic(user, story);
+                        } catch(Exception exception) {
+                            Log.e(TAG, "onDataChange: ", exception);
+                        }
                     }
                 }
             }
