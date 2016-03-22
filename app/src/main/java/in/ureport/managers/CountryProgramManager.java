@@ -143,7 +143,7 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "U-Reporters"));
 			countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
 					, rapidpro_host_address1, ureport_host_address1, "ureportukraine", "UReporters"));
-            countryPrograms.add(buildCountryProgram("GBR", AppTheme_UnitedKingdom, unitedkingdom_channel, "United Kingdom", INVALID_VALUE
+            countryPrograms.add(buildCountryProgram("GBR", AppTheme_UnitedKingdom, unitedkingdom_channel, "United Kingdom", 3
                     , rapidpro_host_address2, ureport_host_address2, "UReportUK", "U-Reporters"));
             countryPrograms.add(buildCountryProgram("ZMB", AppTheme_Zambia, INVALID_VALUE, "Zambia", INVALID_VALUE
                     , rapidpro_host_address1, ureport_host_address1, "ZambiaUReport", null));
