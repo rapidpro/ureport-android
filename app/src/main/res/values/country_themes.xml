@@ -37,6 +37,12 @@
         <item name="colorAccent">#14448a</item>
     </style>
 
+    <style name="AppTheme.Malaysia" parent="AppTheme">
+        <item name="colorPrimary">#155ad0</item>
+        <item name="colorPrimaryDark">#144e9e</item>
+        <item name="colorAccent">#14448a</item>
+    </style>
+
     <style name="AppTheme.Mali" parent="AppTheme">
         <item name="colorPrimary">#d7001d</item>
         <item name="colorPrimaryDark">#c3001e</item>
