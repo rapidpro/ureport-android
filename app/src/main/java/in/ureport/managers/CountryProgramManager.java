@@ -16,6 +16,7 @@ import static in.ureport.R.string.chile_channel;
 import static in.ureport.R.string.global_channel;
 import static in.ureport.R.string.indonesia_channel;
 import static in.ureport.R.string.ireland_channel;
+import static in.ureport.R.string.malaysia_channel;
 import static in.ureport.R.string.mexico_channel;
 import static in.ureport.R.string.nigeria_channel;
 import static in.ureport.R.string.rapidpro_host_address1;
@@ -33,6 +34,7 @@ import static in.ureport.R.style.AppTheme_Drc;
 import static in.ureport.R.style.AppTheme_Indonesia;
 import static in.ureport.R.style.AppTheme_Ireland;
 import static in.ureport.R.style.AppTheme_Liberia;
+import static in.ureport.R.style.AppTheme_Malaysia;
 import static in.ureport.R.style.AppTheme_Mali;
 import static in.ureport.R.style.AppTheme_Mexico;
 import static in.ureport.R.style.AppTheme_Nigeria;
@@ -118,6 +120,8 @@ public class CountryProgramManager {
                     , rapidpro_host_address2, ureport_host_address2, "UReportIRL", "U-Reporters"));
             countryPrograms.add(buildCountryProgram("LBR", AppTheme_Liberia, INVALID_VALUE, "Liberia", 6
                     , rapidpro_host_address1, ureport_host_address1, "UReportLiberia", null));
+            countryPrograms.add(buildCountryProgram("MYS", AppTheme_Malaysia, malaysia_channel, "Malaysia", 22
+                    , rapidpro_host_address1, ureport_host_address1, "UReportMalaysia", "u-reporters"));
             countryPrograms.add(buildCountryProgram("MLI", AppTheme_Mali, INVALID_VALUE, "Mali", 3
                     , rapidpro_host_address1, ureport_host_address1, "UReportMali", null));
             countryPrograms.add(buildCountryProgram("MEX", AppTheme_Mexico, mexico_channel, "México", 9
