@@ -3,11 +3,14 @@ package in.ureport.helpers;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import in.ureport.models.User;
 import in.ureport.flowrunner.models.Contact;
@@ -56,23 +59,36 @@ public class ContactBuilder {
         return key.replace(":", "").replace("-", "");
     }
 
-    public Contact buildContactWithFields(User user, String countryCode) {
+    public Contact buildContactWithFields(User user, Date registrationDate, String countryCode) {
         Contact contact = buildContactWithoutFields(user);
         HashMap<String, Object> contactFields = new HashMap<>();
 
         putValuesIfExists(user.getEmail(), contactFields, "email", "e_mail");
         putValuesIfExists(user.getNickname(), contactFields, "nickname", "nick_name");
-        putValuesIfExists(user.getBirthday(), contactFields, "birthday", "birthdate", "birth_day");
+        putValuesIfExists(formatDate(user.getBirthday()), contactFields, "birthday", "birthdate", "birth_day");
         putValuesIfExists(getBorn(user), contactFields, "year_of_birth", "born");
         putValuesIfExists(getAge(user), contactFields, "age");
         putValuesIfExists(user.getGender().toString(), contactFields, "gender");
         putValuesIfExists(user.getState(), contactFields, "state", "region", "province", "county");
         putValuesIfExists(user.getDistrict(), contactFields, "location", "district", "lga");
         putValuesIfExists(countryCode, contactFields, "country");
-        putValuesIfExists(user.getRegistrationDate(), contactFields, "registration_date", "registrationDate", "registrationdate");
+        putValuesIfExists(formatDate(registrationDate), contactFields, "registration_date", "registrationDate", "registrationdate");
 
         contact.setFields(contactFields);
         return contact;
+    }
+
+    private String formatDate(Date date) {
+        if(date != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+            calendar.setTime(date);
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return simpleDateFormat.format(calendar.getTime());
+        }
+        return null;
     }
 
     private void putValuesIfExists(Object value, Map<String, Object> contactFields, String... possibleKeys) {

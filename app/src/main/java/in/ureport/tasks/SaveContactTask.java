@@ -12,12 +12,14 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ContactBuilder;
 import in.ureport.helpers.IOHelper;
+import in.ureport.helpers.SntpClient;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
@@ -41,14 +43,17 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     private RapidProServices rapidProServices;
 
     private CountryInfo countryInfo;
+    private final boolean newUser;
 
-    public SaveContactTask(Context context, CountryInfo countryInfo) {
+    public SaveContactTask(Context context, CountryInfo countryInfo, boolean newUser) {
         super(context, R.string.load_message_save_user);
         this.countryInfo = countryInfo;
+        this.newUser = newUser;
     }
 
-    public SaveContactTask(Context context) {
+    public SaveContactTask(Context context, boolean newUser) {
         super(context);
+        this.newUser = newUser;
     }
 
     @Override
@@ -65,7 +70,7 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             UserManager.updateCountryToken(countryToken);
             if (countryToken != null && !countryToken.isEmpty()) {
                 String countryCode = countryInfo != null ? countryInfo.getCountryCode() : user.getCountry();
-                Contact contact = getContactForUser(countryToken, user, getISO2CountryCode(countryCode));
+                Contact contact = getContactForUser(countryToken, user, getRegistrationDate(), getISO2CountryCode(countryCode));
                 try {
                     return rapidProServices.saveContact(countryToken, contact);
                 } catch (RetrofitError exception) {
@@ -82,6 +87,24 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             Log.e(TAG, "doInBackground ", exception);
         }
         return null;
+    }
+
+    private Date getRegistrationDate() {
+        if(!newUser) return null;
+
+        Date now = new Date();
+        try {
+            SntpClient client = new SntpClient();
+            if (client.requestTime("pool.ntp.org", 4000)) {
+                long ntpTimeMillis = client.getNtpTime();
+                Log.i(TAG, "getRegistrationDate: ntpTimeMillis: " + new Date(ntpTimeMillis));
+                if (ntpTimeMillis > 0)
+                    now = new Date(ntpTimeMillis);
+            }
+        } catch(Exception exception) {
+            Log.e(TAG, "getRegistrationDate: ", exception);
+        }
+        return now;
     }
 
     private String getISO2CountryCode(String countryCode) {
@@ -110,11 +133,11 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         }
     }
 
-    private Contact getContactForUser(String token, User user, String countryCode) {
+    private Contact getContactForUser(String token, User user, Date registrationDate, String countryCode) {
         List<Field> fields = rapidProServices.loadFields(token);
 
         ContactBuilder contactBuilder = new ContactBuilder(fields);
-        return contactBuilder.buildContactWithFields(user, countryCode);
+        return contactBuilder.buildContactWithFields(user, registrationDate, countryCode);
     }
 
     private List<CountryInfo> getCountryInfoList() {
