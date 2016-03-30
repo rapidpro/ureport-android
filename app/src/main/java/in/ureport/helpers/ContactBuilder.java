@@ -69,6 +69,7 @@ public class ContactBuilder {
         putValuesIfExists(user.getState(), contactFields, "state", "region", "province", "county");
         putValuesIfExists(user.getDistrict(), contactFields, "location", "district", "lga");
         putValuesIfExists(countryCode, contactFields, "country");
+        putValuesIfExists(user.getRegistrationDate(), contactFields, "registration_date", "registrationDate", "registrationdate");
 
         contact.setFields(contactFields);
         return contact;

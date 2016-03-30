@@ -4,11 +4,20 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ContactBuilder;
+import in.ureport.helpers.IOHelper;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
@@ -46,16 +55,17 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     protected Contact doInBackground(User... params) {
         try {
             User user = params[0];
-            String countryCode = countryInfo != null ? countryInfo.getIsoAlpha3() : user.getCountryProgram();
+            String countryProgramCode = countryInfo != null ? countryInfo.getIsoAlpha3() : user.getCountryProgram();
 
             String rapidproEndpoint = getContext().getString(CountryProgramManager
-                    .getCountryProgramForCode(countryCode).getRapidproEndpoint());
+                    .getCountryProgramForCode(countryProgramCode).getRapidproEndpoint());
             this.rapidProServices = new RapidProServices(rapidproEndpoint);
 
-            String countryToken = getTokenFromProxy(countryCode);
+            String countryToken = getTokenFromProxy(countryProgramCode);
             UserManager.updateCountryToken(countryToken);
             if (countryToken != null && !countryToken.isEmpty()) {
-                Contact contact = getContactForUser(countryToken, user, countryCode);
+                String countryCode = countryInfo != null ? countryInfo.getCountryCode() : user.getCountry();
+                Contact contact = getContactForUser(countryToken, user, getISO2CountryCode(countryCode));
                 try {
                     return rapidProServices.saveContact(countryToken, contact);
                 } catch (RetrofitError exception) {
@@ -72,6 +82,19 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             Log.e(TAG, "doInBackground ", exception);
         }
         return null;
+    }
+
+    private String getISO2CountryCode(String countryCode) {
+        List<CountryInfo> countryInfo = getCountryInfoList();
+        if(countryInfo != null) {
+            for (CountryInfo info : countryInfo) {
+                if (info.getIsoAlpha3().equalsIgnoreCase(countryCode)) {
+                    countryCode = info.getCountryCode();
+                    break;
+                }
+            }
+        }
+        return countryCode;
     }
 
     @Nullable
@@ -92,6 +115,23 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
 
         ContactBuilder contactBuilder = new ContactBuilder(fields);
         return contactBuilder.buildContactWithFields(user, countryCode);
+    }
+
+    private List<CountryInfo> getCountryInfoList() {
+        try {
+            String json = IOHelper.loadJSONFromAsset(getContext(), "countryInfo.json");
+
+            Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.TRANSIENT).create();
+            Type type = new TypeToken<List<CountryInfo>>(){}.getType();
+
+            JsonParser jsonParser = new JsonParser();
+            JsonObject jsonObject = (JsonObject) jsonParser.parse(json);
+
+            return gson.fromJson(jsonObject.get("geonames"), type);
+        } catch (Exception exception) {
+            Log.e(TAG, "doInBackground: ", exception);
+        }
+        return null;
     }
 
 }
