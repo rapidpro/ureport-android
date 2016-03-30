@@ -321,7 +321,7 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         void onLoginWithCredentials();
         void onSkipLogin();
         void onSignUp();
-        void onUserReady(User user);
+        void onUserReady(User user, boolean newUser);
         void onForgotPassword();
         void onPasswordReset();
     }
