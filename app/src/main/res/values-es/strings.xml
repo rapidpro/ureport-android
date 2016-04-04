@@ -40,7 +40,7 @@
   <string name="create_story_insert_cover">Insertar una imagen de portada</string>
   <string name="create_story_insert_title">Escribir título</string>
   <string name="create_story_insert_story_content">Cuéntanos qué está pasando</string>
-  <string name="create_story_title_media">insertar media</string>
+  <string name="create_story_title_media">Insertar media</string>
   <string name="create_story_add_markers">Agregar marcadores</string>
   <string name="media_remove">Quitar</string>
   <string name="title_media_source">Elegir una fuente de media</string>

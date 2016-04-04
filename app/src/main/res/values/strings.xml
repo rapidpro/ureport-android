@@ -45,7 +45,7 @@
     <string name="create_story_insert_cover">Insert a cover picture</string>
     <string name="create_story_insert_title">Insert a title</string>
     <string name="create_story_insert_story_content">Tell us what\'s going on</string>
-    <string name="create_story_title_media">Insert a media</string>
+    <string name="create_story_title_media">Insert Media</string>
     <string name="create_story_add_markers">Add markers</string>
     <string name="media_remove">Remove</string>
     <string name="title_media_source">Choose a media source:</string>
