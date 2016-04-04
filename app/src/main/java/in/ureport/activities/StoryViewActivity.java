@@ -30,6 +30,8 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
 
     public static final String ACTION_LOAD_STORY = "in.ureport.LoadStory";
 
+    private static final String DOCUMENT_URL = "http://docs.google.com/gview?embedded=true&url=%1$s";
+
     public static final String EXTRA_STORY = "story";
     public static final String EXTRA_USER = "user";
     public static final String EXTRA_NEWS = "news";
@@ -98,8 +100,18 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
     @Override
     public void onFileMediaView(Media media) {
         Intent viewFileIntent = new Intent(Intent.ACTION_VIEW);
-        viewFileIntent.setData(Uri.parse(media.getUrl()));
+        String url = media.getUrl();
+        if(isGoogleDocsSupported(url))
+            url = String.format(DOCUMENT_URL, media.getUrl());
+        viewFileIntent.setData(Uri.parse(url));
         startActivity(viewFileIntent);
+    }
+
+    private boolean isGoogleDocsSupported(String url) {
+        return url.endsWith(".pdf") || url.endsWith(".doc") || url.endsWith(".docx")
+        || url.endsWith(".ppt") || url.endsWith(".xls") || url.endsWith(".xlsx")
+        || url.endsWith(".csv") || url.endsWith(".ods") || url.endsWith(".txt")
+        || url.endsWith(".svg");
     }
 
     @Override
