@@ -239,7 +239,7 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
   <string name="stories_moderation">Histórias</string>
   <string name="label_moderation">Moderação</string>
   <string name="title_moderation">%1$s moderação</string>
-  <string name="button_title_disapprove">Desaprovar</string>
+  <string name="button_title_disapprove">Rejeitar</string>
   <string name="button_title_publish">Publicar</string>
   <string name="success_story_update_message">História atualizada com sucesso!</string>
   <string name="message_story_publish_warning">Sua história foi enviada para o time do U-Report. Verifique depois e veja se foi publicada!</string>

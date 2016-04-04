@@ -236,7 +236,7 @@ Las celebridades de UNICEF tienen una amplia gama de talentos y logros, pero tod
   <string name="stories_moderation">Historias</string>
   <string name="label_moderation">Moderación</string>
   <string name="title_moderation">%1$s moderación</string>
-  <string name="button_title_disapprove">Desaprobar</string>
+  <string name="button_title_disapprove">Rechazar</string>
   <string name="button_title_publish">Publicar</string>
   <string name="success_story_update_message">La historia fue actualizada exitosamente</string>
   <string name="message_story_publish_warning">Tu historia ha sido enviada al equipo de U-Report. Chequea más tarde para verla publicada.</string>

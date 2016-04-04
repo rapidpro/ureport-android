@@ -246,7 +246,7 @@
     <string name="stories_moderation">Stories</string>
     <string name="label_moderation">Moderation</string>
     <string name="title_moderation">%1$s moderation</string>
-    <string name="button_title_disapprove">Disapprove</string>
+    <string name="button_title_disapprove">Reject</string>
     <string name="button_title_publish">Publish</string>
     <string name="success_story_update_message">Story was updated with success!</string>
     <string name="message_story_publish_warning">Your story has been submitted to the U-Report team. Check back soon to see it published!</string>
