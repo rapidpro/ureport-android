@@ -83,6 +83,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private YoutubeThumbnailHandler youtubeThumbnailHandler;
     private IOManager ioManager;
 
+    public ProgressDialog progressDialog;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -153,6 +155,15 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         super.onAttach(context);
         if(context instanceof StoryCreationListener) {
             this.storyCreationListener = (StoryCreationListener) context;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
         }
     }
 
@@ -381,18 +392,16 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     @Override
     public void onLoadLocalVideo(Uri uri) {
         new CompressVideoTask(getContext()) {
-            public ProgressDialog progressDialog;
-
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progressDialog = ProgressDialog.show(getContext(), null
+                progressDialog = ProgressDialog.show(getActivity(), null
                         , getString(R.string.message_compressing_video), true, false);
             }
 
             @Override
             protected void onPostExecute(Uri uri) {
-                progressDialog.dismiss();
+                progressDialog.cancel();
                 if(uri != null) {
                     addLocalMedia(uri, Media.Type.VideoPhone, null);
                 } else {
