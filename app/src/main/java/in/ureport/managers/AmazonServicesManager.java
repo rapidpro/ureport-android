@@ -2,9 +2,8 @@ package in.ureport.managers;
 
 import android.content.Context;
 
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
 
 import in.ureport.R;
@@ -16,7 +15,7 @@ public class AmazonServicesManager {
 
     private static TransferUtility transferUtility;
     private static AmazonS3Client s3Client;
-    private static CognitoCachingCredentialsProvider credentialsProvider;
+    private static BasicAWSCredentials credentialsProvider;
 
     public static String BUCKET_ID;
 
@@ -29,12 +28,10 @@ public class AmazonServicesManager {
         return transferUtility;
     }
 
-    private static CognitoCachingCredentialsProvider getCredProvider(Context context) {
+    private static BasicAWSCredentials getCredProvider(Context context) {
         if (credentialsProvider == null) {
-            credentialsProvider = new CognitoCachingCredentialsProvider(
-                    context.getApplicationContext(),
-                    context.getString(R.string.identity_pool_id),
-                    Regions.US_EAST_1);
+            credentialsProvider = new BasicAWSCredentials(context.getString(R.string.amazon_s3_access_key)
+                    , context.getString(R.string.amazon_s3_access_secret));
         }
         return credentialsProvider;
     }
