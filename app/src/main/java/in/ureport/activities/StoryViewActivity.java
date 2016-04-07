@@ -93,8 +93,10 @@ public class StoryViewActivity extends AppCompatActivity implements MediaAdapter
 
     @Override
     public void onVideoMediaView(Media media) {
-        MediaViewFragment mediaViewFragment = MediaViewFragment.newInstance(media);
-        addFragment(mediaViewFragment);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(media.getUrl()), "video/mp4");
+        startActivity(intent);
     }
 
     @Override

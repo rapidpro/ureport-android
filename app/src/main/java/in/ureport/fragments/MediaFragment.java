@@ -1,17 +1,13 @@
 package in.ureport.fragments;
 
 import android.content.Context;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.MediaController;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.squareup.picasso.Callback;
 
@@ -26,12 +22,14 @@ import in.ureport.views.widgets.TouchImageView;
  */
 public class MediaFragment extends Fragment {
 
+    private static final String TAG = "MediaFragment";
+
     private static final String EXTRA_MEDIA = "media";
     private Media media;
 
     private MediaViewFragment.OnCloseMediaViewListener onCloseMediaViewListener;
+
     private TouchImageView image;
-    private VideoView videoView;
     private TextView videoPlay;
 
     public static MediaFragment newInstance(Media media) {
@@ -61,7 +59,6 @@ public class MediaFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupView(view);
     }
 
@@ -69,7 +66,6 @@ public class MediaFragment extends Fragment {
         image = (TouchImageView) view.findViewById(R.id.image);
         ImageLoader.loadPictureToImageView(image, media, onImageLoadedCallback);
 
-        videoView = (VideoView) view.findViewById(R.id.videoView);
         videoPlay = (TextView) view.findViewById(R.id.videoPlay);
         bindVideo();
     }
@@ -82,18 +78,6 @@ public class MediaFragment extends Fragment {
                     videoPlay.setVisibility(View.VISIBLE);
                     videoPlay.setOnClickListener(onVideoPlayClickListener);
                     break;
-                case VideoPhone:
-                    Uri videoUri = Uri.parse(media.getUrl());
-                    videoView.setVideoURI(videoUri);
-                    videoView.setVisibility(View.VISIBLE);
-                    videoView.setOnPreparedListener((MediaPlayer mediaPlayer) -> {
-                        videoView.start();
-                        mediaPlayer.setOnVideoSizeChangedListener((MediaPlayer mediaPlayerVideo, int width, int height) -> {
-                            MediaController mediaController = new MediaController(getContext());
-                            videoView.setMediaController(mediaController);
-                            mediaController.setAnchorView(videoView);
-                        });
-                    });
             }
         }
     }
@@ -125,4 +109,5 @@ public class MediaFragment extends Fragment {
             }
         }
     };
+
 }

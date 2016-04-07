@@ -338,6 +338,7 @@
     <string name="message_upload_cancel">Your upload was cancelled!</string>
     <string name="like_this_story">Like this story</string>
     <string name="title_add">Add</string>
+    <string name="state_media_buffering">Buffering video...</string>
 
     <plurals name="files_attached">
         <item quantity="one">%1$s file attached</item>
