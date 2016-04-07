@@ -34,11 +34,13 @@ public class CompressVideoTask extends AsyncTask<Uri, Void, Uri> {
 
             MediaController mediaController = new MediaController();
             boolean converted = mediaController.convertVideo(filePath, newFile.getAbsolutePath());
-            if(converted) return Uri.fromFile(newFile);
+            if(converted) {
+                return Uri.fromFile(newFile);
+            }
         } catch(Exception exception) {
             Log.e(TAG, "doInBackground: ", exception);
         }
-        return null;
+        return uri;
     }
 
     @Override
