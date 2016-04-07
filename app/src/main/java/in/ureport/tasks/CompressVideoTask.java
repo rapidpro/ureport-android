@@ -30,12 +30,17 @@ public class CompressVideoTask extends AsyncTask<Uri, Void, Uri> {
         try {
             IOManager ioManager = new IOManager(context);
             String filePath = ioManager.getFilePathForUri(uri);
+
+            File currentFile = new File(filePath);
             File newFile = ioManager.createVideoFilePath();
 
-            MediaController mediaController = new MediaController();
-            boolean converted = mediaController.convertVideo(filePath, newFile.getAbsolutePath());
-            if(converted) {
-                return Uri.fromFile(newFile);
+            float fileSizeInMb = ioManager.getFileSizeInMb(currentFile);
+            if(fileSizeInMb > 0.7) {
+                MediaController mediaController = new MediaController();
+                boolean converted = mediaController.convertVideo(filePath, newFile.getAbsolutePath());
+                if(converted) {
+                    return Uri.fromFile(newFile);
+                }
             }
         } catch(Exception exception) {
             Log.e(TAG, "doInBackground: ", exception);
