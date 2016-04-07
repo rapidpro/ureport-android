@@ -217,7 +217,8 @@
             <Button
                 android:id="@+id/contribute"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/shape_simple_button"
                 android:textColor="@android:color/white"
                 android:text="@string/story_view_contribute"/>
