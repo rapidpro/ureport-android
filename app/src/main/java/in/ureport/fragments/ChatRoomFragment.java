@@ -178,7 +178,7 @@ public class ChatRoomFragment extends Fragment
                 , getString(R.string.load_message_uploading_image), true);
         try {
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferMedia(media, MEDIA_PARENT, new TransferListenerAdapter(media) {
+            transferManager.transferMedia(media, MEDIA_PARENT, new TransferListenerAdapter(getContext(), media) {
                 @Override
                 public void onTransferFinished(Media media) {
                     super.onTransferFinished(media);
@@ -280,6 +280,9 @@ public class ChatRoomFragment extends Fragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
+            case R.id.attachFile:
+
+                return true;
             case R.id.leaveGroup:
                 if (chatRoomListener != null)
                     infoGroupChatListener.onChatRoomLeave(chatRoom);
@@ -641,7 +644,7 @@ public class ChatRoomFragment extends Fragment
     private View.OnClickListener onAddPictureClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            mediaSelector.selectMedia(ChatRoomFragment.this);
+
         }
     };
 

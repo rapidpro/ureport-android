@@ -245,7 +245,7 @@ public class ProfileFragment extends Fragment {
         private ProgressDialog progressUpload;
         private LocalMedia localMedia;
         public ImageTransferListener(ProgressDialog progressUpload, LocalMedia localMedia) {
-            super(localMedia);
+            super(getContext(), localMedia);
             this.progressUpload = progressUpload;
             this.localMedia = localMedia;
         }

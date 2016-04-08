@@ -1,10 +1,12 @@
 package in.ureport.helpers;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 
+import in.ureport.R;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 
@@ -15,20 +17,20 @@ public abstract class TransferListenerAdapter implements TransferListener {
 
     private static final String TAG = "TransferListenerAdapter";
 
-    private static final String URL = "https://s3.amazonaws.com/%1$s/%2$s";
+    private static final String URL = "https://%1$s.s3.amazonaws.com/%2$s";
 
     private String filename;
     private String bucket;
 
     private LocalMedia localMedia;
 
-    private TransferListenerAdapter() {
+    private TransferListenerAdapter(Context context) {
         this.filename = "file";
-        this.bucket = "ureport-app";
+        this.bucket = context.getString(R.string.amazon_s3_bucket_id);
     }
 
-    public TransferListenerAdapter(LocalMedia localMedia) {
-        this();
+    public TransferListenerAdapter(Context context, LocalMedia localMedia) {
+        this(context);
         this.localMedia = localMedia;
     }
 

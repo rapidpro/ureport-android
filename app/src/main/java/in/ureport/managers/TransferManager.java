@@ -77,7 +77,7 @@ public class TransferManager {
     @NonNull
     private TransferListenerAdapter createTransferListener(final List<Media> mediasToUpload, final String parent
             , final OnTransferMediasListener onTransferMediasListener, final Map<LocalMedia, Media> mediasUploaded, final LocalMedia localMedia) {
-        return new TransferListenerAdapter(localMedia) {
+        return new TransferListenerAdapter(context, localMedia) {
             @Override
             public void onTransferFinished(Media newMedia) {
                 super.onTransferFinished(newMedia);
@@ -133,7 +133,7 @@ public class TransferManager {
 
             @NonNull
             private TransferListenerAdapter createVideoThumbnailListener(final LocalMedia thumbnailLocalMedia) {
-                return new TransferListenerAdapter(thumbnailLocalMedia) {
+                return new TransferListenerAdapter(context, thumbnailLocalMedia) {
                                 @Override
                                 public void onTransferFinished(Media videoThumbnail) {
                                     super.onTransferFinished(videoThumbnail);

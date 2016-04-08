@@ -304,7 +304,7 @@ public class CreateGroupFragment extends Fragment {
             localMedia.setType(Media.Type.Picture);
 
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferMedia(localMedia, GROUP_CHAT_FOLDER, new TransferListenerAdapter(localMedia) {
+            transferManager.transferMedia(localMedia, GROUP_CHAT_FOLDER, new TransferListenerAdapter(getContext(), localMedia) {
                 @Override
                 public void onTransferFinished(Media media) {
                     super.onTransferFinished(media);
