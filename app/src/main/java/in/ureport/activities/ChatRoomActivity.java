@@ -9,10 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.ChangeBounds;
-import android.transition.Slide;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
