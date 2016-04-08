@@ -1,30 +1,53 @@
 package in.ureport.fragments;
 
 import android.animation.ObjectAnimator;
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.util.HashMap;
 
 import br.com.ilhasoft.support.tool.ButtonTinter;
+import br.com.ilhasoft.support.tool.IOManager;
 import in.ureport.R;
-import in.ureport.listener.OnPickMediaListener;
+import in.ureport.helpers.MediaSelector;
+import in.ureport.helpers.YoutubePicker;
+import in.ureport.helpers.YoutubeThumbnailHandler;
+import in.ureport.models.LocalMedia;
+import in.ureport.models.Media;
+import in.ureport.models.VideoMedia;
+import in.ureport.tasks.CompressVideoTask;
 
 /**
  * Created by john-mac on 2/5/16.
  */
-public class PickMediaFragment extends Fragment {
+public class PickMediaFragment extends Fragment
+        implements MediaSelector.OnLoadLocalMediaListener, YoutubePicker.OnPickYoutubeVideoListener {
 
-    private OnPickMediaListener onPickMediaListener;
+    private static final String TAG = "PickMediaFragment";
 
     private ImageView background;
+
+    private MediaSelector mediaSelector;
+    private YoutubeThumbnailHandler youtubeThumbnailHandler;
+
+    private ProgressDialog progressDialog;
+
+    private OnPickMediaListener onPickMediaListener;
 
     @Nullable
     @Override
@@ -35,7 +58,25 @@ public class PickMediaFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupObjects();
         setupView(view);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mediaSelector.onActivityResult(this, this, requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mediaSelector.onRequestPermissionResult(this, requestCode, grantResults);
+    }
+
+    private void setupObjects() {
+        mediaSelector = new MediaSelector(getContext());
+        youtubeThumbnailHandler = new YoutubeThumbnailHandler();
     }
 
     private void setupView(View view) {
@@ -69,17 +110,18 @@ public class PickMediaFragment extends Fragment {
     }
 
     private void showBackground(ImageView background) {
-        animateBackground(background, 0, 1);
+        animateBackground(background, 0, 1, 300, 400);
     }
 
     private void hideBackground(ImageView background) {
-        animateBackground(background, 1, 0);
+        animateBackground(background, 1, 0, 100, 0);
     }
 
-    private void animateBackground(ImageView background, int alphaPre, int alphaPos) {
+    private void animateBackground(ImageView background, int alphaPre, int alphaPos, int duration, int startDelay) {
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
             ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(background, "alpha", alphaPre, alphaPos);
-            objectAnimator.setStartDelay(400);
+            objectAnimator.setDuration(duration);
+            objectAnimator.setStartDelay(startDelay);
             objectAnimator.start();
         }
     }
@@ -109,53 +151,126 @@ public class PickMediaFragment extends Fragment {
     private View.OnClickListener onCameraClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            onPickMediaListener.onPickFromCamera();
-            dismiss();
+            mediaSelector.pickFromCamera(PickMediaFragment.this);
         }
     };
 
     private View.OnClickListener onGalleryClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            onPickMediaListener.onPickFromGallery();
-            dismiss();
+            mediaSelector.pickFromGallery(PickMediaFragment.this);
         }
     };
 
     private View.OnClickListener onVideoClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            onPickMediaListener.onPickVideo();
-            dismiss();
+            mediaSelector.pickVideoFromCamera(PickMediaFragment.this);
         }
     };
 
     private View.OnClickListener onFileClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            onPickMediaListener.onPickFile();
-            dismiss();
+            mediaSelector.pickFile(PickMediaFragment.this);
         }
     };
 
     private View.OnClickListener onAudioClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            onPickMediaListener.onPickAudioRecord();
-            dismiss();
+            mediaSelector.pickAudio(PickMediaFragment.this);
         }
     };
 
     private View.OnClickListener onYoutubeClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            onPickMediaListener.onPickYoutubeLink();
-            dismiss();
+            mediaSelector.pickFromYoutube(PickMediaFragment.this);
         }
     };
+
+    @Override
+    public void onLoadLocalImage(Uri uri) {
+        addLocalMedia(uri, Media.Type.Picture, null);
+    }
+
+    @Override
+    public void onLoadLocalVideo(Uri uri) {
+        new CompressVideoTask(getContext()) {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = ProgressDialog.show(getActivity(), null
+                        , getString(R.string.message_compressing_video), true, false);
+            }
+
+            @Override
+            protected void onPostExecute(Uri uri) {
+                progressDialog.cancel();
+                if(uri != null) {
+                    addLocalMedia(uri, Media.Type.VideoPhone, null);
+                } else {
+                    Toast.makeText(getContext(), R.string.error_compressing_video, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }.execute(uri);
+    }
+
+    @Override
+    public void onLoadFile(Uri uri) {
+        HashMap<String, Object> metadata = new HashMap<>();
+        metadata.put(Media.KEY_FILENAME, getFilenameForUri(uri));
+
+        addLocalMedia(uri, Media.Type.File, metadata);
+    }
+
+    @Override
+    public void onLoadAudio(Uri uri, int duration) {
+        HashMap<String, Object> metadata = new HashMap<>();
+        metadata.put(Media.KEY_DURATION, duration);
+
+        addLocalMedia(uri, Media.Type.Audio, metadata);
+    }
+
+    private void addLocalMedia(Uri pictureUri, Media.Type type, HashMap<String, Object> metadata) {
+        LocalMedia media = new LocalMedia();
+        media.setType(type);
+        media.setPath(pictureUri);
+        media.setMetadata(metadata);
+        onPickMediaListener.onPickMedia(media);
+    }
+
+    private String getFilenameForUri(Uri uri) {
+        try {
+            IOManager ioManager = new IOManager(getContext());
+            File file = new File(ioManager.getFilePathForUri(uri));
+            return file.getName();
+        } catch(Exception exception) {
+            Log.e(TAG, "bindImage: ", exception);
+        }
+        return null;
+    }
+
+    @Override
+    public void onPickYoutubeVideo(String videoId, String videoUrl) {
+        addYoutubeVideoMedia(videoId, videoUrl);
+    }
+
+    private void addYoutubeVideoMedia(String videoId, String videoUrl) {
+        VideoMedia videoMedia = new VideoMedia();
+        videoMedia.setId(videoId);
+        videoMedia.setPath(videoUrl);
+        videoMedia.setUrl(youtubeThumbnailHandler.getThumbnailUrlFromVideo(videoId
+                , YoutubeThumbnailHandler.ThumbnailSizeClass.HighQuality));
+        onPickMediaListener.onPickMedia(videoMedia);
+    }
 
     public void setOnPickMediaListener(OnPickMediaListener onPickMediaListener) {
         this.onPickMediaListener = onPickMediaListener;
     }
 
+    public interface OnPickMediaListener {
+        void onPickMedia(Media media);
+    }
 }

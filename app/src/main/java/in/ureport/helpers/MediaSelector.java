@@ -56,8 +56,8 @@ public class MediaSelector {
         alertDialog.show();
     }
 
-    public void selectMedia(Fragment fragment) {
-        OnMediaSelectedFragmentListener onMediaSelectedFragmentListener = new OnMediaSelectedFragmentListener(fragment);
+    public void selectMedia(Fragment fragment, YoutubePicker.OnPickYoutubeVideoListener listener) {
+        OnMediaSelectedFragmentListener onMediaSelectedFragmentListener = new OnMediaSelectedFragmentListener(fragment, listener);
         selectMedia(onMediaSelectedFragmentListener);
     }
 
@@ -75,7 +75,7 @@ public class MediaSelector {
     }
 
     public void selectImage(Fragment fragment) {
-        OnMediaSelectedFragmentListener onMediaSelectedFragmentListener = new OnMediaSelectedFragmentListener(fragment);
+        OnMediaSelectedFragmentListener onMediaSelectedFragmentListener = new OnMediaSelectedFragmentListener(fragment, null);
         selectImage(onMediaSelectedFragmentListener);
     }
 
@@ -178,11 +178,9 @@ public class MediaSelector {
         mediaPicker.pickImageFromGallery(fragment);
     }
 
-    public void pickFromYoutube(Fragment fragment) {
-        if(fragment instanceof YoutubePicker.OnPickYoutubeVideoListener) {
-            YoutubePicker youtubePicker = new YoutubePicker(context);
-            youtubePicker.pickVideoFromInput((YoutubePicker.OnPickYoutubeVideoListener)fragment);
-        }
+    public void pickFromYoutube(YoutubePicker.OnPickYoutubeVideoListener listener) {
+        YoutubePicker youtubePicker = new YoutubePicker(context);
+        youtubePicker.pickVideoFromInput(listener);
     }
 
     public void pickAudio(Fragment fragment) {
@@ -226,9 +224,11 @@ public class MediaSelector {
 
     private class OnMediaSelectedFragmentListener implements OnMediaSelectedListener {
         private Fragment fragment;
+        private YoutubePicker.OnPickYoutubeVideoListener onPickYoutubeVideoListener;
 
-        public OnMediaSelectedFragmentListener(Fragment fragment) {
+        public OnMediaSelectedFragmentListener(Fragment fragment, YoutubePicker.OnPickYoutubeVideoListener onPickYoutubeVideoListener) {
             this.fragment = fragment;
+            this.onPickYoutubeVideoListener = onPickYoutubeVideoListener;
         }
 
         @Override
@@ -241,7 +241,7 @@ public class MediaSelector {
                     pickFromCamera(fragment);
                     break;
                 case MediaSelector.POSITION_YOUTUBE:
-                    pickFromYoutube(fragment);
+                    pickFromYoutube(onPickYoutubeVideoListener);
             }
         }
     }

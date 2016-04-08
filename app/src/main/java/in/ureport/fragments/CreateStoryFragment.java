@@ -3,8 +3,6 @@ package in.ureport.fragments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,22 +25,15 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
-import br.com.ilhasoft.support.tool.bitmap.IOManager;
 import in.ureport.R;
-import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.helpers.YoutubePicker;
-import in.ureport.helpers.YoutubeThumbnailHandler;
-import in.ureport.listener.OnPickMediaListener;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
@@ -51,18 +42,16 @@ import in.ureport.models.Marker;
 import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
-import in.ureport.models.VideoMedia;
 import in.ureport.network.StoryServices;
 import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.network.UserServices;
-import in.ureport.tasks.CompressVideoTask;
 import in.ureport.views.adapters.MediaAdapter;
 
 /**
  * Created by johncordeiro on 7/14/15.
  */
 public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaListener
-        , YoutubePicker.OnPickYoutubeVideoListener, OnPickMediaListener, MediaSelector.OnLoadLocalMediaListener {
+        , PickMediaFragment.OnPickMediaListener {
 
     private static final String TAG = "CreateStoryFragment";
     public static final int MEDIA_GAP = 5;
@@ -78,10 +67,6 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private MenuItem publishItem;
 
     private StoryCreationListener storyCreationListener;
-
-    private MediaSelector mediaSelector;
-    private YoutubeThumbnailHandler youtubeThumbnailHandler;
-    private IOManager ioManager;
 
     public ProgressDialog progressDialog;
 
@@ -103,18 +88,6 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         super.onPause();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mediaSelector.onActivityResult(this, this, requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        mediaSelector.onRequestPermissionResult(this, requestCode, grantResults);
-    }
-
     private void addMedia(Media media) {
         mediaList.add(media);
         mediaAdapter.updateMediaList(mediaList);
@@ -122,9 +95,6 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     private void setupObjects() {
         mediaList = new ArrayList<>();
-        mediaSelector = new MediaSelector(getContext());
-        youtubeThumbnailHandler = new YoutubeThumbnailHandler();
-        ioManager = new IOManager(getContext());
     }
 
     private void setupView(View view) {
@@ -385,109 +355,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     };
 
     @Override
-    public void onLoadLocalImage(Uri uri) {
-        addLocalMedia(uri, Media.Type.Picture, null);
-    }
-
-    @Override
-    public void onLoadLocalVideo(Uri uri) {
-        new CompressVideoTask(getContext()) {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = ProgressDialog.show(getActivity(), null
-                        , getString(R.string.message_compressing_video), true, false);
-            }
-
-            @Override
-            protected void onPostExecute(Uri uri) {
-                progressDialog.cancel();
-                if(uri != null) {
-                    addLocalMedia(uri, Media.Type.VideoPhone, null);
-                } else {
-                    Toast.makeText(getContext(), R.string.error_compressing_video, Toast.LENGTH_SHORT).show();
-                }
-            }
-        }.execute(uri);
-    }
-
-    @Override
-    public void onLoadFile(Uri uri) {
-        HashMap<String, Object> metadata = new HashMap<>();
-        metadata.put(Media.KEY_FILENAME, getFilenameForUri(uri));
-
-        addLocalMedia(uri, Media.Type.File, metadata);
-    }
-
-    @Override
-    public void onLoadAudio(Uri uri, int duration) {
-        HashMap<String, Object> metadata = new HashMap<>();
-        metadata.put(Media.KEY_DURATION, duration);
-
-        addLocalMedia(uri, Media.Type.Audio, metadata);
-    }
-
-    private void addLocalMedia(Uri pictureUri, Media.Type type, HashMap<String, Object> metadata) {
-        LocalMedia media = new LocalMedia();
-        media.setType(type);
-        media.setPath(pictureUri);
-        media.setMetadata(metadata);
+    public void onPickMedia(Media media) {
         addMedia(media);
-    }
-
-    private String getFilenameForUri(Uri uri) {
-        try {
-            File file = new File(ioManager.getFilePathForUri(uri));
-            return file.getName();
-        } catch(Exception exception) {
-            Log.e(TAG, "bindImage: ", exception);
-        }
-        return null;
-    }
-
-    @Override
-    public void onPickYoutubeVideo(String videoId, String videoUrl) {
-        addYoutubeVideoMedia(videoId, videoUrl);
-    }
-
-    private void addYoutubeVideoMedia(String videoId, String videoUrl) {
-        VideoMedia videoMedia = new VideoMedia();
-        videoMedia.setId(videoId);
-        videoMedia.setPath(videoUrl);
-        videoMedia.setUrl(youtubeThumbnailHandler.getThumbnailUrlFromVideo(videoId
-                , YoutubeThumbnailHandler.ThumbnailSizeClass.HighQuality));
-
-        addMedia(videoMedia);
-    }
-
-    @Override
-    public void onPickFromCamera() {
-        mediaSelector.pickFromCamera(this);
-    }
-
-    @Override
-    public void onPickFromGallery() {
-        mediaSelector.pickFromGallery(this);
-    }
-
-    @Override
-    public void onPickVideo() {
-        mediaSelector.pickVideoFromCamera(this);
-    }
-
-    @Override
-    public void onPickFile() {
-        mediaSelector.pickFile(this);
-    }
-
-    @Override
-    public void onPickAudioRecord() {
-        mediaSelector.pickAudio(this);
-    }
-
-    @Override
-    public void onPickYoutubeLink() {
-        mediaSelector.pickFromYoutube(this);
     }
 
     public interface StoryCreationListener {

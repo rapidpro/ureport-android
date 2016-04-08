@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/attachFile"
+        android:title="@string/label_attach_file"
+        android:icon="@drawable/ic_attach_file"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/groupInfo"
         android:title="@string/label_group_information"
         app:showAsAction="never" />
