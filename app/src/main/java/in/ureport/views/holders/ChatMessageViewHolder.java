@@ -2,10 +2,10 @@ package in.ureport.views.holders;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -178,8 +178,7 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
-        int rule = userAuthor ? RelativeLayout.ALIGN_PARENT_END : RelativeLayout.ALIGN_PARENT_START;
-        params.addRule(rule);
+        addRule(userAuthor, params);
         params.leftMargin = userAuthor ? largeSpace : smallSpace;
         params.rightMargin = userAuthor ? smallSpace : largeSpace;
         parent.setLayoutParams(params);
@@ -189,6 +188,16 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
 
         name.setVisibility(userAuthor ? View.GONE : View.VISIBLE);
         name.setText(chatMessage.getUser().getNickname());
+    }
+
+    private void addRule(boolean userAuthor, RelativeLayout.LayoutParams params) {
+        int rule;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            rule = userAuthor ? RelativeLayout.ALIGN_PARENT_END : RelativeLayout.ALIGN_PARENT_START;
+        } else {
+            rule = userAuthor ? RelativeLayout.ALIGN_PARENT_RIGHT : RelativeLayout.ALIGN_PARENT_LEFT;
+        }
+        params.addRule(rule);
     }
 
     public String getFileExt(String fileName) {
