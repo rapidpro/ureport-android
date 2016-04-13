@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="logo_container_height">240dp</dimen>
+    <dimen name="logo_container_height">70dp</dimen>
     <dimen name="tutorial_image_height">270dp</dimen>
 
 </resources>
