@@ -29,7 +29,7 @@ import in.ureport.tasks.CreateVideoThumbTask;
  */
 public class TransferManager {
 
-    private static final String FILENAME = "%1$s/%2$s%3$s";
+    private static final String FILENAME = "%1$s/%2$s_%3$s";
 
     private Context context;
     private boolean transferFailed = false;
@@ -150,6 +150,7 @@ public class TransferManager {
             @Override
             protected void onPostExecute(File compressedFile) {
                 super.onPostExecute(compressedFile);
+                compressedFile = compressedFile != null ? compressedFile : file;
                 TransferManager.this.transferFile(compressedFile, parent, transferListener);
             }
         };
