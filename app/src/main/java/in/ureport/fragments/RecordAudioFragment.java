@@ -46,6 +46,8 @@ public class RecordAudioFragment extends DialogFragment {
 
     private static final int PLAYING_STATUS = 0;
     private static final int PAUSED_STATUS = 1;
+    private static final int STOPPED_STATUS = 2;
+
     public static final int INTERVAL_MILLIS = 100;
     public static final String EXTRA_MEDIA = "media";
     private static final String AUDIO_EXTENSION = ".3gp";
@@ -65,7 +67,8 @@ public class RecordAudioFragment extends DialogFragment {
     private MediaPlayer mediaPlayer;
 
     private int recordingStatus = IDLE_STATUS;
-    private int playbackStatus = PAUSED_STATUS;
+    private int playbackStatus = STOPPED_STATUS;
+
     private int duration = 0;
 
     private CountDownTimer timer;
@@ -113,18 +116,17 @@ public class RecordAudioFragment extends DialogFragment {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         loadingContainer = view.findViewById(R.id.loadingContainer);
 
-        startTime = (TextView) view.findViewById(R.id.startTime);
-        startTime.setText(TimeFormatter.getDurationString(0));
-
         endTime = (TextView) view.findViewById(R.id.endTime);
         endTime.setText(TimeFormatter.getDurationStringFromMillis(MAX_DURATION_MS));
 
+        startTime = (TextView) view.findViewById(R.id.startTime);
+
         progress = (SeekBar) view.findViewById(R.id.progress);
         progress.setMax(MAX_DURATION_MS);
-        progress.setOnSeekBarChangeListener(onSeekBarChangeListener);
 
         play = (ImageView) view.findViewById(R.id.play);
         play.setOnClickListener(onPlayClickListener);
+        setCustomPlayback(play, startTime, loadingContainer, progress);
 
         mainAction = (TextView) view.findViewById(R.id.mainAction);
         mainAction.setOnClickListener(onMainClickListener);
@@ -141,6 +143,10 @@ public class RecordAudioFragment extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
+        stopCompletely();
+    }
+
+    private void stopCompletely() {
         handler.removeCallbacks(playRunnable);
 
         if(mediaRecorder != null && recordingStatus == RECORDING_STATUS) {
@@ -150,6 +156,7 @@ public class RecordAudioFragment extends DialogFragment {
         if(mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
+            mediaPlayer = null;
         }
     }
 
@@ -209,26 +216,26 @@ public class RecordAudioFragment extends DialogFragment {
     }
 
     private void switchRecordingStatus(int status) {
-        cancel.setText(R.string.cancel_dialog_button);
+        if(cancel != null) cancel.setText(R.string.cancel_dialog_button);
         recordingStatus = status;
         switch (status) {
             case IDLE_STATUS:
-                mainAction.setText(R.string.title_button_record);
+                if(mainAction != null) mainAction.setText(R.string.title_button_record);
                 break;
             case RECORDING_STATUS:
-                duration = 0;
                 startProgressTimer(MAX_DURATION_MS);
-                mainAction.setText(R.string.title_button_stop);
+                duration = 0;
+                if(mainAction != null) mainAction.setText(R.string.title_button_stop);
                 break;
             case READY_STATUS:
                 timer.cancel();
                 play.setVisibility(View.VISIBLE);
-                mainAction.setText(R.string.send);
                 prepareToPlay();
+                if(mainAction != null) mainAction.setText(R.string.send);
                 break;
             case PLAYER_STATUS:
-                cancel.setText(R.string.prompt_done);
-                mainAction.setVisibility(View.GONE);
+                if(cancel != null) cancel.setText(R.string.prompt_done);
+                if(mainAction != null) mainAction.setVisibility(View.GONE);
                 switchPlaybackStatus(PLAYING_STATUS);
                 loadAudio();
         }
@@ -239,10 +246,13 @@ public class RecordAudioFragment extends DialogFragment {
 
         progress.setProgress(0);
         startTime.setText(TimeFormatter.getDurationString(0));
-        if(mediaPlayer != null)
-            endTime.setText(TimeFormatter.getDurationStringFromMillis(mediaPlayer.getDuration()));
-        else
-            endTime.setText(TimeFormatter.getDurationString(duration));
+
+        if(endTime != null) {
+            if (mediaPlayer != null)
+                endTime.setText(TimeFormatter.getDurationStringFromMillis(mediaPlayer.getDuration()));
+            else
+                endTime.setText(TimeFormatter.getDurationString(duration));
+        }
     }
 
     private void startProgressTimer(final int milliseconds) {
@@ -268,6 +278,8 @@ public class RecordAudioFragment extends DialogFragment {
     }
 
     private void switchPlaybackStatus(int status) {
+        if(play == null) return;
+
         playbackStatus = status;
         play.setVisibility(View.VISIBLE);
 
@@ -277,6 +289,10 @@ public class RecordAudioFragment extends DialogFragment {
                 break;
             case PAUSED_STATUS:
                 play.setImageResource(R.drawable.ic_play_arrow_blue_36dp);
+                break;
+            case STOPPED_STATUS:
+                play.setImageResource(R.drawable.ic_play_arrow_blue_36dp);
+                progress.setProgress(0);
         }
     }
 
@@ -290,16 +306,21 @@ public class RecordAudioFragment extends DialogFragment {
     }
 
     private View.OnClickListener onPlayClickListener = view -> {
+        togglePlayback();
+    };
+
+    public void togglePlayback() {
         switch(playbackStatus) {
             case PLAYING_STATUS:
                 mediaPlayer.pause();
                 switchPlaybackStatus(PAUSED_STATUS);
                 break;
+            case STOPPED_STATUS:
             case PAUSED_STATUS:
                 loadAudio();
                 switchPlaybackStatus(PLAYING_STATUS);
         }
-    };
+    }
 
     private void loadAudio() {
         if(mediaPlayer != null) {
@@ -327,7 +348,9 @@ public class RecordAudioFragment extends DialogFragment {
 
     private void startPlay() {
         startTime.setText(TimeFormatter.getDurationString(0));
-        endTime.setText(TimeFormatter.getDurationStringFromMillis(mediaPlayer.getDuration()));
+        if (endTime != null) {
+            endTime.setText(TimeFormatter.getDurationStringFromMillis(mediaPlayer.getDuration()));
+        }
         progress.setMax(mediaPlayer.getDuration());
         loadingContainer.setVisibility(View.GONE);
 
@@ -340,17 +363,64 @@ public class RecordAudioFragment extends DialogFragment {
         public void run() {
             if(mediaPlayer.isPlaying()) {
                 startTime.setText(TimeFormatter.getDurationStringFromMillis(mediaPlayer.getCurrentPosition()));
+                progress.setMax(mediaPlayer.getDuration());
                 progress.setProgress(mediaPlayer.getCurrentPosition());
             }
 
             if(playbackStatus == PLAYING_STATUS) {
-                if(mediaPlayer.getCurrentPosition() != mediaPlayer.getDuration())
+                if(mediaPlayer.getCurrentPosition() < mediaPlayer.getDuration())
                     handler.postDelayed(this, INTERVAL_MILLIS);
                 else
                     prepareToPlay();
             }
         }
     };
+
+    public void resetPlayback() {
+        if(handler != null) handler.removeCallbacks(playRunnable);
+        switchPlaybackStatus(STOPPED_STATUS);
+
+        if(mediaPlayer != null) {
+            startTime.setText(TimeFormatter.getDurationStringFromMillis(mediaPlayer.getDuration()));
+        }
+    }
+
+    public void setCustomPlayback(ImageView play, TextView duration, View loadingContainer, SeekBar progress) {
+        this.loadingContainer = loadingContainer;
+
+        this.startTime = duration;
+        this.startTime.setText(TimeFormatter.getDurationString(0));
+
+        this.play = play;
+
+        this.progress = progress;
+        this.progress.setOnSeekBarChangeListener(onSeekBarChangeListener);
+
+        setupObjects();
+
+        if(recordingStatus == PLAYER_STATUS) {
+            switchPlaybackStatus(PLAYING_STATUS);
+            handler.post(playRunnable);
+        }
+    }
+
+    public void loadNewMedia(Media media) {
+        this.media = media;
+        stopCompletely();
+        switchRecordingStatus(PLAYER_STATUS);
+    }
+
+    public boolean isStopped() {
+        return playbackStatus == STOPPED_STATUS;
+    }
+
+    public boolean isPlayView(View play) {
+        return this.play != null && this.play.equals(play);
+    }
+
+    public Media getCurrentMedia() {
+        return media;
+    }
 
     private SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
