@@ -38,6 +38,7 @@ import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.MediaViewer;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
@@ -81,7 +82,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private StoryServices storyServices;
     private UserServices userServices;
 
-    private MediaAdapter.OnMediaViewListener onMediaViewListener;
+    private MediaViewer mediaViewer;
     private int storyLikeCount;
 
     public static StoryViewFragment newInstance(Story story, User user) {
@@ -156,15 +157,6 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         cleanNotification();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if(context instanceof MediaAdapter.OnMediaViewListener) {
-            onMediaViewListener = (MediaAdapter.OnMediaViewListener) context;
-        }
-    }
-
     private void loadData() {
         contributionServices.addChildEventListener(story, contributionChildEventListener);
         loadUserIfNeeded();
@@ -215,6 +207,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         contributionServices = new ContributionServices();
         userServices = new UserServices();
         storyServices = new StoryServices();
+        mediaViewer = new MediaViewer((AppCompatActivity) getActivity());
     }
 
     private void setupView(View view) {
@@ -323,7 +316,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
             mediaList.addItemDecoration(mediaItemDecoration);
 
             MediaAdapter adapter = new MediaAdapter(story.getMedias(), false);
-            adapter.setOnMediaViewListener(onMediaViewListener);
+            adapter.setOnMediaViewListener(mediaViewer);
             mediaList.setAdapter(adapter);
         } else {
             mediaBottomLine.setVisibility(View.GONE);
