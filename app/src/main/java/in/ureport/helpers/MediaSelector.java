@@ -184,16 +184,19 @@ public class MediaSelector {
     }
 
     public void pickAudio(Fragment fragment) {
+        pickAudio(fragment, (OnLoadLocalMediaListener) fragment);
+    }
+    public void pickAudio(Fragment fragment, OnLoadLocalMediaListener onLoadLocalMediaListener) {
         if (ContextCompat.checkSelfPermission(fragment.getActivity()
                 , Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             fragment.requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.RECORD_AUDIO}
                     , REQUEST_CODE_AUDIO_PERMISSION);
-        } else if (fragment instanceof OnLoadLocalMediaListener) {
+        } else {
             FragmentTransaction transaction = fragment.getActivity().getSupportFragmentManager().beginTransaction();
 
             RecordAudioFragment recordAudioFragment = new RecordAudioFragment();
-            recordAudioFragment.setOnLoadLocalMediaListener((OnLoadLocalMediaListener) fragment);
+            recordAudioFragment.setOnLoadLocalMediaListener(onLoadLocalMediaListener);
             recordAudioFragment.show(transaction, "recordAudioFragment");
         }
     }

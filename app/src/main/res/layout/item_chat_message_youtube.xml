@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@id/chatMessageMedia"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/shape_media"
+        tools:src="@drawable/about_cover"
+        tools:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/transparency"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:background="#2000"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
+        android:src="@drawable/ic_youtube_view" />
+
+    <TextView
+        android:id="@id/chatMessageYoutubeLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="3dp"
+        android:textSize="16sp"
+        android:layout_below="@id/chatMessageMedia"
+        android:autoLink="web"
+        tools:text="http://youtu.be/fyXjJ2yJ7Rw"/>
+
+    <TextView
+        android:id="@id/chatMessageDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="3dp"
+        android:textSize="16sp"
+        android:layout_alignEnd="@id/transparency"
+        android:layout_alignRight="@id/transparency"
+        android:layout_below="@id/chatMessageYoutubeLink"
+        tools:text="16:00"/>
+
+</RelativeLayout>

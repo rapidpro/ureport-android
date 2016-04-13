@@ -3,4 +3,21 @@
 
     <item name="country_program_position" type="id"/>
 
+    <item name="textContainer" type="id"/>
+    <item name="pictureContainer" type="id"/>
+    <item name="videoContainer" type="id"/>
+    <item name="youtubeContainer" type="id"/>
+
+    <item name="chatMessage" type="id"/>
+    <item name="chatMessageLoadingAudio" type="id"/>
+    <item name="chatMessageDurationAudio" type="id"/>
+    <item name="chatMessagePlayAudio" type="id"/>
+    <item name="chatMessageProgressAudio" type="id"/>
+    <item name="chatMessageDate" type="id"/>
+    <item name="chatMessageDuration" type="id"/>
+    <item name="chatMessageYoutubeLink" type="id"/>
+    <item name="chatMessageMedia" type="id"/>
+    <item name="chatMessageFileType" type="id"/>
+    <item name="chatMessageFileName" type="id"/>
+
 </resources>

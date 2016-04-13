@@ -4,12 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,16 +35,19 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
-import in.ureport.activities.MediaActivity;
-import in.ureport.helpers.TransferListenerAdapter;
+import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.MediaViewer;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
@@ -61,12 +65,13 @@ import in.ureport.network.UserServices;
 import in.ureport.tasks.CleanUnreadByRoomTask;
 import in.ureport.tasks.SendGcmChatTask;
 import in.ureport.views.adapters.ChatMessagesAdapter;
+import in.ureport.views.holders.ChatMessageViewHolder;
 
 /**
  * Created by johncordeiro on 7/21/15.
  */
 public class ChatRoomFragment extends Fragment
-        implements ChatMessagesAdapter.OnChatMessageSelectedListener, PickMediaFragment.OnPickMediaListener {
+        implements ChatMessageViewHolder.OnChatMessageSelectedListener, PickMediaFragment.OnPickMediaListener {
 
     private static final String TAG = "ChatRoomFragment";
 
@@ -83,7 +88,7 @@ public class ChatRoomFragment extends Fragment
     private View info;
     private RecyclerView messagesList;
     private ImageButton send;
-    private MenuItem attachFileItem;
+    private ImageView record;
 
     private ChatMessagesAdapter adapter;
 
@@ -100,6 +105,7 @@ public class ChatRoomFragment extends Fragment
     private UserServices userServices;
 
     private PickMediaFragment pickMediaFragment;
+    private MediaViewer mediaViewer;
 
     public static ChatRoomFragment newInstance(ChatRoom chatRoom, ChatMembers chatMembers) {
         ChatRoomFragment chatRoomFragment = new ChatRoomFragment();
@@ -165,17 +171,32 @@ public class ChatRoomFragment extends Fragment
 
     private void sendMedia(LocalMedia media) {
         final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
-                , getString(R.string.load_message_uploading_image), true);
+                , getString(R.string.load_message_uploading_image), true, true);
 
         try {
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferMedia(media, MEDIA_PARENT, new TransferListenerAdapter(getContext(), media) {
-                @Override
-                public void onTransferFinished(Media media) {
-                    super.onTransferFinished(media);
 
-                    sendChatMessageWithMedia(media);
+            progressDialog.setOnCancelListener((DialogInterface dialog) -> {
+                transferManager.cancelTransfer();
+                Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
+            });
+
+            transferManager.transferMedias(Collections.singletonList(media), MEDIA_PARENT, new TransferManager.OnTransferMediasListener() {
+                @Override
+                public void onTransferMedias(Map<LocalMedia, Media> medias) {
                     progressDialog.dismiss();
+                    sendChatMessageWithMedia(medias.values().iterator().next());
+                }
+
+                @Override
+                public void onWaitingConnection() {
+                    progressDialog.setMessage(getString(R.string.load_message_waiting_connection));
+                }
+
+                @Override
+                public void onFailed() {
+                    progressDialog.dismiss();
+                    displayMessage(R.string.error_media_upload);
                 }
             });
         } catch(Exception exception) {
@@ -218,6 +239,7 @@ public class ChatRoomFragment extends Fragment
     private void setupObjects() {
         userServices = new UserServices();
         chatRoomServices = new ChatRoomServices();
+        mediaViewer = new MediaViewer((AppCompatActivity) getActivity());
     }
 
     @Override
@@ -233,7 +255,6 @@ public class ChatRoomFragment extends Fragment
                     inflater.inflate(R.menu.menu_chat_individual, menu);
                     setupMenuItemVisibilityIndividualChat(menu);
             }
-            attachFileItem = menu.findItem(R.id.attachFile);
         }
     }
 
@@ -247,16 +268,20 @@ public class ChatRoomFragment extends Fragment
 
         MenuItem blockChatRoomItem = menu.findItem(R.id.blockChatRoom);
         MenuItem unblockChatRoomItem = menu.findItem(R.id.unblockChatRoom);
+        MenuItem attachFileItem = menu.findItem(R.id.attachFile);
 
         if(individualChatRoom.getBlocked() != null) {
             if(individualChatRoom.getBlocked().equals(UserManager.getUserId())) {
+                attachFileItem.setEnabled(false);
                 blockChatRoomItem.setVisible(false);
                 unblockChatRoomItem.setVisible(true);
             } else {
+                attachFileItem.setEnabled(true);
                 blockChatRoomItem.setVisible(false);
                 unblockChatRoomItem.setVisible(false);
             }
         } else {
+            attachFileItem.setEnabled(true);
             blockChatRoomItem.setVisible(true);
             unblockChatRoomItem.setVisible(false);
         }
@@ -350,6 +375,7 @@ public class ChatRoomFragment extends Fragment
 
         name = (TextView) view.findViewById(R.id.name);
         message = (TextView) view.findViewById(R.id.message);
+        message.addTextChangedListener(onMessageTextWatcher);
         info = view.findViewById(R.id.info);
 
         picture = (ImageView) view.findViewById(R.id.picture);
@@ -367,6 +393,12 @@ public class ChatRoomFragment extends Fragment
 
         send = (ImageButton) view.findViewById(R.id.send);
         send.setOnClickListener(onSendClickListener);
+
+        record = (ImageView) view.findViewById(R.id.record);
+        record.setOnClickListener(v -> {
+            MediaSelector mediaSelector = new MediaSelector(getContext());
+            mediaSelector.pickAudio(ChatRoomFragment.this, onPickAudioListener);
+        });
     }
 
     public void updateChatRoom(ChatRoom chatRoom, ChatMembers chatMembers) {
@@ -425,14 +457,12 @@ public class ChatRoomFragment extends Fragment
                 message.setEnabled(false);
                 message.setText(getString(R.string.message_individual_chat_blocked, blockerUser.getNickname()));
                 send.setEnabled(false);
-                attachFileItem.setEnabled(false);
                 showAlertIfNeeded(individualChatRoom, blockerUser);
             }
         } else {
             message.setEnabled(true);
             message.setText(null);
             send.setEnabled(true);
-            attachFileItem.setEnabled(true);
         }
     }
 
@@ -583,12 +613,7 @@ public class ChatRoomFragment extends Fragment
     @Override
     public void onMediaChatMessageView(ChatMessage chatMessage, ImageView mediaImageView) {
         if(chatRoomListener != null) {
-            Intent mediaViewIntent = new Intent(getActivity(), MediaActivity.class);
-            mediaViewIntent.putExtra(MediaActivity.EXTRA_MEDIA, chatMessage.getMedia());
-
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity()
-                    , mediaImageView, getString(R.string.transition_media));
-            ActivityCompat.startActivity(getActivity(), mediaViewIntent, options.toBundle());
+            mediaViewer.viewMedia(chatMessage.getMedia(), mediaImageView);
         }
     }
 
@@ -652,6 +677,45 @@ public class ChatRoomFragment extends Fragment
         }
         dismissMediaPicker();
     }
+
+    private TextWatcher onMessageTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence sequence, int start, int before, int count) {
+            if (sequence != null && sequence.length() > 0) {
+                send.setVisibility(View.VISIBLE);
+                record.setVisibility(View.GONE);
+            } else {
+                record.setVisibility(View.VISIBLE);
+                send.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable watcher) {}
+    };
+
+    private MediaSelector.OnLoadLocalMediaListener onPickAudioListener = new MediaSelector.OnLoadLocalMediaListener() {
+        @Override
+        public void onLoadLocalImage(Uri uri) {}
+        @Override
+        public void onLoadLocalVideo(Uri uri) {}
+        @Override
+        public void onLoadFile(Uri uri) {}
+        @Override
+        public void onLoadAudio(Uri uri, int duration) {
+            HashMap<String, Object> metadata = new HashMap<>();
+            metadata.put(Media.KEY_DURATION, duration);
+
+            LocalMedia media = new LocalMedia();
+            media.setType(Media.Type.Audio);
+            media.setPath(uri);
+            media.setMetadata(metadata);
+            sendMedia(media);
+        }
+    };
 
     public interface ChatRoomListener {
         void onMediaView(Media media, ImageView mediaImageView);
