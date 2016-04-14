@@ -16,6 +16,7 @@ import com.firebase.client.DataSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.fragments.ListChatRoomsFragment;
 import in.ureport.fragments.PollsFragment;
@@ -110,7 +111,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
 
     private void checkTutorialView() {
         SystemPreferences systemPreferences = new SystemPreferences(this);
-        if(!systemPreferences.getTutorialView()) {
+        if(!systemPreferences.getTutorialView() || BuildConfig.DEBUG) {
             Intent tutorialViewIntent = new Intent(this, TutorialActivity.class);
             startActivity(tutorialViewIntent);
         }

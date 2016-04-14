@@ -45,7 +45,6 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activities.TutorialActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Fullscreen" />
         <activity
             android:name=".activities.ChatActivity"
