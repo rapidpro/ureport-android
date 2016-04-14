@@ -32,7 +32,7 @@
                 android:layout_marginTop="20dp"
                 style="@style/AppTheme.FormMargin">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                 android:layout_below="@+id/usernameInput"
                 style="@style/AppTheme.FormMargin">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 android:layout_below="@+id/emailInput"
                 style="@style/AppTheme.FormMargin">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                 android:layout_below="@+id/passwordInput"
                 style="@style/AppTheme.FormMargin">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/birthday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
