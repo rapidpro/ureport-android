@@ -104,4 +104,14 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
         return new ArrayList<>();
     }
 
+    public CountryInfo getCountryInfo() {
+        return countryInfo;
+    }
+
+    @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        forceLoad();
+    }
+
 }

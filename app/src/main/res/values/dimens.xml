@@ -20,6 +20,8 @@
     <dimen name="chat_message_elevation">3dp</dimen>
 
     <dimen name="tutorial_image_height">230dp</dimen>
-    <dimen name="login_button_width">300dp</dimen>
+
+    <dimen name="login_item_width">300dp</dimen>
+    <dimen name="credential_item_width">400dp</dimen>
 
 </resources>

@@ -56,7 +56,7 @@
             style="@style/AppTheme.CustomButton" />
 
         <View
-            android:layout_width="@dimen/login_button_width"
+            android:layout_width="@dimen/login_item_width"
             android:layout_height="0.8dp"
             android:layout_below="@+id/loginWithTwitter"
             android:layout_marginTop="25dp"

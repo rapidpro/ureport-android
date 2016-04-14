@@ -77,7 +77,9 @@ public class SignUpFragment extends UserInfoBaseFragment {
 
     @Override
     public void onCountriesLoaded(List<CountryInfo> data) {
-        selectCurrentUserLocale(data);
+        if(countryInfo == null) {
+            selectCurrentUserLocale(data);
+        }
     }
 
     @Override
