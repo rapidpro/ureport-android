@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 
+import java.util.ArrayList;
+
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
@@ -49,6 +51,8 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     private static final String TAG = "StoriesListFragment";
 
     private static final String EXTRA_USER = "user";
+    private static final String EXTRA_NEWS = "news";
+    private static final String EXTRA_PUBLIC_TYPE = "publicType";
 
     private RecyclerView storiesList;
     private View info;
@@ -57,6 +61,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     private LinearLayoutManager layoutManager;
 
     private User user;
+    private ArrayList<News> newsList;
     protected boolean publicType = true;
 
     private StoriesAdapter.OnPublishStoryListener onPublishStoryListener;
@@ -87,6 +92,19 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getInstanceStateObjects(savedInstanceState);
+        getDataFromArguments();
+    }
+
+    private void getInstanceStateObjects(@Nullable Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            user = savedInstanceState.getParcelable(EXTRA_USER);
+            newsList = savedInstanceState.getParcelableArrayList(EXTRA_NEWS);
+            publicType = savedInstanceState.getBoolean(EXTRA_PUBLIC_TYPE);
+        }
+    }
+
+    private void getDataFromArguments() {
         Bundle extras = getArguments();
         if(extras != null && extras.containsKey(EXTRA_USER)) {
             user = extras.getParcelable(EXTRA_USER);
@@ -107,6 +125,14 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         setupObjects();
         setupView(view);
         loadData();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(EXTRA_USER, user);
+        outState.putParcelableArrayList(EXTRA_NEWS, (ArrayList<News>) storiesAdapter.getNews());
+        outState.putBoolean(EXTRA_PUBLIC_TYPE, publicType);
     }
 
     @Override
@@ -150,17 +176,23 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     private void loadNewsForPage(int page) {
-        loadingNews = true;
-        ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization()
-                , page, onNewsLoadedCallback);
+        if(newsList != null) {
+            storiesAdapter.addNews(newsList);
+        } else {
+            loadingNews = true;
+            ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization()
+                    , page, onNewsLoadedCallback);
+        }
     }
 
     private void setupView(View view) {
         storiesList = (RecyclerView) view.findViewById(R.id.storiesList);
+
         layoutManager = new LinearLayoutManager(getActivity());
         storiesList.setLayoutManager(layoutManager);
-        recyclerFloatingScrollListener = new RecyclerScrollListener(floatingActionButtonListener);
         storiesList.addOnScrollListener(onStoriesListScrollListener);
+
+        recyclerFloatingScrollListener = new RecyclerScrollListener(floatingActionButtonListener);
         setupStoriesAdapter();
 
         info = view.findViewById(R.id.info);

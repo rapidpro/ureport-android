@@ -51,6 +51,12 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.news = new ArrayList<>();
     }
 
+    public StoriesAdapter(User user, List<Story> stories, List<News> news) {
+        setHasStableIds(true);
+        this.stories = stories;
+        this.news = news;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
@@ -255,6 +261,14 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             }
         };
+    }
+
+    public List<News> getNews() {
+        return news;
+    }
+
+    public List<Story> getStories() {
+        return stories;
     }
 
     public interface StoryModerationListener {
