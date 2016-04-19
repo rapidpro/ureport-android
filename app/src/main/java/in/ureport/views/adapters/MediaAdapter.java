@@ -316,6 +316,11 @@ public class MediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         };
     }
 
+    public void setSelectedMedia(Media selectedMedia) {
+        this.selectedMedia = selectedMedia;
+        notifyDataSetChanged();
+    }
+
     public Media getSelectedMedia() {
         return selectedMedia;
     }

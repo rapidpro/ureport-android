@@ -32,6 +32,7 @@ import java.util.Map;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
+import br.com.ilhasoft.support.utils.KeyboardHandler;
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.GcmTopicManager;
@@ -56,6 +57,10 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private static final String TAG = "CreateStoryFragment";
     public static final int MEDIA_GAP = 5;
 
+    private static final String EXTRA_MARKERS = "markers";
+    private static final String EXTRA_MEDIAS = "medias";
+    private static final String EXTRA_SELECTED_MEDIA = "selectedMedia";
+
     private List<Marker> selectedMarkers;
     private List<Media> mediaList;
 
@@ -79,13 +84,33 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        getDataFromSavedInstance(savedInstanceState);
         setupObjects();
         setupView(view);
+        setupSelectedMedia(savedInstanceState);
+    }
+
+    private void setupSelectedMedia(@Nullable Bundle savedInstanceState) {
+        if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_SELECTED_MEDIA)) {
+            Media selectedMedia = savedInstanceState.getParcelable(EXTRA_SELECTED_MEDIA);
+            mediaAdapter.setSelectedMedia(selectedMedia);
+        }
+    }
+
+    private void getDataFromSavedInstance(@Nullable Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            selectedMarkers = savedInstanceState.getParcelableArrayList(EXTRA_MARKERS);
+            mediaList = savedInstanceState.getParcelableArrayList(EXTRA_MEDIAS);
+        }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_MARKERS, (ArrayList<Marker>) selectedMarkers);
+        outState.putParcelableArrayList(EXTRA_MEDIAS, (ArrayList<Media>) mediaList);
+        outState.putParcelable(EXTRA_SELECTED_MEDIA, mediaAdapter.getSelectedMedia());
     }
 
     private void addMedia(Media media) {
@@ -94,7 +119,9 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void setupObjects() {
-        mediaList = new ArrayList<>();
+        if(mediaList == null) {
+            mediaList = new ArrayList<>();
+        }
     }
 
     private void setupView(View view) {
