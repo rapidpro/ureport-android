@@ -109,6 +109,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="fill_vertical|top|start"
         android:fillViewport="true"
+        android:background="@color/light_window_background"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout

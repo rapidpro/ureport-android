@@ -74,7 +74,7 @@
             android:paddingRight="25dp"
             android:orientation="vertical"
             android:background="@color/light_window_background"
-            android:elevation="20dp">
+            android:elevation="8dp">
 
             <TextView
                 android:id="@+id/title"
@@ -114,7 +114,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/contributionList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_above="@id/addContributionContainer"/>
 
             <TextView
                 android:id="@+id/contribute"

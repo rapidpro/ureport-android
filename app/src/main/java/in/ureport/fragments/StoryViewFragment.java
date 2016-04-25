@@ -75,6 +75,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private TextView author;
     private ImageView picture;
     private View addContributionContainer;
+    private NestedScrollView scrollView;
     private FloatingActionButton shareActionButton;
 
     private ContributionServices contributionServices;
@@ -223,9 +224,9 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         TextView content = (TextView) view.findViewById(R.id.content);
         content.setText(story.getContent());
 
-        final NestedScrollView scrollView = (NestedScrollView) view.findViewById(R.id.scrollView);
+        scrollView = (NestedScrollView) view.findViewById(R.id.scrollView);
         if(scrollView != null) {
-            scrollView.postDelayed(() -> scrollView.fullScroll(View.FOCUS_UP), 200);
+            scrollTo(View.FOCUS_UP);
         }
 
         TextView markers = (TextView) view.findViewById(R.id.markers);
@@ -258,6 +259,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext()
                 , LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setAutoMeasureEnabled(true);
+        linearLayoutManager.setStackFromEnd(true);
         contributionList.setLayoutManager(linearLayoutManager);
 
         contributionAdapter = new ContributionAdapter();
@@ -271,6 +273,10 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         if (shareActionButton != null) {
             shareActionButton.setOnClickListener(onShareClickListener);
         }
+    }
+
+    private void scrollTo(int direction) {
+        scrollView.postDelayed(() -> scrollView.fullScroll(direction), 200);
     }
 
     private void setupUser() {
@@ -392,18 +398,18 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
             final Contribution contribution = new Contribution(content, user);
             contribution.setCreatedDate(new Date());
 
-            contributionServices.saveContribution(story, contribution, new Firebase.CompletionListener() {
-                @Override
-                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                    if(firebaseError == null) {
-                        userServices.incrementContributionPoint();
+            contributionServices.saveContribution(story, contribution, (firebaseError, firebase) -> {
+                if(firebaseError == null) {
+                    userServices.incrementContributionPoint();
 
-                        StoryViewFragment.this.contribution.setText(null);
-                        incrementContributionsText();
-                        refreshContribution();
-                        addAuthorToTopic();
-                        sendNotification(contribution);
+                    StoryViewFragment.this.contribution.setText(null);
+                    if(scrollView != null) {
+                        scrollTo(View.FOCUS_DOWN);
                     }
+                    incrementContributionsText();
+                    refreshContribution();
+                    addAuthorToTopic();
+                    sendNotification(contribution);
                 }
             });
         }
