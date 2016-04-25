@@ -25,6 +25,12 @@
         <item name="colorAccent">#047ea2</item>
     </style>
 
+    <style name="AppTheme.Fiji" parent="AppTheme">
+        <item name="colorPrimary">#05b5e8</item>
+        <item name="colorPrimaryDark">#048db6</item>
+        <item name="colorAccent">#047ea2</item>
+    </style>
+
     <style name="AppTheme.Indonesia" parent="AppTheme">
         <item name="colorPrimary">#b9001c</item>
         <item name="colorPrimaryDark">#c3001c</item>
