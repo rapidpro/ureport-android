@@ -50,10 +50,10 @@ import in.ureport.views.adapters.PollAdapter;
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class PollsFragment extends Fragment implements PollAdapter.PollParticipationListener
+public class PollsResultsFragment extends Fragment implements PollAdapter.PollParticipationListener
         , LoaderManager.LoaderCallbacks<FlowDefinition>, FlowFragment.FlowListener {
 
-    private static final String TAG = "PollsFragment";
+    private static final String TAG = "PollsResultsFragment";
 
     private static final String EXTRA_USER = "user";
 
@@ -68,14 +68,14 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     private PollServices pollServices;
     private PollAdapter pollsAdapter;
 
-    public static PollsFragment newInstance(User user) {
-        PollsFragment pollsFragment = new PollsFragment();
+    public static PollsResultsFragment newInstance(User user) {
+        PollsResultsFragment pollsResultsFragment = new PollsResultsFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_USER, user);
-        pollsFragment.setArguments(args);
+        pollsResultsFragment.setArguments(args);
 
-        return pollsFragment;
+        return pollsResultsFragment;
     }
 
     @Nullable
@@ -158,7 +158,7 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
         String [] pollColors = getResources().getStringArray(R.array.poll_colors);
 
         pollsAdapter = new PollAdapter(polls, pollColors);
-        pollsAdapter.setPollParticipationListener(PollsFragment.this);
+        pollsAdapter.setPollParticipationListener(PollsResultsFragment.this);
         pollsList.setAdapter(pollsAdapter);
     }
 
@@ -229,7 +229,7 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
             @Override
             public void run() {
                 FlowFragment flowFragment = FlowFragment.newInstance(flowDefinition, UserManager.getUserLanguage());
-                flowFragment.setFlowListener(PollsFragment.this);
+                flowFragment.setFlowListener(PollsResultsFragment.this);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.topBar, flowFragment)
                         .commit();

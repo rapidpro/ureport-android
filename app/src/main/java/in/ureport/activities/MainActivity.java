@@ -18,7 +18,7 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.fragments.ListChatRoomsFragment;
-import in.ureport.fragments.PollsFragment;
+import in.ureport.fragments.PollsResultsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
@@ -225,7 +225,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     private NavigationItem[] getNavigationItems() {
         storiesListFragment = new StoriesListFragment();
         NavigationItem storiesItem = new NavigationItem(storiesListFragment, getString(R.string.main_stories));
-        NavigationItem pollsItem = new NavigationItem(new PollsFragment(), getString(R.string.main_polls));
+        NavigationItem pollsItem = new NavigationItem(new PollsResultsFragment(), getString(R.string.main_polls));
 
         NavigationItem [] navigationItems;
         if(UserManager.isUserLoggedIn() && (UserManager.isUserCountryProgramEnabled() || UserManager.isMaster())) {
