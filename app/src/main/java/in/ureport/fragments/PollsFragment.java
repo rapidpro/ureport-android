@@ -81,7 +81,7 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_polls, container, false);
+        return inflater.inflate(R.layout.fragment_polls_results, container, false);
     }
 
     @Override
