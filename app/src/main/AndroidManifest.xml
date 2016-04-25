@@ -148,8 +148,7 @@
             android:name=".activities.StoryViewActivity"
             android:label="@string/label_story_view"
             android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />

@@ -340,6 +340,8 @@
     <string name="title_add">Add</string>
     <string name="state_media_buffering">Buffering video...</string>
     <string name="label_attach_file">Attach file</string>
+    <string name="title_first_comment">Be the first to comment on this story</string>
+    <string name="title_share">Share</string>
 
     <plurals name="files_attached">
         <item quantity="one">%1$s file attached</item>
