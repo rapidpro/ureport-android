@@ -6,6 +6,7 @@
     <color name="translucent_cover">#6000</color>
     <color name="window_background">#e1e1e1</color>
     <color name="light_window_background">#eeeeee</color>
+    <color name="white_window_background">#fafafa</color>
     <color name="yellow">#ebce2c</color>
 
     <color name="highlight">#ec2248</color>
