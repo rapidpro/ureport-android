@@ -39,7 +39,6 @@ import in.ureport.loader.LastFlowLoader;
 import in.ureport.managers.FlowManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Poll;
-import in.ureport.models.User;
 import in.ureport.network.PollServices;
 import in.ureport.tasks.CleanMessageNotificationTask;
 import in.ureport.tasks.MessageNotificationTask;
@@ -55,9 +54,7 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
 
     private static final String TAG = "PollsResultsFragment";
 
-    private static final String EXTRA_USER = "user";
-
-    private static final int LAST_POLL_LOADER = 102;
+    private static final int LAST_POLL_LOADER = 5048;
 
     private RecyclerView pollsList;
     private ProgressBar progressBar;
@@ -68,15 +65,7 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
     private PollServices pollServices;
     private PollAdapter pollsAdapter;
 
-    public static PollsResultsFragment newInstance(User user) {
-        PollsResultsFragment pollsResultsFragment = new PollsResultsFragment();
-
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_USER, user);
-        pollsResultsFragment.setArguments(args);
-
-        return pollsResultsFragment;
-    }
+    private boolean hasCurrentPoll = false;
 
     @Nullable
     @Override
@@ -90,12 +79,6 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
         setupObjects();
         setupView(view);
         registerNotificationReceiver();
-        loadData();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -109,6 +92,7 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
     public void onResume() {
         super.onResume();
         cleanMessageNotifications();
+        loadData();
     }
 
     private void cleanMessageNotifications() {
@@ -126,17 +110,31 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
 
     private void loadData() {
         pollServices.getPolls(onPollsLoadedListener);
-        loadLastFlow();
+        loadLastFlow(false);
     }
 
-    private void loadLastFlow() {
+    private void loadLastFlow(boolean forceLoad) {
         if(UserManager.isUserLoggedIn() && UserManager.isUserCountryProgramEnabled()) {
-            getLoaderManager().initLoader(LAST_POLL_LOADER, null, this).forceLoad();
+            Fragment fragment = getFragmentManager().findFragmentById(R.id.topBar);
+            if(!forceLoad && fragment != null && fragment instanceof FlowFragment) {
+                ((FlowFragment)fragment).setFlowListener(this);
+                setCurrentPollExistance(true);
+            } else {
+                getLoaderManager().initLoader(LAST_POLL_LOADER, null, this).forceLoad();
+            }
+        }
+    }
+
+    private void setCurrentPollExistance(boolean hasCurrentPoll) {
+        this.hasCurrentPoll = hasCurrentPoll;
+        if(pollsAdapter != null) {
+            pollsAdapter.setCurrentPollEnabled(hasCurrentPoll);
         }
     }
 
     private void setupObjects() {
         pollServices = new PollServices();
+        loadData();
     }
 
     private void setupView(View view) {
@@ -159,6 +157,7 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
 
         pollsAdapter = new PollAdapter(polls, pollColors);
         pollsAdapter.setPollParticipationListener(PollsResultsFragment.this);
+        pollsAdapter.setCurrentPollEnabled(hasCurrentPoll);
         pollsList.setAdapter(pollsAdapter);
     }
 
@@ -224,16 +223,13 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
     }
 
     private void addFlowDefinition(final FlowDefinition flowDefinition) {
-        pollsAdapter.setCurrentPollEnabled(true);
-        progressBar.post(new Runnable() {
-            @Override
-            public void run() {
-                FlowFragment flowFragment = FlowFragment.newInstance(flowDefinition, UserManager.getUserLanguage());
-                flowFragment.setFlowListener(PollsResultsFragment.this);
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.topBar, flowFragment)
-                        .commit();
-            }
+        setCurrentPollExistance(true);
+        progressBar.post(() -> {
+            FlowFragment flowFragment = FlowFragment.newInstance(flowDefinition, UserManager.getUserLanguage());
+            flowFragment.setFlowListener(PollsResultsFragment.this);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.topBar, flowFragment)
+                    .commit();
         });
     }
 
@@ -280,7 +276,7 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
         public void onReceive(Context context, Intent intent) {
             String type = intent.getStringExtra(NotificationTask.EXTRA_TYPE);
             if(type != null && type.equals(MessageNotificationTask.NEW_MESSAGE_TYPE)) {
-                loadLastFlow();
+                loadLastFlow(true);
             }
         }
     };
