@@ -144,7 +144,11 @@ public class ChatRoomServices extends ProgramServices {
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
                 super.onChildAdded(dataSnapshot, previousChild);
 
-                ChatMessage lastChatMessage = dataSnapshot.getValue(ChatMessage.class);
+                ChatMessage lastChatMessage = null;
+                try {
+                    lastChatMessage = dataSnapshot.getValue(ChatMessage.class);
+                } catch(Exception ignored) {}
+
                 if (lastChatMessage != null) {
                     int indexOfUser = chatMembers.getUsers().indexOf(lastChatMessage.getUser());
                     if (indexOfUser >= 0)
