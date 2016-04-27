@@ -1,9 +1,11 @@
 package in.ureport.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -95,8 +97,6 @@ public class PollAllResultsFragment extends Fragment {
 
     private void setupView(View view) {
         resultsList = (RecyclerView) view.findViewById(R.id.resultsList);
-        resultsList.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
     }
 
@@ -108,6 +108,12 @@ public class PollAllResultsFragment extends Fragment {
         PollResultsAdapter pollResultsAdapter = new PollResultsAdapter(pollResults
                 , getResources().getStringArray(R.array.poll_colors));
         pollResultsAdapter.setPollResultsListener(pollResultsListener);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && pollResults.size() > 1) {
+            resultsList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        } else {
+            resultsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
         resultsList.setAdapter(pollResultsAdapter);
     }
 

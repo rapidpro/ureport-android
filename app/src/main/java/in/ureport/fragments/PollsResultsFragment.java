@@ -49,8 +49,8 @@ import in.ureport.views.adapters.PollAdapter;
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class PollsResultsFragment extends Fragment implements PollAdapter.PollParticipationListener
-        , LoaderManager.LoaderCallbacks<FlowDefinition>, FlowFragment.FlowListener {
+public class PollsResultsFragment extends Fragment implements LoaderManager.LoaderCallbacks<FlowDefinition>
+        , FlowFragment.FlowListener {
 
     private static final String TAG = "PollsResultsFragment";
 
@@ -64,6 +64,8 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
 
     private PollServices pollServices;
     private PollAdapter pollsAdapter;
+
+    private PollAdapter.PollParticipationListener pollParticipationListener;
 
     private boolean hasCurrentPoll = false;
 
@@ -156,7 +158,7 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
         String [] pollColors = getResources().getStringArray(R.array.poll_colors);
 
         pollsAdapter = new PollAdapter(polls, pollColors);
-        pollsAdapter.setPollParticipationListener(PollsResultsFragment.this);
+        pollsAdapter.setPollParticipationListener(pollParticipationListener);
         pollsAdapter.setCurrentPollEnabled(hasCurrentPoll);
         pollsList.setAdapter(pollsAdapter);
     }
@@ -169,13 +171,6 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
         } catch(Exception exception) {
             Log.e(TAG, "onDataChange ", exception);
         }
-    }
-
-    @Override
-    public void onSeeResults(Poll poll) {
-        Intent pollResultsIntent = new Intent(getActivity(), PollResultsActivity.class);
-        pollResultsIntent.putExtra(PollResultsActivity.EXTRA_POLL, poll);
-        startActivity(pollResultsIntent);
     }
 
     private ValueEventListenerAdapter onPollsLoadedListener = new ValueEventListenerAdapter() {
@@ -280,6 +275,10 @@ public class PollsResultsFragment extends Fragment implements PollAdapter.PollPa
             }
         }
     };
+
+    public void setPollParticipationListener(PollAdapter.PollParticipationListener pollParticipationListener) {
+        this.pollParticipationListener = pollParticipationListener;
+    }
 
     private void displayMessage(@StringRes int message) {
         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
