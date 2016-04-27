@@ -29,7 +29,6 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.activities.BaseActivity;
-import in.ureport.activities.PollResultsActivity;
 import in.ureport.flowrunner.fragments.FlowFragment;
 import in.ureport.flowrunner.models.FlowDefinition;
 import in.ureport.flowrunner.models.FlowRuleset;
@@ -119,8 +118,10 @@ public class PollsResultsFragment extends Fragment implements LoaderManager.Load
         if(UserManager.isUserLoggedIn() && UserManager.isUserCountryProgramEnabled()) {
             Fragment fragment = getFragmentManager().findFragmentById(R.id.topBar);
             if(!forceLoad && fragment != null && fragment instanceof FlowFragment) {
-                ((FlowFragment)fragment).setFlowListener(this);
+                FlowFragment flowFragment = (FlowFragment)fragment;
+                flowFragment.setFlowListener(this);
                 setCurrentPollExistance(true);
+                showTitle(flowFragment.getFlowDefinition());
             } else {
                 getLoaderManager().initLoader(LAST_POLL_LOADER, null, this).forceLoad();
             }
@@ -136,7 +137,6 @@ public class PollsResultsFragment extends Fragment implements LoaderManager.Load
 
     private void setupObjects() {
         pollServices = new PollServices();
-        loadData();
     }
 
     private void setupView(View view) {
