@@ -37,6 +37,18 @@
         android:layout_weight="4"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:background="@color/white_window_background"/>
+        android:background="@color/white_window_background"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:id="@+id/infoChoosePoll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/info_poll_results_large"
+            android:drawablePadding="10dp"
+            android:drawableTop="@drawable/icon_no_color" />
+
+    </FrameLayout>
 
 </LinearLayout>

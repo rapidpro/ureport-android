@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import in.ureport.R;
 import in.ureport.activities.PollResultsActivity;
@@ -19,7 +20,7 @@ import in.ureport.views.adapters.PollAdapter;
  */
 public class PollsFragment extends Fragment implements PollAdapter.PollParticipationListener {
 
-    private View pollsResultsDetailsContainer;
+    private TextView infoChoosePoll;
 
     @Nullable
     @Override
@@ -30,17 +31,30 @@ public class PollsFragment extends Fragment implements PollAdapter.PollParticipa
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupView(view);
+    }
 
+    private void setupView(View view) {
         PollsResultsFragment resultsFragment = (PollsResultsFragment) getChildFragmentManager()
                 .findFragmentById(R.id.pollsResultsFragment);
         resultsFragment.setPollParticipationListener(this);
 
-        pollsResultsDetailsContainer = view.findViewById(R.id.pollResultsDetailsContainer);
+        infoChoosePoll = (TextView) view.findViewById(R.id.infoChoosePoll);
+        setupInfoVisibility();
+    }
+
+    private void setupInfoVisibility() {
+        if(infoChoosePoll != null) {
+            Fragment fragment = getChildFragmentManager().findFragmentById(R.id.pollResultsDetailsContainer);
+            infoChoosePoll.setVisibility(fragment != null ? View.GONE : View.VISIBLE);
+        }
     }
 
     @Override
     public void onSeeResults(Poll poll) {
-        if(pollsResultsDetailsContainer != null) {
+        if(infoChoosePoll != null) {
+            infoChoosePoll.setVisibility(View.GONE);
+
             PollAllResultsFragment pollsResultsFragment = PollAllResultsFragment.newInstance(poll);
             getChildFragmentManager().beginTransaction()
                     .replace(R.id.pollResultsDetailsContainer, pollsResultsFragment)

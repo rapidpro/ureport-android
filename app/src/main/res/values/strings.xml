@@ -342,6 +342,7 @@
     <string name="label_attach_file">Attach file</string>
     <string name="title_first_comment">Be the first to comment on this story</string>
     <string name="title_share">Share</string>
+    <string name="info_poll_results_large">Choose one of the polls next to see results</string>
 
     <plurals name="files_attached">
         <item quantity="one">%1$s file attached</item>
