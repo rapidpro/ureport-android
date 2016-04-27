@@ -25,16 +25,16 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_PAST_POLL = 1;
 
     private List<Poll> polls;
-    private String[] categoryColors;
+    private String[] pollColors;
 
     private Map<PollCategory, Integer> colorMap = new HashMap<>();
     private PollParticipationListener pollParticipationListener;
 
     private boolean currentPollEnabled = false;
 
-    public PollAdapter(List<Poll> polls, String [] categoryColors) {
+    public PollAdapter(List<Poll> polls, String [] pollColors) {
         this.polls = polls;
-        this.categoryColors = categoryColors;
+        this.pollColors = pollColors;
         setHasStableIds(true);
     }
 
@@ -125,8 +125,11 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             if(categoryColor != null) {
                 return categoryColor;
             } else {
-                int colorIndex = (getLayoutPosition() % categoryColors.length);
-                int color = Color.parseColor(categoryColors[colorIndex]);
+                int layoutPosition = getLayoutPosition();
+                layoutPosition = currentPollEnabled ? layoutPosition - 1 : layoutPosition;
+
+                int colorIndex = (layoutPosition % pollColors.length);
+                int color = Color.parseColor(pollColors[colorIndex]);
                 colorMap.put(pollCategory, color);
 
                 return color;
