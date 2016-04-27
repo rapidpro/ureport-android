@@ -10,6 +10,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,7 +59,7 @@ public class PollsResultsFragment extends Fragment implements LoaderManager.Load
     private ProgressBar progressBar;
     private TextView title;
     private TextView subtitle;
-    private ScrollView scrollView;
+    private NestedScrollView scrollView;
 
     private PollServices pollServices;
     private PollAdapter pollsAdapter;
@@ -133,6 +133,7 @@ public class PollsResultsFragment extends Fragment implements LoaderManager.Load
         if(pollsAdapter != null) {
             pollsAdapter.setCurrentPollEnabled(hasCurrentPoll);
         }
+        scrollView.smoothScrollTo(0, 0);
     }
 
     private void setupObjects() {
@@ -140,7 +141,7 @@ public class PollsResultsFragment extends Fragment implements LoaderManager.Load
     }
 
     private void setupView(View view) {
-        scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+        scrollView = (NestedScrollView) view.findViewById(R.id.scrollView);
 
         pollsList = (RecyclerView) view.findViewById(R.id.pollsList);
 

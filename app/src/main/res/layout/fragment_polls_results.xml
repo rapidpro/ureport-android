@@ -5,16 +5,19 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="500dp"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
+        android:layout_gravity="fill_vertical|top|start"
+        android:fillViewport="true"
         android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="top|start"
             android:orientation="vertical">
 
             <android.support.design.widget.AppBarLayout
@@ -64,15 +67,11 @@
             <in.ureport.views.widgets.UntouchableRecyclerView
                 android:id="@+id/pollsList"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="fill_vertical|top|start"
-                android:clipToPadding="false"
-                android:clipChildren="false"
-                android:paddingBottom="60dp" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <ProgressBar
         android:id="@+id/progressBar"
