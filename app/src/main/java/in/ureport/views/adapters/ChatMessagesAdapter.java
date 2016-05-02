@@ -38,7 +38,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ChatMessageViewHolder(parent.getContext(), viewType);
+        return new ChatMessageViewHolder(parent.getContext(), parent, viewType);
     }
 
     @Override

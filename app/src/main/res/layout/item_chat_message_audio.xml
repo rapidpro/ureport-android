@@ -3,9 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="90dp"
-    android:animateLayoutChanges="true">
+    android:layout_width="@dimen/max_chat_item_width"
+    android:layout_height="90dp">
 
     <ImageView
         android:id="@+id/iconMic"

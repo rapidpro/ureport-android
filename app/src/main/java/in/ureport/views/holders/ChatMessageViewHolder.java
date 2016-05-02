@@ -58,8 +58,8 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
 
     private RecordAudioFragment recordAudioFragment;
 
-    public ChatMessageViewHolder(Context context, int viewType) {
-        super(LayoutInflater.from(context).inflate(R.layout.item_chat_message, null));
+    public ChatMessageViewHolder(Context context, ViewGroup parent, int viewType) {
+        super(LayoutInflater.from(context).inflate(R.layout.item_chat_message, parent, false));
         this.context = context;
         this.hourFormatter = DateFormat.getTimeInstance(DateFormat.SHORT);
         this.youtubePlayer = new YoutubePlayer((Activity)itemView.getContext());
@@ -93,56 +93,7 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
         bindContainer(user, chatMessage);
 
         if(chatMessage.getMedia() != null) {
-            media = (ImageView) findIfNeeded(media, R.id.chatMessageMedia);
-            switch (chatMessage.getMedia().getType()) {
-                case Picture:
-                    media.setOnClickListener(onMediaClickListener);
-                    ImageLoader.loadGenericPictureToImageViewFit(media, chatMessage.getMedia());
-                    break;
-                case Video:
-                    youtubeLink = (TextView) findIfNeeded(youtubeLink, R.id.chatMessageYoutubeLink);
-                    youtubeLink.setText(youtubePlayer.getYoutubeLinkById(chatMessage.getMedia().getId()));
-
-                    media.setOnClickListener(onVideoMediaClickListener);
-                    ImageLoader.loadGenericPictureToImageViewFit(media, chatMessage.getMedia());
-                    break;
-                case VideoPhone:
-                    media.setOnClickListener(onMediaClickListener);
-                    ImageLoader.loadGenericPictureToImageViewFit(media, chatMessage.getMedia().getThumbnail());
-                    break;
-                case File:
-                    itemView.setOnClickListener(onMediaClickListener);
-                    prepareForSpecialContent(user, chatMessage);
-
-                    filename = (TextView) findIfNeeded(filename, R.id.chatMessageFileName);
-                    filetype = (TextView) findIfNeeded(filetype, R.id.chatMessageFileType);
-
-                    Map<String, Object> metadata = chatMessage.getMedia().getMetadata();
-                    if(metadata != null && metadata.containsKey(Media.KEY_FILENAME)) {
-                        String filenameMetadata = (String) chatMessage.getMedia().getMetadata().get(Media.KEY_FILENAME);
-                        filename.setText(filenameMetadata);
-                        filetype.setText(getFileExt(filenameMetadata));
-                    }
-                    break;
-                case Audio:
-                    prepareForSpecialContent(user, chatMessage);
-
-                    loadingAudio = itemView.findViewById(R.id.chatMessageLoadingAudio);
-                    playAudio = (ImageView) itemView.findViewById(R.id.chatMessagePlayAudio);
-                    progressAudio = (SeekBar) itemView.findViewById(R.id.chatMessageProgressAudio);
-                    durationAudio = (TextView) itemView.findViewById(R.id.chatMessageDurationAudio);
-
-                    if(!chatMessage.getMedia().equals(recordAudioFragment.getCurrentMedia())) {
-                        resetAudioView();
-                        if(recordAudioFragment.isPlayView(playAudio)) {
-                            recordAudioFragment.resetPlayback();
-                        }
-                    } else {
-                        recordAudioFragment.setCustomPlayback(playAudio, durationAudio, loadingAudio, progressAudio);
-                    }
-
-                    playAudio.setOnClickListener(onPlayCustomClickListener);
-            }
+            bindMedia(user, chatMessage);
         } else {
             message = (TextView) findIfNeeded(message, R.id.chatMessage);
             message.setText(chatMessage.getMessage());
@@ -150,6 +101,59 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
 
         date = (TextView) findIfNeeded(date, R.id.chatMessageDate);
         date.setText(hourFormatter.format(chatMessage.getDate()));
+    }
+
+    private void bindMedia(User user, ChatMessage chatMessage) {
+        media = (ImageView) findIfNeeded(media, R.id.chatMessageMedia);
+        switch (chatMessage.getMedia().getType()) {
+            case Picture:
+                media.setOnClickListener(onMediaClickListener);
+                ImageLoader.loadGenericPictureToImageViewFit(media, chatMessage.getMedia());
+                break;
+            case Video:
+                youtubeLink = (TextView) findIfNeeded(youtubeLink, R.id.chatMessageYoutubeLink);
+                youtubeLink.setText(youtubePlayer.getYoutubeLinkById(chatMessage.getMedia().getId()));
+
+                media.setOnClickListener(onVideoMediaClickListener);
+                ImageLoader.loadGenericPictureToImageViewFit(media, chatMessage.getMedia());
+                break;
+            case VideoPhone:
+                media.setOnClickListener(onMediaClickListener);
+                ImageLoader.loadGenericPictureToImageViewFit(media, chatMessage.getMedia().getThumbnail());
+                break;
+            case File:
+                itemView.setOnClickListener(onMediaClickListener);
+                prepareForSpecialContent(user, chatMessage);
+
+                filename = (TextView) findIfNeeded(filename, R.id.chatMessageFileName);
+                filetype = (TextView) findIfNeeded(filetype, R.id.chatMessageFileType);
+
+                Map<String, Object> metadata = chatMessage.getMedia().getMetadata();
+                if(metadata != null && metadata.containsKey(Media.KEY_FILENAME)) {
+                    String filenameMetadata = (String) chatMessage.getMedia().getMetadata().get(Media.KEY_FILENAME);
+                    filename.setText(filenameMetadata);
+                    filetype.setText(getFileExt(filenameMetadata));
+                }
+                break;
+            case Audio:
+                prepareForSpecialContent(user, chatMessage);
+
+                loadingAudio = itemView.findViewById(R.id.chatMessageLoadingAudio);
+                playAudio = (ImageView) itemView.findViewById(R.id.chatMessagePlayAudio);
+                progressAudio = (SeekBar) itemView.findViewById(R.id.chatMessageProgressAudio);
+                durationAudio = (TextView) itemView.findViewById(R.id.chatMessageDurationAudio);
+
+                if(!chatMessage.getMedia().equals(recordAudioFragment.getCurrentMedia())) {
+                    resetAudioView();
+                    if(recordAudioFragment.isPlayView(playAudio)) {
+                        recordAudioFragment.resetPlayback();
+                    }
+                } else {
+                    recordAudioFragment.setCustomPlayback(playAudio, durationAudio, loadingAudio, progressAudio);
+                }
+
+                playAudio.setOnClickListener(onPlayCustomClickListener);
+        }
     }
 
     private void prepareForSpecialContent(User user, ChatMessage chatMessage) {
