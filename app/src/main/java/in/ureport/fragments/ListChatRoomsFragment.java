@@ -224,6 +224,10 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         chatRoomsAdapter.notifyItemChanged(index);
     }
 
+    public void setSelectable(boolean selectable) {
+        chatRoomsAdapter.setSelectable(selectable);
+    }
+
     @Override
     public boolean onClose() {
         chatsList.setAdapter(chatRoomsAdapter);

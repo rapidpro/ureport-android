@@ -92,12 +92,15 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
     @Override
     public void onChatRoomSelected(ChatRoom chatRoom, ChatMembers members) {
         if(chatRoomContainer != null) {
+            listChatRoomsFragment.setSelectable(true);
+
             ChatRoomFragment chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, members, true);
             getChildFragmentManager().beginTransaction()
                     .replace(R.id.chatRoomContainer, chatRoomFragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
         } else {
+            listChatRoomsFragment.setSelectable(false);
             startChatRoomWithMembers(chatRoom, members);
         }
     }

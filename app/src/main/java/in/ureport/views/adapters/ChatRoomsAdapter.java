@@ -32,10 +32,11 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final String TAG = "ChatRoomsAdapter";
 
     private SortedList<ChatRoomHolder> chatRooms;
-
     private DateFormat hourFormatter;
-
     private OnChatRoomSelectedListener onChatRoomSelectedListener;
+
+    private int selectedPosition = -1;
+    private boolean selectable = false;
 
     public ChatRoomsAdapter() {
         this.chatRooms = new SortedList<>(ChatRoomHolder.class, sortedListAdapterCallback);
@@ -53,6 +54,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         try {
+            holder.itemView.setSelected(selectedPosition == position);
             ((ViewHolder) holder).bindView(chatRooms.get(position));
         } catch(Exception exception) {
             Log.e(TAG, "onBindViewHolder: " + exception.getLocalizedMessage());
@@ -176,12 +178,27 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             public void onClick(View view) {
                 ChatRoomHolder chatRoomHolder = chatRooms.get(getLayoutPosition());
                 onChatRoomSelectedListener.onChatRoomSelected(chatRoomHolder.chatRoom, chatRoomHolder.members);
+
+                selectCurrentPosition();
             }
         };
+
+        private void selectCurrentPosition() {
+            if(selectable) {
+                notifyItemChanged(selectedPosition);
+                selectedPosition = getLayoutPosition();
+                notifyItemChanged(selectedPosition);
+            }
+        }
     }
 
     public void setOnChatRoomSelectedListener(OnChatRoomSelectedListener onChatRoomSelectedListener) {
         this.onChatRoomSelectedListener = onChatRoomSelectedListener;
+    }
+
+    public void setSelectable(boolean selectable) {
+        this.selectable = selectable;
+        this.selectedPosition = !selectable ? -1 : selectedPosition;
     }
 
     public interface OnChatRoomSelectedListener {
