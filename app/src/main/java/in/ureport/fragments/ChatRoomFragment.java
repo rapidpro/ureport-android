@@ -78,6 +78,7 @@ public class ChatRoomFragment extends Fragment
     private static final String EXTRA_CHAT_ROOM = "chatRoom";
     private static final String EXTRA_CHAT_MEMBERS = "chatMembers";
     private static final String EXTRA_CHAT_ROOM_KEY = "chatRoomKey";
+    private static final String EXTRA_STANDALONE_MODE = "standaloneMode";
 
     private static final String MEDIA_PARENT = "chat_message";
     public static final int REMOVE_CHAT_MESSAGE_POSITION = 0;
@@ -95,6 +96,7 @@ public class ChatRoomFragment extends Fragment
     private ChatRoom chatRoom;
     private ChatMembers chatMembers;
     private String chatRoomKey;
+    private boolean standaloneMode = false;
 
     private User user;
 
@@ -107,12 +109,13 @@ public class ChatRoomFragment extends Fragment
     private PickMediaFragment pickMediaFragment;
     private MediaViewer mediaViewer;
 
-    public static ChatRoomFragment newInstance(ChatRoom chatRoom, ChatMembers chatMembers) {
+    public static ChatRoomFragment newInstance(ChatRoom chatRoom, ChatMembers chatMembers, boolean standaloneMode) {
         ChatRoomFragment chatRoomFragment = new ChatRoomFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_CHAT_ROOM, chatRoom);
         args.putParcelable(EXTRA_CHAT_MEMBERS, chatMembers);
+        args.putBoolean(EXTRA_STANDALONE_MODE, standaloneMode);
         chatRoomFragment.setArguments(args);
 
         return chatRoomFragment;
@@ -136,6 +139,7 @@ public class ChatRoomFragment extends Fragment
             } else {
                 chatRoom = getArguments().getParcelable(EXTRA_CHAT_ROOM);
                 chatMembers = getArguments().getParcelable(EXTRA_CHAT_MEMBERS);
+                standaloneMode = getArguments().getBoolean(EXTRA_STANDALONE_MODE, false);
             }
         }
     }
@@ -245,7 +249,8 @@ public class ChatRoomFragment extends Fragment
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if(chatRoom != null) {
+        if(chatRoom != null
+        && ((getParentFragment() != null && getParentFragment().isMenuVisible()) || getParentFragment() == null)) {
             switch(chatRoom.getType()) {
                 case Group:
                     inflater.inflate(R.menu.menu_chat_group, menu);
@@ -368,9 +373,13 @@ public class ChatRoomFragment extends Fragment
 
     private void setupView(View view) {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        AppCompatActivity activity = ((AppCompatActivity) getActivity());
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(!standaloneMode) {
+            AppCompatActivity activity = ((AppCompatActivity) getActivity());
+            activity.setSupportActionBar(toolbar);
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else {
+            toolbar.setVisibility(View.GONE);
+        }
         setHasOptionsMenu(true);
 
         name = (TextView) view.findViewById(R.id.name);

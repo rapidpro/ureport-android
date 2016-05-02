@@ -59,7 +59,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         } else {
             ChatRoom chatRoom = getIntent().getParcelableExtra(EXTRA_CHAT_ROOM);
             ChatMembers chatMembers = getIntent().getParcelableExtra(EXTRA_CHAT_MEMBERS);
-            chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, chatMembers);
+            chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, chatMembers, false);
         }
         addSharedElementTranstion(chatRoomFragment);
     }

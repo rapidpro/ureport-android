@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.LoaderManager;
@@ -67,7 +66,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private NavigationView menuNavigation;
-    private FloatingActionButton mainActionButton;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private DrawerLayout drawerLayout;
 
@@ -106,9 +104,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
         tabLayout = (TabLayout) findViewById(R.id.tabLayout);
         tabLayout.setVisibility(hasTabLayout() ? View.VISIBLE : View.GONE);
-
-        mainActionButton = (FloatingActionButton) findViewById(R.id.mainActionButton);
-        mainActionButton.setVisibility(hasMainActionButton() ? View.VISIBLE : View.GONE);
 
         menuNavigation = (NavigationView) findViewById(R.id.menuNavigation);
         menuNavigation.setNavigationItemSelectedListener(onNavigationItemSelectedListener);
@@ -262,10 +257,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
     protected TabLayout getTabLayout() {
         return tabLayout;
-    }
-
-    public FloatingActionButton getMainActionButton() {
-        return mainActionButton;
     }
 
     protected boolean hasTabLayout() {

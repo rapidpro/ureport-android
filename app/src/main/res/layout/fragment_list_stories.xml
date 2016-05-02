@@ -13,6 +13,18 @@
         android:layout_centerHorizontal="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/createStoryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_edit_white_24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        app:layout_anchor="@id/content"
+        app:backgroundTint="@color/highlight"/>
+
     <TextView
         android:id="@+id/info"
         android:layout_width="wrap_content"
