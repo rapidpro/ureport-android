@@ -76,8 +76,7 @@
         <activity
             android:name=".activities.InviteContactsActivity"
             android:label="@string/label_invite_contacts"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -119,8 +118,7 @@
         <activity
             android:name=".activities.ChatCreationActivity"
             android:label="@string/label_new_chat"
-            android:parentActivityName=".activities.ChatActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.ChatActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ChatActivity" />

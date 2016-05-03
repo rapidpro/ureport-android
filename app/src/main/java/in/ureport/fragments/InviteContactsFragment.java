@@ -1,6 +1,8 @@
 package in.ureport.fragments;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,12 +21,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.managers.SearchManager;
 import in.ureport.models.Contact;
 import in.ureport.views.adapters.ContactsAdapter;
 
@@ -34,6 +37,7 @@ public class InviteContactsFragment extends Fragment implements LoaderManager.Lo
     , ContactsAdapter.OnContactInvitedListener{
 
     private static final String[] PROJECTION = {Phone._ID, Phone.DISPLAY_NAME, Phone.NUMBER};
+    public static final int REQUEST_CODE_PERMISSION_CONTACTS = 1943;
     private RecyclerView contactsList;
 
     @Nullable
@@ -59,6 +63,36 @@ public class InviteContactsFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onResume() {
         super.onResume();
+        if (ContextCompat.checkSelfPermission(getContext()
+                , Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_CODE_PERMISSION_CONTACTS);
+        } else {
+            loadData();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && allPermissionsGranted(grantResults)) {
+            loadData();
+        } else {
+            Toast.makeText(getContext(), R.string.error_message_permission_external, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean allPermissionsGranted(int[] grantResults) {
+        boolean granted = true;
+        for (int grantResult : grantResults) {
+            if(grantResult != PackageManager.PERMISSION_GRANTED) {
+                granted = false;
+                break;
+            }
+        }
+        return granted;
+    }
+
+    private void loadData() {
         getLoaderManager().initLoader(0, null, this).forceLoad();
     }
 

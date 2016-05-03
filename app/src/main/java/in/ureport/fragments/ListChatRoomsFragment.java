@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -27,7 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 import in.ureport.R;
+import in.ureport.activities.ChatCreationActivity;
 import in.ureport.activities.InviteContactsActivity;
+import in.ureport.activities.MainActivity;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.managers.FirebaseManager;
@@ -69,7 +72,6 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
 
     private OnSeeOpenGroupsListener onSeeOpenGroupsListener;
     private ChatRoomsAdapter.OnChatRoomSelectedListener onChatRoomSelectedListener;
-    private OnCreateChatListener onCreateChatListener;
 
     private boolean selectFirst = false;
     private ChatRoom selectableChatRoom;
@@ -115,10 +117,6 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         super.onAttach(context);
         if(context instanceof OnSeeOpenGroupsListener) {
             onSeeOpenGroupsListener = (OnSeeOpenGroupsListener) context;
-        }
-
-        if(context instanceof OnCreateChatListener) {
-            onCreateChatListener = (OnCreateChatListener) context;
         }
     }
 
@@ -168,7 +166,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         seeOpenGroups.setOnClickListener(onSeeOpenGroups);
 
         FloatingActionButton createChatRoom = (FloatingActionButton) view.findViewById(R.id.createChatRoom);
-        createChatRoom.setOnClickListener((button) -> onCreateChatListener.onCreateChat());
+        createChatRoom.setOnClickListener(onCreateChatRoomListener);
     }
 
     private void loadData() {
@@ -338,8 +336,13 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         }
     };
 
-    public interface OnCreateChatListener {
-        void onCreateChat();
-    }
+    private View.OnClickListener onCreateChatRoomListener = view -> {
+        if (UserManager.validateKeyAction(getContext())) {
+            Intent newChatIntent = new Intent(getContext(), ChatCreationActivity.class);
+            newChatIntent.putParcelableArrayListExtra(ChatCreationActivity.EXTRA_CHAT_ROOMS
+                    , (ArrayList<ChatRoomHolder>) getChatRooms());
+            startActivityForResult(newChatIntent, MainActivity.REQUEST_CODE_CHAT_CREATION);
+        }
+    };
 
 }

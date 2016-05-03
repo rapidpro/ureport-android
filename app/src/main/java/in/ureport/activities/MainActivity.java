@@ -17,7 +17,6 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.fragments.ChatsFragment;
-import in.ureport.fragments.ListChatRoomsFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
@@ -42,10 +41,10 @@ import in.ureport.views.adapters.NavigationAdapter;
  * Created by johncordeiro on 7/9/15.
  */
 public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListener, OnUserStartChattingListener,
-        StoriesListFragment.OnPublishStoryListener, ListChatRoomsFragment.OnCreateChatListener {
+        StoriesListFragment.OnPublishStoryListener {
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
-    private static final int REQUEST_CODE_CHAT_CREATION = 200;
+    public static final int REQUEST_CODE_CHAT_CREATION = 200;
     public static final int REQUEST_CODE_CHAT_NOTIFICATION = 300;
     public static final int REQUEST_CODE_MESSAGE_NOTIFICATION = 400;
     public static final int REQUEST_CODE_CONTRIBUTION_NOTIFICATION = 500;
@@ -265,10 +264,6 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         startActivity(storyViewIntent);
     }
 
-    private void createChat() {
-        createChat(null);
-    }
-
     private void createChat(User user) {
         if(UserManager.validateKeyAction(MainActivity.this) && chatsFragment != null) {
             Intent newChatIntent = new Intent(MainActivity.this, ChatCreationActivity.class);
@@ -347,10 +342,5 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
             Intent createStoryIntent = new Intent(MainActivity.this, CreateStoryActivity.class);
             startActivityForResult(createStoryIntent, REQUEST_CODE_CREATE_STORY);
         }
-    }
-
-    @Override
-    public void onCreateChat() {
-        createChat();
     }
 }
