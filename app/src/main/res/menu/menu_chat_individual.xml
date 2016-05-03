@@ -5,12 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
-        android:id="@+id/attachFile"
-        android:title="@string/label_attach_file"
-        android:icon="@drawable/ic_attach_file"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/blockChatRoom"
         android:title="@string/block_chat_room"
         android:icon="@drawable/ic_account_remove_white_24dp"

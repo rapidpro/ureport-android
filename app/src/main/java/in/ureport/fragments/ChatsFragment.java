@@ -1,12 +1,9 @@
 package in.ureport.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -17,7 +14,6 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.activities.ChatRoomActivity;
-import in.ureport.activities.MainActivity;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.holders.ChatRoomHolder;
@@ -47,6 +43,25 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
         super.onViewCreated(view, savedInstanceState);
         setHasOptionsMenu(true);
         setupView(view);
+        selectFirstItemIfNeeded();
+    }
+
+    private void selectFirstItemIfNeeded() {
+        if(chatRoomContainer != null) {
+            ChatRoomFragment chatRoomContainer = (ChatRoomFragment) getChildFragmentManager().findFragmentById(R.id.chatRoomContainer);
+            if(chatRoomContainer == null) {
+                listChatRoomsFragment.setSelectFirst(true);
+            } else {
+                listChatRoomsFragment.selectChatRoom(chatRoomContainer.getChatRoom());
+            }
+        } else {
+            listChatRoomsFragment.setSelectFirst(false);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     private void setupView(View view) {

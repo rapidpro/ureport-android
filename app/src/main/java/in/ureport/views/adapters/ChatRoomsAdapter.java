@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.util.Collections;
 import java.util.List;
 
 import in.ureport.R;
@@ -63,7 +64,11 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public long getItemId(int position) {
-        return chatRooms.get(position).chatRoom.getKey().hashCode();
+        return getChatRoomId(chatRooms.get(position));
+    }
+
+    private int getChatRoomId(ChatRoomHolder holder) {
+        return holder.chatRoom.getKey().hashCode();
     }
 
     @Override
@@ -199,6 +204,29 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void setSelectable(boolean selectable) {
         this.selectable = selectable;
         this.selectedPosition = !selectable ? -1 : selectedPosition;
+    }
+
+    public void selectChatRoom(ChatRoom chatRoom) {
+        ChatRoomHolder holder = new ChatRoomHolder(chatRoom);
+        int indexOfChat = getIndexOfChatRoom(holder);
+
+        if(indexOfChat >= 0) {
+            selectedPosition = indexOfChat;
+            notifyItemChanged(selectedPosition);
+        }
+    }
+
+    private int getIndexOfChatRoom(ChatRoomHolder holder) {
+        int indexOfChat = -1;
+
+        for (int position = 0; position < getItemCount(); position++) {
+            long itemId = getItemId(position);
+            if (getChatRoomId(holder) == itemId) {
+                indexOfChat = position;
+                break;
+            }
+        }
+        return indexOfChat;
     }
 
     public interface OnChatRoomSelectedListener {

@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container"
+    android:id="@+id/content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3">
+        android:orientation="horizontal">
 
-        <fragment
-            android:id="@+id/chatRoomsFragment"
-            android:layout_width="match_parent"
+        <FrameLayout
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            class="in.ureport.fragments.ListChatRoomsFragment" />
+            android:layout_weight="3">
 
-    </FrameLayout>
+            <fragment
+                android:id="@+id/chatRoomsFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                class="in.ureport.fragments.ListChatRoomsFragment" />
 
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:background="@color/dark_gray"/>
+        </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/chatRoomContainer"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="4"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/dark_gray"/>
 
-</LinearLayout>
+        <FrameLayout
+            android:id="@+id/chatRoomContainer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

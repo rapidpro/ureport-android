@@ -90,6 +90,7 @@ public class ChatRoomFragment extends Fragment
     private RecyclerView messagesList;
     private ImageButton send;
     private ImageView record;
+    private ImageView attachFile;
 
     private ChatMessagesAdapter adapter;
 
@@ -273,20 +274,19 @@ public class ChatRoomFragment extends Fragment
 
         MenuItem blockChatRoomItem = menu.findItem(R.id.blockChatRoom);
         MenuItem unblockChatRoomItem = menu.findItem(R.id.unblockChatRoom);
-        MenuItem attachFileItem = menu.findItem(R.id.attachFile);
 
         if(individualChatRoom.getBlocked() != null) {
             if(individualChatRoom.getBlocked().equals(UserManager.getUserId())) {
-                attachFileItem.setEnabled(false);
+                attachFile.setEnabled(false);
                 blockChatRoomItem.setVisible(false);
                 unblockChatRoomItem.setVisible(true);
             } else {
-                attachFileItem.setEnabled(true);
+                attachFile.setEnabled(true);
                 blockChatRoomItem.setVisible(false);
                 unblockChatRoomItem.setVisible(false);
             }
         } else {
-            attachFileItem.setEnabled(true);
+            attachFile.setEnabled(true);
             blockChatRoomItem.setVisible(true);
             unblockChatRoomItem.setVisible(false);
         }
@@ -300,15 +300,6 @@ public class ChatRoomFragment extends Fragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.attachFile:
-                pickMediaFragment = new PickMediaFragment();
-                pickMediaFragment.setOnPickMediaListener(this);
-                getFragmentManager().beginTransaction()
-                        .addToBackStack(null)
-                        .setCustomAnimations(R.anim.slide_in_top, R.anim.slide_out_bottom, R.anim.slide_in_top, R.anim.slide_out_bottom)
-                        .add(R.id.content, pickMediaFragment)
-                        .commit();
-                return true;
             case R.id.leaveGroup:
                 if (chatRoomListener != null)
                     infoGroupChatListener.onChatRoomLeave(chatRoom);
@@ -338,6 +329,16 @@ public class ChatRoomFragment extends Fragment
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void pickMedia() {
+        pickMediaFragment = new PickMediaFragment();
+        pickMediaFragment.setOnPickMediaListener(this);
+        getFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .setCustomAnimations(R.anim.slide_in_top, R.anim.slide_out_bottom, R.anim.slide_in_top, R.anim.slide_out_bottom)
+                .add(R.id.content, pickMediaFragment)
+                .commit();
     }
 
     @NonNull
@@ -400,6 +401,9 @@ public class ChatRoomFragment extends Fragment
         spaceItemDecoration.setVerticalSpaceHeight((int) new UnitConverter(getActivity()).convertDpToPx(10));
         messagesList.addItemDecoration(spaceItemDecoration);
 
+        attachFile = (ImageView) view.findViewById(R.id.attachFile);
+        attachFile.setOnClickListener(v -> pickMedia());
+
         send = (ImageButton) view.findViewById(R.id.send);
         send.setOnClickListener(onSendClickListener);
 
@@ -408,6 +412,9 @@ public class ChatRoomFragment extends Fragment
             MediaSelector mediaSelector = new MediaSelector(getContext());
             mediaSelector.pickAudio(ChatRoomFragment.this, onPickAudioListener);
         });
+
+        if(pickMediaFragment != null)
+            pickMediaFragment.setOnPickMediaListener(this);
     }
 
     public void updateChatRoom(ChatRoom chatRoom, ChatMembers chatMembers) {
@@ -608,6 +615,10 @@ public class ChatRoomFragment extends Fragment
         });
     }
 
+    public ChatRoom getChatRoom() {
+        return chatRoom;
+    }
+
     private ChatRoomInterface.OnChatRoomLoadedListener onLoadChatRoomByKeyListener = new ChatRoomInterface.OnChatRoomLoadedListener() {
         @Override
         public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
@@ -621,9 +632,7 @@ public class ChatRoomFragment extends Fragment
 
     @Override
     public void onMediaChatMessageView(ChatMessage chatMessage, ImageView mediaImageView) {
-        if(chatRoomListener != null) {
-            mediaViewer.viewMedia(chatMessage.getMedia(), mediaImageView);
-        }
+        mediaViewer.viewMedia(chatMessage.getMedia(), mediaImageView);
     }
 
     @Override

@@ -55,6 +55,8 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
 
     private static final String TAG = "ListChatRoomsFragment";
 
+    private static final int DELAY_MILLIS = 5000;
+
     private ChatRoomServices chatRoomServices;
     private ChatRoomsAdapter chatRoomsAdapter;
 
@@ -68,6 +70,9 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     private OnSeeOpenGroupsListener onSeeOpenGroupsListener;
     private ChatRoomsAdapter.OnChatRoomSelectedListener onChatRoomSelectedListener;
     private OnCreateChatListener onCreateChatListener;
+
+    private boolean selectFirst = false;
+    private ChatRoom selectableChatRoom;
 
     @Nullable
     @Override
@@ -202,6 +207,10 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
                     chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, null));
                 }
             });
+
+            if(previousChild == null) {
+                chatsList.postDelayed(ListChatRoomsFragment.this::onLoadedChatRooms, DELAY_MILLIS);
+            }
         }
 
         @Override
@@ -218,6 +227,37 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     public void setOnChatRoomSelectedListener(ChatRoomsAdapter.OnChatRoomSelectedListener onChatRoomSelectedListener) {
         this.onChatRoomSelectedListener = onChatRoomSelectedListener;
         this.chatRoomsAdapter.setOnChatRoomSelectedListener(onChatRoomSelectedListener);
+    }
+
+    public void setSelectFirst(boolean selectFirst) {
+        this.selectFirst = selectFirst;
+    }
+
+    public void selectChatRoom(ChatRoom chatRoom) {
+        this.selectableChatRoom = chatRoom;
+    }
+
+    private void onLoadedChatRooms() {
+        selectFirstIfNeeded();
+        selectChatRoomIfNeeded();
+    }
+
+    private void selectFirstIfNeeded() {
+        if(selectFirst) {
+            selectFirst = false;
+
+            RecyclerView.ViewHolder viewHolder = chatsList.findViewHolderForAdapterPosition(0);
+            if(viewHolder != null) {
+                viewHolder.itemView.performClick();
+            }
+        }
+    }
+
+    private void selectChatRoomIfNeeded() {
+        if(selectableChatRoom != null) {
+            this.chatRoomsAdapter.selectChatRoom(selectableChatRoom);
+            selectableChatRoom = null;
+        }
     }
 
     public void notifyItemChanged(int index) {
