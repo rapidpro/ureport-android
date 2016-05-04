@@ -392,11 +392,13 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
     @Override
     public void hideFloatingButton() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            createStoryButton.animate().translationY(createStoryButton.getHeight()
-                    + getResources().getDimension(R.dimen.fab_margin)).start();
-        } else {
-            createStoryButton.setVisibility(View.GONE);
+        if(isAdded()) {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                createStoryButton.animate().translationY(createStoryButton.getHeight()
+                        + getResources().getDimension(R.dimen.fab_margin)).start();
+            } else {
+                createStoryButton.setVisibility(View.GONE);
+            }
         }
     }
 
