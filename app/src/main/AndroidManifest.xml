@@ -52,23 +52,20 @@
         <activity
             android:name=".activities.GeneralSettingsActivity"
             android:label="@string/label_settings"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
         <activity
             android:name=".activities.ModerationActivity"
-            android:label="@string/label_moderation"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_moderation" />
         <activity
             android:name=".activities.MediaActivity" />
         <activity
             android:name=".activities.UserSettingsActivity"
             android:label="@string/label_user_settings"
-            android:parentActivityName=".activities.ProfileActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.ProfileActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ProfileActivity" />
@@ -92,25 +89,20 @@
         </activity>
         <activity
             android:name=".activities.AboutActivity"
-            android:label="@string/label_about_ureport"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_about_ureport" />
         <activity
             android:name=".activities.DonationActivity"
-            android:label="@string/label_donation"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_donation" />
         <activity
             android:name=".activities.AmbassadorsActivity"
-            android:label="@string/label_ambassadors"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_ambassadors" />
         <activity
             android:name=".activities.GroupInfoActivity"
-            android:label="@string/label_group_info"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_group_info" />
         <activity
             android:name=".activities.ProfileActivity"
             android:label="@string/label_profile"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
