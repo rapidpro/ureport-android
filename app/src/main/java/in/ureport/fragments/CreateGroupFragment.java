@@ -89,6 +89,8 @@ public class CreateGroupFragment extends Fragment {
     private ChatRoomServices chatRoomServices;
     private UserServices userServices;
 
+    private ValueEventListener userEventListener;
+
     public static CreateGroupFragment newInstance(GroupChatRoom chatRoom, ChatMembers members) {
         CreateGroupFragment createGroupFragment = new CreateGroupFragment();
 
@@ -151,6 +153,12 @@ public class CreateGroupFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(userEventListener != null) userServices.removeCountryCodeListener(userEventListener);
+    }
+
     private void saveChoosenPicture(Intent data) {
         pictureUri = data.getData();
 
@@ -159,7 +167,7 @@ public class CreateGroupFragment extends Fragment {
     }
 
     private void loadUsers() {
-        ValueEventListener userEventListener = userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
+        userEventListener = userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
             @Override
             public void onLoadAllUsers(List<User> users) {
                 ureportersAdapter = new UreportersAdapter(users);
@@ -170,7 +178,6 @@ public class CreateGroupFragment extends Fragment {
                 ureportersList.setAdapter(ureportersAdapter);
             }
         });
-        userServices.removeCountryCodeListener(userEventListener);
     }
 
     @Override
@@ -374,7 +381,9 @@ public class CreateGroupFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence text, int start, int before, int count) {
             String query = text.toString();
-            ureportersAdapter.search(query);
+            if(ureportersAdapter != null) {
+                ureportersAdapter.search(query);
+            }
         }
 
         @Override
