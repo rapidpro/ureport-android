@@ -57,6 +57,7 @@ public class PollResultsActivity extends AppCompatActivity implements PollResult
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.label_poll_results);
     }
 
     @Override
