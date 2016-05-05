@@ -344,6 +344,7 @@
     <string name="title_share">Share</string>
     <string name="info_poll_results_large">Choose one of the polls next to see results</string>
     <string name="title_follow">Follow us</string>
+    <string name="error_message_no_youtube">You don\'t have the youtube installed on your phone. It will be not possible to play this video.</string>
 
     <plurals name="files_attached">
         <item quantity="one">%1$s file attached</item>

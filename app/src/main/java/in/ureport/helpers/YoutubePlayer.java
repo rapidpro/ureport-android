@@ -31,7 +31,7 @@ public class YoutubePlayer {
         return activity.getString(R.string.youtube_api_key);
     }
 
-    public String getYoutubeLinkById(String id) {
+    public static String getYoutubeLinkById(String id) {
         return String.format(YOUTUBE_FORMAT_URL, id);
     }
 

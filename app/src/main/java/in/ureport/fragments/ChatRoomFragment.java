@@ -738,8 +738,15 @@ public class ChatRoomFragment extends Fragment
         }
     };
 
+    public void setChatRoomListener(ChatRoomListener chatRoomListener) {
+        this.chatRoomListener = chatRoomListener;
+    }
+
+    public void setInfoGroupChatListener(InfoGroupChatListener infoGroupChatListener) {
+        this.infoGroupChatListener = infoGroupChatListener;
+    }
+
     public interface ChatRoomListener {
-        void onMediaView(Media media, ImageView mediaImageView);
         void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers, Pair<View, String>... pairs);
     }
 }

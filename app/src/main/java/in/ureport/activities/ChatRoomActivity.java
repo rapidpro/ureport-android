@@ -33,7 +33,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     public static final String EXTRA_CHAT_ROOM = "chatRoom";
     public static final String EXTRA_CHAT_MEMBERS = "chatMembers";
 
-    private static final int REQUEST_CODE_GROUP_INFO = 500;
+    public static final int REQUEST_CODE_GROUP_INFO = 500;
 
     private ChatRoomFragment chatRoomFragment;
 
@@ -112,17 +112,6 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     @Override
     public void onChatRoomLeave(ChatRoom chatRoom) {
         UserManager.leaveFromGroup(this, chatRoom);
-    }
-
-    @Override
-    public void onMediaView(Media media, ImageView mediaImageView) {
-        MediaFragment fragment = MediaFragment.newInstance(media);
-        addSharedElementTranstion(fragment);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.content, fragment)
-                .addToBackStack(null)
-                .addSharedElement(mediaImageView, getString(R.string.transition_media))
-                .commit();
     }
 
     private void addSharedElementTranstion(Fragment fragment) {

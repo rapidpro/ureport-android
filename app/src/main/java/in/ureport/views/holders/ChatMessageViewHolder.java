@@ -1,6 +1,5 @@
 package in.ureport.views.holders;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.IdRes;
@@ -53,7 +52,6 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
     private OnChatMessageSelectedListener onChatMessageSelectedListener;
 
     private final DateFormat hourFormatter;
-    private final YoutubePlayer youtubePlayer;
     private final Context context;
 
     private RecordAudioFragment recordAudioFragment;
@@ -62,7 +60,6 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
         super(LayoutInflater.from(context).inflate(R.layout.item_chat_message, parent, false));
         this.context = context;
         this.hourFormatter = DateFormat.getTimeInstance(DateFormat.SHORT);
-        this.youtubePlayer = new YoutubePlayer((Activity)itemView.getContext());
         this.parent = (ViewGroup) itemView.findViewById(R.id.bubble);
         this.name = (TextView) itemView.findViewById(R.id.name);
 
@@ -112,9 +109,9 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
                 break;
             case Video:
                 youtubeLink = (TextView) findIfNeeded(youtubeLink, R.id.chatMessageYoutubeLink);
-                youtubeLink.setText(youtubePlayer.getYoutubeLinkById(chatMessage.getMedia().getId()));
+                youtubeLink.setText(YoutubePlayer.getYoutubeLinkById(chatMessage.getMedia().getId()));
 
-                media.setOnClickListener(onVideoMediaClickListener);
+                media.setOnClickListener(onMediaClickListener);
                 ImageLoader.loadGenericPictureToImageViewFit(media, chatMessage.getMedia());
                 break;
             case VideoPhone:
@@ -247,13 +244,6 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
                     onChatMessageSelectedListener.onMediaChatMessageView(chatMessage, null);
                 }
             }
-        }
-    };
-
-    private View.OnClickListener onVideoMediaClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            youtubePlayer.playVideoMedia(chatMessage.getMedia());
         }
     };
 

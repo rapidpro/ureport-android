@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import in.ureport.R;
 import in.ureport.activities.MediaActivity;
 import in.ureport.fragments.MediaViewFragment;
 import in.ureport.fragments.RecordAudioFragment;
+import in.ureport.helpers.YoutubePlayer;
 import in.ureport.models.Media;
 import in.ureport.views.adapters.MediaAdapter;
 
@@ -34,6 +36,8 @@ public class MediaViewer implements MediaAdapter.OnMediaViewListener {
 
     public void viewMedia(Media media, ImageView imageView) {
         switch (media.getType()) {
+            case Video:
+                onYoutubeMediaView(media); break;
             case File:
                 onFileMediaView(media); break;
             case Audio:
@@ -42,6 +46,15 @@ public class MediaViewer implements MediaAdapter.OnMediaViewListener {
                 onVideoMediaView(media); break;
             default:
                 onMediaView(media, imageView);
+        }
+    }
+
+    private void onYoutubeMediaView(Media media) {
+        try {
+            YoutubePlayer youtubePlayer = new YoutubePlayer(activity);
+            youtubePlayer.playVideoMedia(media);
+        } catch(Exception exception) {
+            Toast.makeText(activity, R.string.error_message_no_youtube, Toast.LENGTH_SHORT).show();
         }
     }
 

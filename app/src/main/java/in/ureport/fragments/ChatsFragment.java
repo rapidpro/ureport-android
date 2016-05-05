@@ -2,28 +2,39 @@ package in.ureport.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.util.Pair;
+import android.transition.ChangeBounds;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import java.util.List;
 
 import in.ureport.R;
 import in.ureport.activities.ChatRoomActivity;
+import in.ureport.activities.GroupInfoActivity;
+import in.ureport.listener.InfoGroupChatListener;
+import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.Media;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.views.adapters.ChatRoomsAdapter;
 
 /**
  * Created by john-mac on 4/27/16.
  */
-public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRoomSelectedListener {
+public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRoomSelectedListener,
+        ChatRoomFragment.ChatRoomListener, InfoGroupChatListener {
 
     public static final String EXTRA_RESULT_CHAT_ROOM = "chatRoom";
 
@@ -70,6 +81,12 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
         listChatRoomsFragment.setOnChatRoomSelectedListener(this);
 
         chatRoomContainer = view.findViewById(R.id.chatRoomContainer);
+
+        ChatRoomFragment chatRoomFragment = (ChatRoomFragment) getChildFragmentManager().findFragmentById(R.id.chatRoomContainer);
+        if(chatRoomFragment != null) {
+            chatRoomFragment.setInfoGroupChatListener(this);
+            chatRoomFragment.setChatRoomListener(this);
+        }
     }
 
     @Override
@@ -113,6 +130,8 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
             listChatRoomsFragment.setSelectable(true);
 
             ChatRoomFragment chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, members, true);
+            chatRoomFragment.setChatRoomListener(this);
+            chatRoomFragment.setInfoGroupChatListener(this);
             getChildFragmentManager().beginTransaction()
                     .replace(R.id.chatRoomContainer, chatRoomFragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
@@ -136,4 +155,24 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
         startActivityForResult(chatRoomIntent, REQUEST_CODE_CHAT_ROOM);
     }
 
+    @Override
+    public void onEditGroupChat(ChatRoom chatRoom, ChatMembers members) {}
+
+    @Override
+    public void onChatRoomClose(ChatRoom chatRoom, ChatMembers members) {}
+
+    @Override
+    public void onChatRoomLeave(ChatRoom chatRoom) {
+        UserManager.leaveFromGroup(getActivity(), chatRoom);
+    }
+
+    @Override
+    public void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers, Pair<View, String>... pairs) {
+        Intent groupInfoIntent = new Intent(getActivity(), GroupInfoActivity.class);
+        groupInfoIntent.putExtra(GroupInfoActivity.EXTRA_CHAT_ROOM, chatRoom);
+        groupInfoIntent.putExtra(GroupInfoActivity.EXTRA_CHAT_MEMBERS, chatMembers);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), pairs);
+        ActivityCompat.startActivityForResult(getActivity(), groupInfoIntent, ChatRoomActivity.REQUEST_CODE_GROUP_INFO, options.toBundle());
+    }
 }
