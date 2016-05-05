@@ -81,8 +81,7 @@
         <activity
             android:name=".activities.OpenGroupsActivity"
             android:label="@string/label_chat_groups"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
