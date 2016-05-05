@@ -35,6 +35,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private OnChatRoomSelectedListener onChatRoomSelectedListener;
 
     private ChatRoomHolder selectedItem;
+    private boolean forceClick = false;
     private boolean selectable = false;
 
     public ChatRoomsAdapter() {
@@ -57,6 +58,11 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             holder.itemView.setSelected(isSelected(chatRoomHolder));
             ((ViewHolder) holder).bindView(chatRoomHolder);
+
+            if(forceClick) {
+                forceClick = false;
+                holder.itemView.performClick();
+            }
         } catch(Exception exception) {
             Log.e(TAG, "onBindViewHolder: " + exception.getLocalizedMessage());
         }
@@ -203,6 +209,11 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void setSelectable(boolean selectable) {
         this.selectable = selectable;
         this.selectedItem = !selectable ? null : selectedItem;
+    }
+
+    public void selectFirst() {
+        this.forceClick = true;
+        this.selectedItem = chatRooms.get(0);
     }
 
     public void selectChatRoom(ChatRoom chatRoom) {

@@ -21,6 +21,7 @@ import android.widget.Button;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ import in.ureport.R;
 import in.ureport.activities.ChatCreationActivity;
 import in.ureport.activities.InviteContactsActivity;
 import in.ureport.activities.MainActivity;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.managers.FirebaseManager;
@@ -44,7 +46,6 @@ import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
-import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.tasks.GetUnreadMessagesTask;
 import in.ureport.views.adapters.ChatRoomsAdapter;
@@ -56,8 +57,6 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         , SearchView.OnCloseListener {
 
     private static final String TAG = "ListChatRoomsFragment";
-
-    private static final int DELAY_MILLIS = 5000;
 
     private ChatRoomServices chatRoomServices;
     private ChatRoomsAdapter chatRoomsAdapter;
@@ -141,7 +140,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        FirebaseManager.getReference().removeEventListener(childEventListener);
+        FirebaseManager.getReference().removeEventListener(valueListener);
         for (ChildEventListener chatEventListener : chatEventListenerList) {
             FirebaseManager.getReference().removeEventListener(chatEventListener);
         }
@@ -174,7 +173,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
             protected void onPostExecute(Map<ChatRoom, Integer> chatNotifications) {
                 super.onPostExecute(chatNotifications);
                 ListChatRoomsFragment.this.chatNotifications = chatNotifications;
-                userServices.addChildEventListenerForChatRooms(UserManager.getUserId(), childEventListener);
+                userServices.addValueEventListenerForChatRooms(UserManager.getUserId(), valueListener);
             }
         };
         getUnreadMessagesTask.execute();
@@ -189,33 +188,35 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         }
     };
 
-    private ChildEventListenerAdapter childEventListener = new ChildEventListenerAdapter() {
+    private ValueEventListener valueListener = new ValueEventListenerAdapter() {
         @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, final String previousChild) {
-            super.onChildAdded(dataSnapshot, previousChild);
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            super.onDataChange(dataSnapshot);
+            chatRoomsAdapter.getChatRooms().beginBatchedUpdates();
 
-            String chatRoomKey = dataSnapshot.getKey();
-            chatRoomServices.getChatRoom(chatRoomKey, new ChatRoomInterface.OnChatRoomLoadedListener() {
-                @Override
-                public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
-                    chatRoomServices.loadLastChatMessage(chatRoom, chatMembers, onLastChatMessageLoaded);
-                    chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
-                }
-            });
+            List<ChatRoomHolder> chatRoomHolders = new ArrayList<>();
+            List<String> chatRoomsFailed = new ArrayList<>();
 
-            if(previousChild == null) {
-                chatsList.postDelayed(ListChatRoomsFragment.this::onLoadedChatRooms, DELAY_MILLIS);
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                String chatRoomKey = snapshot.getKey();
+                chatRoomServices.getChatRoom(chatRoomKey, new ChatRoomInterface.OnChatRoomLoadedListener() {
+                    @Override
+                    public void onChatRoomLoadFailed() {
+                        chatRoomsFailed.add(chatRoomKey);
+                    }
+
+                    @Override
+                    public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
+                        ChatRoomHolder holder = new ChatRoomHolder(chatRoom, chatMembers, null);
+                        chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
+                        chatRoomHolders.add(holder);
+
+                        if(chatRoomHolders.size() + chatRoomsFailed.size() >= dataSnapshot.getChildrenCount()) {
+                            onLoadedChatRooms(chatRoomHolders);
+                        }
+                    }
+                });
             }
-        }
-
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
-            super.onChildRemoved(dataSnapshot);
-
-            ChatRoom chatRoom = new ChatRoom(){};
-            chatRoom.setKey(dataSnapshot.getKey());
-
-            chatRoomsAdapter.removeChatRoom(new ChatRoomHolder(chatRoom));
         }
     };
 
@@ -232,25 +233,54 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         this.selectableChatRoom = chatRoom;
     }
 
-    private void onLoadedChatRooms() {
+    private void onLoadedChatRooms(List<ChatRoomHolder> chatRoomHolders) {
+        updateChatRooms(chatRoomHolders);
+        updateChatRoomsWithLastMessage(chatRoomHolders);
+
         selectFirstIfNeeded();
-        selectChatRoomIfNeeded();
+        selectChatRoomIfNeeded(selectableChatRoom);
+    }
+
+    private void updateChatRoomsWithLastMessage(List<ChatRoomHolder> chatRoomHolders) {
+        List<ChatMessage> chatMessages = new ArrayList<>();
+        List<ChatRoomHolder> chatRoomsWithoutMessages = new ArrayList<>();
+
+        for (ChatRoomHolder chatRoomHolder : chatRoomHolders) {
+            chatRoomServices.loadLastChatMessage(chatRoomHolder, new ChatRoomInterface.OnChatLastMessageLoadedListener() {
+                @Override
+                public void onChatLastMessageLoaded(ChatMessage chatMessage) {
+                    chatMessages.add(chatMessage);
+                    if(chatMessages.size() + chatRoomsWithoutMessages.size() >= chatRoomHolders.size()) {
+                        updateChatRooms(chatRoomHolders);
+                    }
+                }
+                @Override
+                public void onChatLastMessageLoadFailed() {
+                    chatRoomsWithoutMessages.add(chatRoomHolder);
+                }
+            });
+        }
+    }
+
+    private void updateChatRooms(List<ChatRoomHolder> chatRoomHolders) {
+        chatRoomsAdapter.getChatRooms().beginBatchedUpdates();
+        for (ChatRoomHolder chatRoomHolder : chatRoomHolders) {
+            chatRoomsAdapter.addChatRoom(chatRoomHolder);
+        }
+        chatRoomsAdapter.getChatRooms().endBatchedUpdates();
     }
 
     private void selectFirstIfNeeded() {
         if(selectFirst) {
             selectFirst = false;
-
-            RecyclerView.ViewHolder viewHolder = chatsList.findViewHolderForAdapterPosition(0);
-            if(viewHolder != null) {
-                viewHolder.itemView.performClick();
-            }
+            chatRoomsAdapter.selectFirst();
         }
     }
 
-    private void selectChatRoomIfNeeded() {
-        if(selectableChatRoom != null) {
-            this.chatRoomsAdapter.selectChatRoom(selectableChatRoom);
+    private void selectChatRoomIfNeeded(ChatRoom chatRoom) {
+        if(chatRoom != null) {
+            selectableChatRoom = chatRoom;
+            this.chatRoomsAdapter.selectChatRoom(chatRoom);
             selectableChatRoom = null;
         }
     }
@@ -324,14 +354,6 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         }
         return chatRoomHolderList;
     }
-
-    private ChatRoomInterface.OnChatLastMessageLoadedListener onLastChatMessageLoaded =
-            new ChatRoomInterface.OnChatLastMessageLoadedListener() {
-        @Override
-        public void onChatLastMessageLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastChatMessage) {
-            chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, lastChatMessage));
-        }
-    };
 
     private View.OnClickListener onCreateChatRoomListener = view -> {
         if (UserManager.validateKeyAction(getContext())) {

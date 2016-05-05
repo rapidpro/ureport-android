@@ -65,9 +65,9 @@ public class UserServices extends ProgramServices {
                 .child("chatRooms");
     }
 
-    public void addChildEventListenerForChatRooms(String key, ChildEventListener childEventListener) {
+    public void addValueEventListenerForChatRooms(String key, ValueEventListener listener) {
         FirebaseManager.getReference().child(userPath).child(key)
-                .child("chatRooms").addChildEventListener(childEventListener);
+                .child("chatRooms").addValueEventListener(listener);
     }
 
     public void loadChatRooms(String key, ValueEventListener valueEventListener) {

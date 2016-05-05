@@ -621,6 +621,9 @@ public class ChatRoomFragment extends Fragment
 
     private ChatRoomInterface.OnChatRoomLoadedListener onLoadChatRoomByKeyListener = new ChatRoomInterface.OnChatRoomLoadedListener() {
         @Override
+        public void onChatRoomLoadFailed() {}
+
+        @Override
         public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
             ChatRoomFragment.this.chatRoom = chatRoom;
             ChatRoomFragment.this.chatMembers = chatMembers;
