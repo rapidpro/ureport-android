@@ -59,7 +59,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             holder.itemView.setSelected(isSelected(chatRoomHolder));
             ((ViewHolder) holder).bindView(chatRoomHolder);
 
-            if(forceClick) {
+            if(forceClick && isSelected(chatRoomHolder)) {
                 forceClick = false;
                 holder.itemView.performClick();
             }
@@ -106,6 +106,12 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             chatRooms.add(newChatRoomHolder);
         } else {
             chatRooms.updateItemAt(indexOfChatRoom, newChatRoomHolder);
+        }
+    }
+
+    public void fillSelectableWhenNull() {
+        if(selectable && (selectedItem == null || getIndexOfChatRoom(selectedItem)< 0)) {
+            selectFirst();
         }
     }
 
@@ -214,6 +220,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void selectFirst() {
         this.forceClick = true;
         this.selectedItem = chatRooms.get(0);
+        this.notifyDataSetChanged();
     }
 
     public void selectChatRoom(ChatRoom chatRoom) {

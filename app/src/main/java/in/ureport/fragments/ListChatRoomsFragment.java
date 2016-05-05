@@ -264,9 +264,11 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
 
     private void updateChatRooms(List<ChatRoomHolder> chatRoomHolders) {
         chatRoomsAdapter.getChatRooms().beginBatchedUpdates();
+        chatRoomsAdapter.getChatRooms().clear();
         for (ChatRoomHolder chatRoomHolder : chatRoomHolders) {
             chatRoomsAdapter.addChatRoom(chatRoomHolder);
         }
+        chatRoomsAdapter.fillSelectableWhenNull();
         chatRoomsAdapter.getChatRooms().endBatchedUpdates();
     }
 

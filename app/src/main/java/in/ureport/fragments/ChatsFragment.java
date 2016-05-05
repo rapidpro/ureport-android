@@ -2,20 +2,15 @@ package in.ureport.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.Pair;
-import android.transition.ChangeBounds;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import java.util.List;
 
@@ -26,7 +21,6 @@ import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
-import in.ureport.models.Media;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.views.adapters.ChatRoomsAdapter;
 
@@ -39,6 +33,7 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
     public static final String EXTRA_RESULT_CHAT_ROOM = "chatRoom";
 
     private static final int REQUEST_CODE_CHAT_ROOM = 100;
+    public static final int REQUEST_CODE_GROUP_INFO = 500;
 
     private View chatRoomContainer;
 
@@ -163,7 +158,7 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
 
     @Override
     public void onChatRoomLeave(ChatRoom chatRoom) {
-        UserManager.leaveFromGroup(getActivity(), chatRoom);
+        UserManager.leaveFromGroup(getActivity(), chatRoom, () -> Log.i(TAG, "onChatRoomLeave: "));
     }
 
     @Override
@@ -171,8 +166,6 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
         Intent groupInfoIntent = new Intent(getActivity(), GroupInfoActivity.class);
         groupInfoIntent.putExtra(GroupInfoActivity.EXTRA_CHAT_ROOM, chatRoom);
         groupInfoIntent.putExtra(GroupInfoActivity.EXTRA_CHAT_MEMBERS, chatMembers);
-
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), pairs);
-        ActivityCompat.startActivityForResult(getActivity(), groupInfoIntent, ChatRoomActivity.REQUEST_CODE_GROUP_INFO, options.toBundle());
+        startActivityForResult(groupInfoIntent, REQUEST_CODE_GROUP_INFO);
     }
 }
