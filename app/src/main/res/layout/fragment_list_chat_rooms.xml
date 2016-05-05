@@ -9,7 +9,7 @@
     <RelativeLayout
         android:id="@+id/topChatRoom"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:background="#eaeaea">
 
         <TextView
@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
             android:layout_below="@+id/title"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"

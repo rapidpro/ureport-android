@@ -60,6 +60,11 @@ public class UserServices extends ProgramServices {
                 .child(userKey).child("chatRooms").child(chatRoomKey).removeValue();
     }
 
+    public Firebase getUserChatRoomsReference(String key) {
+        return FirebaseManager.getReference().child(userPath).child(key)
+                .child("chatRooms");
+    }
+
     public void addChildEventListenerForChatRooms(String key, ChildEventListener childEventListener) {
         FirebaseManager.getReference().child(userPath).child(key)
                 .child("chatRooms").addChildEventListener(childEventListener);

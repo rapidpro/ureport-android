@@ -3,7 +3,6 @@ package in.ureport.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -192,7 +191,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
 
     private ChildEventListenerAdapter childEventListener = new ChildEventListenerAdapter() {
         @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
+        public void onChildAdded(DataSnapshot dataSnapshot, final String previousChild) {
             super.onChildAdded(dataSnapshot, previousChild);
 
             String chatRoomKey = dataSnapshot.getKey();
@@ -200,9 +199,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
                 @Override
                 public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
                     chatRoomServices.loadLastChatMessage(chatRoom, chatMembers, onLastChatMessageLoaded);
-
                     chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
-                    chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, null));
                 }
             });
 
@@ -331,8 +328,8 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     private ChatRoomInterface.OnChatLastMessageLoadedListener onLastChatMessageLoaded =
             new ChatRoomInterface.OnChatLastMessageLoadedListener() {
         @Override
-        public void onChatLastMessageLoaded(ChatRoom chatRoom, ChatMessage lastChatMessage) {
-            chatRoomsAdapter.updateChatRoomMessage(chatRoom, lastChatMessage);
+        public void onChatLastMessageLoaded(ChatRoom chatRoom, ChatMembers chatMembers, ChatMessage lastChatMessage) {
+            chatRoomsAdapter.addChatRoom(new ChatRoomHolder(chatRoom, chatMembers, lastChatMessage));
         }
     };
 

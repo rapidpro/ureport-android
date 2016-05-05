@@ -146,11 +146,12 @@ public class ChatRoomServices extends ProgramServices {
 
                 ChatMessage lastChatMessage = dataSnapshot.getValue(ChatMessage.class);
                 if (lastChatMessage != null) {
+                    lastChatMessage.setKey(dataSnapshot.getKey());
                     int indexOfUser = chatMembers.getUsers().indexOf(lastChatMessage.getUser());
                     if (indexOfUser >= 0)
                         lastChatMessage.setUser(chatMembers.getUsers().get(indexOfUser));
                 }
-                onChatLastMessageLoadedListener.onChatLastMessageLoaded(chatRoom, lastChatMessage);
+                onChatLastMessageLoadedListener.onChatLastMessageLoaded(chatRoom, chatMembers, lastChatMessage);
             }
         });
     }
