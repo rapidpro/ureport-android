@@ -33,7 +33,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     public static final String EXTRA_CHAT_ROOM = "chatRoom";
     public static final String EXTRA_CHAT_MEMBERS = "chatMembers";
 
-    public static final int REQUEST_CODE_GROUP_INFO = 500;
+    private static final int REQUEST_CODE_GROUP_INFO = 500;
 
     private ChatRoomFragment chatRoomFragment;
 
@@ -113,6 +113,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     public void onChatRoomLeave(ChatRoom chatRoom) {
         UserManager.leaveFromGroup(this, chatRoom);
     }
+
 
     private void addSharedElementTranstion(Fragment fragment) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
