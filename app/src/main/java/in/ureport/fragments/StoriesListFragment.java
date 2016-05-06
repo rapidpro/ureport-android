@@ -159,7 +159,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     private void setupObjects() {
         storyServices = new StoryServices();
         userServices = new UserServices();
-        contributionServices = new ContributionServices();
+        contributionServices = new ContributionServices(ContributionServices.Type.Story);
         String ureportEndpoint = getString(CountryProgramManager.getCurrentCountryProgram().getUreportEndpoint());
         ureportServices = new UreportServices(ureportEndpoint);
     }

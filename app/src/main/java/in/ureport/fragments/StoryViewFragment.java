@@ -204,7 +204,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     }
 
     private void setupObjects() {
-        contributionServices = new ContributionServices();
+        contributionServices = new ContributionServices(ContributionServices.Type.Story);
         userServices = new UserServices();
         storyServices = new StoryServices();
         mediaViewer = new MediaViewer((AppCompatActivity) getActivity());

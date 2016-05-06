@@ -6,7 +6,6 @@ import com.firebase.client.Firebase;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnStoryContributionCountListener;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
 import in.ureport.models.User;
@@ -16,21 +15,45 @@ import in.ureport.models.User;
  */
 public class ContributionServices extends ProgramServices {
 
-    public static final String contributionPath = "contribution";
-    public static final String contributionDisapprovedPath = "contribution_disapproved";
+    private static final String pollContributionPath = "poll_contribution";
+    private static final String pollContributionDisapprovedPath = "poll_contribution_disapproved";
+
+    private static final String contributionPath = "contribution";
+    private static final String contributionDisapprovedPath = "contribution_disapproved";
+
+
+    public enum Type {
+        Poll(pollContributionPath, pollContributionDisapprovedPath),
+        Story(contributionPath, contributionDisapprovedPath);
+
+        Type(String path, String disapprovedPath) {
+            this.path = path;
+            this.disapprovedPath = disapprovedPath;
+        }
+
+        private String path;
+        private String disapprovedPath;
+
+    }
+
+    private final Type type;
+
+    public ContributionServigces(Type type) {
+        this.type = type;
+    }
 
     public void saveContribution(Story story, Contribution contribution, Firebase.CompletionListener listener) {
         User user = new User();
         user.setKey(contribution.getAuthor().getKey());
         contribution.setAuthor(user);
 
-        Firebase object = getDefaultRoot().child(contributionPath).child(story.getKey()).push();
+        Firebase object = getDefaultRoot().child(type.path).child(story.getKey()).push();
         object.setValue(contribution, listener);
         contribution.setKey(object.getKey());
     }
 
     public void getContributionCount(Story story, final OnStoryContributionCountListener listener) {
-        getDefaultRoot().child(contributionPath).child(story.getKey()).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+        getDefaultRoot().child(type.path).child(story.getKey()).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
@@ -40,13 +63,13 @@ public class ContributionServices extends ProgramServices {
     }
     
     public void removeContribution(Story story, Contribution contribution, Firebase.CompletionListener listener) {
-        getDefaultRoot().child(contributionPath).child(story.getKey()).child(contribution.getKey()).removeValue();
-        getDefaultRoot().child(contributionDisapprovedPath).child(story.getKey())
+        getDefaultRoot().child(type.path).child(story.getKey()).child(contribution.getKey()).removeValue();
+        getDefaultRoot().child(type.disapprovedPath).child(story.getKey())
                 .child(contribution.getKey()).setValue(contribution, listener);
     }
 
     public void addChildEventListener(Story story, ChildEventListener childEventListener) {
-        getDefaultRoot().child(contributionPath).child(story.getKey()).addChildEventListener(childEventListener);
+        getDefaultRoot().child(type.path).child(story.getKey()).addChildEventListener(childEventListener);
     }
     
 }
