@@ -158,7 +158,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     }
 
     private void loadData() {
-        contributionServices.addChildEventListener(story, contributionChildEventListener);
+        contributionServices.addChildEventListener(story.getKey(), contributionChildEventListener);
         loadUserIfNeeded();
         checkLikeForUser();
         loadStoryLikesCount();
@@ -398,7 +398,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
             final Contribution contribution = new Contribution(content, user);
             contribution.setCreatedDate(new Date());
 
-            contributionServices.saveContribution(story, contribution, (firebaseError, firebase) -> {
+            contributionServices.saveContribution(story.getKey(), contribution, (firebaseError, firebase) -> {
                 if(firebaseError == null) {
                     userServices.incrementContributionPoint();
 
@@ -513,7 +513,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     public void onContributionRemove(Contribution contribution) {
         final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
                 , getString(R.string.load_message_wait), true, false);
-        contributionServices.removeContribution(story, contribution, new Firebase.CompletionListener() {
+        contributionServices.removeContribution(story.getKey(), contribution, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 progressDialog.dismiss();

@@ -42,12 +42,12 @@ public class ContributionServices extends ProgramServices {
         this.type = type;
     }
 
-    public void saveContribution(Story story, Contribution contribution, Firebase.CompletionListener listener) {
+    public void saveContribution(String key, Contribution contribution, Firebase.CompletionListener listener) {
         User user = new User();
         user.setKey(contribution.getAuthor().getKey());
         contribution.setAuthor(user);
 
-        Firebase object = getDefaultRoot().child(type.path).child(story.getKey()).push();
+        Firebase object = getDefaultRoot().child(type.path).child(key).push();
         object.setValue(contribution, listener);
         contribution.setKey(object.getKey());
     }
@@ -62,14 +62,14 @@ public class ContributionServices extends ProgramServices {
         });
     }
     
-    public void removeContribution(Story story, Contribution contribution, Firebase.CompletionListener listener) {
-        getDefaultRoot().child(type.path).child(story.getKey()).child(contribution.getKey()).removeValue();
-        getDefaultRoot().child(type.disapprovedPath).child(story.getKey())
+    public void removeContribution(String key, Contribution contribution, Firebase.CompletionListener listener) {
+        getDefaultRoot().child(type.path).child(key).child(contribution.getKey()).removeValue();
+        getDefaultRoot().child(type.disapprovedPath).child(key)
                 .child(contribution.getKey()).setValue(contribution, listener);
     }
 
-    public void addChildEventListener(Story story, ChildEventListener childEventListener) {
-        getDefaultRoot().child(type.path).child(story.getKey()).addChildEventListener(childEventListener);
+    public void addChildEventListener(String key, ChildEventListener childEventListener) {
+        getDefaultRoot().child(type.path).child(key).addChildEventListener(childEventListener);
     }
     
 }
