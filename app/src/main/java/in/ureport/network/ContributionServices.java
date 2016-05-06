@@ -38,7 +38,7 @@ public class ContributionServices extends ProgramServices {
 
     private final Type type;
 
-    public ContributionServigces(Type type) {
+    public ContributionServices(Type type) {
         this.type = type;
     }
 
