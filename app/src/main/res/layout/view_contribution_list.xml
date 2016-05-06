@@ -4,8 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="10dp"
-    android:paddingStart="10dp"
     android:background="@android:color/white"
     tools:showIn="@layout/fragment_story_view">
 
@@ -31,7 +29,7 @@
         android:id="@+id/addContributionContainer"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
-        android:layout_margin="5dp"
+        android:layout_marginTop="5dp"
         android:layout_alignParentBottom="true"
         layout="@layout/item_add_contribution"
         tools:visibility="visible" />

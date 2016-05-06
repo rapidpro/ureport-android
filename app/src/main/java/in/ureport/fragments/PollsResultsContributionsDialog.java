@@ -114,9 +114,6 @@ public class PollsResultsContributionsDialog extends BottomSheetDialogFragment i
 
         contribute = (TextView) view.findViewById(R.id.contribute);
         contribute.setText(R.string.title_comment_poll);
-
-        View addContributionContainer = view.findViewById(R.id.addContributionContainer);
-        addContributionContainer.setBackgroundDrawable(null);
     }
 
     private TextView.OnEditorActionListener onDescriptionEditorActionListener = (textView, i, keyEvent) -> {

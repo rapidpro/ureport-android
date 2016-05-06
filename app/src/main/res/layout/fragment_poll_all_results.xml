@@ -48,21 +48,4 @@
 
     </RelativeLayout>
 
-    <!--<android.support.v4.widget.NestedScrollView-->
-        <!--android:id="@+id/bottomSheet"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_marginTop="50dp"-->
-        <!--android:clipToPadding="true"-->
-        <!--android:background="@android:color/white"-->
-        <!--android:elevation="10dp"-->
-        <!--app:layout_behavior="android.support.design.widget.BottomSheetBehavior">-->
-
-        <!--<include-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--layout="@layout/view_contribution_list"/>-->
-
-    <!--</android.support.v4.widget.NestedScrollView>-->
-
 </android.support.design.widget.CoordinatorLayout>
