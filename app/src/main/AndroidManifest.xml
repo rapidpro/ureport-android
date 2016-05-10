@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="in.ureport" >
 
-    <uses-sdk tools:overrideLibrary="de.hdodenhof.circleimageview, com.firebase.ui" />
+    <uses-sdk tools:overrideLibrary="de.hdodenhof.circleimageview, com.moxun.tagcloudlib" />
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />

@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="@dimen/card_margin">
 
     <LinearLayout
@@ -11,15 +12,16 @@
 
         <include layout="@layout/view_poll_results_card_header"/>
 
-        <TextView
-            android:id="@+id/wordsList"
+        <com.moxun.tagcloudlib.view.TagCloudView
+            android:id="@+id/tag_cloud"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="5dp"
-            style="@style/AppTheme.CardItemPadding" />
-
+            android:layout_height="400dp"
+            android:layout_margin="10dp"
+            app:autoScrollMode="uniform"
+            app:darkColor="?attr/colorPrimaryDark"
+            app:lightColor="?attr/colorPrimary"
+            app:radiusPercent="0.65"
+            app:scrollSpeed="3" />
 
         <Button
             android:id="@+id/resultsByRegion"
