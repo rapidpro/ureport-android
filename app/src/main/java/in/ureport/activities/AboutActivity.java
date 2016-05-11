@@ -26,7 +26,7 @@ public class AboutActivity extends AppCompatActivity {
     private static final String TAG = "AboutActivity";
 
     private static final String TWITTER_URL = "http://twitter.com/%1$s";
-    private static final String FACEBOOK_URL = "https://www.facebook.com/U-report-Nigeria-1429673597287501";
+    private static final String FACEBOOK_URL = "https://www.facebook.com/%1$s";
 
     private static final String ABOUT_VIDEO_ID = "g4fGB5mQ_gE";
 
@@ -70,7 +70,8 @@ public class AboutActivity extends AppCompatActivity {
     private View.OnClickListener onFacebookClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            openPage(Uri.parse(FACEBOOK_URL));
+            CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
+            openPage(Uri.parse(String.format(FACEBOOK_URL, countryProgram.getFacebook())));
         }
     };
 
