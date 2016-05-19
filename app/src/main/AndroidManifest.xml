@@ -159,6 +159,12 @@
                 android:value=".activities.MainActivity" />
         </activity>
 
+        <activity android:name=".activities.CaptureActivityAnyOrientation"
+            android:screenOrientation="fullSensor"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+
         <meta-data
             android:name="AA_DB_NAME"
             android:value="Ureport.db" />
