@@ -195,25 +195,20 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
             chatRoomsAdapter.getChatRooms().beginBatchedUpdates();
 
             List<ChatRoomHolder> chatRoomHolders = new ArrayList<>();
-            List<String> chatRoomsFailed = new ArrayList<>();
 
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 String chatRoomKey = snapshot.getKey();
                 chatRoomServices.getChatRoom(chatRoomKey, new ChatRoomInterface.OnChatRoomLoadedListener() {
                     @Override
-                    public void onChatRoomLoadFailed() {
-                        chatRoomsFailed.add(chatRoomKey);
-                    }
-
+                    public void onChatRoomLoadFailed() {}
                     @Override
                     public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
                         ChatRoomHolder holder = new ChatRoomHolder(chatRoom, chatMembers, null);
                         chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
                         chatRoomHolders.add(holder);
 
-                        if(chatRoomHolders.size() + chatRoomsFailed.size() >= dataSnapshot.getChildrenCount()) {
-                            onLoadedChatRooms(chatRoomHolders);
-                        }
+                        updateChatRoomsWithLastMessage(holder);
+                        onUpdatedChatRooms(chatRoomHolders);
                     }
                 });
             }
@@ -233,33 +228,21 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         this.selectableChatRoom = chatRoom;
     }
 
-    private void onLoadedChatRooms(List<ChatRoomHolder> chatRoomHolders) {
+    private void onUpdatedChatRooms(List<ChatRoomHolder> chatRoomHolders) {
         updateChatRooms(chatRoomHolders);
-        updateChatRoomsWithLastMessage(chatRoomHolders);
-
-        selectFirstIfNeeded();
         selectChatRoomIfNeeded(selectableChatRoom);
+        chatsList.postDelayed(this::selectFirstIfNeeded, 4000);
     }
 
-    private void updateChatRoomsWithLastMessage(List<ChatRoomHolder> chatRoomHolders) {
-        List<ChatMessage> chatMessages = new ArrayList<>();
-        List<ChatRoomHolder> chatRoomsWithoutMessages = new ArrayList<>();
-
-        for (ChatRoomHolder chatRoomHolder : chatRoomHolders) {
-            chatRoomServices.loadLastChatMessage(chatRoomHolder, new ChatRoomInterface.OnChatLastMessageLoadedListener() {
-                @Override
-                public void onChatLastMessageLoaded(ChatMessage chatMessage) {
-                    chatMessages.add(chatMessage);
-                    if(chatMessages.size() + chatRoomsWithoutMessages.size() >= chatRoomHolders.size()) {
-                        updateChatRooms(chatRoomHolders);
-                    }
-                }
-                @Override
-                public void onChatLastMessageLoadFailed() {
-                    chatRoomsWithoutMessages.add(chatRoomHolder);
-                }
-            });
-        }
+    private void updateChatRoomsWithLastMessage(final ChatRoomHolder chatRoomHolder) {
+        chatRoomServices.loadLastChatMessage(chatRoomHolder, new ChatRoomInterface.OnChatLastMessageLoadedListener() {
+            @Override
+            public void onChatLastMessageLoaded(ChatMessage chatMessage) {
+                chatRoomsAdapter.addChatRoom(chatRoomHolder);
+            }
+            @Override
+            public void onChatLastMessageLoadFailed() {}
+        });
     }
 
     private void updateChatRooms(List<ChatRoomHolder> chatRoomHolders) {

@@ -148,7 +148,8 @@ public class ChatRoomServices extends ProgramServices {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
 
-                if (dataSnapshot.getChildrenCount() > 0) {
+                Log.d(TAG, "onDataChange() called with: " + "dataSnapshot = [" + dataSnapshot + "]");
+                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
                     ChatMessage lastChatMessage = dataSnapshot.getChildren().iterator().next().getValue(ChatMessage.class);
                     if (lastChatMessage != null) {
                         lastChatMessage.setKey(dataSnapshot.getKey());
