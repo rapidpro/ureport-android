@@ -348,6 +348,8 @@
     <string name="title_comment">Comment</string>
     <string name="title_comment_poll">Be the first to comment this poll</string>
     <string name="poll_comment">Add a comment</string>
+    <string name="label_web_moderation">Web Moderation</string>
+    <string name="message_authentication_started">Authentication started successfully</string>
 
     <plurals name="files_attached">
         <item quantity="one">%1$s file attached</item>
