@@ -134,8 +134,8 @@ public class CreateGroupFragment extends Fragment {
         if(editMode) {
             title.setText(groupChatRoom.getTitle());
             description.setText(groupChatRoom.getSubject());
-            privateGroup.setChecked(groupChatRoom.getPrivateAccess());
-            mediaAllowed.setChecked(groupChatRoom.getMediaAllowed());
+            privateGroup.setChecked(groupChatRoom.getPrivateAccess() != null && groupChatRoom.getPrivateAccess());
+            mediaAllowed.setChecked(groupChatRoom.getMediaAllowed() != null && groupChatRoom.getMediaAllowed());
 
             if(groupChatRoom.getPicture() != null)
                 ImageLoader.loadGroupPictureToImageView(addPicture, groupChatRoom.getPicture());
