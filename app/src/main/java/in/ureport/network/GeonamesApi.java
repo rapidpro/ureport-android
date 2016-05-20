@@ -13,15 +13,15 @@ import retrofit.http.Query;
 public interface GeonamesApi {
 
     @GET("/countryInfoJSON")
-    Response<CountryInfo> getCountryInfo(@Query("country") String country, @Query("username") String username);
+    GeonamesResponse<CountryInfo> getCountryInfo(@Query("country") String country, @Query("username") String username);
 
     @GET("/countryInfoJSON")
-    Response<CountryInfo> getCountriesByLanguage(@Query("lang") String language, @Query("username") String username);
+    GeonamesResponse<CountryInfo> getCountriesByLanguage(@Query("lang") String language, @Query("username") String username);
 
     @GET("/childrenJSON")
-    Response<Location> getStates(@Query("geonameId") Long geonameId, @Query("username") String username);
+    GeonamesResponse<Location> getStates(@Query("geonameId") Long geonameId, @Query("username") String username);
 
-    class Response<T> {
+    public class GeonamesResponse<T> {
 
         private List<T> geonames;
 

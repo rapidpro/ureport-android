@@ -132,7 +132,7 @@ public class CredentialsLoginFragment extends Fragment {
                 progressDialog.dismiss();
 
                 User user = dataSnapshot.getValue(User.class);
-                loginListener.onUserReady(user);
+                loginListener.onUserReady(user, false);
             }
         });
     }
