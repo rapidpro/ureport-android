@@ -17,7 +17,6 @@ import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
-import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.models.IndividualChatRoom;
@@ -32,10 +31,12 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final String TAG = "ChatRoomsAdapter";
 
     private SortedList<ChatRoomHolder> chatRooms;
-
     private DateFormat hourFormatter;
-
     private OnChatRoomSelectedListener onChatRoomSelectedListener;
+
+    private ChatRoomHolder selectedItem;
+    private boolean forceClick = false;
+    private boolean selectable = false;
 
     public ChatRoomsAdapter() {
         this.chatRooms = new SortedList<>(ChatRoomHolder.class, sortedListAdapterCallback);
@@ -53,15 +54,31 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         try {
-            ((ViewHolder) holder).bindView(chatRooms.get(position));
+            ChatRoomHolder chatRoomHolder = chatRooms.get(position);
+
+            holder.itemView.setSelected(isSelected(chatRoomHolder));
+            ((ViewHolder) holder).bindView(chatRoomHolder);
+
+            if(forceClick && isSelected(chatRoomHolder)) {
+                forceClick = false;
+                holder.itemView.performClick();
+            }
         } catch(Exception exception) {
             Log.e(TAG, "onBindViewHolder: " + exception.getLocalizedMessage());
         }
     }
 
+    private boolean isSelected(ChatRoomHolder chatRoomHolder) {
+        return selectedItem != null && selectedItem.equals(chatRoomHolder);
+    }
+
     @Override
     public long getItemId(int position) {
-        return chatRooms.get(position).chatRoom.getKey().hashCode();
+        return getChatRoomId(chatRooms.get(position));
+    }
+
+    private int getChatRoomId(ChatRoomHolder holder) {
+        return holder.chatRoom.getKey().hashCode();
     }
 
     @Override
@@ -83,18 +100,18 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.chatRooms.addAll(chatRooms);
     }
 
-    public void addChatRoom(ChatRoomHolder chatRoom) {
-        chatRooms.add(chatRoom);
+    public void addChatRoom(ChatRoomHolder newChatRoomHolder) {
+        int indexOfChatRoom = getIndexOfChatRoom(newChatRoomHolder);
+        if(indexOfChatRoom < 0) {
+            chatRooms.add(newChatRoomHolder);
+        } else {
+            chatRooms.updateItemAt(indexOfChatRoom, newChatRoomHolder);
+        }
     }
 
-    public void updateChatRoomMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
-        for (int position = 0; position < chatRooms.size(); position++) {
-            ChatRoomHolder chatRoomHolder = chatRooms.get(position);
-            if(chatRoomHolder.chatRoom.equals(chatRoom)) {
-                chatRoomHolder.lastMessage = chatMessage;
-                chatRooms.updateItemAt(position, chatRoomHolder);
-                break;
-            }
+    public void fillSelectableWhenNull() {
+        if(selectable && (selectedItem == null || getIndexOfChatRoom(selectedItem)< 0)) {
+            selectFirst();
         }
     }
 
@@ -176,12 +193,57 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             public void onClick(View view) {
                 ChatRoomHolder chatRoomHolder = chatRooms.get(getLayoutPosition());
                 onChatRoomSelectedListener.onChatRoomSelected(chatRoomHolder.chatRoom, chatRoomHolder.members);
+
+                selectCurrentPosition();
             }
         };
+
+        private void selectCurrentPosition() {
+            if(selectable) {
+                if(selectedItem != null)
+                    notifyItemChanged(getIndexOfChatRoom(selectedItem));
+                selectedItem = chatRooms.get(getLayoutPosition());
+                notifyItemChanged(getLayoutPosition());
+            }
+        }
     }
 
     public void setOnChatRoomSelectedListener(OnChatRoomSelectedListener onChatRoomSelectedListener) {
         this.onChatRoomSelectedListener = onChatRoomSelectedListener;
+    }
+
+    public void setSelectable(boolean selectable) {
+        this.selectable = selectable;
+        this.selectedItem = !selectable ? null : selectedItem;
+    }
+
+    public void selectFirst() {
+        this.forceClick = true;
+        this.selectedItem = chatRooms.get(0);
+        this.notifyDataSetChanged();
+    }
+
+    public void selectChatRoom(ChatRoom chatRoom) {
+        ChatRoomHolder holder = new ChatRoomHolder(chatRoom);
+        int indexOfChat = getIndexOfChatRoom(holder);
+
+        if(indexOfChat >= 0) {
+            selectedItem = holder;
+            notifyItemChanged(indexOfChat);
+        }
+    }
+
+    private int getIndexOfChatRoom(ChatRoomHolder holder) {
+        int indexOfChat = -1;
+
+        for (int position = 0; position < getItemCount(); position++) {
+            long itemId = getItemId(position);
+            if (getChatRoomId(holder) == itemId) {
+                indexOfChat = position;
+                break;
+            }
+        }
+        return indexOfChat;
     }
 
     public interface OnChatRoomSelectedListener {
@@ -197,7 +259,8 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         @Override
         public boolean areContentsTheSame(ChatRoomHolder oldItem, ChatRoomHolder newItem) {
-            return oldItem.chatRoom.getKey().equals(newItem.chatRoom.getKey());
+            return oldItem.lastMessage != null && newItem.lastMessage != null
+                && oldItem.lastMessage.equals(newItem.lastMessage);
         }
 
         @Override

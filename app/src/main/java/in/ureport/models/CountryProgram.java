@@ -31,10 +31,12 @@ public class CountryProgram {
 
     private String twitter;
 
+    private String facebook;
+
     private String group;
 
     public CountryProgram(String code, @StyleRes int theme, @StringRes int channel
-            , String name, int organization, int rapidproEndpoint, int ureportEndpoint, String twitter, String group) {
+            , String name, int organization, int rapidproEndpoint, int ureportEndpoint, String twitter, String facebook, String group) {
         this.code = code;
         this.theme = theme;
         this.channel = channel;
@@ -43,6 +45,7 @@ public class CountryProgram {
         this.rapidproEndpoint = rapidproEndpoint;
         this.ureportEndpoint = ureportEndpoint;
         this.twitter = twitter;
+        this.facebook = facebook;
         this.group = group;
     }
 
@@ -123,6 +126,14 @@ public class CountryProgram {
 
     public void setTwitter(String twitter) {
         this.twitter = twitter;
+    }
+
+    public String getFacebook() {
+        return facebook;
+    }
+
+    public void setFacebook(String facebook) {
+        this.facebook = facebook;
     }
 
     public String getGroup() {

@@ -31,6 +31,8 @@
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/addMarker"
         android:layout_toEndOf="@+id/addMarker"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:textColor="@android:color/black"
         android:imeOptions="actionDone"
         android:singleLine="true"

@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -42,13 +43,7 @@ public class MediaViewFragment extends Fragment {
         ArrayList<Media> medias = new ArrayList<>();
         medias.add(media);
 
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(EXTRA_MEDIAS, medias);
-        args.putInt(EXTRA_POSITION, 0);
-
-        MediaViewFragment fragment = new MediaViewFragment();
-        fragment.setArguments(args);
-        return fragment;
+        return newInstance(medias, 0);
     }
 
     public static MediaViewFragment newInstance(ArrayList<Media> medias, int position) {
@@ -98,13 +93,48 @@ public class MediaViewFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getActivity().setTitle("");
 
-        mediaPager = (ViewPager) view.findViewById(R.id.mediaPager);
-        mediaPager.addOnPageChangeListener(onPageChangeListener);
+        if(medias.size() == 1 && containsVideoMedia()) {
+            MediaFragment mediaFragment = MediaFragment.newInstance(medias.get(0));
+            getChildFragmentManager().beginTransaction().add(R.id.container, mediaFragment).commit();
+        } else {
+            mediaPager = (ViewPager) view.findViewById(R.id.mediaPager);
+            mediaPager.addOnPageChangeListener(onPageChangeListener);
 
-        mediaViewAdapter = new MediaViewAdapter(getChildFragmentManager(), medias);
-        mediaPager.setAdapter(mediaViewAdapter);
-        mediaPager.setCurrentItem(position);
-        mediaPager.setPageTransformer(true, new DepthPageTransformer());
+            mediaViewAdapter = new MediaViewAdapter(getChildFragmentManager(), filterSupportedMedias());
+            mediaPager.setAdapter(mediaViewAdapter);
+            mediaPager.setCurrentItem(position);
+            mediaPager.setPageTransformer(true, new DepthPageTransformer());
+        }
+    }
+
+    private boolean containsVideoMedia() {
+        for (Media media : medias) {
+            if (media.getType() == Media.Type.VideoPhone)
+                return true;
+        }
+        return false;
+    }
+
+    @NonNull
+    private List<Media> filterSupportedMedias() {
+        List<Media> medias = new ArrayList<>();
+        for (int i = 0; i < this.medias.size(); i++) {
+            Media media = this.medias.get(i);
+            if(isSupportedMedia(media)) {
+                medias.add(media);
+            } else if(position > 0 && position >= i) {
+                position--;
+            }
+        }
+        return medias;
+    }
+
+    private boolean isSupportedMedia(Media media) {
+        switch (media.getType()) {
+            case File: case Audio:
+                return false;
+        }
+        return true;
     }
 
     private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -123,12 +153,9 @@ public class MediaViewFragment extends Fragment {
     };
 
     private void closeMediaViewFragmentDelayed() {
-        mediaPager.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if(onCloseMediaViewListener != null)
-                    onCloseMediaViewListener.onCloseMediaView();
-            }
+        mediaPager.postDelayed(() -> {
+            if(onCloseMediaViewListener != null)
+                onCloseMediaViewListener.onCloseMediaView();
         }, 500);
     }
 

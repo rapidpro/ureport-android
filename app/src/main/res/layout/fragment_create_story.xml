@@ -1,81 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="fill_vertical">
+    android:layout_gravity="center_horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <ScrollView
+        android:layout_width="@dimen/credential_item_width"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="fill_vertical">
 
-        <br.com.ilhasoft.support.widget.CustomTextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/AppTheme.FormMargin"
-            android:layout_marginTop="10dp">
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/title"
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:maxLength="80"
+                style="@style/AppTheme.FormMargin"
+                android:layout_marginTop="10dp">
+
+                <EditText
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:maxLength="80"
+                    android:inputType="textCapSentences"
+                    android:imeOptions="flagNoFullscreen"
+                    android:hint="@string/create_story_insert_title"/>
+
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+
+            <EditText
+                android:id="@+id/markers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:drawablePadding="5dp"
+                android:drawableLeft="@drawable/ic_tag_grey600_18dp"
+                android:drawableStart="@drawable/ic_tag_grey600_18dp"
+                android:gravity="start"
+                android:textAlignment="viewStart"
                 android:inputType="text"
-                android:imeOptions="flagNoFullscreen"
-                android:hint="@string/create_story_insert_title"/>
+                android:focusable="false"
+                style="@style/AppTheme.FormMargin"
+                android:textColorHint="?attr/colorPrimary"
+                android:hint="@string/create_story_add_markers"/>
 
-        </br.com.ilhasoft.support.widget.CustomTextInputLayout>
-
-        <EditText
-            android:id="@+id/markers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:drawablePadding="5dp"
-            android:drawableLeft="@drawable/ic_tag_grey600_18dp"
-            android:drawableStart="@drawable/ic_tag_grey600_18dp"
-            android:gravity="start"
-            android:textAlignment="viewStart"
-            android:inputType="text"
-            android:focusable="false"
-            style="@style/AppTheme.FormMargin"
-            android:textColorHint="?attr/colorPrimary"
-            android:hint="@string/create_story_add_markers"/>
-
-        <br.com.ilhasoft.support.widget.CustomTextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/AppTheme.FormMargin">
-
-            <EditText
-                android:id="@+id/content"
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top|left|start"
-                android:textSize="16sp"
-                android:inputType="textMultiLine"
-                android:hint="@string/create_story_insert_story_content"/>
+                style="@style/AppTheme.FormMargin">
 
-        </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+                <EditText
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|left|start"
+                    android:textSize="16sp"
+                    android:inputType="textMultiLine"
+                    android:hint="@string/create_story_insert_story_content"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/create_story_title_media"
-            android:layout_marginTop="15dp"
-            style="@style/AppTheme.FormMargin"/>
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/mediaAddList"
-            android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:orientation="horizontal"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            style="@style/AppTheme.FormMargin" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_story_title_media"
+                android:layout_marginTop="15dp"
+                style="@style/AppTheme.FormMargin"/>
 
-    </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/mediaAddList"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                style="@style/AppTheme.FormMargin" />
 
-</ScrollView>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/details"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

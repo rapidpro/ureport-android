@@ -29,6 +29,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private OnContributionRemoveListener onContributionRemoveListener;
 
     public ContributionAdapter() {
+        contributions = new ArrayList<>();
         setHasStableIds(true);
     }
 
@@ -55,14 +56,8 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void addContribution(Contribution contribution) {
-        if(contributions == null) {
-            contributions = new ArrayList<>();
-            contributions.add(contribution);
-            notifyDataSetChanged();
-        } else {
-            contributions.add(contribution);
-            notifyItemInserted(contributions.size());
-        }
+        contributions.add(contribution);
+        notifyItemInserted(contributions.size());
     }
 
     public void removeContribution(Contribution contribution) {

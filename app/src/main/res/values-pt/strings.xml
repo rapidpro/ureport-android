@@ -39,8 +39,8 @@
   <string name="label_new_story">Nova história</string>
   <string name="create_story_insert_cover">Insira uma imagem de capa</string>
   <string name="create_story_insert_title">Insira um título</string>
-  <string name="create_story_insert_story_content">Nos dia o que está acontecendo</string>
-  <string name="create_story_title_media">Insira uma mídia</string>
+  <string name="create_story_insert_story_content">Nos diga o que está acontecendo</string>
+  <string name="create_story_title_media">Insira Mídia</string>
   <string name="create_story_add_markers">Adicionar marcadores</string>
   <string name="media_remove">Remover</string>
   <string name="title_media_source">Escolha uma fonte de mídia:</string>
@@ -190,7 +190,7 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
   <string name="search_title">Buscar</string>
   <string name="search_hint_users">Buscar usuários</string>
   <string name="error_image_upload">Não foi possível fazer o upload dessa imagem, escolha outra!</string>
-  <string name="load_message_uploading_image">Imagem em upload...</string>
+  <string name="load_message_uploading_image">Fazendo upload de arquivos...</string>
   <string name="chat_room_removed_user_name">Usuário removido</string>
   <string name="error_full_group">Esse grupo está lotado de usuários! Entre em outro.</string>
   <string name="error_already_join_group">Você já é membro deste grupo.</string>
@@ -239,7 +239,7 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
   <string name="stories_moderation">Histórias</string>
   <string name="label_moderation">Moderação</string>
   <string name="title_moderation">%1$s moderação</string>
-  <string name="button_title_disapprove">Desaprovar</string>
+  <string name="button_title_disapprove">Rejeitar</string>
   <string name="button_title_publish">Publicar</string>
   <string name="success_story_update_message">História atualizada com sucesso!</string>
   <string name="message_story_publish_warning">Sua história foi enviada para o time do U-Report. Verifique depois e veja se foi publicada!</string>
@@ -300,4 +300,26 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
   <string name="title_chat_message">Nova mensagem de chat</string>
   <string name="prompt_media_notification">media</string>
   <string name="error_message_permission">Não é possível efetuar login com Google+ sem permissões</string>
+  <string name="error_compressing_video">Não foi possível comprimir o vídeo, tente novamente</string>
+  <string name="error_get_file">Ocorreu um erro, tente com outro arquivo</string>
+  <string name="error_media_upload">O upload da mídia falhou. Verifique sua conexão e tente novamente.</string>
+  <string name="error_message_audio">Não foi possível gravar o áudio. Tente novamente!</string>
+  <string name="error_message_audio_play">Não foi possível reproduzir o áudio. Tente novamente.</string>
+  <string name="error_message_mic">Há um problema com seu microfone. Não foi possível gravar o áudio.</string>
+  <string name="error_message_permission_external">É necessário dar permissão para essa ação.</string>
+  <string name="load_message_waiting_connection">Esperando conexão...</string>
+  <string name="message_compressing_video">Comprimindo vídeo...</string>
+  <string name="prompt_file_upload">Selecione um arquivo</string>
+  <string name="title_button_record">Gravar</string>
+  <string name="title_button_stop">Parar</string>
+  <string name="title_camera">Câmera</string>
+  <string name="title_file">Arquivo</string>
+  <string name="title_gallery">Galeria</string>
+  <string name="title_loading_audio">Carregando áudio</string>
+  <string name="title_record">Gravar</string>
+  <string name="title_recorder">Gravador</string>
+  <string name="title_video">Vídeo</string>
+  <string name="title_youtube">Youtube</string>
+  <string name="prompt_done">Pronto</string>
+  <string name="message_upload_cancel">Seu upload foi cancelado!</string>
 </resources>

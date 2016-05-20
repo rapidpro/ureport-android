@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    android:id="@+id/content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -56,15 +58,19 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/messagesList"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/bottomContainer"
         android:background="#ebebeb"/>
 
     <RelativeLayout
+        android:id="@+id/bottomContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:animateLayoutChanges="true">
 
         <EditText
             android:id="@+id/message"
@@ -84,17 +90,18 @@
             android:hint="@string/chat_room_message_hint"
             tools:targetApi="17"/>
 
-        <ImageButton
-            android:id="@+id/addPicture"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+        <ImageView
+            android:id="@+id/attachFile"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="10dp"
             android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/ic_camera_grey600_36dp"
-            android:background="@null"/>
+            android:layout_alignParentStart="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_attach_file_blue"
+            android:visibility="visible" />
 
         <ImageButton
             android:id="@+id/send"
@@ -106,8 +113,23 @@
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
             android:src="@drawable/ic_send_white_24dp"
-            android:background="@drawable/shape_highlight" />
+            android:background="@drawable/shape_highlight"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/record"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/ic_mic_blue"
+            android:visibility="visible" />
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

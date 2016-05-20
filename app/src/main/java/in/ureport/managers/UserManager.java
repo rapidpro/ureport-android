@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -205,21 +206,22 @@ public class UserManager {
     }
 
     public static void leaveFromGroup(final Activity activity, final ChatRoom chatRoom) {
+        leaveFromGroup(activity, chatRoom, activity::finish);
+    }
+
+    public static void leaveFromGroup(final Activity activity, final ChatRoom chatRoom, OnRemoveChatListener onRemoveChatListener) {
         AlertDialog alertDialog = new AlertDialog.Builder(activity)
                 .setMessage(R.string.chat_group_leave)
                 .setNegativeButton(R.string.cancel_dialog_button, null)
-                .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        User user = new User();
-                        user.setKey(getUserId());
-                        user.setCountryProgram(UserManager.getCountryCode());
+                .setPositiveButton(R.string.confirm_neutral_dialog_button, (dialogInterface, i) -> {
+                    User user = new User();
+                    user.setKey(getUserId());
+                    user.setCountryProgram(UserManager.getCountryCode());
 
-                        ChatRoomServices chatRoomServices = new ChatRoomServices();
-                        chatRoomServices.removeChatMember(activity, user, chatRoom.getKey());
+                    ChatRoomServices chatRoomServices = new ChatRoomServices();
+                    chatRoomServices.removeChatMember(activity, user, chatRoom.getKey());
 
-                        activity.finish();
-                    }
+                    onRemoveChatListener.onRemoveChat();
                 }).create();
         alertDialog.show();
     }
@@ -271,5 +273,9 @@ public class UserManager {
                     }
                 }).create();
         alertDialog.show();
+    }
+
+    public interface OnRemoveChatListener {
+        void onRemoveChat();
     }
 }

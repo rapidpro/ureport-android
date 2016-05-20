@@ -4,7 +4,9 @@
     <color name="primary_color">#42b6e7</color>
     <color name="primary_dark_color">#3aadda</color>
     <color name="translucent_cover">#6000</color>
-    <color name="window_background">#e1e1e1</color>
+    <color name="window_background">#eeeeee</color>
+    <color name="light_window_background">#eeeeee</color>
+    <color name="white_window_background">#fafafa</color>
     <color name="yellow">#ebce2c</color>
 
     <color name="highlight">#ec2248</color>
@@ -19,8 +21,14 @@
     <color name="light_yellow_highlight">#ffcc01</color>
     <color name="dark_yellow_highlight">#f7bb01</color>
 
+    <color name="super_light_cyan_highlight">#a6effe</color>
     <color name="light_cyan_highlight">#01d1db</color>
     <color name="dark_cyan_highlight">#00bbc2</color>
+
+    <color name="orange">#FF881E</color>
+    <color name="dark_yellow">#ffc652</color>
+    <color name="purple">#c356d7</color>
+    <color name="red">#f65251</color>
 
     <string-array name="poll_colors">
         <item>#78c95d</item>

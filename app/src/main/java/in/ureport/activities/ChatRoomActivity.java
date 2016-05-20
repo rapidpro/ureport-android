@@ -9,10 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.ChangeBounds;
-import android.transition.Slide;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -63,7 +59,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         } else {
             ChatRoom chatRoom = getIntent().getParcelableExtra(EXTRA_CHAT_ROOM);
             ChatMembers chatMembers = getIntent().getParcelableExtra(EXTRA_CHAT_MEMBERS);
-            chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, chatMembers);
+            chatRoomFragment = ChatRoomFragment.newInstance(chatRoom, chatMembers, false);
         }
         addSharedElementTranstion(chatRoomFragment);
     }
@@ -118,16 +114,6 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
         UserManager.leaveFromGroup(this, chatRoom);
     }
 
-    @Override
-    public void onMediaView(Media media, ImageView mediaImageView) {
-        MediaFragment fragment = MediaFragment.newInstance(media);
-        addSharedElementTranstion(fragment);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.content, fragment)
-                .addToBackStack(null)
-                .addSharedElement(mediaImageView, getString(R.string.transition_media))
-                .commit();
-    }
 
     private void addSharedElementTranstion(Fragment fragment) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

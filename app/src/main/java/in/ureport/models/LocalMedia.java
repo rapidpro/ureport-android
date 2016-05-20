@@ -39,6 +39,23 @@ public class LocalMedia extends Media {
         this.path = path;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        LocalMedia that = (LocalMedia) o;
+        return path.equals(that.path);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + path.hashCode();
+        return result;
+    }
+
     protected LocalMedia(Parcel in) {
         super(in);
         this.path = in.readParcelable(Uri.class.getClassLoader());

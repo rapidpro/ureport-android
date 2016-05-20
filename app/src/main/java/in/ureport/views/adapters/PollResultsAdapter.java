@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.moxun.tagcloudlib.view.TagCloudView;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.helpers.HashtagBubble;
-import in.ureport.models.ItemKeyword;
 import in.ureport.models.MultipleResult;
 import in.ureport.models.PollResult;
 import in.ureport.models.KeywordsResult;
@@ -138,22 +138,19 @@ public class PollResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private class WordsResultViewHolder extends ResultViewHolder {
 
-        private final HashtagBubble<ItemKeyword> hashtagBubble;
+        private final TagCloudView tagCloudView;
 
         public WordsResultViewHolder(View itemView) {
             super(itemView);
-            TextView wordsList = (TextView) itemView.findViewById(R.id.wordsList);
-            hashtagBubble = new HashtagBubble<>(wordsList);
+            tagCloudView = (TagCloudView) itemView.findViewById(R.id.tag_cloud);
         }
 
         @Override
         protected void bindView(PollResult pollResult) {
             super.bindView(pollResult);
-            setupWordsList((KeywordsResult) pollResult);
-        }
 
-        private void setupWordsList(KeywordsResult keywordsResult) {
-            hashtagBubble.setList(keywordsResult.getResults());
+            KeywordsResult keywordsResult = (KeywordsResult) pollResult;
+            tagCloudView.setAdapter(new PollWordsAdapter(keywordsResult.getResults()));
         }
     }
 

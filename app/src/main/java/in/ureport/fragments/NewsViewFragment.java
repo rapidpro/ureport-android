@@ -164,7 +164,7 @@ public class NewsViewFragment extends Fragment {
     private List<Media> getMedias() {
         List<Media> medias = new ArrayList<>();
         for (String image : news.getImages()) {
-            medias.add(new Media(null, image, Media.Type.Picture));
+            medias.add(new Media(null, image, Media.Type.Picture, null));
         }
         return medias;
     }

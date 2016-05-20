@@ -4,12 +4,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import in.ureport.R;
 import in.ureport.fragments.SelectModeratorsFragment;
 import in.ureport.fragments.StoriesModerationFragment;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
@@ -59,6 +68,34 @@ public class ModerationActivity extends BaseActivity implements OnUserStartChatt
         NavigationAdapter adapter = new NavigationAdapter(getSupportFragmentManager(), navigationItems);
         pager.setAdapter(adapter);
         getTabLayout().setupWithViewPager(pager);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(scanResult != null && !TextUtils.isEmpty(scanResult.getContents())) {
+            FirebaseManager.authorizeCode(scanResult.getContents());
+            Toast.makeText(ModerationActivity.this, R.string.message_authentication_started, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_moderation, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.webModeration:
+                IntentIntegrator integrator = new IntentIntegrator(this);
+                integrator.setCaptureActivity(CaptureActivityAnyOrientation.class);
+                integrator.setOrientationLocked(false);
+                integrator.initiateScan();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

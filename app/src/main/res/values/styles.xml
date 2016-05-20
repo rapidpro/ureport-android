@@ -39,6 +39,7 @@
     </style>
 
     <style name="AppTheme.FormMargin">
+        <item name="android:layout_width">@dimen/credential_item_width</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:layout_marginRight">20dp</item>
     </style>
@@ -60,9 +61,11 @@
     </style>
 
     <style name="AppTheme.CustomButton">
+        <item name="android:layout_width">@dimen/login_item_width</item>
         <item name="android:layout_marginLeft">25dp</item>
         <item name="android:layout_marginRight">25dp</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_centerHorizontal">true</item>
     </style>
 
     <style name="AppTheme.SpinnerFullItem" parent="android:Widget.TextView.SpinnerItem">
@@ -76,6 +79,26 @@
         <item name="android:gravity">center</item>
         <item name="android:background">@android:color/white</item>
         <item name="android:paddingLeft">20dp</item>
+    </style>
+
+    <style name="BlueButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">#20BEF2</item>
+        <item name="colorButtonNormal">#20BEF2</item>
+    </style>
+
+    <style name="GreenButton" parent="Theme.AppCompat.Light">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="colorControlHighlight">@color/light_green_highlight</item>
+        <item name="colorButtonNormal">@color/light_green_highlight</item>
+    </style>
+
+    <style name="StoryTitle">
+        <item name="android:maxLines">2</item>
+        <item name="android:gravity">start|bottom</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:transitionName">@string/transition_story_title</item>
     </style>
 
 </resources>

@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,7 +18,6 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.ilhasoft.support.utils.KeyboardHandler;
 import in.ureport.R;
 import in.ureport.listener.ItemSelectionListener;
 import in.ureport.listener.SelectionResultListener;
@@ -49,14 +49,31 @@ public class MarkersFragment extends Fragment implements LoaderManager.LoaderCal
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if(context instanceof SelectionResultListener) {
+            selectionResultListener = (SelectionResultListener<Marker>) context;
+        }
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getArguments();
         if(extras != null && extras.containsKey(EXTRA_SELECTED_MARKERS)) {
             selectedMarkers = extras.getParcelableArrayList(EXTRA_SELECTED_MARKERS);
+        } else if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_SELECTED_MARKERS)) {
+            selectedMarkers = savedInstanceState.getParcelableArrayList(EXTRA_SELECTED_MARKERS);
         } else {
             selectedMarkers = new ArrayList<>();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_SELECTED_MARKERS, (ArrayList<Marker>) selectedMarkers);
     }
 
     @Nullable
@@ -76,7 +93,6 @@ public class MarkersFragment extends Fragment implements LoaderManager.LoaderCal
     public void onResume() {
         super.onResume();
 
-        hideKeyboard();
         AppCompatActivity activity = (AppCompatActivity)getActivity();
         activity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_done_white_24dp);
     }
@@ -124,11 +140,6 @@ public class MarkersFragment extends Fragment implements LoaderManager.LoaderCal
         }
     }
 
-    private void hideKeyboard() {
-        KeyboardHandler keyboardHandler = new KeyboardHandler();
-        keyboardHandler.changeKeyboardVisibility(getActivity(), false);
-    }
-
     @Override
     public void onLoaderReset(Loader<List<Marker>> loader) {}
 
@@ -142,7 +153,4 @@ public class MarkersFragment extends Fragment implements LoaderManager.LoaderCal
         selectedMarkers.remove(item);
     }
 
-    public void setSelectionResultListener(SelectionResultListener<Marker> selectionResultListener) {
-        this.selectionResultListener = selectionResultListener;
-    }
 }

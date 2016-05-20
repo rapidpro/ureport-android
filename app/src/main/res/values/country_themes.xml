@@ -115,6 +115,12 @@
         <item name="colorAccent">#86001a</item>
     </style>
 
+    <style name="AppTheme.Ukraine" parent="AppTheme">
+        <item name="colorPrimary">#05b5e8</item>
+        <item name="colorPrimaryDark">#048db6</item>
+        <item name="colorAccent">#047ea2</item>
+    </style>
+
     <style name="AppTheme.Zambia" parent="AppTheme">
         <item name="colorPrimary">#00a200</item>
         <item name="colorPrimaryDark">#007000</item>

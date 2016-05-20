@@ -65,6 +65,12 @@ public class FirebaseManager {
         reference.authWithOAuthToken("twitter", options, handler);
     }
 
+    public static void authorizeCode(String code) {
+        Firebase authorization = reference.child("backend_authorization").child(code);
+        authorization.child("checked").setValue(true);
+        authorization.child("user").setValue(UserManager.getUserId());
+    }
+
     public static Firebase getReference() {
         return reference;
     }

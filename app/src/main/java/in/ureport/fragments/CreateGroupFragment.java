@@ -36,15 +36,16 @@ import java.util.List;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
+import in.ureport.helpers.MediaPicker;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.helpers.ImageLoader;
-import in.ureport.helpers.ImagePicker;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.GroupChatRoom;
+import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
@@ -87,6 +88,8 @@ public class CreateGroupFragment extends Fragment {
 
     private ChatRoomServices chatRoomServices;
     private UserServices userServices;
+
+    private ValueEventListener userEventListener;
 
     public static CreateGroupFragment newInstance(GroupChatRoom chatRoom, ChatMembers members) {
         CreateGroupFragment createGroupFragment = new CreateGroupFragment();
@@ -131,8 +134,8 @@ public class CreateGroupFragment extends Fragment {
         if(editMode) {
             title.setText(groupChatRoom.getTitle());
             description.setText(groupChatRoom.getSubject());
-            privateGroup.setChecked(groupChatRoom.getPrivateAccess());
-            mediaAllowed.setChecked(groupChatRoom.getMediaAllowed());
+            privateGroup.setChecked(groupChatRoom.getPrivateAccess() != null && groupChatRoom.getPrivateAccess());
+            mediaAllowed.setChecked(groupChatRoom.getMediaAllowed() != null && groupChatRoom.getMediaAllowed());
 
             if(groupChatRoom.getPicture() != null)
                 ImageLoader.loadGroupPictureToImageView(addPicture, groupChatRoom.getPicture());
@@ -144,10 +147,16 @@ public class CreateGroupFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
-                case ImagePicker.REQUEST_PICK_FROM_GALLERY:
+                case MediaPicker.REQUEST_PICK_FROM_GALLERY:
                     saveChoosenPicture(data);
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(userEventListener != null) userServices.removeCountryCodeListener(userEventListener);
     }
 
     private void saveChoosenPicture(Intent data) {
@@ -158,7 +167,7 @@ public class CreateGroupFragment extends Fragment {
     }
 
     private void loadUsers() {
-        ValueEventListener userEventListener = userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
+        userEventListener = userServices.loadByCountryCode(new UserServices.OnLoadAllUsersListener() {
             @Override
             public void onLoadAllUsers(List<User> users) {
                 ureportersAdapter = new UreportersAdapter(users);
@@ -169,7 +178,6 @@ public class CreateGroupFragment extends Fragment {
                 ureportersList.setAdapter(ureportersAdapter);
             }
         });
-        userServices.removeCountryCodeListener(userEventListener);
     }
 
     @Override
@@ -299,8 +307,11 @@ public class CreateGroupFragment extends Fragment {
             final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_uploading_image)
                     , true, false);
 
+            LocalMedia localMedia = new LocalMedia(pictureUri);
+            localMedia.setType(Media.Type.Picture);
+
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferFile(pictureUri, GROUP_CHAT_FOLDER, new TransferListenerAdapter() {
+            transferManager.transferMedia(localMedia, GROUP_CHAT_FOLDER, new TransferListenerAdapter(getContext(), localMedia) {
                 @Override
                 public void onTransferFinished(Media media) {
                     super.onTransferFinished(media);
@@ -358,8 +369,8 @@ public class CreateGroupFragment extends Fragment {
     private View.OnClickListener onAddPictureClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            ImagePicker imagePicker = new ImagePicker();
-            imagePicker.pickImageFromGallery(CreateGroupFragment.this);
+            MediaPicker mediaPicker = new MediaPicker();
+            mediaPicker.pickImageFromGallery(CreateGroupFragment.this);
         }
     };
 
@@ -370,7 +381,9 @@ public class CreateGroupFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence text, int start, int before, int count) {
             String query = text.toString();
-            ureportersAdapter.search(query);
+            if(ureportersAdapter != null) {
+                ureportersAdapter.search(query);
+            }
         }
 
         @Override

@@ -27,6 +27,7 @@ import in.ureport.models.GroupChatRoom;
 import in.ureport.models.IndividualChatRoom;
 import in.ureport.models.User;
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.models.holders.ChatRoomHolder;
 
 /**
  * Created by johncordeiro on 16/08/15.
@@ -105,7 +106,10 @@ public class ChatRoomServices extends ProgramServices {
                 new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.exists()) return;
+                        if (!dataSnapshot.exists()) {
+                            listener.onChatRoomLoadFailed();
+                            return;
+                        }
 
                         final ChatRoom chatRoom = getChatRoomFromSnapshot(dataSnapshot);
                         chatRoom.setKey(key);
@@ -136,25 +140,29 @@ public class ChatRoomServices extends ProgramServices {
         return chatRoom;
     }
 
-    public ChildEventListener loadLastChatMessage(final ChatRoom chatRoom, final ChatMembers chatMembers
+    public ValueEventListener loadLastChatMessage(final ChatRoomHolder holder
             , final ChatRoomInterface.OnChatLastMessageLoadedListener onChatLastMessageLoadedListener) {
-        Query query = getDefaultRoot().child(messagesPath).child(chatRoom.getKey()).orderByKey().limitToLast(1);
-        return query.addChildEventListener(new ChildEventListenerAdapter() {
+        Query query = getDefaultRoot().child(messagesPath).child(holder.chatRoom.getKey()).orderByKey().limitToLast(1);
+        return query.addValueEventListener(new ValueEventListenerAdapter() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
-                super.onChildAdded(dataSnapshot, previousChild);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
 
-                ChatMessage lastChatMessage = null;
-                try {
-                    lastChatMessage = dataSnapshot.getValue(ChatMessage.class);
-                } catch(Exception ignored) {}
-
-                if (lastChatMessage != null) {
-                    int indexOfUser = chatMembers.getUsers().indexOf(lastChatMessage.getUser());
-                    if (indexOfUser >= 0)
-                        lastChatMessage.setUser(chatMembers.getUsers().get(indexOfUser));
+                Log.d(TAG, "onDataChange() called with: " + "dataSnapshot = [" + dataSnapshot + "]");
+                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                    ChatMessage lastChatMessage = dataSnapshot.getChildren().iterator().next().getValue(ChatMessage.class);
+                    if (lastChatMessage != null) {
+                        lastChatMessage.setKey(dataSnapshot.getKey());
+                        int indexOfUser = holder.members.getUsers().indexOf(lastChatMessage.getUser());
+                        if (indexOfUser >= 0) {
+                            lastChatMessage.setUser(holder.members.getUsers().get(indexOfUser));
+                        }
+                        holder.lastMessage = lastChatMessage;
+                    }
+                    onChatLastMessageLoadedListener.onChatLastMessageLoaded(lastChatMessage);
+                } else {
+                    onChatLastMessageLoadedListener.onChatLastMessageLoadFailed();
                 }
-                onChatLastMessageLoadedListener.onChatLastMessageLoaded(chatRoom, lastChatMessage);
             }
         });
     }

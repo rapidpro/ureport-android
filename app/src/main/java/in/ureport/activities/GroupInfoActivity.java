@@ -24,7 +24,7 @@ import in.ureport.network.ChatRoomServices;
  */
 public class GroupInfoActivity extends AppCompatActivity implements InfoGroupChatListener {
 
-    private static final int REQUEST_CODE_CHAT_EDITION = 200;
+    public static final int REQUEST_CODE_CHAT_EDITION = 200;
     public static final int RESULT_REMOVED = 20;
 
     public static final String EXTRA_CHAT_ROOM = "chatRoom";

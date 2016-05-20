@@ -13,6 +13,8 @@ import in.ureport.models.Media;
  */
 public class YoutubePlayer {
 
+    private static final String YOUTUBE_FORMAT_URL = "http://youtu.be/%1$s";
+
     private Activity activity;
 
     public YoutubePlayer(Activity activity) {
@@ -23,6 +25,14 @@ public class YoutubePlayer {
         Intent intent = YouTubeStandalonePlayer.createVideoIntent(activity
                 , activity.getString(R.string.youtube_api_key), media.getId(), 0, true, false);
         activity.startActivity(intent);
+    }
+
+    public String getYoutubeKey() {
+        return activity.getString(R.string.youtube_api_key);
+    }
+
+    public static String getYoutubeLinkById(String id) {
+        return String.format(YOUTUBE_FORMAT_URL, id);
     }
 
 }

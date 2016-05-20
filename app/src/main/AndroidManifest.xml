@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="in.ureport" >
 
-    <uses-sdk tools:overrideLibrary="de.hdodenhof.circleimageview" />
+    <uses-sdk tools:overrideLibrary="de.hdodenhof.circleimageview, com.moxun.tagcloudlib" />
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -31,8 +32,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,11 +42,9 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/label_home"
-            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".activities.TutorialActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Fullscreen" />
         <activity
             android:name=".activities.ChatActivity"
@@ -55,24 +53,19 @@
         <activity
             android:name=".activities.GeneralSettingsActivity"
             android:label="@string/label_settings"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
         <activity
             android:name=".activities.ModerationActivity"
-            android:label="@string/label_moderation"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".activities.MediaActivity"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_moderation" />
+        <activity android:name=".activities.MediaActivity" />
         <activity
             android:name=".activities.UserSettingsActivity"
             android:label="@string/label_user_settings"
-            android:parentActivityName=".activities.ProfileActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.ProfileActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ProfileActivity" />
@@ -80,8 +73,7 @@
         <activity
             android:name=".activities.InviteContactsActivity"
             android:label="@string/label_invite_contacts"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -89,33 +81,27 @@
         <activity
             android:name=".activities.OpenGroupsActivity"
             android:label="@string/label_chat_groups"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
         <activity
             android:name=".activities.AboutActivity"
-            android:label="@string/label_about_ureport"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_about_ureport" />
         <activity
             android:name=".activities.DonationActivity"
-            android:label="@string/label_donation"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_donation" />
         <activity
             android:name=".activities.AmbassadorsActivity"
-            android:label="@string/label_ambassadors"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_ambassadors" />
         <activity
             android:name=".activities.GroupInfoActivity"
-            android:label="@string/label_group_info"
-            android:screenOrientation="portrait" />
+            android:label="@string/label_group_info" />
         <activity
             android:name=".activities.ProfileActivity"
             android:label="@string/label_profile"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -123,8 +109,7 @@
         <activity
             android:name=".activities.ChatCreationActivity"
             android:label="@string/label_new_chat"
-            android:parentActivityName=".activities.ChatActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.ChatActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.ChatActivity" />
@@ -142,7 +127,7 @@
             android:name=".activities.CreateStoryActivity"
             android:label="@string/label_new_story"
             android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -151,8 +136,7 @@
             android:name=".activities.StoryViewActivity"
             android:label="@string/label_story_view"
             android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="stateHidden|adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -169,12 +153,17 @@
         <activity
             android:name=".activities.PollResultsActivity"
             android:label="@string/label_poll_results"
-            android:parentActivityName=".activities.MainActivity"
-            android:screenOrientation="portrait" >
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
         </activity>
+
+        <activity android:name=".activities.CaptureActivityAnyOrientation"
+            android:screenOrientation="fullSensor"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
 
         <meta-data
             android:name="AA_DB_NAME"

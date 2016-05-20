@@ -59,6 +59,17 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
         return null;
     }
 
+    @Override
+    protected void onStartLoading() {
+        if (takeContentChanged())
+            forceLoad();
+    }
+
+    @Override
+    protected void onStopLoading() {
+        cancelLoad();
+    }
+
     private void loadCountryTokenIfNeeded() {
         if(!UserManager.isCountryTokenValid()) {
             ProxyServices proxyServices = new ProxyServices(getContext());

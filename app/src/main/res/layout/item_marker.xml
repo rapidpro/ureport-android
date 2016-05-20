@@ -6,6 +6,8 @@
     android:minHeight="40dp"
     android:orientation="horizontal"
     android:gravity="center_vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     tools:background="#f00">
 
     <ImageView

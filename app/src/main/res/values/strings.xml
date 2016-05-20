@@ -45,7 +45,7 @@
     <string name="create_story_insert_cover">Insert a cover picture</string>
     <string name="create_story_insert_title">Insert a title</string>
     <string name="create_story_insert_story_content">Tell us what\'s going on</string>
-    <string name="create_story_title_media">Insert a media</string>
+    <string name="create_story_title_media">Insert Media</string>
     <string name="create_story_add_markers">Add markers</string>
     <string name="media_remove">Remove</string>
     <string name="title_media_source">Choose a media source:</string>
@@ -197,7 +197,7 @@
     <string name="search_title">Search</string>
     <string name="search_hint_users">Search users</string>
     <string name="error_image_upload">It was not possible to upload this image, choose another!</string>
-    <string name="load_message_uploading_image">Uploading image...</string>
+    <string name="load_message_uploading_image">Uploading media...</string>
     <string name="chat_room_removed_user_name">Removed user</string>
     <string name="error_full_group">This group is full of users! Join another.</string>
     <string name="error_already_join_group">You already are member of this group.</string>
@@ -246,7 +246,7 @@
     <string name="stories_moderation">Stories</string>
     <string name="label_moderation">Moderation</string>
     <string name="title_moderation">%1$s moderation</string>
-    <string name="button_title_disapprove">Disapprove</string>
+    <string name="button_title_disapprove">Reject</string>
     <string name="button_title_publish">Publish</string>
     <string name="success_story_update_message">Story was updated with success!</string>
     <string name="message_story_publish_warning">Your story has been submitted to the U-Report team. Check back soon to see it published!</string>
@@ -314,5 +314,52 @@
     <string name="title_chat_message">New chat message</string>
     <string name="prompt_media_notification">media</string>
     <string name="error_message_permission">It\'s not possible to login with Google+ without permissions</string>
+    <string name="title_camera">Camera</string>
+    <string name="title_gallery">Gallery</string>
+    <string name="title_video">Video</string>
+    <string name="title_file">File</string>
+    <string name="title_record">Record</string>
+    <string name="title_youtube">Youtube</string>
+    <string name="error_message_permission_external">It\'s necessary to give permissions to this action.</string>
+    <string name="error_get_file">An error occurred, get other file</string>
+    <string name="prompt_file_upload">Select a file to upload</string>
+    <string name="error_compressing_video">It was not possible to compress the video, try again</string>
+    <string name="message_compressing_video">Compressing video...</string>
+    <string name="title_recorder">Recorder</string>
+    <string name="title_button_record">Record</string>
+    <string name="error_message_audio">It was not possible to record the audio. Try again!</string>
+    <string name="error_message_mic">There is a problem with your microphone. It was not possible to record the audio.</string>
+    <string name="title_button_stop">Stop</string>
+    <string name="error_message_audio_play">It was not possible to play the audio. Try again.</string>
+    <string name="title_loading_audio">Loading audio</string>
+    <string name="error_media_upload">The media upload was failed. Please check your connection and try again.</string>
+    <string name="load_message_waiting_connection">Waiting connection...</string>
+    <string name="prompt_done">Done</string>
+    <string name="message_upload_cancel">Your upload was cancelled!</string>
+    <string name="like_this_story">Like this story</string>
+    <string name="title_add">Add</string>
+    <string name="state_media_buffering">Buffering video...</string>
+    <string name="label_attach_file">Attach file</string>
+    <string name="title_first_comment">Be the first to comment on this story</string>
+    <string name="title_share">Share</string>
+    <string name="info_poll_results_large">Choose one of the polls next to see results</string>
+    <string name="title_follow">Follow us</string>
+    <string name="error_message_no_youtube">You don\'t have the youtube installed on your phone. It will be not possible to play this video.</string>
+    <string name="title_comment">Comment</string>
+    <string name="title_comment_poll">Be the first to comment this poll</string>
+    <string name="poll_comment">Add a comment</string>
+    <string name="label_web_moderation">Web Moderation</string>
+    <string name="message_authentication_started">Authentication started successfully</string>
+
+    <plurals name="files_attached">
+        <item quantity="one">%1$s file attached</item>
+        <item quantity="other">%1$s files attached</item>
+    </plurals>
+
+    <plurals name="like_count">
+        <item quantity="zero">No likes</item>
+        <item quantity="one">%1$d like</item>
+        <item quantity="other">%1$d likes</item>
+    </plurals>
 
 </resources>

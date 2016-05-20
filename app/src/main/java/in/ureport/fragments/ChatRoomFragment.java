@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,19 +35,19 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.lang.reflect.Array;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
-import in.ureport.activities.MediaActivity;
 import in.ureport.helpers.MediaSelector;
-import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.helpers.YoutubePicker;
-import in.ureport.helpers.YoutubeThumbnailHandler;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.MediaViewer;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
@@ -58,7 +58,6 @@ import in.ureport.models.IndividualChatRoom;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 import in.ureport.models.User;
-import in.ureport.models.VideoMedia;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.SpaceItemDecoration;
@@ -66,18 +65,20 @@ import in.ureport.network.UserServices;
 import in.ureport.tasks.CleanUnreadByRoomTask;
 import in.ureport.tasks.SendGcmChatTask;
 import in.ureport.views.adapters.ChatMessagesAdapter;
+import in.ureport.views.holders.ChatMessageViewHolder;
 
 /**
  * Created by johncordeiro on 7/21/15.
  */
 public class ChatRoomFragment extends Fragment
-        implements ChatMessagesAdapter.OnChatMessageSelectedListener, MediaSelector.OnLoadLocalMediaListener, YoutubePicker.OnPickVideoListener {
+        implements ChatMessageViewHolder.OnChatMessageSelectedListener, PickMediaFragment.OnPickMediaListener {
 
     private static final String TAG = "ChatRoomFragment";
 
     private static final String EXTRA_CHAT_ROOM = "chatRoom";
     private static final String EXTRA_CHAT_MEMBERS = "chatMembers";
     private static final String EXTRA_CHAT_ROOM_KEY = "chatRoomKey";
+    private static final String EXTRA_STANDALONE_MODE = "standaloneMode";
 
     private static final String MEDIA_PARENT = "chat_message";
     public static final int REMOVE_CHAT_MESSAGE_POSITION = 0;
@@ -88,13 +89,15 @@ public class ChatRoomFragment extends Fragment
     private View info;
     private RecyclerView messagesList;
     private ImageButton send;
-    private ImageButton addPicture;
+    private ImageView record;
+    private ImageView attachFile;
 
     private ChatMessagesAdapter adapter;
 
     private ChatRoom chatRoom;
     private ChatMembers chatMembers;
     private String chatRoomKey;
+    private boolean standaloneMode = false;
 
     private User user;
 
@@ -103,15 +106,17 @@ public class ChatRoomFragment extends Fragment
 
     private ChatRoomServices chatRoomServices;
     private UserServices userServices;
-    private MediaSelector mediaSelector;
-    private YoutubeThumbnailHandler youtubeThumbnailHandler;
 
-    public static ChatRoomFragment newInstance(ChatRoom chatRoom, ChatMembers chatMembers) {
+    private PickMediaFragment pickMediaFragment;
+    private MediaViewer mediaViewer;
+
+    public static ChatRoomFragment newInstance(ChatRoom chatRoom, ChatMembers chatMembers, boolean standaloneMode) {
         ChatRoomFragment chatRoomFragment = new ChatRoomFragment();
 
         Bundle args = new Bundle();
         args.putParcelable(EXTRA_CHAT_ROOM, chatRoom);
         args.putParcelable(EXTRA_CHAT_MEMBERS, chatMembers);
+        args.putBoolean(EXTRA_STANDALONE_MODE, standaloneMode);
         chatRoomFragment.setArguments(args);
 
         return chatRoomFragment;
@@ -135,6 +140,7 @@ public class ChatRoomFragment extends Fragment
             } else {
                 chatRoom = getArguments().getParcelable(EXTRA_CHAT_ROOM);
                 chatMembers = getArguments().getParcelable(EXTRA_CHAT_MEMBERS);
+                standaloneMode = getArguments().getBoolean(EXTRA_STANDALONE_MODE, false);
             }
         }
     }
@@ -166,24 +172,36 @@ public class ChatRoomFragment extends Fragment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mediaSelector.onActivityResult(this, this, requestCode, resultCode, data);
     }
 
-    private void sendMedia(Uri pictureUri) {
-        LocalMedia media = new LocalMedia();
-        media.setPath(pictureUri);
-
+    private void sendMedia(LocalMedia media) {
         final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
-                , getString(R.string.load_message_uploading_image), true);
+                , getString(R.string.load_message_uploading_image), true, true);
+
         try {
             TransferManager transferManager = new TransferManager(getActivity());
-            transferManager.transferMedia(media, MEDIA_PARENT, new TransferListenerAdapter() {
-                @Override
-                public void onTransferFinished(Media media) {
-                    super.onTransferFinished(media);
 
-                    sendChatMessageWithMedia(media);
+            progressDialog.setOnCancelListener((DialogInterface dialog) -> {
+                transferManager.cancelTransfer();
+                Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
+            });
+
+            transferManager.transferMedias(Collections.singletonList(media), MEDIA_PARENT, new TransferManager.OnTransferMediasListener() {
+                @Override
+                public void onTransferMedias(Map<LocalMedia, Media> medias) {
                     progressDialog.dismiss();
+                    sendChatMessageWithMedia(medias.values().iterator().next());
+                }
+
+                @Override
+                public void onWaitingConnection() {
+                    progressDialog.setMessage(getString(R.string.load_message_waiting_connection));
+                }
+
+                @Override
+                public void onFailed() {
+                    progressDialog.dismiss();
+                    displayMessage(R.string.error_media_upload);
                 }
             });
         } catch(Exception exception) {
@@ -226,14 +244,14 @@ public class ChatRoomFragment extends Fragment
     private void setupObjects() {
         userServices = new UserServices();
         chatRoomServices = new ChatRoomServices();
-        mediaSelector = new MediaSelector(getContext());
-        youtubeThumbnailHandler = new YoutubeThumbnailHandler();
+        mediaViewer = new MediaViewer((AppCompatActivity) getActivity());
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if(chatRoom != null) {
+        if(chatRoom != null
+        && ((getParentFragment() != null && getParentFragment().isMenuVisible()) || getParentFragment() == null)) {
             switch(chatRoom.getType()) {
                 case Group:
                     inflater.inflate(R.menu.menu_chat_group, menu);
@@ -259,13 +277,16 @@ public class ChatRoomFragment extends Fragment
 
         if(individualChatRoom.getBlocked() != null) {
             if(individualChatRoom.getBlocked().equals(UserManager.getUserId())) {
+                attachFile.setEnabled(false);
                 blockChatRoomItem.setVisible(false);
                 unblockChatRoomItem.setVisible(true);
             } else {
+                attachFile.setEnabled(true);
                 blockChatRoomItem.setVisible(false);
                 unblockChatRoomItem.setVisible(false);
             }
         } else {
+            attachFile.setEnabled(true);
             blockChatRoomItem.setVisible(true);
             unblockChatRoomItem.setVisible(false);
         }
@@ -310,6 +331,16 @@ public class ChatRoomFragment extends Fragment
         return super.onOptionsItemSelected(item);
     }
 
+    private void pickMedia() {
+        pickMediaFragment = new PickMediaFragment();
+        pickMediaFragment.setOnPickMediaListener(this);
+        getFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .setCustomAnimations(R.anim.slide_in_top, R.anim.slide_out_bottom, R.anim.slide_in_top, R.anim.slide_out_bottom)
+                .add(R.id.content, pickMediaFragment)
+                .commit();
+    }
+
     @NonNull
     private Pair<View, String>[] getPairs() {
         Pair<View, String> picturePair = Pair.create((View)picture, getString(R.string.transition_profile_picture));
@@ -343,13 +374,18 @@ public class ChatRoomFragment extends Fragment
 
     private void setupView(View view) {
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        AppCompatActivity activity = ((AppCompatActivity) getActivity());
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(!standaloneMode) {
+            AppCompatActivity activity = ((AppCompatActivity) getActivity());
+            activity.setSupportActionBar(toolbar);
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else {
+            toolbar.setVisibility(View.GONE);
+        }
         setHasOptionsMenu(true);
 
         name = (TextView) view.findViewById(R.id.name);
         message = (TextView) view.findViewById(R.id.message);
+        message.addTextChangedListener(onMessageTextWatcher);
         info = view.findViewById(R.id.info);
 
         picture = (ImageView) view.findViewById(R.id.picture);
@@ -365,11 +401,20 @@ public class ChatRoomFragment extends Fragment
         spaceItemDecoration.setVerticalSpaceHeight((int) new UnitConverter(getActivity()).convertDpToPx(10));
         messagesList.addItemDecoration(spaceItemDecoration);
 
-        addPicture = (ImageButton) view.findViewById(R.id.addPicture);
-        addPicture.setOnClickListener(onAddPictureClickListener);
+        attachFile = (ImageView) view.findViewById(R.id.attachFile);
+        attachFile.setOnClickListener(v -> pickMedia());
 
         send = (ImageButton) view.findViewById(R.id.send);
         send.setOnClickListener(onSendClickListener);
+
+        record = (ImageView) view.findViewById(R.id.record);
+        record.setOnClickListener(v -> {
+            MediaSelector mediaSelector = new MediaSelector(getContext());
+            mediaSelector.pickAudio(ChatRoomFragment.this, onPickAudioListener);
+        });
+
+        if(pickMediaFragment != null)
+            pickMediaFragment.setOnPickMediaListener(this);
     }
 
     public void updateChatRoom(ChatRoom chatRoom, ChatMembers chatMembers) {
@@ -428,14 +473,12 @@ public class ChatRoomFragment extends Fragment
                 message.setEnabled(false);
                 message.setText(getString(R.string.message_individual_chat_blocked, blockerUser.getNickname()));
                 send.setEnabled(false);
-                addPicture.setEnabled(false);
                 showAlertIfNeeded(individualChatRoom, blockerUser);
             }
         } else {
             message.setEnabled(true);
             message.setText(null);
             send.setEnabled(true);
-            addPicture.setEnabled(true);
         }
     }
 
@@ -572,7 +615,14 @@ public class ChatRoomFragment extends Fragment
         });
     }
 
+    public ChatRoom getChatRoom() {
+        return chatRoom;
+    }
+
     private ChatRoomInterface.OnChatRoomLoadedListener onLoadChatRoomByKeyListener = new ChatRoomInterface.OnChatRoomLoadedListener() {
+        @Override
+        public void onChatRoomLoadFailed() {}
+
         @Override
         public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
             ChatRoomFragment.this.chatRoom = chatRoom;
@@ -585,14 +635,7 @@ public class ChatRoomFragment extends Fragment
 
     @Override
     public void onMediaChatMessageView(ChatMessage chatMessage, ImageView mediaImageView) {
-        if(chatRoomListener != null) {
-            Intent mediaViewIntent = new Intent(getActivity(), MediaActivity.class);
-            mediaViewIntent.putExtra(MediaActivity.EXTRA_MEDIA, chatMessage.getMedia());
-
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity()
-                    , mediaImageView, getString(R.string.transition_media));
-            ActivityCompat.startActivity(getActivity(), mediaViewIntent, options.toBundle());
-        }
+        mediaViewer.viewMedia(chatMessage.getMedia(), mediaImageView);
     }
 
     @Override
@@ -637,35 +680,73 @@ public class ChatRoomFragment extends Fragment
         }
     };
 
-    private View.OnClickListener onAddPictureClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            mediaSelector.selectMedia(ChatRoomFragment.this);
-        }
-    };
-
     private void displayMessage(int messageId) {
         Toast.makeText(getActivity(), messageId, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onLoadLocalMedia(Uri uri) {
-        sendMedia(uri);
+    private void dismissMediaPicker() {
+        if(pickMediaFragment != null)
+            pickMediaFragment.dismiss();
     }
 
     @Override
-    public void onPickVideo(String videoId, String videoUrl) {
-        VideoMedia videoMedia = new VideoMedia();
-        videoMedia.setId(videoId);
-        videoMedia.setPath(videoUrl);
-        videoMedia.setUrl(youtubeThumbnailHandler.getThumbnailUrlFromVideo(videoId
-                , YoutubeThumbnailHandler.ThumbnailSizeClass.HighQuality));
+    public void onPickMedia(Media media) {
+        if(media instanceof LocalMedia) {
+            sendMedia((LocalMedia) media);
+        } else {
+            sendChatMessageWithMedia(media);
+        }
+        dismissMediaPicker();
+    }
 
-        sendChatMessageWithMedia(videoMedia);
+    private TextWatcher onMessageTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence sequence, int start, int before, int count) {
+            if (sequence != null && sequence.length() > 0) {
+                send.setVisibility(View.VISIBLE);
+                record.setVisibility(View.GONE);
+            } else {
+                record.setVisibility(View.VISIBLE);
+                send.setVisibility(View.GONE);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable watcher) {}
+    };
+
+    private MediaSelector.OnLoadLocalMediaListener onPickAudioListener = new MediaSelector.OnLoadLocalMediaListener() {
+        @Override
+        public void onLoadLocalImage(Uri uri) {}
+        @Override
+        public void onLoadLocalVideo(Uri uri) {}
+        @Override
+        public void onLoadFile(Uri uri) {}
+        @Override
+        public void onLoadAudio(Uri uri, int duration) {
+            HashMap<String, Object> metadata = new HashMap<>();
+            metadata.put(Media.KEY_DURATION, duration);
+
+            LocalMedia media = new LocalMedia();
+            media.setType(Media.Type.Audio);
+            media.setPath(uri);
+            media.setMetadata(metadata);
+            sendMedia(media);
+        }
+    };
+
+    public void setChatRoomListener(ChatRoomListener chatRoomListener) {
+        this.chatRoomListener = chatRoomListener;
+    }
+
+    public void setInfoGroupChatListener(InfoGroupChatListener infoGroupChatListener) {
+        this.infoGroupChatListener = infoGroupChatListener;
     }
 
     public interface ChatRoomListener {
-        void onMediaView(Media media, ImageView mediaImageView);
         void onChatRoomInfoView(ChatRoom chatRoom, ChatMembers chatMembers, Pair<View, String>... pairs);
     }
 }

@@ -2,8 +2,10 @@ package in.ureport.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -18,11 +20,12 @@ import android.view.ViewGroup;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 
+import java.util.ArrayList;
+
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
-import in.ureport.listener.OnStoryContributionCountListener;
 import in.ureport.helpers.RecyclerScrollListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.CountryProgramManager;
@@ -45,23 +48,26 @@ import retrofit.RetrofitError;
  * Created by johncordeiro on 7/13/15.
  */
 public class StoriesListFragment extends Fragment implements StoriesAdapter.OnStoryViewListener
-        , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener {
+        , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener, FloatingActionButtonListener {
 
     private static final String TAG = "StoriesListFragment";
 
     private static final String EXTRA_USER = "user";
+    private static final String EXTRA_NEWS = "news";
+    private static final String EXTRA_PUBLIC_TYPE = "publicType";
 
     private RecyclerView storiesList;
     private View info;
+    private FloatingActionButton createStoryButton;
 
     private RecyclerScrollListener recyclerFloatingScrollListener;
     private LinearLayoutManager layoutManager;
 
     private User user;
+    private ArrayList<News> newsList;
     protected boolean publicType = true;
 
-    private StoriesAdapter.OnPublishStoryListener onPublishStoryListener;
-    private FloatingActionButtonListener floatingActionButtonListener;
+    private OnPublishStoryListener onPublishStoryListener;
     protected OnUserStartChattingListener onUserStartChattingListener;
 
     protected StoriesAdapter storiesAdapter;
@@ -88,6 +94,19 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getInstanceStateObjects(savedInstanceState);
+        getDataFromArguments();
+    }
+
+    private void getInstanceStateObjects(@Nullable Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            user = savedInstanceState.getParcelable(EXTRA_USER);
+            newsList = savedInstanceState.getParcelableArrayList(EXTRA_NEWS);
+            publicType = savedInstanceState.getBoolean(EXTRA_PUBLIC_TYPE);
+        }
+    }
+
+    private void getDataFromArguments() {
         Bundle extras = getArguments();
         if(extras != null && extras.containsKey(EXTRA_USER)) {
             user = extras.getParcelable(EXTRA_USER);
@@ -111,6 +130,14 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(EXTRA_USER, user);
+        outState.putParcelableArrayList(EXTRA_NEWS, (ArrayList<News>) storiesAdapter.getNews());
+        outState.putBoolean(EXTRA_PUBLIC_TYPE, publicType);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         storyServices.removeChildEventListener(childEventListener);
@@ -120,23 +147,19 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if(context instanceof StoriesAdapter.OnPublishStoryListener) {
-            onPublishStoryListener = (StoriesAdapter.OnPublishStoryListener) context;
+        if(context instanceof OnPublishStoryListener) {
+            onPublishStoryListener = (OnPublishStoryListener) context;
         }
 
         if(context instanceof OnUserStartChattingListener) {
             onUserStartChattingListener = (OnUserStartChattingListener) context;
-        }
-
-        if(context instanceof FloatingActionButtonListener) {
-            floatingActionButtonListener = (FloatingActionButtonListener) context;
         }
     }
 
     private void setupObjects() {
         storyServices = new StoryServices();
         userServices = new UserServices();
-        contributionServices = new ContributionServices();
+        contributionServices = new ContributionServices(ContributionServices.Type.Story);
         String ureportEndpoint = getString(CountryProgramManager.getCurrentCountryProgram().getUreportEndpoint());
         ureportServices = new UreportServices(ureportEndpoint);
     }
@@ -151,20 +174,31 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     private void loadNewsForPage(int page) {
-        loadingNews = true;
-        ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization()
-                , page, onNewsLoadedCallback);
+        if(newsList != null) {
+            storiesAdapter.addNews(newsList);
+        } else {
+            loadingNews = true;
+            ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization()
+                    , page, onNewsLoadedCallback);
+        }
     }
 
     private void setupView(View view) {
         storiesList = (RecyclerView) view.findViewById(R.id.storiesList);
+
         layoutManager = new LinearLayoutManager(getActivity());
         storiesList.setLayoutManager(layoutManager);
-        recyclerFloatingScrollListener = new RecyclerScrollListener(floatingActionButtonListener);
         storiesList.addOnScrollListener(onStoriesListScrollListener);
+
+        recyclerFloatingScrollListener = new RecyclerScrollListener(this);
         setupStoriesAdapter();
 
         info = view.findViewById(R.id.info);
+
+        createStoryButton = (FloatingActionButton) view.findViewById(R.id.createStoryButton);
+        createStoryButton.setOnClickListener(onCreateStoryClickListener);
+
+        createStoryButton.postDelayed(this::hideFloatingButton, 1000);
     }
 
     private void setupStoriesAdapter() {
@@ -254,11 +288,16 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     private void loadStoryData(final Story story) {
-        contributionServices.getContributionCount(story, new OnStoryContributionCountListener() {
+        contributionServices.getContributionCount(story, count -> {
+            story.setContributions(Long.valueOf(count).intValue());
+            loadUsersFromStory(story, onAfterStoryLoadedListener);
+        });
+
+        storyServices.loadStoryLikeCount(story, new ValueEventListenerAdapter() {
             @Override
-            public void onStoryContributionCountListener(long count) {
-                story.setContributions(Long.valueOf(count).intValue());
-                loadUsersFromStory(story, onAfterStoryLoadedListener);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                story.setLikes(dataSnapshot.exists() ? (int) dataSnapshot.getChildrenCount() : 0);
             }
         });
     }
@@ -335,7 +374,39 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         shareNewsTask.execute();
     }
 
+    private View.OnClickListener onCreateStoryClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            onPublishStoryListener.onPublishStory();
+        }
+    };
+
+    @Override
+    public void showFloatingButton() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            createStoryButton.animate().translationY(0).start();
+        } else {
+            createStoryButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void hideFloatingButton() {
+        if(isAdded()) {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                createStoryButton.animate().translationY(createStoryButton.getHeight()
+                        + getResources().getDimension(R.dimen.fab_margin)).start();
+            } else {
+                createStoryButton.setVisibility(View.GONE);
+            }
+        }
+    }
+
     private interface OnAfterStoryLoadedListener {
         void onAfterStoryLoaded(Story story);
+    }
+
+    public interface OnPublishStoryListener {
+        void onPublishStory();
     }
 }

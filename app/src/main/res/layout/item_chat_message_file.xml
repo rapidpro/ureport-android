@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="90dp">
+
+    <FrameLayout
+        android:id="@+id/iconFileContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:src="@drawable/ic_folder_white_24dp"
+            android:background="@drawable/shape_orange_left_corner_round"/>
+
+        <TextView
+            android:id="@id/chatMessageDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="center_horizontal|bottom"
+            android:textColor="@android:color/white"
+            tools:text="16:00 PM"/>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@id/chatMessageFileName"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/iconFileContainer"
+        android:layout_toEndOf="@+id/iconFileContainer"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        tools:text="Ebook Opinions (Law, Human Rights and Politics) Ebook Opinions (Law, Human Rights and Politics)"/>
+
+    <TextView
+        android:id="@id/chatMessageFileType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/chatMessageFileName"
+        android:layout_alignStart="@id/chatMessageFileName"
+        android:layout_below="@+id/chatMessageFileName"
+        tools:text="PDF" />
+
+</RelativeLayout>
