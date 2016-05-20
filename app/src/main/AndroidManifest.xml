@@ -153,8 +153,7 @@
         <activity
             android:name=".activities.PollResultsActivity"
             android:label="@string/label_poll_results"
-            android:parentActivityName=".activities.MainActivity"
-            android:windowSoftInputMode="adjustResize">
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
