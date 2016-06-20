@@ -11,6 +11,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CountryProgram {
 
+    public static final String GROUP_UREPORT_MALES = "UReport Males";
+
+    public static final String GROUP_UREPORT_FEMALES = "UReport Females";
+
     private String code;
 
     @StyleRes
@@ -34,6 +38,10 @@ public class CountryProgram {
     private String facebook;
 
     private String group;
+
+    private String maleGroup = GROUP_UREPORT_MALES;
+
+    private String femaleGroup = GROUP_UREPORT_FEMALES;
 
     public CountryProgram(String code, @StyleRes int theme, @StringRes int channel
             , String name, int organization, int rapidproEndpoint, int ureportEndpoint, String twitter, String facebook, String group) {
@@ -142,6 +150,22 @@ public class CountryProgram {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public String getMaleGroup() {
+        return maleGroup;
+    }
+
+    public void setMaleGroup(String maleGroup) {
+        this.maleGroup = maleGroup;
+    }
+
+    public String getFemaleGroup() {
+        return femaleGroup;
+    }
+
+    public void setFemaleGroup(String femaleGroup) {
+        this.femaleGroup = femaleGroup;
     }
 
     @Override
