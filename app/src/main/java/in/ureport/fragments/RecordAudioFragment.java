@@ -1,6 +1,8 @@
 package in.ureport.fragments;
 
+import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -8,9 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +31,7 @@ import java.io.IOException;
 import br.com.ilhasoft.support.tool.bitmap.IOManager;
 import in.ureport.R;
 import in.ureport.helpers.MediaSelector;
+import in.ureport.helpers.PermissionHelper;
 import in.ureport.helpers.TimeFormatter;
 import in.ureport.models.Media;
 
@@ -51,6 +56,7 @@ public class RecordAudioFragment extends DialogFragment {
     public static final int INTERVAL_MILLIS = 100;
     public static final String EXTRA_MEDIA = "media";
     private static final String AUDIO_EXTENSION = ".3gp";
+    public static final int REQUEST_CODE_RECORD_AUDIO = 400;
 
     private TextView startTime;
     private TextView endTime;
@@ -99,9 +105,26 @@ public class RecordAudioFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        requestPermissions();
         setupObjects();
         setupView(view);
         setupDataIfExists();
+    }
+
+    private void requestPermissions() {
+        if (!PermissionHelper.isPermissionGranted(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        || !PermissionHelper.isPermissionGranted(getContext(), Manifest.permission.RECORD_AUDIO)) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO}, REQUEST_CODE_RECORD_AUDIO);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults.length > 0 && !PermissionHelper.allPermissionsGranted(grantResults)) {
+            Toast.makeText(getContext(), R.string.error_message_permission_external, Toast.LENGTH_SHORT).show();
+            dismiss();
+        }
     }
 
     private void setupDataIfExists() {
