@@ -51,8 +51,8 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
 
     public static final int FIELDS_MINIMUM_SIZE = 5;
 
-    private static final int LOAD_COUNTRY_LIST_ID = 0;
-    private static final int LOAD_STATES_ID = 1;
+    private static final int LOAD_COUNTRY_LIST_ID = 3000;
+    private static final int LOAD_STATES_ID = 3001;
 
     protected User user;
     protected User.Type userType = User.Type.ureport;
@@ -74,10 +74,26 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     protected boolean containsDistrict = false;
     private List<Location> districts;
 
+    protected CountryInfo countryInfo;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getCountryInfoFromState(savedInstanceState);
         getUserFromArguments();
+        loadCountryList();
+    }
+
+    private void getCountryInfoFromState(@Nullable Bundle savedInstanceState) {
+        if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_COUNTRY_INFO)) {
+            countryInfo = savedInstanceState.getParcelable(EXTRA_COUNTRY_INFO);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(EXTRA_COUNTRY_INFO, countryInfo);
     }
 
     @Nullable
@@ -140,7 +156,6 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         country = (Spinner) view.findViewById(R.id.country);
         country.setOnItemSelectedListener(onCountrySelectedListener);
         resetLocationSpinner(country, R.array.spinner_loading);
-        loadCountryList();
 
         state = (Spinner) view.findViewById(R.id.state);
         state.setOnItemSelectedListener(onStateSelectedListener);
@@ -170,7 +185,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     }
 
     private void loadCountryList() {
-        getLoaderManager().initLoader(LOAD_COUNTRY_LIST_ID, null, this).forceLoad();
+        getLoaderManager().initLoader(LOAD_COUNTRY_LIST_ID, null, this);
     }
 
     private void loadUserGenders() {
@@ -249,6 +264,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
 
     @Override
     public Loader onCreateLoader(int id, Bundle args) {
+        Log.d(TAG, "onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
         switch(id) {
             case LOAD_COUNTRY_LIST_ID:
                 return new CountryListLoader(getActivity());
@@ -261,6 +277,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
 
     @Override
     public void onLoadFinished(Loader loader, Object data) {
+        Log.d(TAG, "onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
         switch (loader.getId()) {
             case LOAD_COUNTRY_LIST_ID:
                 updateCountries((List<CountryInfo>)data);
@@ -327,6 +344,9 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         country.setAdapter(localeAdapter);
         country.setEnabled(true);
 
+        int position = countryInfo != null ? data.indexOf(countryInfo) : 0;
+        country.setSelection(position);
+
         onCountriesLoaded(data);
     }
 
@@ -357,7 +377,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             Object item = country.getSelectedItem();
             if(item instanceof CountryInfo) {
-                CountryInfo countryInfo = (CountryInfo) item;
+                countryInfo = (CountryInfo) item;
                 resetLocationSpinner(state, R.array.spinner_loading);
                 resetLocationSpinner(district, R.array.spinner_loading);
                 loadStatesForCountry(countryInfo);
@@ -390,7 +410,12 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
         Bundle bundle = new Bundle();
         bundle.putParcelable(EXTRA_COUNTRY_INFO, countryInfo);
 
-        getLoaderManager().restartLoader(LOAD_STATES_ID, bundle, this).forceLoad();
+        Loader loader = getLoaderManager().getLoader(LOAD_STATES_ID);
+        if(loader != null && ((LocationInfoLoader)loader).getCountryInfo().equals(countryInfo)) {
+            getLoaderManager().initLoader(LOAD_STATES_ID, bundle, this);
+        } else {
+            getLoaderManager().restartLoader(LOAD_STATES_ID, bundle, this);
+        }
     }
 
     private View.OnClickListener onBirthdayClickListener = new View.OnClickListener() {

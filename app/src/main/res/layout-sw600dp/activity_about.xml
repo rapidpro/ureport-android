@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_collapseMode="pin">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:gravity="start"
+                android:textAlignment="viewStart"
+                android:textSize="20sp"
+                style="@style/AppTheme.Info"
+                android:text="@string/about_title"/>
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="fill_vertical|top|start"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="start"
+                    android:textAlignment="viewStart"
+                    android:maxLines="3"
+                    android:ellipsize="end"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:textSize="30sp"
+                    android:text="@string/about_subtitle"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_marginTop="20dp"
+                    android:textSize="16sp"
+                    android:textAlignment="viewStart"
+                    android:textColor="@android:color/black"
+                    android:text="@string/about_content" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:paddingBottom="10dp"
+                android:orientation="vertical"
+                android:clipToPadding="false">
+
+                <fragment
+                    android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+                    android:id="@+id/youtube_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_marginBottom="15dp" />
+
+                <TextView
+                    android:id="@+id/follow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/youtube_fragment"
+                    android:textSize="22sp"
+                    android:textColor="@android:color/black"
+                    android:text="@string/title_follow" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/twitter"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:clickable="true"
+                    android:src="@drawable/ic_twitter_white_24dp"
+                    android:layout_below="@+id/youtube_fragment"
+                    android:layout_toRightOf="@+id/follow"
+                    android:layout_toEndOf="@+id/follow"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
+                    app:backgroundTint="#00b8ea"
+                    app:layout_anchorGravity="bottom|right|end"
+                    app:layout_anchor="@id/appbar" />
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/facebook"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:clickable="true"
+                    android:src="@drawable/ic_facebook_white_24dp"
+                    android:layout_below="@+id/youtube_fragment"
+                    android:layout_toRightOf="@+id/twitter"
+                    android:layout_toEndOf="@+id/twitter"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginStart="20dp"
+                    app:backgroundTint="#005ed2"
+                    app:layout_anchorGravity="bottom|right|end"
+                    app:layout_anchor="@id/appbar" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.activities.MainActivity;
+import in.ureport.fragments.StoriesListFragment;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.models.News;
@@ -40,7 +42,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private OnStoryViewListener onStoryViewListener;
     private OnNewsViewListener onNewsViewListener;
-    private OnPublishStoryListener onPublishStoryListener;
+    private StoriesListFragment.OnPublishStoryListener onPublishStoryListener;
     private StoryModerationListener storyModerationListener;
     private OnUserStartChattingListener onUserStartChattingListener;
     private OnShareNewsListener onShareNewsListener;
@@ -49,6 +51,12 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         setHasStableIds(true);
         this.stories = new ArrayList<>();
         this.news = new ArrayList<>();
+    }
+
+    public StoriesAdapter(User user, List<Story> stories, List<News> news) {
+        setHasStableIds(true);
+        this.stories = stories;
+        this.news = news;
     }
 
     @Override
@@ -143,7 +151,7 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.onStoryViewListener = onStoryViewListener;
     }
 
-    public void setOnPublishStoryListener(OnPublishStoryListener onPublishStoryListener) {
+    public void setOnPublishStoryListener(StoriesListFragment.OnPublishStoryListener onPublishStoryListener) {
         this.onPublishStoryListener = onPublishStoryListener;
     }
 
@@ -257,6 +265,14 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         };
     }
 
+    public List<News> getNews() {
+        return news;
+    }
+
+    public List<Story> getStories() {
+        return stories;
+    }
+
     public interface StoryModerationListener {
         void onApprove(Story story);
         void onDisapprove(Story story);
@@ -274,7 +290,4 @@ public class StoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void onShareNews(News news);
     }
 
-    public interface OnPublishStoryListener {
-        void onPublishStory();
-    }
 }

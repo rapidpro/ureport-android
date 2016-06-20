@@ -20,7 +20,8 @@
     <FrameLayout
         android:id="@+id/logoContainer"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/logo_container_height">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttonContainer">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -30,91 +31,95 @@
 
     </FrameLayout>
 
-    <Button
-        android:id="@+id/loginWithCredentials"
+    <RelativeLayout
+        android:id="@+id/buttonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/logoContainer"
-        android:background="@drawable/shape_green_round_button"
-        android:text="@string/login"
-        style="@style/AppTheme.CustomButton" />
+        android:paddingTop="@dimen/logo_container_height"
+        android:layout_centerInParent="true">
 
-    <Button
-        android:id="@+id/loginWithTwitter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/loginWithCredentials"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/shape_light_blue_round_button"
-        android:text="@string/login_twitter"
-        style="@style/AppTheme.CustomButton" />
+        <Button
+            android:id="@+id/loginWithCredentials"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/shape_green_round_button"
+            android:text="@string/login"
+            style="@style/AppTheme.CustomButton" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.8dp"
-        android:layout_below="@+id/loginWithTwitter"
-        android:layout_marginLeft="25dp"
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_toLeftOf="@+id/or"
-        android:layout_toStartOf="@+id/or"
-        android:background="#787e6c16"/>
+        <Button
+            android:id="@+id/loginWithTwitter"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/loginWithCredentials"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_light_blue_round_button"
+            android:text="@string/login_twitter"
+            style="@style/AppTheme.CustomButton" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/loginWithTwitter"
-        android:layout_marginRight="25dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_toRightOf="@+id/or"
-        android:layout_toEndOf="@+id/or"
-        android:background="#787e6c16"/>
+        <View
+            android:layout_width="@dimen/login_item_width"
+            android:layout_height="0.8dp"
+            android:layout_below="@+id/loginWithTwitter"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignLeft="@+id/loginWithTwitter"
+            android:layout_alignStart="@+id/loginWithTwitter"
+            android:layout_toLeftOf="@+id/or"
+            android:layout_toStartOf="@+id/or"
+            android:background="#787e6c16"/>
 
-    <TextView
-        android:id="@+id/or"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/loginWithTwitter"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_gravity="center"
-        android:text="@string/login_or" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/loginWithTwitter"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignRight="@+id/loginWithTwitter"
+            android:layout_alignEnd="@+id/loginWithTwitter"
+            android:layout_toRightOf="@+id/or"
+            android:layout_toEndOf="@+id/or"
+            android:background="#787e6c16"/>
 
-    <Button
-        android:id="@+id/loginWithFacebook"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
-        android:layout_marginStart="25dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/or"
-        android:layout_toStartOf="@+id/or"
-        android:layout_below="@+id/or"
-        android:background="@drawable/shape_dark_blue_round_button"
-        android:textColor="@android:color/white"
-        android:text="@string/login_facebook" />
+        <TextView
+            android:id="@+id/or"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/loginWithTwitter"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_gravity="center"
+            android:text="@string/login_or" />
 
-    <Button
-        android:id="@+id/loginWithGoogle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="25dp"
-        android:layout_marginEnd="25dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/or"
-        android:layout_toRightOf="@+id/or"
-        android:layout_toEndOf="@+id/or"
-        android:background="@drawable/shape_red_round_button"
-        android:textColor="@android:color/white"
-        android:text="@string/login_google"/>
+        <Button
+            android:id="@+id/loginWithFacebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/loginWithTwitter"
+            android:layout_alignStart="@+id/loginWithTwitter"
+            android:layout_toLeftOf="@+id/or"
+            android:layout_toStartOf="@+id/or"
+            android:layout_below="@+id/or"
+            android:background="@drawable/shape_dark_blue_round_button"
+            android:textColor="@android:color/white"
+            android:text="@string/login_facebook" />
+
+        <Button
+            android:id="@+id/loginWithGoogle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/loginWithTwitter"
+            android:layout_alignEnd="@+id/loginWithTwitter"
+            android:layout_toRightOf="@+id/or"
+            android:layout_toEndOf="@+id/or"
+            android:layout_below="@+id/or"
+            android:background="@drawable/shape_red_round_button"
+            android:textColor="@android:color/white"
+            android:text="@string/login_google"/>
+
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/signUp"

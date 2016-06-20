@@ -228,7 +228,7 @@
   <string name="stories_moderation">Історії</string>
   <string name="label_moderation">Модерація</string>
   <string name="title_moderation">%1$s модерацій</string>
-  <string name="button_title_disapprove">Відхилено</string>
+  <string name="button_title_disapprove">відхиляти</string>
   <string name="button_title_publish">Опублікувати</string>
   <string name="success_story_update_message">Історію була оновлено успішно!</string>
   <string name="message_story_publish_warning">Ваша історія була передана команді Ю-Репорт. Перевірте пізніше її публікацію!</string>

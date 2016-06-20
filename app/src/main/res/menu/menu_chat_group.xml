@@ -11,4 +11,5 @@
         android:id="@+id/leaveGroup"
         android:title="@string/label_leave_group"
         app:showAsAction="never" />
+
 </menu>

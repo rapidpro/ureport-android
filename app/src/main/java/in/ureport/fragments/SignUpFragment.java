@@ -77,7 +77,9 @@ public class SignUpFragment extends UserInfoBaseFragment {
 
     @Override
     public void onCountriesLoaded(List<CountryInfo> data) {
-        selectCurrentUserLocale(data);
+        if(countryInfo == null) {
+            selectCurrentUserLocale(data);
+        }
     }
 
     @Override
@@ -214,7 +216,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
                 if (firebaseError != null)
                     Toast.makeText(getActivity().getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
                 else
-                    loginListener.onUserReady(user);
+                    loginListener.onUserReady(user, true);
             }
         });
     }

@@ -31,6 +31,7 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         storiesAdapter.enableModerationMode(this);
+        hideFloatingButton();
     }
 
     public void loadData() {

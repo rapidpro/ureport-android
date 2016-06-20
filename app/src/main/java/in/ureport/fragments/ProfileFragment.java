@@ -212,10 +212,20 @@ public class ProfileFragment extends Fragment {
 
     private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
         @Override
-        public void onLoadLocalMedia(Uri uri) {
+        public void onLoadLocalImage(Uri uri) {
             LocalMedia localMedia = new LocalMedia(uri);
+            localMedia.setType(Media.Type.Picture);
             transferMedia(localMedia);
         }
+
+        @Override
+        public void onLoadLocalVideo(Uri uri) {}
+
+        @Override
+        public void onLoadFile(Uri uri) {}
+
+        @Override
+        public void onLoadAudio(Uri uri, int duration) {}
 
         private void transferMedia(final LocalMedia localMedia) {
             try {
@@ -225,7 +235,7 @@ public class ProfileFragment extends Fragment {
                 TransferManager transferManager = new TransferManager(getActivity());
                 transferManager.transferMedia(localMedia, "user", new ImageTransferListener(progressUpload, localMedia));
             } catch(Exception exception) {
-                Log.e(TAG, "onLoadLocalMedia ", exception);
+                Log.e(TAG, "onLoadLocalImage ", exception);
                 displayPictureError();
             }
         }
@@ -235,6 +245,7 @@ public class ProfileFragment extends Fragment {
         private ProgressDialog progressUpload;
         private LocalMedia localMedia;
         public ImageTransferListener(ProgressDialog progressUpload, LocalMedia localMedia) {
+            super(getContext(), localMedia);
             this.progressUpload = progressUpload;
             this.localMedia = localMedia;
         }

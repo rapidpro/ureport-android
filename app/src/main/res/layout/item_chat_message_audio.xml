@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="@dimen/max_chat_item_width"
+    android:layout_height="90dp">
+
+    <ImageView
+        android:id="@+id/iconMic"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/ic_mic_white"
+        android:background="@drawable/shape_green_left_corner_round"/>
+
+    <ImageView
+        android:id="@id/chatMessagePlayAudio"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/iconMic"
+        android:layout_toEndOf="@+id/iconMic"
+        android:layout_centerVertical="true"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/ic_play_arrow_blue_36dp"/>
+
+    <SeekBar
+        android:id="@+id/chatMessageProgressAudio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        tools:progress="50"
+        android:layout_toRightOf="@+id/chatMessagePlayAudio"
+        android:layout_toEndOf="@+id/chatMessagePlayAudio"
+        android:layout_centerVertical="true"
+        android:layout_alignWithParentIfMissing="true" />
+
+    <TextView
+        android:id="@id/chatMessageDurationAudio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/chatMessageProgressAudio"
+        android:layout_alignStart="@id/chatMessageProgressAudio"
+        android:layout_below="@+id/chatMessageProgressAudio"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginStart="12dp"
+        tools:text="00:00" />
+
+    <TextView
+        android:id="@id/chatMessageDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_below="@id/chatMessageProgressAudio"
+        android:layout_alignRight="@id/chatMessageProgressAudio"
+        android:layout_alignEnd="@id/chatMessageProgressAudio"
+        android:layout_marginTop="3dp"
+        tools:text="16:00"/>
+
+    <LinearLayout
+        android:id="@+id/chatMessageLoadingAudio"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_toRightOf="@id/iconMic"
+        android:layout_toEndOf="@id/iconMic"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:background="#5fff"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textColor="@android:color/black"
+            android:text="@string/title_loading_audio"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

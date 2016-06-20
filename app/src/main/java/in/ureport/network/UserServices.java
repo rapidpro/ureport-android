@@ -1,6 +1,7 @@
 package in.ureport.network;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -20,12 +21,16 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.GameficationManager;
 import in.ureport.managers.UserManager;
+import in.ureport.models.Media;
+import in.ureport.models.Story;
 import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 14/08/15.
  */
 public class UserServices extends ProgramServices {
+
+    private static final String TAG = "UserServices";
 
     private static final String userPath = "user";
     private static final String userModeratorPath = "user_moderator";
@@ -55,9 +60,14 @@ public class UserServices extends ProgramServices {
                 .child(userKey).child("chatRooms").child(chatRoomKey).removeValue();
     }
 
-    public void addChildEventListenerForChatRooms(String key, ChildEventListener childEventListener) {
+    public Firebase getUserChatRoomsReference(String key) {
+        return FirebaseManager.getReference().child(userPath).child(key)
+                .child("chatRooms");
+    }
+
+    public void addValueEventListenerForChatRooms(String key, ValueEventListener listener) {
         FirebaseManager.getReference().child(userPath).child(key)
-                .child("chatRooms").addChildEventListener(childEventListener);
+                .child("chatRooms").addValueEventListener(listener);
     }
 
     public void loadChatRooms(String key, ValueEventListener valueEventListener) {
@@ -74,9 +84,13 @@ public class UserServices extends ProgramServices {
 
         List<User> users = new ArrayList<>();
         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-            User user = snapshot.getValue(User.class);
-            if(!snapshot.getKey().equals(currentUserKey) && (user.getPublicProfile() == null || user.getPublicProfile())) {
-                users.add(user);
+            try {
+                User user = snapshot.getValue(User.class);
+                if (!snapshot.getKey().equals(currentUserKey) && (user.getPublicProfile() == null || user.getPublicProfile())) {
+                    users.add(user);
+                }
+            } catch(Exception exception) {
+                Log.e(TAG, "handleDataResponse: ", exception);
             }
         }
 
@@ -88,12 +102,12 @@ public class UserServices extends ProgramServices {
                 .runTransaction(new ValueIncrementerTransaction(GameficationManager.CONTRIBUTION_POINTS));
     }
 
-    public void incrementStoryCount() {
+    public void incrementStoryCount(Story story) {
         FirebaseManager.getReference().child(userPath).child(UserManager.getUserId()).child("stories")
                 .runTransaction(new ValueIncrementerTransaction(1));
 
         FirebaseManager.getReference().child(userPath).child(UserManager.getUserId()).child("points")
-                .runTransaction(new ValueIncrementerTransaction(GameficationManager.STORIES_POINTS));
+                .runTransaction(new ValueIncrementerTransaction(GameficationManager.getPointsForStory(story)));
     }
 
     public void loadRanking(final OnLoadAllUsersListener onLoadAllUsersListener) {

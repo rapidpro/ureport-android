@@ -23,7 +23,7 @@ public class YoutubePicker {
         this.context = context;
     }
 
-    public void pickVideoFromInput(final OnPickVideoListener onPickVideoListener) {
+    public void pickVideoFromInput(final OnPickYoutubeVideoListener onPickYoutubeVideoListener) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View container = inflater.inflate(R.layout.view_youtube_picker, null);
         final EditText editText = (EditText) container.findViewById(R.id.youtubeLink);
@@ -41,7 +41,7 @@ public class YoutubePicker {
             public void onClick(View view) {
                 String videoId = getVideoIdFromLink(editText.getText().toString());
                 if (editText.getText().length() > 0 && videoId != null) {
-                    onPickVideoListener.onPickVideo(videoId, editText.getText().toString());
+                    onPickYoutubeVideoListener.onPickYoutubeVideo(videoId, editText.getText().toString());
                     alertDialog.dismiss();
                 } else {
                     Toast.makeText(context, R.string.error_empty_link, Toast.LENGTH_SHORT).show();
@@ -61,7 +61,7 @@ public class YoutubePicker {
         return videoId;
     }
 
-    public interface OnPickVideoListener {
-        void onPickVideo(String videoId, String videoUrl);
+    public interface OnPickYoutubeVideoListener {
+        void onPickYoutubeVideo(String videoId, String videoUrl);
     }
 }

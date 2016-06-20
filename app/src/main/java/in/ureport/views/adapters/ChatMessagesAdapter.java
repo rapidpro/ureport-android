@@ -1,61 +1,52 @@
 package in.ureport.views.adapters;
 
-import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import in.ureport.R;
-import in.ureport.helpers.ImageLoader;
-import in.ureport.helpers.YoutubePlayer;
+import in.ureport.fragments.RecordAudioFragment;
 import in.ureport.models.ChatMessage;
-import in.ureport.models.Media;
 import in.ureport.models.User;
+import in.ureport.views.holders.ChatMessageViewHolder;
 
 /**
  * Created by johncordeiro on 7/21/15.
  */
 public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int TYPE_USER = 0;
-    private static final int TYPE_OTHER = 1;
+    public static final int TYPE_TEXT = 0;
+    public static final int TYPE_PICTURE = 1;
+    public static final int TYPE_YOUTUBE = 2;
+    public static final int TYPE_VIDEO = 3;
+    public static final int TYPE_AUDIO = 4;
+    public static final int TYPE_FILE = 5;
 
+    private RecordAudioFragment recordAudioFragment;
     private List<ChatMessage> chatMessages;
     private User user;
 
-    private DateFormat hourFormatter;
-
-    private OnChatMessageSelectedListener onChatMessageSelectedListener;
+    private ChatMessageViewHolder.OnChatMessageSelectedListener onChatMessageSelectedListener;
 
     public ChatMessagesAdapter(User user) {
         this.chatMessages = new ArrayList<>();
         this.user = user;
-        hourFormatter = DateFormat.getTimeInstance(DateFormat.SHORT);
+        this.recordAudioFragment = new RecordAudioFragment();
         setHasStableIds(true);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        switch(viewType) {
-            case TYPE_USER:
-                return new ViewHolder(inflater.inflate(R.layout.item_chat_message_me, parent, false));
-            default:
-            case TYPE_OTHER:
-                return new ViewHolder(inflater.inflate(R.layout.item_chat_message_other, parent, false));
-        }
+        return new ChatMessageViewHolder(parent.getContext(), parent, viewType);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder)holder).bindView(chatMessages.get(position));
+        ChatMessageViewHolder chatMessageViewHolder = ((ChatMessageViewHolder)holder);
+        chatMessageViewHolder.setOnChatMessageSelectedListener(onChatMessageSelectedListener);
+        chatMessageViewHolder.setRecordAudioFragment(recordAudioFragment);
+        chatMessageViewHolder.bindView(user, chatMessages.get(position));
     }
 
     @Override
@@ -66,10 +57,22 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemViewType(int position) {
-        if(user != null && chatMessages.get(position).getUser().equals(user)) {
-            return TYPE_USER;
+        ChatMessage chatMessage = chatMessages.get(position);
+        if(chatMessage.getMedia() != null) {
+            switch(chatMessage.getMedia().getType()) {
+                case Picture:
+                    return TYPE_PICTURE;
+                case Video:
+                    return TYPE_YOUTUBE;
+                case VideoPhone:
+                    return TYPE_VIDEO;
+                case Audio:
+                    return TYPE_AUDIO;
+                case File:
+                    return TYPE_FILE;
+            }
         }
-        return TYPE_OTHER;
+        return TYPE_TEXT;
     }
 
     @Override
@@ -90,7 +93,7 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public void setOnChatMessageSelectedListener(OnChatMessageSelectedListener onChatMessageSelectedListener) {
+    public void setOnChatMessageSelectedListener(ChatMessageViewHolder.OnChatMessageSelectedListener onChatMessageSelectedListener) {
         this.onChatMessageSelectedListener = onChatMessageSelectedListener;
     }
 
@@ -98,100 +101,4 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.user = user;
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
-
-        private ChatMessage chatMessage;
-
-        private final TextView message;
-        private final TextView date;
-        private final TextView name;
-        private final ImageView media;
-        private final ImageView videoPlay;
-
-        private final YoutubePlayer youtubePlayer;
-
-        public ViewHolder(final View itemView) {
-            super(itemView);
-            youtubePlayer = new YoutubePlayer((Activity)itemView.getContext());
-
-            message = (TextView) itemView.findViewById(R.id.message);
-            date = (TextView) itemView.findViewById(R.id.date);
-            name = (TextView) itemView.findViewById(R.id.name);
-            media = (ImageView) itemView.findViewById(R.id.media);
-            videoPlay = (ImageView) itemView.findViewById(R.id.videoPlay);
-
-            itemView.setOnLongClickListener(onLongClickListener);
-            media.setOnLongClickListener(onLongClickListener);
-        }
-
-        private void bindView(ChatMessage chatMessage) {
-            this.chatMessage = chatMessage;
-
-            bindMessage(chatMessage);
-            date.setText(hourFormatter.format(chatMessage.getDate()));
-            bindName(chatMessage);
-        }
-
-        private void bindMessage(ChatMessage chatMessage) {
-            if(chatMessage.getMessage() != null) {
-                media.setVisibility(View.GONE);
-                message.setVisibility(View.VISIBLE);
-                message.setText(chatMessage.getMessage());
-                videoPlay.setVisibility(View.GONE);
-            } else if(chatMessage.getMedia() != null) {
-                message.setVisibility(View.GONE);
-                media.setVisibility(View.VISIBLE);
-                bindMediaType(chatMessage);
-                ImageLoader.loadGenericPictureToImageViewFit(media, chatMessage.getMedia());
-            }
-        }
-
-        private void bindMediaType(ChatMessage chatMessage) {
-            if(chatMessage.getMedia().getType() == Media.Type.Picture) {
-                videoPlay.setVisibility(View.GONE);
-                media.setOnClickListener(onMediaClickListener);
-            } else {
-                videoPlay.setVisibility(View.VISIBLE);
-                media.setOnClickListener(onVideoMediaClickListener);
-            }
-        }
-
-        private void bindName(ChatMessage chatMessage) {
-            if(getItemViewType() == TYPE_OTHER) {
-                name.setVisibility(View.VISIBLE);
-                name.setText(chatMessage.getUser().getNickname());
-            }
-        }
-
-        private View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if(onChatMessageSelectedListener != null) {
-                    onChatMessageSelectedListener.onChatMessageSelected(chatMessages.get(getLayoutPosition()));
-                }
-                return false;
-            }
-        };
-
-        private View.OnClickListener onMediaClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(onChatMessageSelectedListener != null) {
-                    onChatMessageSelectedListener.onMediaChatMessageView(chatMessages.get(getLayoutPosition()), (ImageView)view);
-                }
-            }
-        };
-
-        private View.OnClickListener onVideoMediaClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                youtubePlayer.playVideoMedia(chatMessage.getMedia());
-            }
-        };
-    }
-
-    public interface OnChatMessageSelectedListener {
-        void onMediaChatMessageView(ChatMessage chatMessage, ImageView mediaImageView);
-        void onChatMessageSelected(ChatMessage chatMessage);
-    }
 }

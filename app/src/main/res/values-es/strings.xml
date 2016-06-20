@@ -40,7 +40,7 @@
   <string name="create_story_insert_cover">Insertar una imagen de portada</string>
   <string name="create_story_insert_title">Escribir título</string>
   <string name="create_story_insert_story_content">Cuéntanos qué está pasando</string>
-  <string name="create_story_title_media">insertar media</string>
+  <string name="create_story_title_media">Insertar media</string>
   <string name="create_story_add_markers">Agregar marcadores</string>
   <string name="media_remove">Quitar</string>
   <string name="title_media_source">Elegir una fuente de media</string>
@@ -187,7 +187,7 @@ Las celebridades de UNICEF tienen una amplia gama de talentos y logros, pero tod
   <string name="search_title">Buscar</string>
   <string name="search_hint_users">Buscar usuarios</string>
   <string name="error_image_upload">No fue posible cargar esta imagen. Por favor selecciona otra.</string>
-  <string name="load_message_uploading_image">Subiendo imagen...</string>
+  <string name="load_message_uploading_image">Subiendo archivos...</string>
   <string name="chat_room_removed_user_name">Usuario removido</string>
   <string name="error_full_group">Este grupo ya está completo. Por favor selecciona otro.</string>
   <string name="error_already_join_group">Ya eres miembro de este equipo.</string>
@@ -236,7 +236,7 @@ Las celebridades de UNICEF tienen una amplia gama de talentos y logros, pero tod
   <string name="stories_moderation">Historias</string>
   <string name="label_moderation">Moderación</string>
   <string name="title_moderation">%1$s moderación</string>
-  <string name="button_title_disapprove">Desaprobar</string>
+  <string name="button_title_disapprove">Rechazar</string>
   <string name="button_title_publish">Publicar</string>
   <string name="success_story_update_message">La historia fue actualizada exitosamente</string>
   <string name="message_story_publish_warning">Tu historia ha sido enviada al equipo de U-Report. Chequea más tarde para verla publicada.</string>
@@ -297,4 +297,26 @@ Las celebridades de UNICEF tienen una amplia gama de talentos y logros, pero tod
   <string name="title_chat_message">Nuevo mensaje de chat</string>
   <string name="prompt_media_notification">media</string>
   <string name="error_message_permission">No es posible iniciar sesión con Google+ sin permisos</string>
+  <string name="title_file">Archivo</string>
+  <string name="title_camera">Cámara</string>
+  <string name="title_loading_audio">Cargando audio</string>
+  <string name="message_compressing_video">La compresión de vídeo...</string>
+  <string name="error_message_permission_external">Es necesario dar permisos a esta acción.</string>
+  <string name="load_message_waiting_connection">Esperando conexión...</string>
+  <string name="title_gallery">Galería</string>
+  <string name="title_recorder">Grabadora</string>
+  <string name="title_button_record">Grabar</string>
+  <string name="title_record">Grabar</string>
+  <string name="error_message_mic">Hay un problema con el micrófono. No fue posible grabar el audio.</string>
+  <string name="error_compressing_video">No fue posible para comprimir el vídeo, inténtelo de nuevo</string>
+  <string name="error_message_audio">No fue posible grabar el audio. ¡Inténtalo de nuevo!</string>
+  <string name="error_message_audio_play">No fue posible reproducir el audio. Inténtalo de nuevo!</string>
+  <string name="error_get_file">Se produjo un error, conseguir otro archivo</string>
+  <string name="error_media_upload">La carga medios de comunicación ha fallado. Por favor verifique su conexión e intente de nuevo.</string>
+  <string name="title_button_stop">Detener</string>
+  <string name="prompt_file_upload">Seleccione un archivo para cargar</string>
+  <string name="title_video">Vídeo</string>
+  <string name="title_youtube">Youtube</string>
+  <string name="prompt_done">Hecho</string>
+  <string name="message_upload_cancel">La subida fue cancelado!</string>
 </resources>

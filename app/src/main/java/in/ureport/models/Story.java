@@ -3,6 +3,7 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
@@ -29,6 +30,9 @@ public class Story implements Parcelable {
     private User userObject;
 
     private Integer contributions;
+
+    @JsonIgnore
+    private Integer likes;
 
     private String markers;
 
@@ -95,6 +99,14 @@ public class Story implements Parcelable {
         this.contributions = contributions;
     }
 
+    public Integer getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Integer likes) {
+        this.likes = likes;
+    }
+
     public String getMarkers() {
         return markers;
     }
@@ -133,6 +145,7 @@ public class Story implements Parcelable {
         dest.writeString(this.user);
         dest.writeParcelable(this.userObject, 0);
         dest.writeValue(this.contributions);
+        dest.writeValue(this.likes);
         dest.writeString(this.markers);
         dest.writeTypedList(medias);
         dest.writeParcelable(this.cover, 0);
@@ -147,6 +160,7 @@ public class Story implements Parcelable {
         this.user = in.readString();
         this.userObject = in.readParcelable(User.class.getClassLoader());
         this.contributions = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.likes = (Integer) in.readValue(Integer.class.getClassLoader());
         this.markers = in.readString();
         this.medias = in.createTypedArrayList(Media.CREATOR);
         this.cover = in.readParcelable(Media.class.getClassLoader());
@@ -168,12 +182,11 @@ public class Story implements Parcelable {
         if (o == null || getClass() != o.getClass()) return false;
 
         Story story = (Story) o;
-        return key.equals(story.key);
-
+        return key != null ? key.equals(story.key) : story.key == null;
     }
 
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return key != null ? key.hashCode() : 0;
     }
 }

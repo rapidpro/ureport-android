@@ -6,10 +6,12 @@
     android:layout_height="@dimen/item_media_height"
     android:clickable="true">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        android:gravity="center"
         android:background="@drawable/shape_media">
 
         <ImageView
@@ -17,8 +19,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/ic_camera_grey600_36dp"/>
+            android:src="@drawable/ic_add_files"/>
 
-    </FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/title_add"/>
+
+    </LinearLayout>
 
 </FrameLayout>

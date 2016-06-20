@@ -80,7 +80,6 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
 
     private void setupView() {
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
-        pager.addOnPageChangeListener(onPageChangeListener);
 
         NavigationItem chatGroupItem = new NavigationItem(new ChatGroupFragment(), getString(R.string.label_chat_groups));
         NavigationItem chatRoomsItem = new NavigationItem(new ListChatRoomsFragment(), getString(R.string.chat_rooms));
@@ -91,10 +90,6 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
         getTabLayout().setupWithViewPager(pager);
         pager.setOffscreenPageLimit(3);
         pager.setCurrentItem(1);
-
-        getMainActionButton().setImageResource(R.drawable.ic_add_white_24dp);
-        getMainActionButton().setOnClickListener(onCreateChatClickListener);
-//        getMenuNavigation().getMenu().findItem(R.id.chat).setChecked(true);
     }
 
     @Override
@@ -106,21 +101,6 @@ public class ChatActivity extends BaseActivity implements ChatGroupAdapter.ChatG
     public boolean hasMainActionButton() {
         return true;
     }
-
-    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
-        @Override
-        public void onPageScrollStateChanged(int state) {}
-        @Override
-        public void onPageSelected(int position) {
-            if(position == PAGE_POSITION_GROUPS || position == PAGE_POSITION_MY_CHATS) {
-                getMainActionButton().setVisibility(View.VISIBLE);
-            } else {
-                getMainActionButton().setVisibility(View.GONE);
-            }
-        }
-    };
 
     private View.OnClickListener onCreateChatClickListener = new View.OnClickListener() {
         @Override

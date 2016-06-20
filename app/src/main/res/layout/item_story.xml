@@ -64,10 +64,26 @@
             android:gravity="center_vertical|start"
             android:textAlignment="viewStart"
             android:visibility="visible"
-            android:drawableLeft="@drawable/ic_tag_grey600_18dp"
-            android:drawableStart="@drawable/ic_tag_grey600_18dp"
+            android:drawableLeft="@drawable/ic_marker"
+            android:drawableStart="@drawable/ic_marker"
             android:drawablePadding="5dp"
             tools:text="Water, Violence, Education"/>
+
+        <TextView
+            android:id="@+id/filesAttached"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/markers"
+            android:layout_marginTop="5dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:gravity="center_vertical|start"
+            android:textAlignment="viewStart"
+            android:visibility="visible"
+            android:drawableLeft="@drawable/ic_file_attached"
+            android:drawableStart="@drawable/ic_file_attached"
+            android:drawablePadding="5dp"
+            tools:text="3 files attached"/>
 
         <View
             android:id="@+id/line"
@@ -75,7 +91,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="10dp"
             android:background="@color/line"
-            android:layout_below="@+id/markers"/>
+            android:layout_below="@+id/filesAttached"/>
 
         <ImageView
             android:id="@+id/image"
@@ -112,14 +128,29 @@
             android:drawablePadding="5dp"
             android:drawableLeft="@drawable/ic_person_black_24dp"
             android:drawableStart="@drawable/ic_person_black_24dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             tools:text="25 contributions" />
+
+        <TextView
+            android:id="@+id/likeCountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="2dp"
+            android:drawablePadding="10dp"
+            android:drawableLeft="@drawable/ic_like_small"
+            android:drawableStart="@drawable/ic_like_small"
+            android:layout_below="@id/contributors"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            tools:text="25 likes" />
 
         <Button
             android:id="@+id/readFullStory"
             android:layout_width="match_parent"
             android:layout_height="35dp"
-            android:layout_below="@+id/contributors"
+            android:layout_below="@+id/likeCountText"
             android:background="@null"
             android:textColor="?attr/colorPrimary"
             android:text="@string/story_item_contribute_to_story"/>
@@ -129,7 +160,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="5dp"
-            android:layout_below="@+id/contributors"
+            android:layout_below="@+id/likeCountText"
             android:visibility="gone"
             tools:visibility="visible"
             layout="@layout/view_moderation_story" />

@@ -20,18 +20,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <br.com.ilhasoft.support.widget.CustomTextInputLayout
-                android:layout_width="match_parent"
+                android:id="@+id/usernameInput"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 style="@style/AppTheme.FormMargin">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -41,11 +42,12 @@
             </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
             <br.com.ilhasoft.support.widget.CustomTextInputLayout
-                android:layout_width="match_parent"
+                android:id="@+id/emailInput"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/usernameInput"
                 style="@style/AppTheme.FormMargin">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -55,11 +57,12 @@
             </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
             <br.com.ilhasoft.support.widget.CustomTextInputLayout
-                android:layout_width="match_parent"
+                android:id="@+id/passwordInput"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/emailInput"
                 style="@style/AppTheme.FormMargin">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -69,11 +72,12 @@
             </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
             <br.com.ilhasoft.support.widget.CustomTextInputLayout
-                android:layout_width="match_parent"
+                android:id="@+id/birthdayInput"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/passwordInput"
                 style="@style/AppTheme.FormMargin">
 
-                <EditText
+                <android.support.design.widget.TextInputEditText
                     android:id="@+id/birthday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -85,9 +89,10 @@
 
             <Spinner
                 android:id="@+id/country"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/credential_item_width"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/birthdayInput"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
@@ -96,9 +101,10 @@
 
             <Spinner
                 android:id="@+id/state"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/credential_item_width"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/country"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
@@ -107,9 +113,10 @@
 
             <Spinner
                 android:id="@+id/district"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/credential_item_width"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/state"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
@@ -120,9 +127,10 @@
 
             <Spinner
                 android:id="@+id/gender"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/credential_item_width"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/district"
                 android:gravity="start"
                 android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
@@ -132,14 +140,15 @@
 
             <Button
                 android:id="@+id/confirm"
-                android:layout_width="match_parent"
+                android:layout_width="@dimen/credential_item_width"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
+                android:layout_below="@+id/gender"
                 android:background="@drawable/shape_gray_round_button"
                 android:textColor="@android:color/white"
                 android:text="@string/sign_up_confirm"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </ScrollView>
 </LinearLayout>

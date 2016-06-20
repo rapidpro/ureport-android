@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3">
+
+        <fragment
+            android:id="@+id/pollsResultsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginRight="25dp"
+            android:layout_marginEnd="25dp"
+            class="in.ureport.fragments.PollsResultsFragment" />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="top|right|end"
+            android:src="@drawable/shape_triangle"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/pollResultsDetailsContainer"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="@color/white_window_background"
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:id="@+id/infoChoosePoll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/info_poll_results_large"
+            android:drawablePadding="10dp"
+            android:drawableTop="@drawable/icon_no_color" />
+
+    </FrameLayout>
+
+</LinearLayout>

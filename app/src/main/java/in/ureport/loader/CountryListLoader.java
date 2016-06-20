@@ -22,6 +22,12 @@ public class CountryListLoader extends AsyncTaskLoader<List<CountryInfo>> {
     }
 
     @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        forceLoad();
+    }
+
+    @Override
     public List<CountryInfo> loadInBackground() {
         List<CountryInfo> countries;
 

@@ -14,11 +14,16 @@
 
     <dimen name="spinner_padding_left">0dp</dimen>
     <dimen name="button_radius">25dp</dimen>
-    <dimen name="logo_container_height">180dp</dimen>
+    <dimen name="logo_container_height">10dp</dimen>
     <dimen name="dialog_width">320dp</dimen>
     <dimen name="dialog_height">340dp</dimen>
     <dimen name="chat_message_elevation">3dp</dimen>
 
     <dimen name="tutorial_image_height">230dp</dimen>
+
+    <dimen name="login_item_width">300dp</dimen>
+    <dimen name="credential_item_width">400dp</dimen>
+
+    <dimen name="max_chat_item_width">-1dp</dimen>
 
 </resources>

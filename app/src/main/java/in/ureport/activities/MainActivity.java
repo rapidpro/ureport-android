@@ -1,7 +1,6 @@
 package in.ureport.activities;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
@@ -17,12 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.fragments.ListChatRoomsFragment;
+import in.ureport.fragments.ChatsFragment;
 import in.ureport.fragments.PollsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.listener.ChatRoomInterface;
-import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.CountryProgramManager;
@@ -39,21 +36,19 @@ import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
 import in.ureport.views.adapters.NavigationAdapter;
-import in.ureport.views.adapters.StoriesAdapter;
 
 /**
  * Created by johncordeiro on 7/9/15.
  */
-public class MainActivity extends BaseActivity implements FloatingActionButtonListener
-        , StoriesAdapter.OnPublishStoryListener, OnSeeOpenGroupsListener, OnUserStartChattingListener {
+public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListener, OnUserStartChattingListener,
+        StoriesListFragment.OnPublishStoryListener {
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
-    private static final int REQUEST_CODE_CHAT_CREATION = 200;
+    public static final int REQUEST_CODE_CHAT_CREATION = 200;
     public static final int REQUEST_CODE_CHAT_NOTIFICATION = 300;
     public static final int REQUEST_CODE_MESSAGE_NOTIFICATION = 400;
     public static final int REQUEST_CODE_CONTRIBUTION_NOTIFICATION = 500;
 
-    private static final int POSITION_STORIES_FRAGMENT = 0;
     private static final int POSITION_POLLS_FRAGMENT = 1;
     private static final int POSITION_CHAT_FRAGMENT = 2;
 
@@ -72,7 +67,7 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     private ViewPager pager;
 
     private StoriesListFragment storiesListFragment;
-    private ListChatRoomsFragment listChatRoomsFragment;
+    private ChatsFragment chatsFragment;
 
     private LocalNotificationManager localNotificationManager;
     private Story story;
@@ -184,31 +179,15 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
     private void setupView() {
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setOffscreenPageLimit(3);
-        pager.addOnPageChangeListener(onPageChangeListener);
         setupNavigationAdapter();
-        hideFloatingButtonDelayed();
 
         getTabLayout().setupWithViewPager(pager);
-        getMainActionButton().setOnClickListener(onCreateStoryClickListener);
     }
 
     @Override
     protected void onMenuLoaded() {
         super.onMenuLoaded();
         getMenuNavigation().getMenu().findItem(R.id.home).setChecked(true);
-    }
-
-    private void hideFloatingButtonDelayed() {
-        getMainActionButton().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                hideFloatingButton();
-            }
-        }, 1000);
-    }
-
-    private boolean containsMainActionButton(int position) {
-        return position == POSITION_STORIES_FRAGMENT || position == POSITION_CHAT_FRAGMENT;
     }
 
     private void setupNavigationAdapter() {
@@ -229,8 +208,8 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
 
         NavigationItem [] navigationItems;
         if(UserManager.isUserLoggedIn() && (UserManager.isUserCountryProgramEnabled() || UserManager.isMaster())) {
-            listChatRoomsFragment = new ListChatRoomsFragment();
-            NavigationItem chatItem = new NavigationItem(listChatRoomsFragment, getString(R.string.main_chat));
+            chatsFragment = new ChatsFragment();
+            NavigationItem chatItem = new NavigationItem(chatsFragment, getString(R.string.main_chat));
             navigationItems = new NavigationItem[]{storiesItem, pollsItem, chatItem};
         } else {
             navigationItems = new NavigationItem[]{storiesItem, pollsItem};
@@ -243,12 +222,9 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         if(action != null) {
             switch(action) {
                 case ACTION_START_CHATTING:
-                    pager.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            User user = getIntent().getParcelableExtra(EXTRA_USER);
-                            onUserStartChatting(user);
-                        }
+                    pager.postDelayed(() -> {
+                        User user1 = getIntent().getParcelableExtra(EXTRA_USER);
+                        onUserStartChatting(user1);
                     }, LOAD_CHAT_TIME);
                     break;
                 case ACTION_OPEN_CHAT_NOTIFICATION:
@@ -288,94 +264,15 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         startActivity(storyViewIntent);
     }
 
-    @Override
-    public void showFloatingButton() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            getMainActionButton().animate().translationY(0).start();
-        } else {
-            getMainActionButton().setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void hideFloatingButton() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            getMainActionButton().animate().translationY(getMainActionButton().getHeight()
-                    + getResources().getDimension(R.dimen.fab_margin)).start();
-        } else {
-            getMainActionButton().setVisibility(View.GONE);
-        }
-    }
-
-    private void checkFloatingButtonVisibility(int position) {
-        if(containsMainActionButton(position)) {
-            showFloatingButton();
-        } else {
-            hideFloatingButton();
-        }
-    }
-
-    private void publishStory() {
-        if(UserManager.validateKeyAction(MainActivity.this)) {
-            Intent createStoryIntent = new Intent(MainActivity.this, CreateStoryActivity.class);
-            startActivityForResult(createStoryIntent, REQUEST_CODE_CREATE_STORY);
-        }
-    }
-
-    @Override
-    public void onPublishStory() {
-        publishStory();
-    }
-
-    private ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
-        @Override
-        public void onPageScrollStateChanged(int state) {}
-        @Override
-        public void onPageSelected(int position) {
-            checkFloatingButtonVisibility(position);
-            checkFloatingButtonAction(position);
-        }
-    };
-
-    private void checkFloatingButtonAction(int position) {
-        switch(position) {
-            case POSITION_STORIES_FRAGMENT:
-                getMainActionButton().setOnClickListener(onCreateStoryClickListener);
-                break;
-            case POSITION_CHAT_FRAGMENT:
-                getMainActionButton().setOnClickListener(onCreateChatClickListener);
-        }
-    }
-
-    private View.OnClickListener onCreateChatClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            createChat();
-        }
-    };
-
-    private void createChat() {
-        createChat(null);
-    }
-
     private void createChat(User user) {
-        if(UserManager.validateKeyAction(MainActivity.this) && listChatRoomsFragment != null) {
+        if(UserManager.validateKeyAction(MainActivity.this) && chatsFragment != null) {
             Intent newChatIntent = new Intent(MainActivity.this, ChatCreationActivity.class);
             newChatIntent.putParcelableArrayListExtra(ChatCreationActivity.EXTRA_CHAT_ROOMS
-                    , (ArrayList<ChatRoomHolder>) listChatRoomsFragment.getChatRooms());
+                    , (ArrayList<ChatRoomHolder>) chatsFragment.getChatRooms());
             if(user != null)  newChatIntent.putExtra(ChatCreationActivity.EXTRA_USER, user);
             startActivityForResult(newChatIntent, REQUEST_CODE_CHAT_CREATION);
         }
     }
-
-    private View.OnClickListener onCreateStoryClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            publishStory();
-        }
-    };
 
     private View.OnClickListener onNotificationsClickListener = new View.OnClickListener() {
         @Override
@@ -424,21 +321,26 @@ public class MainActivity extends BaseActivity implements FloatingActionButtonLi
         final ChatRoomServices chatRoomServices = new ChatRoomServices();
 
         for (final DataSnapshot chatRoom : chatRoomsSnapshot.getChildren()) {
-            chatRoomServices.loadChatRoomMembers(chatRoom.getKey(), new ChatRoomInterface.OnChatMembersLoadedListener() {
-                @Override
-                public void onChatMembersLoaded(ChatMembers chatMembers) {
-                    roomMembersLoaded++;
-                    boolean needsChatCreation = !chatRoomFound && roomMembersLoaded >= chatRoomsSnapshot.getChildrenCount();
+            chatRoomServices.loadChatRoomMembers(chatRoom.getKey(), chatMembers -> {
+                roomMembersLoaded++;
+                boolean needsChatCreation = !chatRoomFound && roomMembersLoaded >= chatRoomsSnapshot.getChildrenCount();
 
-                    if(chatMembers.getUsers().size() == 2
-                    && chatMembers.getUsers().contains(user)) {
-                        chatRoomFound = true;
-                        listChatRoomsFragment.startChatRoom(new ChatRoom(chatRoom.getKey()));
-                    } else if(needsChatCreation) {
-                        createChat(user);
-                    }
+                if(chatMembers.getUsers().size() == 2
+                && chatMembers.getUsers().contains(user)) {
+                    chatRoomFound = true;
+                    chatsFragment.startChatRoom(new ChatRoom(chatRoom.getKey()));
+                } else if(needsChatCreation) {
+                    createChat(user);
                 }
             });
+        }
+    }
+
+    @Override
+    public void onPublishStory() {
+        if(UserManager.validateKeyAction(MainActivity.this)) {
+            Intent createStoryIntent = new Intent(MainActivity.this, CreateStoryActivity.class);
+            startActivityForResult(createStoryIntent, REQUEST_CODE_CREATE_STORY);
         }
     }
 }

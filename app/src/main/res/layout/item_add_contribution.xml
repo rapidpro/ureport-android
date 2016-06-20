@@ -1,31 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:minHeight="50dp"
-    android:paddingTop="5dp"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    tools:background="#f00">
+    android:layout_height="60dp"
+    android:minHeight="60dp"
+    android:gravity="center_vertical">
 
-    <Button
-        android:id="@+id/addContribution"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="@drawable/ic_add_circle_grey_600_36dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_gray"/>
 
     <EditText
         android:id="@+id/contribution"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
-        android:imeOptions="actionSend|flagNoFullscreen"
-        android:ellipsize="start"
-        android:singleLine="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_height="match_parent"
+        android:paddingLeft="20dp"
+        android:paddingStart="20dp"
+        android:paddingRight="60dp"
+        android:paddingEnd="60dp"
+        android:gravity="start|center_vertical"
+        android:textAlignment="viewStart"
+        android:inputType="textMultiLine"
+        android:imeOptions="actionSend|flagNoEnterAction"
+        android:maxLines="3"
+        android:background="@android:color/transparent"
         android:hint="@string/story_contribution_add"
-        tools:text="@string/poll1_description"/>
+        tools:targetApi="17"/>
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/addContribution"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_send_blue_36dp" />
+
+</RelativeLayout>

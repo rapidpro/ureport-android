@@ -2,12 +2,12 @@ package in.ureport.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,14 +28,13 @@ import com.firebase.client.FirebaseError;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
+import br.com.ilhasoft.support.utils.KeyboardHandler;
 import in.ureport.R;
-import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.helpers.YoutubePicker;
-import in.ureport.helpers.YoutubeThumbnailHandler;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
@@ -44,7 +43,6 @@ import in.ureport.models.Marker;
 import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
-import in.ureport.models.VideoMedia;
 import in.ureport.network.StoryServices;
 import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.network.UserServices;
@@ -54,10 +52,14 @@ import in.ureport.views.adapters.MediaAdapter;
  * Created by johncordeiro on 7/14/15.
  */
 public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaListener
-        , YoutubePicker.OnPickVideoListener {
+        , PickMediaFragment.OnPickMediaListener {
 
     private static final String TAG = "CreateStoryFragment";
     public static final int MEDIA_GAP = 5;
+
+    private static final String EXTRA_MARKERS = "markers";
+    private static final String EXTRA_MEDIAS = "medias";
+    private static final String EXTRA_SELECTED_MEDIA = "selectedMedia";
 
     private List<Marker> selectedMarkers;
     private List<Media> mediaList;
@@ -67,11 +69,11 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private EditText markers;
     private EditText title;
     private EditText content;
+    private MenuItem publishItem;
 
     private StoryCreationListener storyCreationListener;
 
-    private MediaSelector mediaSelector;
-    private YoutubeThumbnailHandler youtubeThumbnailHandler;
+    public ProgressDialog progressDialog;
 
     @Nullable
     @Override
@@ -82,25 +84,33 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        getDataFromSavedInstance(savedInstanceState);
         setupObjects();
         setupView(view);
+        setupSelectedMedia(savedInstanceState);
+    }
+
+    private void setupSelectedMedia(@Nullable Bundle savedInstanceState) {
+        if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_SELECTED_MEDIA)) {
+            Media selectedMedia = savedInstanceState.getParcelable(EXTRA_SELECTED_MEDIA);
+            mediaAdapter.setSelectedMedia(selectedMedia);
+        }
+    }
+
+    private void getDataFromSavedInstance(@Nullable Bundle savedInstanceState) {
+        if(savedInstanceState != null) {
+            selectedMarkers = savedInstanceState.getParcelableArrayList(EXTRA_MARKERS);
+            mediaList = savedInstanceState.getParcelableArrayList(EXTRA_MEDIAS);
+        }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mediaSelector.onActivityResult(this, onLoadLocalMediaListener, requestCode, resultCode, data);
-    }
-
-    private void addLocalMedia(Uri pictureUri) {
-        LocalMedia media = new LocalMedia();
-        media.setPath(pictureUri);
-        addMedia(media);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_MARKERS, (ArrayList<Marker>) selectedMarkers);
+        outState.putParcelableArrayList(EXTRA_MEDIAS, (ArrayList<Media>) mediaList);
+        outState.putParcelable(EXTRA_SELECTED_MEDIA, mediaAdapter.getSelectedMedia());
     }
 
     private void addMedia(Media media) {
@@ -109,9 +119,9 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void setupObjects() {
-        mediaList = new ArrayList<>();
-        mediaSelector = new MediaSelector(getContext());
-        youtubeThumbnailHandler = new YoutubeThumbnailHandler();
+        if(mediaList == null) {
+            mediaList = new ArrayList<>();
+        }
     }
 
     private void setupView(View view) {
@@ -146,15 +156,26 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_create_story, menu);
+        publishItem = menu.findItem(R.id.publish);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.publish:
+                item.setEnabled(false);
                 publishStory();
                 return true;
         }
@@ -179,9 +200,16 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
             if(mediasToUpload.size() > 0) {
                 uploadMediasAndCreateStory();
             } else {
-                createStoryWithMediasAndSave(mediaList);
+                createStoryWithMediasAndSave(mediaList, null);
             }
+        } else {
+            finishPublishing();
         }
+    }
+
+    private void finishPublishing() {
+        if(publishItem != null)
+            publishItem.setEnabled(true);
     }
 
     @NonNull
@@ -197,15 +225,32 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     private void uploadMediasAndCreateStory() {
         try {
+            final TransferManager transferManager = new TransferManager(getActivity());
+
             final ProgressDialog progressUpload = ProgressDialog.show(getActivity(), null
                     , getString(R.string.load_message_uploading_image), true, true);
+            progressUpload.setOnCancelListener((DialogInterface dialog) -> {
+                finishPublishing();
+                transferManager.cancelTransfer();
+                Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
+            });
 
-            TransferManager transferManager = new TransferManager(getActivity());
             transferManager.transferMedias(mediaList, "story", new TransferManager.OnTransferMediasListener() {
                 @Override
-                public void onTransferMedias(List<Media> medias) {
+                public void onTransferMedias(Map<LocalMedia, Media> medias) {
                     progressUpload.dismiss();
-                    createStoryWithMediasAndSave(medias);
+                    createStoryWithMediasAndSave(new ArrayList<>(medias.values()), getCoverFromMediasUploaded(medias));
+                }
+
+                @Override
+                public void onWaitingConnection() {
+                    progressUpload.setMessage(getString(R.string.load_message_waiting_connection));
+                }
+
+                @Override
+                public void onFailed() {
+                    progressUpload.dismiss();
+                    displayMediaUploadError();
                 }
             });
         } catch(Exception exception) {
@@ -214,11 +259,22 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         }
     }
 
+    private void displayMediaUploadError() {
+        finishPublishing();
+
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setMessage(R.string.error_media_upload)
+                .setPositiveButton(R.string.confirm_neutral_dialog_button, null)
+                .create();
+        alertDialog.show();
+    }
+
     private void showErrorImageUpload() {
+        finishPublishing();
         Toast.makeText(getActivity(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
     }
 
-    private void createStoryWithMediasAndSave(List<Media> medias) {
+    private void createStoryWithMediasAndSave(List<Media> medias, Media cover) {
         final ProgressDialog progressCreation = ProgressDialog.show(getActivity(), null
                 , getString(R.string.load_message_wait), true, true);
 
@@ -228,7 +284,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         story.setContent(content.getText().toString());
         story.setCreatedDate(new Date());
         story.setMedias(medias.size() > 0 ? medias : null);
-        story.setCover(getCoverFromMediasUploaded(medias));
+        story.setCover(cover);
 
         String markersText = markers.getText().toString();
         story.setMarkers(markersText.length() == 0 ? "" : markersText);
@@ -237,11 +293,12 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         storyServices.saveStory(story, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                finishPublishing();
                 progressCreation.dismiss();
                 if (firebaseError == null && storyCreationListener != null) {
                     story.setKey(firebase.getKey());
 
-                    incrementStoryCount();
+                    incrementStoryCount(story);
                     storyCreationListener.onStoryCreated(story);
                     registerAuthorToGcm(story);
                 }
@@ -263,19 +320,14 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         });
     }
 
-    private void incrementStoryCount() {
+    private void incrementStoryCount(Story story) {
         UserServices userServices = new UserServices();
-        userServices.incrementStoryCount();
+        userServices.incrementStoryCount(story);
     }
 
     @Nullable
-    private Media getCoverFromMediasUploaded(List<Media> medias) {
-        Media cover = null;
-        int indexOfCover = mediaList.indexOf(mediaAdapter.getSelectedMedia());
-        if(indexOfCover >= 0) {
-            cover = medias.get(indexOfCover);
-        }
-        return cover;
+    private Media getCoverFromMediasUploaded(Map<LocalMedia, Media> medias) {
+        return medias.get(mediaAdapter.getSelectedMedia());
     }
 
     private boolean isFieldsValid() {
@@ -312,7 +364,13 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public void onMediaAddListener() {
-        mediaSelector.selectMedia(this);
+        PickMediaFragment pickMediaFragment = new PickMediaFragment();
+        pickMediaFragment.setOnPickMediaListener(this);
+        getFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .setCustomAnimations(R.anim.slide_in_top, R.anim.slide_out_bottom, R.anim.slide_out_bottom, R.anim.slide_in_top)
+                .replace(R.id.details, pickMediaFragment)
+                .commit();
     }
 
     private View.OnClickListener onMarkerClickListener = new View.OnClickListener() {
@@ -323,26 +381,9 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         }
     };
 
-    private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
-        @Override
-        public void onLoadLocalMedia(Uri uri) {
-            addLocalMedia(uri);
-        }
-    };
-
     @Override
-    public void onPickVideo(String videoId, String videoUrl) {
-        addVideoMedia(videoId, videoUrl);
-    }
-
-    private void addVideoMedia(String videoId, String videoUrl) {
-        VideoMedia videoMedia = new VideoMedia();
-        videoMedia.setId(videoId);
-        videoMedia.setPath(videoUrl);
-        videoMedia.setUrl(youtubeThumbnailHandler.getThumbnailUrlFromVideo(videoId
-                , YoutubeThumbnailHandler.ThumbnailSizeClass.HighQuality));
-
-        addMedia(videoMedia);
+    public void onPickMedia(Media media) {
+        addMedia(media);
     }
 
     public interface StoryCreationListener {

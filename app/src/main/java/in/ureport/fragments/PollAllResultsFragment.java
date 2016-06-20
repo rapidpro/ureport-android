@@ -1,15 +1,18 @@
 package in.ureport.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.firebase.client.DataSnapshot;
@@ -43,6 +46,7 @@ public class PollAllResultsFragment extends Fragment {
     private ProgressBar progressBar;
 
     private PollServices pollServices;
+    private BottomSheetBehavior<View> bottomSheetBehavior;
 
     public static PollAllResultsFragment newInstance(Poll poll) {
         PollAllResultsFragment pollAllResultsFragment = new PollAllResultsFragment();
@@ -75,12 +79,6 @@ public class PollAllResultsFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.label_poll_results);
-    }
-
-    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -95,9 +93,15 @@ public class PollAllResultsFragment extends Fragment {
 
     private void setupView(View view) {
         resultsList = (RecyclerView) view.findViewById(R.id.resultsList);
-        resultsList.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
+        Button comment = (Button) view.findViewById(R.id.comment);
+        comment.setOnClickListener(v -> PollsResultsContributionsDialog.newInstance(poll).show(getFragmentManager(), "dialog"));
+    }
+
+    private float getHeight(int percent) {
+        int heightPixels = getResources().getDisplayMetrics().heightPixels;
+        return heightPixels * (percent/100);
     }
 
     private void loadData() {
@@ -108,6 +112,12 @@ public class PollAllResultsFragment extends Fragment {
         PollResultsAdapter pollResultsAdapter = new PollResultsAdapter(pollResults
                 , getResources().getStringArray(R.array.poll_colors));
         pollResultsAdapter.setPollResultsListener(pollResultsListener);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && pollResults.size() > 1) {
+            resultsList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        } else {
+            resultsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
         resultsList.setAdapter(pollResultsAdapter);
     }
 

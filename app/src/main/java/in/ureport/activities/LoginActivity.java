@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
                 if (dataSnapshot.exists()) {
                     User user = dataSnapshot.getValue(User.class);
                     user.setKey(dataSnapshot.getKey());
-                    onUserReady(user);
+                    onUserReady(user, false);
                 } else {
                     addSignUpFragment(user);
                 }
@@ -114,17 +114,17 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     @Override
-    public void onUserReady(final User user) {
+    public void onUserReady(final User user, boolean newUser) {
         if(user == null) return;
 
         final ProgressDialog progressDialog = ProgressDialog.show(this, null
                 , getString(R.string.load_message_wait), true, false);
 
-        saveContactOnRapidPro(user, progressDialog);
+        saveContactOnRapidPro(user, newUser, progressDialog);
     }
 
-    private void saveContactOnRapidPro(final User user, final ProgressDialog progressDialog) {
-        SaveContactTask saveContactTask = new SaveContactTask(this) {
+    private void saveContactOnRapidPro(final User user, final boolean newUser, final ProgressDialog progressDialog) {
+        SaveContactTask saveContactTask = new SaveContactTask(this, newUser) {
             @Override
             protected void onPostExecute(Contact contact) {
                 super.onPostExecute(contact);

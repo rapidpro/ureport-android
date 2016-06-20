@@ -21,10 +21,9 @@ public class UserSettingsActivity extends SettingsActivity implements UserSettin
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        user = getIntent().getParcelableExtra(EXTRA_USER);
 
         if(savedInstanceState == null) {
-            user = getIntent().getParcelableExtra(EXTRA_USER);
-
             if(user.getType() != User.Type.ureport)
                 onEditProfile();
             else

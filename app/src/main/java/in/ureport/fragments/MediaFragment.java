@@ -22,10 +22,13 @@ import in.ureport.views.widgets.TouchImageView;
  */
 public class MediaFragment extends Fragment {
 
+    private static final String TAG = "MediaFragment";
+
     private static final String EXTRA_MEDIA = "media";
     private Media media;
 
     private MediaViewFragment.OnCloseMediaViewListener onCloseMediaViewListener;
+
     private TouchImageView image;
     private TextView videoPlay;
 
@@ -56,14 +59,6 @@ public class MediaFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(onCloseMediaViewListener != null)
-                    onCloseMediaViewListener.onCloseMediaView();
-            }
-        });
         setupView(view);
     }
 
@@ -76,10 +71,14 @@ public class MediaFragment extends Fragment {
     }
 
     private void bindVideo() {
-        if(media != null && media.getType() == Media.Type.Video) {
-            image.setEnabled(false);
-            videoPlay.setVisibility(View.VISIBLE);
-            videoPlay.setOnClickListener(onVideoPlayClickListener);
+        if(media != null) {
+            switch (media.getType()) {
+                case Video:
+                    image.setEnabled(false);
+                    videoPlay.setVisibility(View.VISIBLE);
+                    videoPlay.setOnClickListener(onVideoPlayClickListener);
+                    break;
+            }
         }
     }
 
@@ -104,8 +103,11 @@ public class MediaFragment extends Fragment {
     private View.OnClickListener onVideoPlayClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            YoutubePlayer youtubePlayer = new YoutubePlayer(getActivity());
-            youtubePlayer.playVideoMedia(media);
+            if(media.getType() == Media.Type.Video) {
+                YoutubePlayer youtubePlayer = new YoutubePlayer(getActivity());
+                youtubePlayer.playVideoMedia(media);
+            }
         }
     };
+
 }

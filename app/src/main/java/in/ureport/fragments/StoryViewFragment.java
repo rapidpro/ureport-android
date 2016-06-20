@@ -1,13 +1,13 @@
 package in.ureport.fragments;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,8 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +38,7 @@ import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.MediaViewer;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
@@ -68,17 +69,21 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
     private ContributionAdapter contributionAdapter;
     private TextView contributions;
-    private Button contribute;
+    private View contribute;
+    private TextView likeCount;
     private EditText contribution;
     private TextView author;
     private ImageView picture;
     private View addContributionContainer;
+    private NestedScrollView scrollView;
+    private FloatingActionButton shareActionButton;
 
     private ContributionServices contributionServices;
     private StoryServices storyServices;
     private UserServices userServices;
 
-    private MediaAdapter.OnMediaViewListener onMediaViewListener;
+    private MediaViewer mediaViewer;
+    private int storyLikeCount;
 
     public static StoryViewFragment newInstance(Story story, User user) {
         return newInstance(story, user, true);
@@ -133,6 +138,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
                 super.onDataChange(dataSnapshot);
 
                 story = dataSnapshot.getValue(Story.class);
+                story.setKey(dataSnapshot.getKey());
                 setupView(view);
                 loadData();
             }
@@ -151,18 +157,35 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         cleanNotification();
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if(context instanceof MediaAdapter.OnMediaViewListener) {
-            onMediaViewListener = (MediaAdapter.OnMediaViewListener) context;
-        }
+    private void loadData() {
+        contributionServices.addChildEventListener(story.getKey(), contributionChildEventListener);
+        loadUserIfNeeded();
+        checkLikeForUser();
+        loadStoryLikesCount();
     }
 
-    private void loadData() {
-        contributionServices.addChildEventListener(story, contributionChildEventListener);
-        loadUserIfNeeded();
+    private void loadStoryLikesCount() {
+        storyServices.loadStoryLikeCount(story, new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                updateLikes((int)dataSnapshot.getChildrenCount());
+            }
+        });
+    }
+
+    private void updateLikes(int likesCount) {
+        storyLikeCount = likesCount;
+        likeCount.setText(getResources().getQuantityString(R.plurals.like_count, storyLikeCount, storyLikeCount));
+    }
+
+    private void checkLikeForUser() {
+        storyServices.checkLikeForUser(story, new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                likeCount.setSelected(dataSnapshot.exists());
+            }
+        });
     }
 
     private void loadUserIfNeeded() {
@@ -181,9 +204,10 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     }
 
     private void setupObjects() {
-        contributionServices = new ContributionServices();
+        contributionServices = new ContributionServices(ContributionServices.Type.Story);
         userServices = new UserServices();
         storyServices = new StoryServices();
+        mediaViewer = new MediaViewer((AppCompatActivity) getActivity());
     }
 
     private void setupView(View view) {
@@ -200,13 +224,10 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         TextView content = (TextView) view.findViewById(R.id.content);
         content.setText(story.getContent());
 
-        final NestedScrollView scrollView = (NestedScrollView) view.findViewById(R.id.scrollView);
-        scrollView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                scrollView.fullScroll(View.FOCUS_UP);
-            }
-        }, 200);
+        scrollView = (NestedScrollView) view.findViewById(R.id.scrollView);
+        if(scrollView != null) {
+            scrollTo(View.FOCUS_UP);
+        }
 
         TextView markers = (TextView) view.findViewById(R.id.markers);
         setupMarkers(markers);
@@ -221,20 +242,24 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
         addContributionContainer = view.findViewById(R.id.addContributionContainer);
 
-        contribute = (Button) view.findViewById(R.id.contribute);
+        contribute = view.findViewById(R.id.contribute);
         contribute.setOnClickListener(onContributeClickListener);
 
-        Button addContribution = (Button) view.findViewById(R.id.addContribution);
+        ImageButton addContribution = (ImageButton) view.findViewById(R.id.addContribution);
         addContribution.setOnClickListener(onAddContributionClickListener);
 
         contribution = (EditText) view.findViewById(R.id.contribution);
         contribution.setOnEditorActionListener(onDescriptionEditorActionListener);
+
+        likeCount = (TextView) view.findViewById(R.id.likeCount);
+        likeCount.setOnClickListener(onLikeClickListener);
 
         RecyclerView contributionList = (RecyclerView) view.findViewById(R.id.contributionList);
         ((SimpleItemAnimator) contributionList.getItemAnimator()).setSupportsChangeAnimations(false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext()
                 , LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setAutoMeasureEnabled(true);
+        linearLayoutManager.setStackFromEnd(true);
         contributionList.setLayoutManager(linearLayoutManager);
 
         contributionAdapter = new ContributionAdapter();
@@ -244,8 +269,14 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         RecyclerView mediaList = (RecyclerView) view.findViewById(R.id.mediaList);
         setupMediaList(mediaList);
 
-        FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.share);
-        floatingActionButton.setOnClickListener(onShareClickListener);
+        shareActionButton = (FloatingActionButton) view.findViewById(R.id.share);
+        if (shareActionButton != null) {
+            shareActionButton.setOnClickListener(onShareClickListener);
+        }
+    }
+
+    private void scrollTo(int direction) {
+        scrollView.postDelayed(() -> scrollView.fullScroll(direction), 200);
     }
 
     private void setupUser() {
@@ -289,7 +320,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
             mediaList.addItemDecoration(mediaItemDecoration);
 
             MediaAdapter adapter = new MediaAdapter(story.getMedias(), false);
-            adapter.setOnMediaViewListener(onMediaViewListener);
+            adapter.setOnMediaViewListener(mediaViewer);
             mediaList.setAdapter(adapter);
         } else {
             mediaList.setVisibility(View.GONE);
@@ -303,6 +334,12 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         if(UserManager.canModerate()) {
             inflater.inflate(R.menu.menu_story_view, menu);
         }
+
+        if(shareActionButton == null) {
+            MenuItem menuItem = menu.add(Menu.NONE, R.id.share, Menu.NONE, R.string.title_share);
+            menuItem.setIcon(R.drawable.ic_share_white_24dp);
+            MenuItemCompat.setShowAsAction(menuItem, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
+        }
     }
 
     @Override
@@ -310,6 +347,9 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         switch(item.getItemId()) {
             case R.id.disapproveStory:
                 disapproveStory();
+                break;
+            case R.id.share:
+                shareStory();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -344,28 +384,32 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private View.OnClickListener onShareClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            ShareStoryTask shareStoryTask = new ShareStoryTask(StoryViewFragment.this, story);
-            shareStoryTask.execute();
+            shareStory();
         }
     };
+
+    private void shareStory() {
+        ShareStoryTask shareStoryTask = new ShareStoryTask(StoryViewFragment.this, story);
+        shareStoryTask.execute();
+    }
 
     public void addContribution(String content) {
         if(UserManager.validateKeyAction(getActivity())) {
             final Contribution contribution = new Contribution(content, user);
             contribution.setCreatedDate(new Date());
 
-            contributionServices.saveContribution(story, contribution, new Firebase.CompletionListener() {
-                @Override
-                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                    if(firebaseError == null) {
-                        userServices.incrementContributionPoint();
+            contributionServices.saveContribution(story.getKey(), contribution, (firebaseError, firebase) -> {
+                if(firebaseError == null) {
+                    userServices.incrementContributionPoint();
 
-                        StoryViewFragment.this.contribution.setText(null);
-                        incrementContributionsText();
-                        refreshContribution();
-                        addAuthorToTopic();
-                        sendNotification(contribution);
+                    StoryViewFragment.this.contribution.setText(null);
+                    if(scrollView != null) {
+                        scrollTo(View.FOCUS_DOWN);
                     }
+                    incrementContributionsText();
+                    refreshContribution();
+                    addAuthorToTopic();
+                    sendNotification(contribution);
                 }
             });
         }
@@ -425,10 +469,8 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     };
 
     private void updateViewForContribution() {
-        if(contribute.getVisibility() == View.VISIBLE) {
-            addContributionContainer.setVisibility(View.VISIBLE);
-            contribute.setVisibility(View.GONE);
-        }
+        addContributionContainer.setVisibility(View.VISIBLE);
+        contribute.setVisibility(View.GONE);
     }
 
     private void loadUserFromContribution(final Contribution contribution, final OnAfterLoadUserListener listener) {
@@ -471,7 +513,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     public void onContributionRemove(Contribution contribution) {
         final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
                 , getString(R.string.load_message_wait), true, false);
-        contributionServices.removeContribution(story, contribution, new Firebase.CompletionListener() {
+        contributionServices.removeContribution(story.getKey(), contribution, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 progressDialog.dismiss();
@@ -491,6 +533,31 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
     private void displayToast(@StringRes int messageId) {
         Toast.makeText(getActivity(), messageId, Toast.LENGTH_SHORT).show();
+    }
+
+    private View.OnClickListener onLikeClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if(UserManager.validateKeyAction(getActivity())) {
+                boolean selected = view.isSelected();
+                view.setSelected(!selected);
+
+                storyLikeCount += selected ? -1 : 1;
+                updateLikes(storyLikeCount);
+
+                toggleLike(view, selected);
+            }
+        }
+    };
+
+    private void toggleLike(View view, boolean selected) {
+        if(selected) {
+            storyServices.removeStoryLike(story, user
+                    , (FirebaseError firebaseError, Firebase firebase) -> view.setSelected(false));
+        } else {
+            storyServices.addStoryLike(story, user
+                    , (FirebaseError firebaseError, Firebase firebase) -> view.setSelected(true));
+        }
     }
 
     public interface OnAfterLoadUserListener {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
@@ -8,9 +8,22 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/storiesList"
-        android:layout_width="match_parent"
+        android:layout_width="550dp"
         android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/createStoryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_edit_white_24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        app:layout_anchor="@id/content"
+        app:backgroundTint="@color/highlight"/>
 
     <TextView
         android:id="@+id/info"
@@ -19,11 +32,11 @@
         android:layout_marginTop="50dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
         android:drawableTop="@drawable/ic_report_problem_grey_600_36dp"
         android:drawablePadding="5dp"
         android:visibility="gone"
         tools:visibility="visible"
         android:text="@string/list_stories_error"/>
 
-</FrameLayout>
+</RelativeLayout>

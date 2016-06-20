@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    tools:showIn="@layout/fragment_story_view">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/contributionList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="60dp" />
+
+    <TextView
+        android:id="@+id/contribute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="80dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_gravity="center"
+        android:drawablePadding="5dp"
+        android:text="@string/title_first_comment"
+        android:drawableTop="@drawable/ic_no_comments" />
+
+    <include
+        android:id="@+id/addContributionContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="bottom"
+        layout="@layout/item_add_contribution"
+        tools:visibility="visible" />
+
+</FrameLayout>
