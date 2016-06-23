@@ -144,8 +144,7 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UreportSL", "U-report-Sierra-Leone-361005830734231", null));
             countryPrograms.add(buildCountryProgram("SWZ", AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4
                     , rapidpro_host_address1, ureport_host_address1, "Ureportszd", "Swaziland-U-Report-1407332376221373", null));
-            countryPrograms.add(buildCountryProgram("THA", AppTheme_Thailand, thailand_channel, "Thailand", 5
-                    , rapidpro_host_address2, ureport_host_address2, "UReportThai", "ureportglobal", "U-Reporters"));
+            countryPrograms.add(buildTha());
             countryPrograms.add(buildCountryProgram("UGA", AppTheme_Uganda, uganda_channel, "Uganda", 18
                     , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "UReportUganda", "U-Reporters"));
 			countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
@@ -157,6 +156,15 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "Ureportzim", "U-Report-Zimbabwe-1477396805878097", null));
         }
         return countryPrograms;
+    }
+
+    @NonNull
+    private static CountryProgram buildTha() {
+        CountryProgram thaCountry = buildCountryProgram("THA", AppTheme_Thailand, thailand_channel, "Thailand", 5
+                , rapidpro_host_address2, ureport_host_address2, "UReportThai", "ureportglobal", "U-Reporters");
+        thaCountry.setMaleGroup("U-Reporters Male");
+        thaCountry.setFemaleGroup("U-Reporters Female");
+        return thaCountry;
     }
 
     @NonNull
