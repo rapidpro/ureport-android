@@ -17,8 +17,6 @@ public class ContactGroupsBuilder {
 
     private static final String GROUP_UREPORT_YOUTH = "UReport Youth";
     private static final String GROUP_UREPORT_ADULTS = "UReport Adults";
-    private static final String GROUP_UREPORT_MALES = "UReport Males";
-    private static final String GROUP_UREPORT_FEMALES = "UReport Females";
     private static final String GROUP_UREPORT_APP = "App U-Reporters";
 
     public List<String> getGroupsForUser(User user) {
@@ -28,7 +26,7 @@ public class ContactGroupsBuilder {
             userGroups.add(countryProgram.getGroup());
         }
         userGroups.add(GROUP_UREPORT_APP);
-        addGenderGroup(user, userGroups);
+        addGenderGroup(user, countryProgram, userGroups);
         addAgeGroup(user, userGroups);
         return userGroups;
     }
@@ -44,11 +42,11 @@ public class ContactGroupsBuilder {
         }
     }
 
-    private void addGenderGroup(User user, List<String> userGroups) {
+    private void addGenderGroup(User user, CountryProgram countryProgram, List<String> userGroups) {
         if(user.getGender() == User.Gender.Male) {
-            userGroups.add(GROUP_UREPORT_MALES);
+            userGroups.add(countryProgram.getMaleGroup());
         } else if(user.getGender() == User.Gender.Female) {
-            userGroups.add(GROUP_UREPORT_FEMALES);
+            userGroups.add(countryProgram.getFemaleGroup());
         }
     }
 }
