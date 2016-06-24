@@ -120,8 +120,7 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UReportDRC", "UNICEFRDC", null));
 			countryPrograms.add(buildCountryProgram("FJI", AppTheme_Fiji, R.string.fiji_channel, "Fiji", INVALID_VALUE
 					, rapidpro_host_address1, ureport_host_address1, null, null, "UReporters"));
-            countryPrograms.add(buildCountryProgram("GTM", AppTheme_Guatemala, R.string.guatemala_channel, "Guatemala", 7
-                    , rapidpro_host_address2, ureport_host_address2, "UReportGua", "ureportglobal", "U-Reporters"));
+            countryPrograms.add(buildGtmCountry());
             countryPrograms.add(buildCountryProgram("IDN", AppTheme_Indonesia, indonesia_channel, "Indonesia", 15
                     , rapidpro_host_address1, ureport_host_address1, "UReport_id", "UNICEFIndonesia", "UReporters_Indonesia"));
             countryPrograms.add(buildCountryProgram("IRL", AppTheme_Ireland, ireland_channel, "Ireland", 2
@@ -149,13 +148,21 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "UReportUganda", "U-Reporters"));
 			countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
 					, rapidpro_host_address1, ureport_host_address1, "ureportukraine", "ureportukraine", "UReporters"));
-            countryPrograms.add(buildGbrCountry());
             countryPrograms.add(buildCountryProgram("ZMB", AppTheme_Zambia, INVALID_VALUE, "Zambia", INVALID_VALUE
                     , rapidpro_host_address1, ureport_host_address1, "ZambiaUReport", "Zambia-U-Report-421536867911449", null));
             countryPrograms.add(buildCountryProgram("ZWE", AppTheme_Zimbabwe, INVALID_VALUE, "Zimbabwe", 2
                     , rapidpro_host_address1, ureport_host_address1, "Ureportzim", "U-Report-Zimbabwe-1477396805878097", null));
         }
         return countryPrograms;
+    }
+
+    @NonNull
+    private static CountryProgram buildGtmCountry() {
+        CountryProgram gtmCountry = buildCountryProgram("GTM", AppTheme_Guatemala, R.string.guatemala_channel, "Guatemala", 7
+                , rapidpro_host_address2, ureport_host_address2, "UReportGua", "ureportglobal", "U-Reporters");
+        gtmCountry.setMaleGroup("U-Reporters Male");
+        gtmCountry.setFemaleGroup("U-Reporters Female");
+        return gtmCountry;
     }
 
     @NonNull
