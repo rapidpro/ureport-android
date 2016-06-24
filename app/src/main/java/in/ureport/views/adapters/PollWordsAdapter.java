@@ -25,7 +25,7 @@ public class PollWordsAdapter extends TagsAdapter {
     private final List<ItemKeyword> keywords;
 
     public PollWordsAdapter(List<ItemKeyword> keywords) {
-        this.keywords = keywords.subList(0, 15);
+        this.keywords = keywords.size() >= 15 ? keywords.subList(0, 15) : keywords;
     }
 
     @Override
