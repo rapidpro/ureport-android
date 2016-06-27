@@ -357,7 +357,6 @@
     </plurals>
 
     <plurals name="like_count">
-        <item quantity="zero">No likes</item>
         <item quantity="one">%1$d like</item>
         <item quantity="other">%1$d likes</item>
     </plurals>
