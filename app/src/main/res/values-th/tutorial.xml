@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string name="tutorial_title1">เขียนเรื่องราวใหม่</string>
+  <string name="tutorial_description1">กระจายเสียงของคุณและแบ่งปันสิ่งที่เกิดขึ้นในชุมชนของคุณด้วยการเขียนเรื่องราวและแสดงความเห็นกับเรื่องราวของคนอื่น</string>
+  <string name="tutorial1_example_markers">น้ำ, การคุ้มครองเด็ก, การศึกษา</string>
+  <string name="tutorial1_example_content">สวัสดี เล่าให้เราฟังหน่อยว่าเกิดอะไรขึ้นบ้าง</string>
+  <string name="tutorial1_example_contribute">มีส่วนร่วมกับเรื่องราวนี้</string>
+  <string name="tutorial_title2">ตอบโพล</string>
+  <string name="tutorial_description2">แต่ละสัปดาห์ คุณและยู-รีพอร์ตเตอร์นับล้านทั่วโลกจะตอบคำถามโพลเกี่ยวกับเรื่องที่มีผลกระทบต่อชุมชนของคุณ ผลโพลจะถูกแบ่งปันตลอดเวลา</string>
+  <string name="tutorial2_example_title">โพลปัจจุบัน</string>
+  <string name="tutorial2_example_subtitle">น้ำ และสุขาภิบาล</string>
+  <string name="tutorial2_example_content">มีการดำเนินการแก้ไขเรื่องแหล่งน้ำที่ใช้งานไม่ได้ที่คุณได้รายงานให้หน่วยงานที่เกี่ยวข้องทราบหรือยัง?</string>
+  <string name="tutorial2_example_accept">ใช่</string>
+  <string name="tutorial2_example_reject">ไม่ใช่</string>
+  <string name="tutorial2_example_finish">ส่ง</string>
+  <string name="tutorial_title3">แชทฟรี</string>
+  <string name="tutorial_description3">แชทกับยู-รีพอร์ตเตอร์คนอื่น และติดตามกลุ่มแชทในเรื่องที่เกี่ยวกับเยาวชน</string>
+  <string name="tutorial3_first_message">คุณพบว่าคุณครูไม่มีโรงเรียนวันนี้หรือไม่?</string>
+  <string name="tutorial3_second_message">ใช่แล้ว! เขาไปไหนนะ ดูสิ ห้องเรียนว่างเปล่า</string>
+  <string name="tutorial_example_message3">โพลปัจจุบัน</string>
+</resources>
