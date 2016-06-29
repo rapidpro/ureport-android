@@ -160,7 +160,7 @@ public class CountryProgramManager {
     private static CountryProgram buildGtmCountry() {
         CountryProgram gtmCountry = buildCountryProgram("GTM", AppTheme_Guatemala, R.string.guatemala_channel, "Guatemala", 7
                 , rapidpro_host_address2, ureport_host_address2, "UReportGua", "ureportglobal", "U-Reporters");
-        gtmCountry.setMaleGroup("UReport Male");
+        gtmCountry.setMaleGroup("UReport Males");
         gtmCountry.setFemaleGroup("UReport Female");
         return gtmCountry;
     }
