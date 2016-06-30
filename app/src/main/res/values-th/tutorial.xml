@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-  <string name="tutorial_title1">เขียนเรื่องราวใหม่</string>
-  <string name="tutorial_description1">กระจายเสียงของคุณและแบ่งปันสิ่งที่เกิดขึ้นในชุมชนของคุณด้วยการเขียนเรื่องราวและแสดงความเห็นกับเรื่องราวของคนอื่น</string>
-  <string name="tutorial_title2">ตอบโพล</string>
-  <string name="tutorial_description2">แต่ละสัปดาห์ คุณและยู-รีพอร์ตเตอร์นับล้านทั่วโลกจะตอบคำถามโพลเกี่ยวกับเรื่องที่มีผลกระทบต่อชุมชนของคุณ ผลโพลจะถูกแบ่งปันตลอดเวลา</string>
-  <string name="tutorial_title3">แชทฟรี</string>
-  <string name="tutorial_description3">แชทกับยู-รีพอร์ตเตอร์คนอื่น และติดตามกลุ่มแชทในเรื่องที่เกี่ยวกับเยาวชน</string>
-</resources>
