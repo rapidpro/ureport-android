@@ -222,11 +222,8 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     }
 
     protected boolean isUsernameValid() {
-        String messageNameValidation = getString(R.string.error_minimum_size
-                , FIELDS_MINIMUM_SIZE);
-
-        return validator.validateSizeMulti(FIELDS_MINIMUM_SIZE
-                , messageNameValidation, username);
+        String messageNameValidation = getString(R.string.error_required_field);
+        return validator.validateEmpty(username, messageNameValidation);
     }
 
     protected boolean isEmailValid() {
