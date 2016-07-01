@@ -4,6 +4,7 @@
 app/src/debug/res/values/keys.xml
 app/src/release/res/values/keys.xml
 app/src/beta/res/values/keys.xml
+app/src/company/res/values/keys.xml
 
 ### Android ###
 # Built application files
