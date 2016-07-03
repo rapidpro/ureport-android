@@ -17,6 +17,7 @@ import static in.ureport.R.string.global_channel;
 import static in.ureport.R.string.indonesia_channel;
 import static in.ureport.R.string.ireland_channel;
 import static in.ureport.R.string.mexico_channel;
+import static in.ureport.R.string.thailand_channel;
 import static in.ureport.R.string.nigeria_channel;
 import static in.ureport.R.string.rapidpro_host_address1;
 import static in.ureport.R.string.rapidpro_host_address2;
@@ -45,6 +46,7 @@ import static in.ureport.R.style.AppTheme_RepubliqueCentrafricaine;
 import static in.ureport.R.style.AppTheme_Senegal;
 import static in.ureport.R.style.AppTheme_SierraLeone;
 import static in.ureport.R.style.AppTheme_Swaiziland;
+import static in.ureport.R.style.AppTheme_Thailand;
 import static in.ureport.R.style.AppTheme_Uganda;
 import static in.ureport.R.style.AppTheme_Ukraine;
 import static in.ureport.R.style.AppTheme_UnitedKingdom;
@@ -144,6 +146,7 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UreportSL", "U-report-Sierra-Leone-361005830734231", null));
             countryPrograms.add(buildCountryProgram("SWZ", AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4
                     , rapidpro_host_address1, ureport_host_address1, "Ureportszd", "Swaziland-U-Report-1407332376221373", null));
+            countryPrograms.add(buildTha());
             countryPrograms.add(buildCountryProgram("UGA", AppTheme_Uganda, uganda_channel, "Uganda", 18
                     , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "UReportUganda", "U-Reporters"));
 			countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
@@ -163,6 +166,15 @@ public class CountryProgramManager {
         gtmCountry.setMaleGroup("UReport Males");
         gtmCountry.setFemaleGroup("UReport Female");
         return gtmCountry;
+    }
+
+    @NonNull
+    private static CountryProgram buildTha() {
+        CountryProgram thaCountry = buildCountryProgram("THA", AppTheme_Thailand, thailand_channel, "Thailand", 5
+                , rapidpro_host_address2, ureport_host_address2, "UReportThai", "ureportglobal", "U-Reporters");
+        thaCountry.setMaleGroup("U-Reporters Male");
+        thaCountry.setFemaleGroup("U-Reporters Female");
+        return thaCountry;
     }
 
     @NonNull
