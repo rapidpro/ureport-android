@@ -71,6 +71,8 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             if (countryToken != null && !countryToken.isEmpty()) {
                 String countryCode = countryInfo != null ? countryInfo.getCountryCode() : user.getCountry();
                 Contact contact = getContactForUser(countryToken, user, getRegistrationDate(), getISO2CountryCode(countryCode));
+                updateContactsWithGroups(countryToken, contact);
+
                 try {
                     return rapidProServices.saveContact(countryToken, contact);
                 } catch (RetrofitError exception) {
@@ -87,6 +89,21 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             Log.e(TAG, "doInBackground ", exception);
         }
         return null;
+    }
+
+    private void updateContactsWithGroups(String countryToken, Contact contact) {
+        try {
+            Contact contactResult = this.rapidProServices.loadContact(countryToken, contact.getUrns().get(0));
+            if (contactResult != null) {
+                for (String group : contactResult.getGroups()) {
+                    if (!contact.getGroups().contains(group)) {
+                        contact.getGroups().add(group);
+                    }
+                }
+            }
+        } catch(Exception exception) {
+            Log.e(TAG, "updateContactsWithGroups: ", exception);
+        }
     }
 
     private Date getRegistrationDate() {

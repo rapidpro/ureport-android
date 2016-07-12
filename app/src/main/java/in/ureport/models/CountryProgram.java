@@ -5,6 +5,10 @@ import android.support.annotation.StyleRes;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
+
+import in.ureport.models.rapidpro.AgeGroup;
+
 /**
  * Created by johncordeiro on 7/23/15.
  */
@@ -42,6 +46,8 @@ public class CountryProgram {
     private String maleGroup = GROUP_UREPORT_MALES;
 
     private String femaleGroup = GROUP_UREPORT_FEMALES;
+
+    private List<AgeGroup> ageGroups;
 
     public CountryProgram(String code, @StyleRes int theme, @StringRes int channel
             , String name, int organization, int rapidproEndpoint, int ureportEndpoint, String twitter, String facebook, String group) {
@@ -166,6 +172,15 @@ public class CountryProgram {
 
     public void setFemaleGroup(String femaleGroup) {
         this.femaleGroup = femaleGroup;
+    }
+
+    public List<AgeGroup> getAgeGroups() {
+        return ageGroups;
+    }
+
+    public CountryProgram setAgeGroups(List<AgeGroup> ageGroups) {
+        this.ageGroups = ageGroups;
+        return this;
     }
 
     @Override

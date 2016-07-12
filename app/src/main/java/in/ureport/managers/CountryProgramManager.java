@@ -10,6 +10,7 @@ import br.com.ilhasoft.support.tool.ResourceUtil;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.models.CountryProgram;
+import in.ureport.models.rapidpro.AgeGroup;
 
 import static in.ureport.R.string.brasil_channel;
 import static in.ureport.R.string.chile_channel;
@@ -149,7 +150,8 @@ public class CountryProgramManager {
             countryPrograms.add(buildTha());
             countryPrograms.add(buildCountryProgram("UGA", AppTheme_Uganda, uganda_channel, "Uganda", 18
                     , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "UReportUganda", "U-Reporters"));
-			countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
+            countryPrograms.add(buildGbrCountry());
+            countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
 					, rapidpro_host_address1, ureport_host_address1, "ureportukraine", "ureportukraine", "UReporters"));
             countryPrograms.add(buildCountryProgram("ZMB", AppTheme_Zambia, INVALID_VALUE, "Zambia", INVALID_VALUE
                     , rapidpro_host_address1, ureport_host_address1, "ZambiaUReport", "Zambia-U-Report-421536867911449", null));
@@ -174,6 +176,17 @@ public class CountryProgramManager {
                 , rapidpro_host_address2, ureport_host_address2, "UReportThai", "ureportglobal", "U-Reporters");
         thaCountry.setMaleGroup("U-Reporters Male");
         thaCountry.setFemaleGroup("U-Reporters Female");
+
+        List<AgeGroup> ageGroups = new ArrayList<>();
+        ageGroups.add(new AgeGroup("6 - 9", 6, 9));
+        ageGroups.add(new AgeGroup("10 - 13", 10, 13));
+        ageGroups.add(new AgeGroup("14 - 18", 14, 18));
+        ageGroups.add(new AgeGroup("19 - 23", 19, 23));
+        ageGroups.add(new AgeGroup("24 - 28", 24, 28));
+        ageGroups.add(new AgeGroup("29 - 33", 29, 33));
+        ageGroups.add(new AgeGroup("> 34", 34));
+        thaCountry.setAgeGroups(ageGroups);
+
         return thaCountry;
     }
 
@@ -183,6 +196,13 @@ public class CountryProgramManager {
                 , rapidpro_host_address2, ureport_host_address2, "UReportUK", "ureportglobal", "U-Reporters");
         gbrCountry.setMaleGroup("U-Reporters Male");
         gbrCountry.setFemaleGroup("U-Reporters Female");
+
+        List<AgeGroup> ageGroups = new ArrayList<>();
+        ageGroups.add(new AgeGroup("U-Reporters 13-18", 13, 18));
+        ageGroups.add(new AgeGroup("U-Reporters 18-25", 18, 25));
+        ageGroups.add(new AgeGroup("U-Reporters 26+", 26));
+        gbrCountry.setAgeGroups(ageGroups);
+
         return gbrCountry;
     }
 
