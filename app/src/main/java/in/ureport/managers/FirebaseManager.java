@@ -3,8 +3,11 @@ package in.ureport.managers;
 import android.content.Context;
 
 import com.facebook.AccessToken;
-import com.firebase.client.AuthData;
+import com.firebase.client.Config;
 import com.firebase.client.Firebase;
+import com.firebase.client.core.RepoManager;
+import com.firebase.client.utilities.ParsedUrl;
+import com.firebase.client.utilities.Utilities;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.twitter.sdk.android.core.TwitterSession;
 
@@ -26,10 +29,17 @@ public class FirebaseManager {
     public static void init(Context context) {
         Firebase.setAndroidContext(context);
 
+        Config config = new Config();
+        config.setAuthenticationServer("http://52.73.40.16:8000");
+        Firebase.setDefaultConfig(config);
+
         if(reference == null) {
             Firebase.getDefaultConfig().setPersistenceEnabled(true);
             FirebaseManager.context = context;
-            reference = new Firebase(context.getString(R.string.firebase_app));
+
+            ParsedUrl parsedUrl = Utilities.parseUrl(context.getString(R.string.firebase_app));
+            parsedUrl.repoInfo.namespace = "u-report-dev";
+            reference = new Firebase(RepoManager.getRepo(config, parsedUrl.repoInfo), parsedUrl.path);
         }
     }
 
