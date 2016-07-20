@@ -264,9 +264,6 @@ public class PollsResultsFragment extends Fragment implements LoaderManager.Load
         sendFlowReponsesTask.execute(stepSet);
     }
 
-    @Override
-    public void onFinishedClick() {}
-
     private BroadcastReceiver onReloadNotifications = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
