@@ -321,6 +321,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     private void updateSpinnerLocation(Spinner spinner, List<Location> locations) {
         if(locations != null) {
             ArrayAdapter<Location> adapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, locations);
+            adapter.sort((lhs, rhs) -> lhs.toString().compareTo(rhs.toString()));
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             spinner.setEnabled(true);
