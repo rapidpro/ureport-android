@@ -81,7 +81,7 @@
   <string name="label_chat_groups">เปิดกลุ่ม</string>
   <string name="chat_groups_join">เข้าร่วม</string>
   <string name="chat_rooms">แชทของฉัน</string>
-  <string name="chat_invite_contacts_title">ส่ง SMS เพื่อเชิญชวนเพื่อนๆ ของคุณ</string>
+  <string name="chat_invite_contacts_title">ส่งข้อความ SMS เพื่อเชิญชวนเพื่อนๆ มาร่วมกับยูรีพอร์ต</string>
   <string name="chat_contact_invite_button">เชิญ</string>
   <string name="chat_invite">เชิญ</string>
   <string name="label_new_chat">เปิดแชทใหม่</string>
@@ -160,7 +160,7 @@
   <string name="error_email_check">รหัสผ่านของคุณถูกรีเซ็ตแล้ว กรุณาเช็ครหัสผ่านใหม่ทางอีเมลของคุณ</string>
   <string name="label_login">ลงชื่อเข้าใช้</string>
   <string name="label_forgot_password">ลืมรหัสผ่าน</string>
-  <string name="label_data_confirmation">ยืนยันข้อมูล</string>
+  <string name="label_data_confirmation">ลงทะเบียนยูรีพอร์ต</string>
   <string-array name="image_sources">
     <item>แกลลอรี่</item>
     <item>กล้อง</item>
@@ -173,9 +173,9 @@
   <!--TODO: Remove or change this placeholder text-->
   <string name="load_message_save_user">กำลังบันทึกผู้ใช้งาน...</string>
   <string name="error_no_internet">กรุณาเชื่อมต่อกับอินเทอร์เน็ตก่อนดำเนินการต่อ</string>
-  <string name="invite_contact_text">แชทกับฉันบนแอปยูรีพอร์ต ดาวน์โหลได้ที่ http://goo.gl/Xxyodt</string>
+  <string name="invite_contact_text">แชทกับฉันบนแอปยูรีพอร์ต ดาวน์โหลได้ที่ http://bit.ly/UReportAndroid หรือ http://bit.ly/UReportIOS</string>
   <string name="ureporters_selected_maximum">จำนวนผู้ใช้งานมากที่สุดที่สามารถเลือกได้คือ %1$s</string>
-  <string name="chat_private_media_permission_title">สื่อที่ได้รับอนุญาต</string>
+  <string name="chat_private_media_permission_title">สื่อที่ใช้ได้</string>
   <string name="search_title">ค้นหา</string>
   <string name="search_hint_users">ค้นหายูรีพอร์ตเตอร์</string>
   <string name="error_image_upload">ไม่สามารถอัพโหลดรูปภาพนี้ได้ กรุณาเลือกรูปภาพอื่น!</string>
@@ -218,10 +218,10 @@
   <string name="poll_response_hint">แตะที่นี่เพื่อตอบ</string>
   <string name="poll_question_default_message">รอโพลถัดไป หรือส่งข้อความมายังยูรีพอร์ตด้านล่าง</string>
   <string name="main_chat">แชท</string>
-  <string name="title_open_groups">ติดตามกลุ่มสนทนา</string>
+  <string name="title_open_groups">ติดตามการสนทนา</string>
   <string name="description_open_groups">มาดูกันว่าชุมชนยูรีพอร์ตกำลังพูดคุยเรื่องอะไรกัน</string>
-  <string name="title_see">ดูกลุ่ม</string>
-  <string name="label_invite_contacts">เชิญผู้ติดต่อ</string>
+  <string name="title_see">ดู</string>
+  <string name="label_invite_contacts">เชิญเพื่อนๆ มาร่วม</string>
   <string name="title_poll_question_no_login">คุณจำเป็นต้องลงชื่อเข้าใช้ก่อนตอบโพล</string>
   <string name="label_last_polls">ผลโพลก่อนหน้า</string>
   <string name="choice_result_value">%1$s %%</string>
@@ -295,7 +295,7 @@
   <string name="prompt_file_upload">เลือกไฟล์เพื่ออัพโหลด</string>
   <string name="error_compressing_video">ไม่สามารถบีบอัดวิดีโอได้ กรุณาลองใหม่</string>
   <string name="message_compressing_video">กำลังบีบอัดวิดีโอ...</string>
-  <string name="title_button_record">บันทึก</string>
+  <string name="title_button_record">บันทึกเสียง</string>
   <string name="error_message_audio">ไม่สามารถบันทึกเสียงได้ กรุณาลองใหม่</string>
   <string name="error_message_mic">มีปัญหากับไมโครโฟน จึงไม่สามารถบันทึกเสียงได้</string>
   <string name="title_button_stop">หยุด</string>
