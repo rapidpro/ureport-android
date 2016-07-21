@@ -21,16 +21,20 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.Collator;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.widget.DatePickerFragment;
 import in.ureport.R;
+import in.ureport.helpers.LocalizedComparator;
 import in.ureport.loader.CountryListLoader;
 import in.ureport.loader.LocationInfoLoader;
 import in.ureport.models.User;
@@ -321,7 +325,8 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     private void updateSpinnerLocation(Spinner spinner, List<Location> locations) {
         if(locations != null) {
             ArrayAdapter<Location> adapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, locations);
-            adapter.sort((lhs, rhs) -> lhs.toString().compareTo(rhs.toString()));
+            Collator collator = getLocalizedComparator();
+            adapter.sort((lhs, rhs) -> collator.compare(lhs.toString(), rhs.toString()));
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             spinner.setEnabled(true);
@@ -330,6 +335,17 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
             resetLocationSpinner(spinner, R.array.spinner_error_loading_states);
             Toast.makeText(getActivity(), R.string.error_no_internet, Toast.LENGTH_LONG).show();
         }
+    }
+
+    @NonNull
+    private Collator getLocalizedComparator() {
+        Locale locale = Locale.getDefault();
+        if (countryInfo != null) {
+            locale = new Locale(countryInfo.getCountryCode());
+        }
+        Collator collator = Collator.getInstance(locale);
+        collator.setStrength(Collator.PRIMARY);
+        return collator;
     }
 
     @Override
