@@ -35,7 +35,9 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     private static final String EXTRA_STORY = "story";
 
     public enum Type {
-        Rapidpro
+        Rapidpro,
+        Chat,
+        Contribution
     }
 
     @Override
