@@ -170,6 +170,9 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     private void startMainActivity() {
         Intent mainIntent = new Intent(this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (getIntent().getExtras() != null) {
+            mainIntent.putExtras(getIntent().getExtras());
+        }
         startActivity(mainIntent);
         finish();
     }

@@ -14,6 +14,7 @@ import in.ureport.models.ChatRoom;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
 import in.ureport.models.holders.ContributionHolder;
+import in.ureport.services.GcmListenerService;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
@@ -44,11 +45,13 @@ public class GcmServices {
         ChatMessageHolder chatMessageHolder = new ChatMessageHolder();
         chatMessageHolder.chatRoom = chatRoom;
         chatMessageHolder.chatMessage = chatMessage;
+        chatMessageHolder.setType(GcmListenerService.Type.Chat);
 
         GcmApi.Input<ChatMessageHolder> chatMessageHolderInput = new GcmApi.Input<>(
                 GcmTopicManager.CHAT_TOPICS_PATH + chatRoom.getKey(), chatMessageHolder);
         chatMessageHolderInput.setNotification(new GcmApi.Notification(context.getString(R.string.title_chat_message)
-                , String.format("%1$s: %2$s", chatMessage.getUser().getNickname(), getChatMessage(chatMessage))));
+                , String.format("%1$s: %2$s", chatMessage.getUser().getNickname()
+                , getChatMessage(chatMessage))));
 
         return gcmApi.sendData(gcmKey, chatMessageHolderInput);
     }
@@ -59,6 +62,7 @@ public class GcmServices {
 
     public GcmApi.Response sendContribution(Story story, Contribution contribution) {
         ContributionHolder contributionHolder = new ContributionHolder(story, contribution);
+        contributionHolder.setType(GcmListenerService.Type.Contribution);
 
         GcmApi.Input<ContributionHolder> contributionData = new GcmApi.Input<>(
                 GcmTopicManager.STORY_TOPICS_PATH + story.getKey(), contributionHolder);
@@ -77,7 +81,7 @@ public class GcmServices {
                 .build();
     }
 
-    public class ChatMessageHolder {
+    public class ChatMessageHolder extends GcmApi.NotificationHolder {
         @Expose
         ChatRoom chatRoom;
         @Expose

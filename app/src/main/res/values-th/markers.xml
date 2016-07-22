@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation" >
+    <string-array name="markers">
+        <item>งานรณรงค์</item>
+        <item>การคุ้มครองเด็ก</item>
+        <item>การศึกษา</item>
+        <item>สถานการณ์ฉุกเฉิน</item>
+        <item>สุขภาพ</item>
+        <item>เอชไอวี/เอดส์</item>
+        <item>โภชนาการ</item>
+        <item>การเมือง</item>
+        <item>นโยบายสังคม</item>
+        <item>สุขาภิบาล</item>
+        <item>ความรุนแรง</item>
+    </string-array>
+</resources>
