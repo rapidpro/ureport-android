@@ -8,6 +8,7 @@ import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 
 import in.ureport.managers.AmazonServicesManager;
+import in.ureport.managers.FirebaseProxyManager;
 import in.ureport.managers.UserManager;
 import in.ureport.managers.FirebaseManager;
 import io.fabric.sdk.android.Fabric;
@@ -23,7 +24,7 @@ public class UreportApplication extends MultiDexApplication {
 
         AnalyticsTracker.initialize(this);
         UserManager.init(this);
-        FirebaseManager.init(this);
+        FirebaseProxyManager.init(this);
         initializeFabric();
         ActiveAndroid.initialize(this);
         AmazonServicesManager.init(this);

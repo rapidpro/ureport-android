@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.ilhasoft.support.tool.ResourceUtil;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
