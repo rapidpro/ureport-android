@@ -43,6 +43,12 @@
         <item name="colorAccent">#870018</item>
     </style>
 
+    <style name="AppTheme.India" parent="AppTheme">
+        <item name="colorPrimary">#05b5e8</item>
+        <item name="colorPrimaryDark">#048db6</item>
+        <item name="colorAccent">#047ea2</item>
+    </style>
+
     <style name="AppTheme.Liberia" parent="AppTheme">
         <item name="colorPrimary">#155ad0</item>
         <item name="colorPrimaryDark">#144e9e</item>

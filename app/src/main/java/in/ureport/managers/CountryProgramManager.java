@@ -15,6 +15,7 @@ import in.ureport.models.rapidpro.AgeGroup;
 import static in.ureport.R.string.brasil_channel;
 import static in.ureport.R.string.chile_channel;
 import static in.ureport.R.string.global_channel;
+import static in.ureport.R.string.india_channel;
 import static in.ureport.R.string.indonesia_channel;
 import static in.ureport.R.string.ireland_channel;
 import static in.ureport.R.string.mexico_channel;
@@ -36,6 +37,7 @@ import static in.ureport.R.style.AppTheme_Chile;
 import static in.ureport.R.style.AppTheme_Drc;
 import static in.ureport.R.style.AppTheme_Fiji;
 import static in.ureport.R.style.AppTheme_Guatemala;
+import static in.ureport.R.style.AppTheme_India;
 import static in.ureport.R.style.AppTheme_Indonesia;
 import static in.ureport.R.style.AppTheme_Ireland;
 import static in.ureport.R.style.AppTheme_Liberia;
@@ -126,6 +128,7 @@ public class CountryProgramManager {
             countryPrograms.add(buildGtmCountry());
             countryPrograms.add(buildCountryProgram("IDN", AppTheme_Indonesia, indonesia_channel, "Indonesia", 15
                     , rapidpro_host_address1, ureport_host_address1, "UReport_id", "UNICEFIndonesia", "UReporters_Indonesia"));
+            countryPrograms.add(buildIndia());
             countryPrograms.add(buildCountryProgram("IRL", AppTheme_Ireland, ireland_channel, "Ireland", 2
                     , rapidpro_host_address2, ureport_host_address2, "UReportIRL", "ureportIRL", "U-Reporters"));
             countryPrograms.add(buildCountryProgram("LBR", AppTheme_Liberia, INVALID_VALUE, "Liberia", 6
@@ -159,6 +162,12 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "Ureportzim", "U-Report-Zimbabwe-1477396805878097", null));
         }
         return countryPrograms;
+    }
+
+    @NonNull
+    private static CountryProgram buildIndia() {
+        return buildCountryProgram("IND", AppTheme_India, india_channel, "India", 25
+                , rapidpro_host_address1, ureport_host_address1, "UReportIndia", "UReport.India", "UReporters");
     }
 
     @NonNull
