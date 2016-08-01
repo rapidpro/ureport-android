@@ -169,7 +169,10 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
-                updateLikes((int)dataSnapshot.getChildrenCount());
+
+                if (dataSnapshot.exists()) {
+                    updateLikes((int)dataSnapshot.getChildrenCount());
+                }
             }
         });
     }
