@@ -94,16 +94,15 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     private void updateContactsWithGroups(String countryToken, Contact contact) {
         try {
             Contact contactResult = this.rapidProServices.loadContact(countryToken, contact.getUrns().get(0));
-            if (contactResult != null) {
-                for (String group : contactResult.getGroups()) {
-                    if (!contact.getGroups().contains(group)) {
-                        contact.getGroups().add(group);
-                    }
-                }
-            }
+            if (contactHasGroups(contactResult))
+                contact.setGroups(null);
         } catch(Exception exception) {
             Log.e(TAG, "updateContactsWithGroups: ", exception);
         }
+    }
+
+    private boolean contactHasGroups(Contact contactResult) {
+        return contactResult != null && contactResult.getGroups() != null && !contactResult.getGroups().isEmpty();
     }
 
     private Date getRegistrationDate() {
