@@ -193,6 +193,8 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
     private void setupView(View view) {
         info = view.findViewById(R.id.info);
+        info.setVisibility(publicType ? View.GONE : View.VISIBLE);
+
         storiesList = (InfiniteFireLinearRecyclerView) view.findViewById(R.id.storiesList);
 
         layoutManager = new LinearLayoutManager(getActivity());
