@@ -58,8 +58,8 @@ public class CountryInfo implements Parcelable {
         this.isoAlpha3 = isoAlpha3;
     }
 
-    public CountryInfo(String isoAlpha3) {
-        this.isoAlpha3 = isoAlpha3;
+    public CountryInfo(String countryCode) {
+        this.countryCode = countryCode;
     }
 
     @Override
@@ -73,13 +73,12 @@ public class CountryInfo implements Parcelable {
         if (o == null || getClass() != o.getClass()) return false;
 
         CountryInfo that = (CountryInfo) o;
-
-        return isoAlpha3.equals(that.isoAlpha3);
+        return countryCode.equals(that.countryCode);
     }
 
     @Override
     public int hashCode() {
-        return isoAlpha3.hashCode();
+        return countryCode.hashCode();
     }
 
     @Override
