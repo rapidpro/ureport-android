@@ -119,8 +119,12 @@ public class UserServices extends ProgramServices {
 
                         List<User> users = new ArrayList<>();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            User user = snapshot.getValue(User.class);
-                            users.add(user);
+                            try {
+                                User user = snapshot.getValue(User.class);
+                                users.add(user);
+                            } catch(Exception exception) {
+                                Log.e(TAG, "onDataChange: ", exception);
+                            }
                         }
 
                         onLoadAllUsersListener.onLoadAllUsers(users);
