@@ -35,7 +35,7 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
     }
 
     public void loadData() {
-        storyServices.addStoryModerateChildEventListener(childEventListener);
+//        storyServices.addStoryModerateChildEventListener(childEventListener);
     }
 
     @Override
