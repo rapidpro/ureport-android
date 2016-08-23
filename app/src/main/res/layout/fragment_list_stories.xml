@@ -35,8 +35,6 @@
         android:layout_centerHorizontal="true"
         android:drawableTop="@drawable/ic_report_problem_grey_600_36dp"
         android:drawablePadding="5dp"
-        android:visibility="gone"
-        tools:visibility="visible"
         android:text="@string/list_stories_error"/>
 
 </RelativeLayout>

@@ -136,6 +136,16 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        try {
+            storiesAdapter.unregisterAdapterDataObserver(storiesAdapterObserver);
+        } catch(Exception exception) {
+            Log.e(TAG, "onDestroyView: ", exception);
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(EXTRA_USER, user);
@@ -182,6 +192,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     private void setupView(View view) {
+        info = view.findViewById(R.id.info);
         storiesList = (InfiniteFireLinearRecyclerView) view.findViewById(R.id.storiesList);
 
         layoutManager = new LinearLayoutManager(getActivity());
@@ -190,8 +201,6 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
         recyclerFloatingScrollListener = new RecyclerScrollListener(this);
         setupStoriesAdapter();
-
-        info = view.findViewById(R.id.info);
 
         createStoryButton = (FloatingActionButton) view.findViewById(R.id.createStoryButton);
         createStoryButton.setOnClickListener(onCreateStoryClickListener);
@@ -206,6 +215,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
         storiesAdapter = new StoriesAdapter(storyFireArray, publicType);
         storiesAdapter.setHasStableIds(true);
+        storiesAdapter.registerAdapterDataObserver(storiesAdapterObserver);
 
         if(needsUserPublish()) storiesAdapter.setUser(user);
 
@@ -338,6 +348,16 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         ShareNewsTask shareNewsTask = new ShareNewsTask(this, news);
         shareNewsTask.execute();
     }
+
+    private RecyclerView.AdapterDataObserver storiesAdapterObserver = new RecyclerView.AdapterDataObserver() {
+        @Override
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            super.onItemRangeInserted(positionStart, itemCount);
+            if (info.getVisibility() == View.VISIBLE) {
+                info.setVisibility(View.GONE);
+            }
+        }
+    };
 
     private View.OnClickListener onCreateStoryClickListener = new View.OnClickListener() {
         @Override

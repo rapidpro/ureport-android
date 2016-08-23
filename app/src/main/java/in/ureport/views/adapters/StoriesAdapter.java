@@ -183,7 +183,7 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
 
     public void setUser(User user) {
         this.user = user;
-        notifyItemInserted(0);
+        notifyItemChanged(0);
     }
 
     private class HeaderViewHolder extends RecyclerView.ViewHolder {
@@ -199,16 +199,15 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
         }
 
         private void bind(User user) {
-            name.setHint(itemView.getContext().getString(R.string.list_stories_header_title, user.getNickname()));
-            ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
+            if (user != null) {
+                name.setHint(itemView.getContext().getString(R.string.list_stories_header_title, user.getNickname()));
+                ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
+            }
         }
 
-        private View.OnClickListener onPublishStoryClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (onPublishStoryListener != null)
-                    onPublishStoryListener.onPublishStory();
-            }
+        private View.OnClickListener onPublishStoryClickListener = view -> {
+            if (onPublishStoryListener != null)
+                onPublishStoryListener.onPublishStory();
         };
     }
 
