@@ -235,11 +235,11 @@ public class ChatRoomFragment extends Fragment
 
     private void loadData() {
         user = getMemberUserByKey(UserManager.getUserId());
-        adapter.setUser(user);
 
         CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask(getActivity());
         cleanUnreadByRoomTask.execute(chatRoom);
 
+        setupMessagesAdapter();
         chatRoomServices.addValueListenForChatRoom(chatRoom, onChatRoomChangedListener);
     }
 
@@ -389,15 +389,6 @@ public class ChatRoomFragment extends Fragment
         messagesLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, true);
         messagesList.setLayoutManager(messagesLayoutManager);
 
-        Query query = chatRoomServices.getChatMessagesQuery(chatRoom.getKey());
-        chatMessageArray = new InfiniteFireArray<>(ChatMessage.class, query, 20, 20, false, false);
-        adapter = new ChatMessagesAdapter(user, chatMessageArray);
-        adapter.setOnChatMessageSelectedListener(this);
-        adapter.registerAdapterDataObserver(adapterDataObserver);
-
-        messagesList.setAdapter(adapter);
-        messagesList.setInfiniteFireArray(chatMessageArray);
-
         SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration();
         spaceItemDecoration.setVerticalSpaceHeight((int) new UnitConverter(getActivity()).convertDpToPx(10));
         messagesList.addItemDecoration(spaceItemDecoration);
@@ -416,6 +407,17 @@ public class ChatRoomFragment extends Fragment
 
         if(pickMediaFragment != null)
             pickMediaFragment.setOnPickMediaListener(this);
+    }
+
+    private void setupMessagesAdapter() {
+        Query query = chatRoomServices.getChatMessagesQuery(chatRoom.getKey());
+        chatMessageArray = new InfiniteFireArray<>(ChatMessage.class, query, 20, 20, false, false);
+        adapter = new ChatMessagesAdapter(user, chatMessageArray);
+        adapter.setOnChatMessageSelectedListener(this);
+        adapter.registerAdapterDataObserver(adapterDataObserver);
+
+        messagesList.setAdapter(adapter);
+        messagesList.setInfiniteFireArray(chatMessageArray);
     }
 
     public void updateChatRoom(ChatRoom chatRoom, ChatMembers chatMembers) {
