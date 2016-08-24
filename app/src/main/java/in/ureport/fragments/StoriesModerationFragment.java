@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 
 import in.ureport.R;
 import in.ureport.models.Story;
@@ -34,8 +35,9 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
         hideFloatingButton();
     }
 
-    public void loadData() {
-//        storyServices.addStoryModerateChildEventListener(childEventListener);
+    @Override
+    public Query loadData() {
+        return storyServices.getStoriesModerationQuery();
     }
 
     @Override

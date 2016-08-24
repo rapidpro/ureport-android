@@ -84,7 +84,11 @@ public class StoryServices extends ProgramServices {
     }
 
     public void addStoryModerateChildEventListener(ChildEventListener childEventListener) {
-        getDefaultRoot().child(storyModeratePath).addChildEventListener(childEventListener);
+        getStoriesModerationQuery().addChildEventListener(childEventListener);
+    }
+
+    public Firebase getStoriesModerationQuery() {
+        return getDefaultRoot().child(storyModeratePath);
     }
 
     public Firebase getStoryReference() {

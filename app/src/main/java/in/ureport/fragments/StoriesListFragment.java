@@ -132,7 +132,8 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
         setupObjects();
         setupView(view);
-        loadData();
+        Query query = loadData();
+        setupStoriesAdapter(query);
     }
 
     @Override
@@ -175,10 +176,11 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         ureportServices = new UreportServices(ureportEndpoint);
     }
 
-    public void loadData() {
+    public Query loadData() {
         if(publicType) {
             loadNewsForPage(previousPageLoaded);
         }
+        return publicType ? storyServices.getStoryReference() : storyServices.getStoryQueryByUser(user);
     }
 
     private void loadNewsForPage(int page) {
@@ -202,7 +204,6 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         storiesList.addOnScrollListener(onStoriesListScrollListener);
 
         recyclerFloatingScrollListener = new RecyclerScrollListener(this);
-        setupStoriesAdapter();
 
         createStoryButton = (FloatingActionButton) view.findViewById(R.id.createStoryButton);
         createStoryButton.setOnClickListener(onCreateStoryClickListener);
@@ -210,8 +211,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         createStoryButton.postDelayed(this::hideFloatingButton, 1000);
     }
 
-    private void setupStoriesAdapter() {
-        Query query = publicType ? storyServices.getStoryReference() : storyServices.getStoryQueryByUser(user);
+    private void setupStoriesAdapter(Query query) {
         InfiniteFireArray<Story> storyFireArray = new InfiniteFireArray<>(Story.class
                 , query, 10, 10, false, false);
 
