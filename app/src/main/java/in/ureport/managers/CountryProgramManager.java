@@ -186,6 +186,7 @@ public class CountryProgramManager {
         ageGroups.add(new AgeGroup("29 - 33", 29, 33));
         ageGroups.add(new AgeGroup("> 34", 34));
         thaCountry.setAgeGroups(ageGroups);
+        thaCountry.setStateField("province");
 
         return thaCountry;
     }

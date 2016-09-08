@@ -66,11 +66,12 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
                     .getCountryProgramForCode(countryProgramCode).getRapidproEndpoint());
             this.rapidProServices = new RapidProServices(rapidproEndpoint);
 
-            String countryToken = getTokenFromProxy(countryProgramCode);
+            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryProgramCode);
+            String countryToken = getTokenFromProxy(countryProgram);
             UserManager.updateCountryToken(countryToken);
             if (countryToken != null && !countryToken.isEmpty()) {
                 String countryCode = countryInfo != null ? countryInfo.getCountryCode() : user.getCountry();
-                Contact contact = getContactForUser(countryToken, user, getRegistrationDate(), getISO2CountryCode(countryCode));
+                Contact contact = getContactForUser(countryToken, user, getRegistrationDate(), countryCode, countryProgram);
                 updateContactsWithGroups(countryToken, contact);
 
                 try {
@@ -137,10 +138,8 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     }
 
     @Nullable
-    private String getTokenFromProxy(String countryCode) {
+    private String getTokenFromProxy(CountryProgram countryProgram) {
         try {
-            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryCode);
-
             ProxyServices proxyServices = new ProxyServices(getContext());
             ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
             return response.token;
@@ -149,11 +148,11 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         }
     }
 
-    private Contact getContactForUser(String token, User user, Date registrationDate, String countryCode) {
+    private Contact getContactForUser(String token, User user, Date registrationDate, String countryCode, CountryProgram countryProgram) {
         List<Field> fields = rapidProServices.loadFields(token);
 
         ContactBuilder contactBuilder = new ContactBuilder(fields);
-        return contactBuilder.buildContactWithFields(user, registrationDate, countryCode);
+        return contactBuilder.buildContactWithFields(user, registrationDate, countryCode, countryProgram);
     }
 
     private List<CountryInfo> getCountryInfoList() {

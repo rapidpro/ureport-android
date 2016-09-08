@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import in.ureport.managers.CountryProgramManager;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.flowrunner.models.Contact;
 import in.ureport.models.rapidpro.Field;
@@ -60,17 +62,22 @@ public class ContactBuilder {
         return key.replace(":", "").replace("-", "");
     }
 
-    public Contact buildContactWithFields(User user, Date registrationDate, String countryCode) {
+    public Contact buildContactWithFields(User user, Date registrationDate, String countryCode, CountryProgram countryProgram) {
         Contact contact = buildContactWithoutFields(user);
         HashMap<String, Object> contactFields = new HashMap<>();
+
+        String [] possibleStates = countryProgram.getStateField() != null ?
+                new String[]{countryProgram.getStateField()} : new String[]{"state", "region", "province", "county"};
+        String [] possibleDistricts = countryProgram.getDistrictField() != null ?
+                new String[]{countryProgram.getDistrictField()} : new String[]{"location", "district", "lga"};
 
         putValuesIfExists(user.getNickname(), contactFields, "nickname", "nick_name");
         putValuesIfExists(formatDate(user.getBirthday()), contactFields, "birthday", "birthdate", "birth_day");
         putValuesIfExists(getBornFormatted(user), contactFields, "year_of_birth", "born", "birth_year");
         putValuesIfExists(getAgeFormatted(user), contactFields, "age");
         putValuesIfExists(user.getGender().toString(), contactFields, "gender");
-        putValuesIfExists(user.getState(), contactFields, "state", "region", "province", "county");
-        putValuesIfExists(user.getDistrict(), contactFields, "location", "district", "lga");
+        putValuesIfExists(user.getState(), contactFields, possibleStates);
+        putValuesIfExists(user.getDistrict(), contactFields, possibleDistricts);
         putValuesIfExists(countryCode, contactFields, "country");
         putValuesIfExists(formatDate(registrationDate), contactFields, "registration_date", "registrationDate", "registrationdate");
 
