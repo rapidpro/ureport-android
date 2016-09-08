@@ -71,7 +71,8 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             UserManager.updateCountryToken(countryToken);
             if (countryToken != null && !countryToken.isEmpty()) {
                 String countryCode = countryInfo != null ? countryInfo.getCountryCode() : user.getCountry();
-                Contact contact = getContactForUser(countryToken, user, getRegistrationDate(), countryCode, countryProgram);
+                Contact contact = getContactForUser(countryToken, user, getRegistrationDate()
+                        , getISO2CountryCode(countryCode), countryProgram);
                 updateContactsWithGroups(countryToken, contact);
 
                 try {

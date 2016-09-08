@@ -167,6 +167,8 @@ public class CountryProgramManager {
                 , rapidpro_host_address2, ureport_host_address2, "UReportGua", "ureportglobal", "U-Reporters");
         gtmCountry.setMaleGroup("UReport Males");
         gtmCountry.setFemaleGroup("UReport Female");
+        gtmCountry.setStateField("department");
+        gtmCountry.setDistrictField("district");
         return gtmCountry;
     }
 
