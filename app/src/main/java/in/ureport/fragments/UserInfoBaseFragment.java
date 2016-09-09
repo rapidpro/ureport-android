@@ -433,7 +433,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     private View.OnClickListener onBirthdayClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            DatePickerFragment datePickerFragment = new DatePickerFragment();
+            DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(Calendar.getInstance().getTime());
             datePickerFragment.setOnDateSetListener(UserInfoBaseFragment.this);
             datePickerFragment.show(getFragmentManager(), "datePickerFragment");
         }

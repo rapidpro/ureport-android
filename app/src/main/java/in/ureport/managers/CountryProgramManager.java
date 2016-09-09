@@ -167,6 +167,8 @@ public class CountryProgramManager {
                 , rapidpro_host_address2, ureport_host_address2, "UReportGua", "ureportglobal", "U-Reporters");
         gtmCountry.setMaleGroup("UReport Males");
         gtmCountry.setFemaleGroup("UReport Female");
+        gtmCountry.setStateField("department");
+        gtmCountry.setDistrictField("district");
         return gtmCountry;
     }
 
@@ -186,6 +188,7 @@ public class CountryProgramManager {
         ageGroups.add(new AgeGroup("29 - 33", 29, 33));
         ageGroups.add(new AgeGroup("> 34", 34));
         thaCountry.setAgeGroups(ageGroups);
+        thaCountry.setStateField("province");
 
         return thaCountry;
     }

@@ -43,6 +43,10 @@ public class CountryProgram {
 
     private String group;
 
+    private String stateField;
+
+    private String districtField;
+
     private String maleGroup = GROUP_UREPORT_MALES;
 
     private String femaleGroup = GROUP_UREPORT_FEMALES;
@@ -156,6 +160,22 @@ public class CountryProgram {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public String getStateField() {
+        return stateField;
+    }
+
+    public void setStateField(String stateField) {
+        this.stateField = stateField;
+    }
+
+    public String getDistrictField() {
+        return districtField;
+    }
+
+    public void setDistrictField(String districtField) {
+        this.districtField = districtField;
     }
 
     public String getMaleGroup() {
