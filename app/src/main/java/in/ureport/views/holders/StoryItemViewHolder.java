@@ -13,6 +13,7 @@ import java.lang.reflect.Array;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.listener.OnNeedUpdateStoryListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.UserViewManager;
 import in.ureport.models.Media;
@@ -28,6 +29,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
     private final StoriesAdapter.OnStoryViewListener onStoryViewListener;
     private final OnUserStartChattingListener onUserStartChattingListener;
+    private final OnNeedUpdateStoryListener onNeedUpdateStoryListener;
 
     private final ImageView picture;
     private final ImageView image;
@@ -45,10 +47,11 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     private UserViewManager userViewManager;
 
     public StoryItemViewHolder(View itemView, StoriesAdapter.OnStoryViewListener onStoryViewListener
-            , OnUserStartChattingListener onUserStartChattingListener) {
+            , OnUserStartChattingListener onUserStartChattingListener, OnNeedUpdateStoryListener onNeedUpdateStoryListener) {
         super(itemView);
         this.onStoryViewListener = onStoryViewListener;
         this.onUserStartChattingListener = onUserStartChattingListener;
+        this.onNeedUpdateStoryListener = onNeedUpdateStoryListener;
 
         contributionsTemplate = itemView.getContext().getString(R.string.stories_list_item_contributions);
 
@@ -152,6 +155,8 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         if(story.getUserObject() != null) {
             ImageLoader.loadPersonPictureToImageView(picture, story.getUserObject().getPicture());
             author.setText(story.getUserObject().getNickname());
+        } else if (onNeedUpdateStoryListener != null) {
+            onNeedUpdateStoryListener.loadStoryData(story, this::bind);
         }
     }
 

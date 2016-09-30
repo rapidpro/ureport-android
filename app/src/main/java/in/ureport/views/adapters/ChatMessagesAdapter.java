@@ -1,10 +1,12 @@
 package in.ureport.views.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.marcorei.infinitefire.InfiniteFireArray;
+import com.marcorei.infinitefire.InfiniteFireRecyclerViewAdapter;
+import com.marcorei.infinitefire.InfiniteFireSnapshot;
 
 import in.ureport.fragments.RecordAudioFragment;
 import in.ureport.models.ChatMessage;
@@ -14,7 +16,7 @@ import in.ureport.views.holders.ChatMessageViewHolder;
 /**
  * Created by johncordeiro on 7/21/15.
  */
-public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ChatMessagesAdapter extends InfiniteFireRecyclerViewAdapter<ChatMessage> {
 
     public static final int TYPE_TEXT = 0;
     public static final int TYPE_PICTURE = 1;
@@ -24,13 +26,12 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public static final int TYPE_FILE = 5;
 
     private RecordAudioFragment recordAudioFragment;
-    private List<ChatMessage> chatMessages;
     private User user;
 
     private ChatMessageViewHolder.OnChatMessageSelectedListener onChatMessageSelectedListener;
 
-    public ChatMessagesAdapter(User user) {
-        this.chatMessages = new ArrayList<>();
+    public ChatMessagesAdapter(User user, InfiniteFireArray snapshots) {
+        super(snapshots, 0, 0);
         this.user = user;
         this.recordAudioFragment = new RecordAudioFragment();
         setHasStableIds(true);
@@ -42,23 +43,33 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ChatMessage chatMessage = getChatMessage(position);
+
         ChatMessageViewHolder chatMessageViewHolder = ((ChatMessageViewHolder)holder);
         chatMessageViewHolder.setOnChatMessageSelectedListener(onChatMessageSelectedListener);
         chatMessageViewHolder.setRecordAudioFragment(recordAudioFragment);
-        chatMessageViewHolder.bindView(user, chatMessages.get(position));
+        chatMessageViewHolder.bindView(user, chatMessage);
+    }
+
+    @NonNull
+    public ChatMessage getChatMessage(int position) {
+        InfiniteFireSnapshot<ChatMessage> infiniteFireArray = snapshots.getItem(position);
+        ChatMessage chatMessage = infiniteFireArray.getValue();
+        chatMessage.setKey(infiniteFireArray.getKey());
+        return chatMessage;
     }
 
     @Override
     public long getItemId(int position) {
-        ChatMessage chatMessage = chatMessages.get(position);
-        return chatMessage.getKey() != null ? chatMessage.getKey().hashCode() : 0;
+        return snapshots.getItem(position).getKey().hashCode();
     }
 
     @Override
     public int getItemViewType(int position) {
-        ChatMessage chatMessage = chatMessages.get(position);
-        if(chatMessage.getMedia() != null) {
+        ChatMessage chatMessage = snapshots.getItem(position).getValue();
+        if(chatMessage != null && chatMessage.getMedia() != null) {
             switch(chatMessage.getMedia().getType()) {
                 case Picture:
                     return TYPE_PICTURE;
@@ -73,24 +84,6 @@ public class ChatMessagesAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
         return TYPE_TEXT;
-    }
-
-    @Override
-    public int getItemCount() {
-        return chatMessages.size();
-    }
-
-    public void addChatMessage(ChatMessage chatMessage) {
-        chatMessages.add(0, chatMessage);
-        notifyItemInserted(0);
-    }
-
-    public void removeChatMessage(ChatMessage chatMessage) {
-        int indexOfMessage = chatMessages.indexOf(chatMessage);
-        if(indexOfMessage >= 0) {
-            chatMessages.remove(indexOfMessage);
-            notifyItemRemoved(indexOfMessage);
-        }
     }
 
     public void setOnChatMessageSelectedListener(ChatMessageViewHolder.OnChatMessageSelectedListener onChatMessageSelectedListener) {

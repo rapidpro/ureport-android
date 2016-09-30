@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
@@ -50,12 +49,16 @@ public class ChatRoomServices extends ProgramServices {
                 .equalTo(false).removeEventListener(listener);
     }
 
+    public Query getChatMessagesQuery(String key) {
+        return getDefaultRoot().child(messagesPath).child(key).orderByKey();
+    }
+
     public void addChildEventListenerForChatMessages(String key, ChildEventListener listener) {
-        getDefaultRoot().child(messagesPath).child(key).orderByChild("date").addChildEventListener(listener);
+        getChatMessagesQuery(key).addChildEventListener(listener);
     }
 
     public void removeEventListenerForChatMessages(String key, ChildEventListener listener) {
-        getDefaultRoot().child(messagesPath).child(key).orderByChild("date").removeEventListener(listener);
+        getChatMessagesQuery(key).removeEventListener(listener);
     }
 
     public void addValueListenForChatRoom(ChatRoom chatRoom, ValueEventListener listener) {
@@ -87,22 +90,27 @@ public class ChatRoomServices extends ProgramServices {
                 .child(chatMessage.getKey()).removeValue(listener);
     }
 
-    public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
+    public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage, Firebase.CompletionListener listener) {
         setUserIfNeeded(chatMessage);
         getDefaultRoot().child(messagesPath).child(chatRoom.getKey())
-                .push().setValue(chatMessage);
+                .push().setValue(chatMessage, listener);
     }
 
     private void setUserIfNeeded(ChatMessage chatMessage) {
         if(chatMessage.getUser() != null && chatMessage.getUser().getKey() != null) {
             User user = new User();
             user.setKey(chatMessage.getUser().getKey());
+            user.setNickname(chatMessage.getUser().getNickname());
             chatMessage.setUser(user);
         }
     }
 
+    public Firebase getChatRoomReference(String key) {
+        return getDefaultRoot().child(chatRoomPath).child(key);
+    }
+
     public void getChatRoom(final String key, final ChatRoomInterface.OnChatRoomLoadedListener listener) {
-        getDefaultRoot().child(chatRoomPath).child(key).addListenerForSingleValueEvent(
+        getChatRoomReference(key).addListenerForSingleValueEvent(
                 new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {

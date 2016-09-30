@@ -35,20 +35,26 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     private static final String EXTRA_STORY = "story";
 
     public enum Type {
-        Rapidpro
+        Rapidpro,
+        Chat,
+        Contribution
     }
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
         super.onMessageReceived(from, data);
 
-        if(from.startsWith(GcmTopicManager.CHAT_TOPICS_PATH)) {
+        if(from.startsWith(GcmTopicManager.CHAT_TOPICS_PATH) || hasType(data, Type.Chat)) {
             sendChatMessageNotification(data);
-        } else if(from.startsWith(GcmTopicManager.STORY_TOPICS_PATH)) {
+        } else if(from.startsWith(GcmTopicManager.STORY_TOPICS_PATH) || hasType(data, Type.Contribution)) {
             sendContributionNotification(data);
         } else {
             handleNotificationType(data);
         }
+    }
+
+    private boolean hasType(Bundle data, Type type) {
+        return data != null && data.containsKey(EXTRA_NOTIFICATION_TYPE) && data.getString(EXTRA_NOTIFICATION_TYPE).equals(type.toString());
     }
 
     private void sendContributionNotification(Bundle data) {

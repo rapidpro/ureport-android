@@ -29,7 +29,12 @@ import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
+import in.ureport.models.ip.IpResponse;
+import in.ureport.network.IpServices;
 import in.ureport.network.UserServices;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -102,8 +107,25 @@ public class SignUpFragment extends UserInfoBaseFragment {
     }
 
     private void selectCurrentUserLocale(List<CountryInfo> countries) {
-        Locale locale = Locale.getDefault();
-        CountryInfo countryInfo = new CountryInfo(locale.getISO3Country());
+        IpServices ipServices = new IpServices();
+        ipServices.getIp(new Callback<IpResponse>() {
+            @Override
+            public void success(IpResponse ipResponse, Response response) {
+                if (ipResponse != null) {
+                    CountryInfo countryInfo = new CountryInfo(ipResponse.getCountryCode());
+                    setupCountryInfo(countryInfo, countries);
+                }
+            }
+            @Override
+            public void failure(RetrofitError error) {
+                Locale locale = Locale.getDefault();
+                CountryInfo countryInfo = new CountryInfo(locale.getCountry());
+                setupCountryInfo(countryInfo, countries);
+            }
+        });
+    }
+
+    private void setupCountryInfo(CountryInfo countryInfo, List<CountryInfo> countries) {
         int countryPosition = countries.indexOf(countryInfo);
 
         if(countryPosition >= 0) {

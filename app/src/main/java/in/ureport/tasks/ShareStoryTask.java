@@ -20,7 +20,7 @@ public class ShareStoryTask extends ShareViewTask<Story> {
     @Override
     protected View createViewForObject(Story object) {
         LayoutInflater inflater = LayoutInflater.from(fragment.getContext());
-        StoryItemViewHolder itemViewHolder = new StoryItemViewHolder(inflater.inflate(R.layout.item_story, null), null, null);
+        StoryItemViewHolder itemViewHolder = new StoryItemViewHolder(inflater.inflate(R.layout.item_story, null), null, null, null);
         itemViewHolder.bind(object);
         itemViewHolder.bindInfo(R.string.story_share_info);
         return itemViewHolder.itemView;

@@ -178,13 +178,15 @@ public class PollsResultsFragment extends Fragment implements LoaderManager.Load
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             super.onDataChange(dataSnapshot);
-            updateViewForData();
+            if (isAdded()) {
+                updateViewForData();
 
-            List<Poll> polls = new ArrayList<>();
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                addPollIfPossible(polls, snapshot);
+                List<Poll> polls = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    addPollIfPossible(polls, snapshot);
+                }
+                setupPolls(polls);
             }
-            setupPolls(polls);
         }
     };
 

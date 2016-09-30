@@ -137,10 +137,12 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
 
-                story = dataSnapshot.getValue(Story.class);
-                story.setKey(dataSnapshot.getKey());
-                setupView(view);
-                loadData();
+                if (isAdded()) {
+                    story = dataSnapshot.getValue(Story.class);
+                    story.setKey(dataSnapshot.getKey());
+                    setupView(view);
+                    loadData();
+                }
             }
         });
     }
@@ -169,7 +171,8 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
-                updateLikes((int)dataSnapshot.getChildrenCount());
+                if (isAdded())
+                    updateLikes((int)dataSnapshot.getChildrenCount());
             }
         });
     }

@@ -31,6 +31,12 @@
         <item name="colorAccent">#047ea2</item>
     </style>
 
+    <style name="AppTheme.Guatemala" parent="AppTheme">
+        <item name="colorPrimary">#05b5e8</item>
+        <item name="colorPrimaryDark">#048db6</item>
+        <item name="colorAccent">#047ea2</item>
+    </style>
+
     <style name="AppTheme.Indonesia" parent="AppTheme">
         <item name="colorPrimary">#b9001c</item>
         <item name="colorPrimaryDark">#c3001c</item>
@@ -115,6 +121,12 @@
         <item name="colorAccent">#87001c</item>
     </style>
 
+    <style name="AppTheme.Thailand" parent="AppTheme">
+        <item name="colorPrimary">#155ad0</item>
+        <item name="colorPrimaryDark">#144e9e</item>
+        <item name="colorAccent">#14448a</item>
+    </style>
+
     <style name="AppTheme.Uganda" parent="AppTheme">
         <item name="colorPrimary">#d6001f</item>
         <item name="colorPrimaryDark">#c2001c</item>
@@ -122,6 +134,12 @@
     </style>
 
     <style name="AppTheme.Ukraine" parent="AppTheme">
+        <item name="colorPrimary">#05b5e8</item>
+        <item name="colorPrimaryDark">#048db6</item>
+        <item name="colorAccent">#047ea2</item>
+    </style>
+
+    <style name="AppTheme.UnitedKingdom" parent="AppTheme">
         <item name="colorPrimary">#05b5e8</item>
         <item name="colorPrimaryDark">#048db6</item>
         <item name="colorAccent">#047ea2</item>

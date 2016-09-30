@@ -72,6 +72,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private MenuItem publishItem;
 
     private StoryCreationListener storyCreationListener;
+    private KeyboardHandler keyboardHandler = new KeyboardHandler();
 
     public ProgressDialog progressDialog;
 
@@ -364,6 +365,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public void onMediaAddListener() {
+        keyboardHandler.changeKeyboardVisibility(getActivity(), false);
+
         PickMediaFragment pickMediaFragment = new PickMediaFragment();
         pickMediaFragment.setOnPickMediaListener(this);
         getFragmentManager().beginTransaction()

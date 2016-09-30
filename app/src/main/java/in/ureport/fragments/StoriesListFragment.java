@@ -17,16 +17,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.Query;
+import com.marcorei.infinitefire.InfiniteFireArray;
+import com.marcorei.infinitefire.InfiniteFireLinearRecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.helpers.RecyclerScrollListener;
+import in.ureport.listener.OnNeedUpdateStoryListener;
+import in.ureport.listener.OnStoryUpdatedListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
@@ -38,7 +44,6 @@ import in.ureport.network.Response;
 import in.ureport.network.StoryServices;
 import in.ureport.network.UreportServices;
 import in.ureport.network.UserServices;
-import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.tasks.ShareNewsTask;
 import in.ureport.views.adapters.StoriesAdapter;
 import retrofit.Callback;
@@ -48,7 +53,7 @@ import retrofit.RetrofitError;
  * Created by johncordeiro on 7/13/15.
  */
 public class StoriesListFragment extends Fragment implements StoriesAdapter.OnStoryViewListener
-        , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener, FloatingActionButtonListener {
+        , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener, OnNeedUpdateStoryListener, FloatingActionButtonListener {
 
     private static final String TAG = "StoriesListFragment";
 
@@ -56,7 +61,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     private static final String EXTRA_NEWS = "news";
     private static final String EXTRA_PUBLIC_TYPE = "publicType";
 
-    private RecyclerView storiesList;
+    private InfiniteFireLinearRecyclerView storiesList;
     private View info;
     private FloatingActionButton createStoryButton;
 
@@ -65,6 +70,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
     private User user;
     private ArrayList<News> newsList;
+    private Map<String, Story> storiesLoaded;
     protected boolean publicType = true;
 
     private OnPublishStoryListener onPublishStoryListener;
@@ -126,7 +132,18 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
         setupObjects();
         setupView(view);
-        loadData();
+        Query query = loadData();
+        setupStoriesAdapter(query);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        try {
+            storiesAdapter.unregisterAdapterDataObserver(storiesAdapterObserver);
+        } catch(Exception exception) {
+            Log.e(TAG, "onDestroyView: ", exception);
+        }
     }
 
     @Override
@@ -135,12 +152,6 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         outState.putParcelable(EXTRA_USER, user);
         outState.putParcelableArrayList(EXTRA_NEWS, (ArrayList<News>) storiesAdapter.getNews());
         outState.putBoolean(EXTRA_PUBLIC_TYPE, publicType);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        storyServices.removeChildEventListener(childEventListener);
     }
 
     @Override
@@ -157,6 +168,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     private void setupObjects() {
+        storiesLoaded = new HashMap<>();
         storyServices = new StoryServices();
         userServices = new UserServices();
         contributionServices = new ContributionServices(ContributionServices.Type.Story);
@@ -164,13 +176,11 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         ureportServices = new UreportServices(ureportEndpoint);
     }
 
-    public void loadData() {
+    public Query loadData() {
         if(publicType) {
             loadNewsForPage(previousPageLoaded);
-            storyServices.addChildEventListener(childEventListener);
-        } else {
-            storyServices.addChildEventListenerForUser(user, childEventListener);
         }
+        return publicType ? storyServices.getStoryReference() : storyServices.getStoryQueryByUser(user);
     }
 
     private void loadNewsForPage(int page) {
@@ -184,16 +194,16 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     private void setupView(View view) {
-        storiesList = (RecyclerView) view.findViewById(R.id.storiesList);
+        info = view.findViewById(R.id.info);
+        info.setVisibility(publicType ? View.GONE : View.VISIBLE);
+
+        storiesList = (InfiniteFireLinearRecyclerView) view.findViewById(R.id.storiesList);
 
         layoutManager = new LinearLayoutManager(getActivity());
         storiesList.setLayoutManager(layoutManager);
         storiesList.addOnScrollListener(onStoriesListScrollListener);
 
         recyclerFloatingScrollListener = new RecyclerScrollListener(this);
-        setupStoriesAdapter();
-
-        info = view.findViewById(R.id.info);
 
         createStoryButton = (FloatingActionButton) view.findViewById(R.id.createStoryButton);
         createStoryButton.setOnClickListener(onCreateStoryClickListener);
@@ -201,9 +211,13 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         createStoryButton.postDelayed(this::hideFloatingButton, 1000);
     }
 
-    private void setupStoriesAdapter() {
-        storiesAdapter = new StoriesAdapter();
+    private void setupStoriesAdapter(Query query) {
+        InfiniteFireArray<Story> storyFireArray = new InfiniteFireArray<>(Story.class
+                , query, 10, 10, false, false);
+
+        storiesAdapter = new StoriesAdapter(storyFireArray, publicType);
         storiesAdapter.setHasStableIds(true);
+        storiesAdapter.registerAdapterDataObserver(storiesAdapterObserver);
 
         if(needsUserPublish()) storiesAdapter.setUser(user);
 
@@ -212,7 +226,9 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         storiesAdapter.setOnShareNewsListener(this);
         storiesAdapter.setOnPublishStoryListener(onPublishStoryListener);
         storiesAdapter.setOnUserStartChattingListener(onUserStartChattingListener);
+        storiesAdapter.setOnNeedUpdateStoryListener(this);
         storiesList.setAdapter(storiesAdapter);
+        storiesList.setInfiniteFireArray(storyFireArray);
     }
 
     @Override
@@ -231,83 +247,44 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         if(storiesAdapter != null && needsUserPublish()) storiesAdapter.setUser(user);
     }
 
-    private void removeStory(Story story) {
-        storiesAdapter.removeStory(story);
-    }
-
-    private void addStory(Story story) {
-        if(!needsUserPublish())
-            info.setVisibility(story != null ? View.GONE : View.VISIBLE);
-
-        storiesAdapter.addStory(story);
-    }
-
-    private void updateStory(Story story) {
-        storiesAdapter.updateStory(story);
-    }
-
     private boolean needsUserPublish() {
         return publicType && UserManager.isUserLoggedIn() && user != null;
     }
 
-    protected ChildEventListener childEventListener = new ChildEventListenerAdapter() {
-        @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String previous) {
-            super.onChildAdded(dataSnapshot, previous);
-            updateStoryFromSnapshot(dataSnapshot);
-        }
-
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
-            super.onChildRemoved(dataSnapshot);
-            Story story = getStoryFromSnapshot(dataSnapshot);
-            if(story != null)
-                removeStory(story);
-        }
-    };
-
-    private void updateStoryFromSnapshot(DataSnapshot dataSnapshot) {
-        final Story story = getStoryFromSnapshot(dataSnapshot);
-
-        if(story != null) {
-            addStory(story);
-            loadStoryData(story);
+    @Override
+    public void loadStoryData(final Story story, OnStoryUpdatedListener onStoryUpdatedListener) {
+        if (storiesLoaded.containsKey(story.getKey())) {
+            Story storyLoaded = storiesLoaded.get(story.getKey());
+            copyDynamicData(storyLoaded, story);
+            onStoryUpdatedListener.onStoryUpdated(story);
+        } else {
+            loadUsersFromStory(story, storyWithUser ->
+                    contributionServices.getContributionCount(story, count -> {
+                        story.setContributions(Long.valueOf(count).intValue());
+                        loadStoryLikeCount(story, storyWithLikes -> {
+                            storiesLoaded.put(story.getKey(), story);
+                            onStoryUpdatedListener.onStoryUpdated(story);
+                        });
+                    }));
         }
     }
 
-    @Nullable
-    private Story getStoryFromSnapshot(DataSnapshot dataSnapshot) {
-        try {
-            final Story story = dataSnapshot.getValue(Story.class);
-            story.setKey(dataSnapshot.getKey());
-            return story;
-        } catch(Exception exception) {
-            Log.e(TAG, "getStoryFromSnapshot: ", exception);
-        }
-        return null;
+    private void copyDynamicData(Story fromStory, Story toStory) {
+        toStory.setUserObject(fromStory.getUserObject());
+        toStory.setLikes(fromStory.getLikes());
+        toStory.setContributions(fromStory.getContributions());
     }
 
-    private void loadStoryData(final Story story) {
-        contributionServices.getContributionCount(story, count -> {
-            story.setContributions(Long.valueOf(count).intValue());
-            loadUsersFromStory(story, onAfterStoryLoadedListener);
-        });
-
+    private void loadStoryLikeCount(Story story, final OnAfterStoryLoadedListener onAfterStoryLoadedListener) {
         storyServices.loadStoryLikeCount(story, new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 story.setLikes(dataSnapshot.exists() ? (int) dataSnapshot.getChildrenCount() : 0);
+                onAfterStoryLoadedListener.onAfterStoryLoaded(story);
             }
         });
     }
-
-    private OnAfterStoryLoadedListener onAfterStoryLoadedListener = new OnAfterStoryLoadedListener() {
-        @Override
-        public void onAfterStoryLoaded(Story story) {
-            updateStory(story);
-        }
-    };
 
     private void loadUsersFromStory(final Story story, final OnAfterStoryLoadedListener onAfterStoryLoadedListener) {
         userServices.getUser(story.getUser(), new ValueEventListenerAdapter() {
@@ -373,6 +350,16 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         ShareNewsTask shareNewsTask = new ShareNewsTask(this, news);
         shareNewsTask.execute();
     }
+
+    private RecyclerView.AdapterDataObserver storiesAdapterObserver = new RecyclerView.AdapterDataObserver() {
+        @Override
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            super.onItemRangeInserted(positionStart, itemCount);
+            if (info.getVisibility() == View.VISIBLE) {
+                info.setVisibility(View.GONE);
+            }
+        }
+    };
 
     private View.OnClickListener onCreateStoryClickListener = new View.OnClickListener() {
         @Override

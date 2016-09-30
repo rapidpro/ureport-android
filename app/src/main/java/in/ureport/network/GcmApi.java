@@ -2,6 +2,7 @@ package in.ureport.network;
 
 import com.google.gson.annotations.Expose;
 
+import in.ureport.services.GcmListenerService;
 import retrofit.http.Body;
 import retrofit.http.Header;
 import retrofit.http.POST;
@@ -18,7 +19,21 @@ public interface GcmApi {
         String message_id;
     }
 
-    class Input<T> {
+    class NotificationHolder {
+        @Expose
+        private GcmListenerService.Type type;
+
+        public GcmListenerService.Type getType() {
+            return type;
+        }
+
+        public NotificationHolder setType(GcmListenerService.Type type) {
+            this.type = type;
+            return this;
+        }
+    }
+
+    class Input<T extends NotificationHolder> {
 
         enum Priority {
             normal,
@@ -103,6 +118,7 @@ public interface GcmApi {
         public void setTitle(String title) {
             this.title = title;
         }
+
     }
 
 }

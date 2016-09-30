@@ -5,11 +5,19 @@ import android.support.annotation.StyleRes;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
+
+import in.ureport.models.rapidpro.AgeGroup;
+
 /**
  * Created by johncordeiro on 7/23/15.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CountryProgram {
+
+    public static final String GROUP_UREPORT_MALES = "UReport Males";
+
+    public static final String GROUP_UREPORT_FEMALES = "UReport Females";
 
     private String code;
 
@@ -34,6 +42,16 @@ public class CountryProgram {
     private String facebook;
 
     private String group;
+
+    private String stateField;
+
+    private String districtField;
+
+    private String maleGroup = GROUP_UREPORT_MALES;
+
+    private String femaleGroup = GROUP_UREPORT_FEMALES;
+
+    private List<AgeGroup> ageGroups;
 
     public CountryProgram(String code, @StyleRes int theme, @StringRes int channel
             , String name, int organization, int rapidproEndpoint, int ureportEndpoint, String twitter, String facebook, String group) {
@@ -142,6 +160,47 @@ public class CountryProgram {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public String getStateField() {
+        return stateField;
+    }
+
+    public void setStateField(String stateField) {
+        this.stateField = stateField;
+    }
+
+    public String getDistrictField() {
+        return districtField;
+    }
+
+    public void setDistrictField(String districtField) {
+        this.districtField = districtField;
+    }
+
+    public String getMaleGroup() {
+        return maleGroup;
+    }
+
+    public void setMaleGroup(String maleGroup) {
+        this.maleGroup = maleGroup;
+    }
+
+    public String getFemaleGroup() {
+        return femaleGroup;
+    }
+
+    public void setFemaleGroup(String femaleGroup) {
+        this.femaleGroup = femaleGroup;
+    }
+
+    public List<AgeGroup> getAgeGroups() {
+        return ageGroups;
+    }
+
+    public CountryProgram setAgeGroups(List<AgeGroup> ageGroups) {
+        this.ageGroups = ageGroups;
+        return this;
     }
 
     @Override

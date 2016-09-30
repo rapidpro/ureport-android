@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import in.ureport.managers.CountryProgramManager;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.flowrunner.models.Contact;
 import in.ureport.models.rapidpro.Field;
@@ -45,6 +47,7 @@ public class ContactBuilder {
         urns.add(formatExtUrn(user.getKey()));
 
         Contact contact = new Contact();
+        contact.setEmail(user.getEmail());
         contact.setName(user.getNickname());
         contact.setGroups(userGroups);
         contact.setUrns(urns);
@@ -59,18 +62,22 @@ public class ContactBuilder {
         return key.replace(":", "").replace("-", "");
     }
 
-    public Contact buildContactWithFields(User user, Date registrationDate, String countryCode) {
+    public Contact buildContactWithFields(User user, Date registrationDate, String countryCode, CountryProgram countryProgram) {
         Contact contact = buildContactWithoutFields(user);
         HashMap<String, Object> contactFields = new HashMap<>();
 
-        putValuesIfExists(user.getEmail(), contactFields, "email", "e_mail");
+        String [] possibleStates = countryProgram.getStateField() != null ?
+                new String[]{countryProgram.getStateField()} : new String[]{"state", "region", "province", "county"};
+        String [] possibleDistricts = countryProgram.getDistrictField() != null ?
+                new String[]{countryProgram.getDistrictField()} : new String[]{"location", "district", "lga"};
+
         putValuesIfExists(user.getNickname(), contactFields, "nickname", "nick_name");
         putValuesIfExists(formatDate(user.getBirthday()), contactFields, "birthday", "birthdate", "birth_day");
-        putValuesIfExists(getBorn(user), contactFields, "year_of_birth", "born");
-        putValuesIfExists(getAge(user), contactFields, "age");
+        putValuesIfExists(getBornFormatted(user), contactFields, "year_of_birth", "born", "birth_year");
+        putValuesIfExists(getAgeFormatted(user), contactFields, "age");
         putValuesIfExists(user.getGender().toString(), contactFields, "gender");
-        putValuesIfExists(user.getState(), contactFields, "state", "region", "province", "county");
-        putValuesIfExists(user.getDistrict(), contactFields, "location", "district", "lga");
+        putValuesIfExists(user.getState(), contactFields, possibleStates);
+        putValuesIfExists(user.getDistrict(), contactFields, possibleDistricts);
         putValuesIfExists(countryCode, contactFields, "country");
         putValuesIfExists(formatDate(registrationDate), contactFields, "registration_date", "registrationDate", "registrationdate");
 
@@ -102,17 +109,22 @@ public class ContactBuilder {
     }
 
     @Nullable
-    private String getBorn(User user) {
+    public Integer getBorn(User user) {
         if(user.getBirthday() != null) {
             Calendar calendarBirthday = Calendar.getInstance();
             calendarBirthday.setTime(user.getBirthday());
-            return String.valueOf(calendarBirthday.get(YEAR));
+            return calendarBirthday.get(YEAR);
         }
         return null;
     }
 
+    public String getBornFormatted(User user) {
+        Integer born = getBorn(user);
+        return born != null ? String.valueOf(born) : null;
+    }
+
     @Nullable
-    private String getAge(User user) {
+    public static Integer getAge(User user) {
         if(user.getBirthday() != null) {
             Calendar a = Calendar.getInstance();
             a.setTime(user.getBirthday());
@@ -124,9 +136,14 @@ public class ContactBuilder {
                     (a.get(MONTH) == b.get(MONTH) && a.get(DATE) > b.get(DATE))) {
                 diff--;
             }
-            return String.valueOf(diff);
+            return diff;
         }
         return null;
+    }
+
+    public static String getAgeFormatted(User user) {
+        Integer age = getAge(user);
+        return age != null ? String.valueOf(age) : null;
     }
 
 }

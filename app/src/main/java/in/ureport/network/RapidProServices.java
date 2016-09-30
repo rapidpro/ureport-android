@@ -65,8 +65,8 @@ public class RapidProServices {
         return response.getCount() > 0 ? response.getResults().get(0) : null;
     }
 
-    public List<Group> loadGroups(String apiKey) {
-        Response<Group> response = service.listGroups(apiKey);
+    public List<Group> loadGroups(String apiKey, String contact) {
+        Response<Group> response = service.listGroups(apiKey, contact);
         return response.getResults();
     }
 

@@ -32,7 +32,9 @@ import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.marcorei.infinitefire.InfiniteFireArray;
+import com.marcorei.infinitefire.InfiniteFireLinearRecyclerView;
 
 import java.lang.reflect.Array;
 import java.util.Collections;
@@ -59,9 +61,7 @@ import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
-import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.SpaceItemDecoration;
-import in.ureport.network.UserServices;
 import in.ureport.tasks.CleanUnreadByRoomTask;
 import in.ureport.tasks.SendGcmChatTask;
 import in.ureport.views.adapters.ChatMessagesAdapter;
@@ -87,7 +87,7 @@ public class ChatRoomFragment extends Fragment
     private TextView message;
     private ImageView picture;
     private View info;
-    private RecyclerView messagesList;
+    private InfiniteFireLinearRecyclerView messagesList;
     private ImageButton send;
     private ImageView record;
     private ImageView attachFile;
@@ -105,10 +105,12 @@ public class ChatRoomFragment extends Fragment
     private InfoGroupChatListener infoGroupChatListener;
 
     private ChatRoomServices chatRoomServices;
-    private UserServices userServices;
 
     private PickMediaFragment pickMediaFragment;
     private MediaViewer mediaViewer;
+
+    private LinearLayoutManager messagesLayoutManager;
+    private InfiniteFireArray<ChatMessage> chatMessageArray;
 
     public static ChatRoomFragment newInstance(ChatRoom chatRoom, ChatMembers chatMembers, boolean standaloneMode) {
         ChatRoomFragment chatRoomFragment = new ChatRoomFragment();
@@ -224,25 +226,24 @@ public class ChatRoomFragment extends Fragment
         CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask(getActivity());
         cleanUnreadByRoomTask.execute(chatRoom);
 
+        chatMessageArray.cleanup();
+
         if(chatRoom != null) {
-            chatRoomServices.removeEventListenerForChatMessages(chatRoom.getKey(), onChildEventListener);
             chatRoomServices.removeValueListenForChatRoom(chatRoom, onChatRoomChangedListener);
         }
     }
 
     private void loadData() {
         user = getMemberUserByKey(UserManager.getUserId());
-        adapter.setUser(user);
 
         CleanUnreadByRoomTask cleanUnreadByRoomTask = new CleanUnreadByRoomTask(getActivity());
         cleanUnreadByRoomTask.execute(chatRoom);
 
-        chatRoomServices.addChildEventListenerForChatMessages(chatRoom.getKey(), onChildEventListener);
+        setupMessagesAdapter();
         chatRoomServices.addValueListenForChatRoom(chatRoom, onChatRoomChangedListener);
     }
 
     private void setupObjects() {
-        userServices = new UserServices();
         chatRoomServices = new ChatRoomServices();
         mediaViewer = new MediaViewer((AppCompatActivity) getActivity());
     }
@@ -310,21 +311,15 @@ public class ChatRoomFragment extends Fragment
                 }
                 return true;
             case R.id.blockChatRoom:
-                displayAlert(R.string.message_confirm_block_user, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        displayMessage(R.string.message_block_chat_room);
-                        chatRoomServices.blockChatRoom(chatRoom);
-                    }
+                displayAlert(R.string.message_confirm_block_user, (dialog, which) -> {
+                    displayMessage(R.string.message_block_chat_room);
+                    chatRoomServices.blockChatRoom(chatRoom);
                 });
                 return true;
             case R.id.unblockChatRoom:
-                displayAlert(R.string.message_confirm_unblock_user, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        displayMessage(R.string.message_unblock_chat_room);
-                        chatRoomServices.unblockChatRoom(chatRoom);
-                    }
+                displayAlert(R.string.message_confirm_unblock_user, (dialog, which) -> {
+                    displayMessage(R.string.message_unblock_chat_room);
+                    chatRoomServices.unblockChatRoom(chatRoom);
                 });
                 return true;
         }
@@ -390,12 +385,9 @@ public class ChatRoomFragment extends Fragment
 
         picture = (ImageView) view.findViewById(R.id.picture);
 
-        messagesList = (RecyclerView) view.findViewById(R.id.messagesList);
-        messagesList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, true));
-
-        adapter = new ChatMessagesAdapter(user);
-        adapter.setOnChatMessageSelectedListener(this);
-        messagesList.setAdapter(adapter);
+        messagesList = (InfiniteFireLinearRecyclerView) view.findViewById(R.id.messagesList);
+        messagesLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, true);
+        messagesList.setLayoutManager(messagesLayoutManager);
 
         SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration();
         spaceItemDecoration.setVerticalSpaceHeight((int) new UnitConverter(getActivity()).convertDpToPx(10));
@@ -417,6 +409,17 @@ public class ChatRoomFragment extends Fragment
             pickMediaFragment.setOnPickMediaListener(this);
     }
 
+    private void setupMessagesAdapter() {
+        Query query = chatRoomServices.getChatMessagesQuery(chatRoom.getKey());
+        chatMessageArray = new InfiniteFireArray<>(ChatMessage.class, query, 20, 20, false, false);
+        adapter = new ChatMessagesAdapter(user, chatMessageArray);
+        adapter.setOnChatMessageSelectedListener(this);
+        adapter.registerAdapterDataObserver(adapterDataObserver);
+
+        messagesList.setAdapter(adapter);
+        messagesList.setInfiniteFireArray(chatMessageArray);
+    }
+
     public void updateChatRoom(ChatRoom chatRoom, ChatMembers chatMembers) {
         this.chatRoom = chatRoom;
         this.chatMembers = chatMembers;
@@ -432,21 +435,14 @@ public class ChatRoomFragment extends Fragment
         }
     }
 
-    private User getMemberUserByKey(String key) {
-        if(chatMembers == null || chatMembers.getUsers() == null) return null;
-
-        User memberUser = new User();
-        memberUser.setKey(key);
-
-        int authUserIndex = chatMembers.getUsers().indexOf(memberUser);
-        return authUserIndex >= 0 ? chatMembers.getUsers().get(authUserIndex) : null;
-    }
-
     private void setupViewForGroupChat() {
         GroupChatRoom groupChatRoom = (GroupChatRoom)chatRoom;
         name.setText(groupChatRoom.getTitle());
 
-        info.setOnClickListener(onInfoClickListener);
+        info.setOnClickListener(v -> {
+            if (chatRoomListener != null)
+                chatRoomListener.onChatRoomInfoView(chatRoom, chatMembers, getPairs());
+        });
         ImageLoader.loadGroupPictureToImageView(picture, groupChatRoom.getPicture());
     }
 
@@ -486,18 +482,8 @@ public class ChatRoomFragment extends Fragment
         if(!individualChatRoom.getBlocked().equals(UserManager.getUserId())) {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                     .setMessage(getString(R.string.message_user_blocked_by_other, blockerUser.getNickname()))
-                    .setNeutralButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            getActivity().finish();
-                        }
-                    }).create();
+                    .setNeutralButton(R.string.confirm_neutral_dialog_button, (dialog, which) -> dialog.cancel())
+                    .setOnCancelListener(dialog -> getActivity().finish()).create();
             alertDialog.show();
         }
     }
@@ -511,9 +497,8 @@ public class ChatRoomFragment extends Fragment
         return null;
     }
 
-    private void addChatMessage(ChatMessage chatMessage) {
-        adapter.addChatMessage(chatMessage);
-        messagesList.scrollToPosition(0);
+    private void onChatMessageAdded() {
+        message.setText("");
     }
 
     private View.OnClickListener onSendClickListener = new View.OnClickListener() {
@@ -521,32 +506,24 @@ public class ChatRoomFragment extends Fragment
         public void onClick(View view) {
             String messageText = message.getText().toString();
             if(messageText.length() > 0) {
-                message.setText("");
-
                 ChatMessage chatMessage = new ChatMessage();
                 chatMessage.setDate(new Date());
                 chatMessage.setMessage(messageText);
                 chatMessage.setUser(user);
 
                 saveChatMessage(chatMessage);
+                onChatMessageAdded();
             }
         }
     };
 
     private void saveChatMessage(ChatMessage chatMessage) {
+        chatRoomServices.saveChatMessage(chatRoom, chatMessage
+                , (firebaseError, firebase) -> messagesList.scrollToPosition(0));
+
         SendGcmChatTask sendGcmChatTask = new SendGcmChatTask(getActivity(), chatRoom, chatMessage.getUser());
         sendGcmChatTask.execute(chatMessage);
-
-        chatRoomServices.saveChatMessage(chatRoom, chatMessage);
     }
-
-    private View.OnClickListener onInfoClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (chatRoomListener != null)
-                chatRoomListener.onChatRoomInfoView(chatRoom, chatMembers, getPairs());
-        }
-    };
 
     private ValueEventListenerAdapter onChatRoomChangedListener = new ValueEventListenerAdapter() {
         @Override
@@ -559,60 +536,14 @@ public class ChatRoomFragment extends Fragment
         }
     };
 
-    private ChildEventListenerAdapter onChildEventListener = new ChildEventListenerAdapter() {
-        @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
-            super.onChildAdded(dataSnapshot, previousChild);
-            addChatMessage(dataSnapshot);
-        }
+    private User getMemberUserByKey(String key) {
+        if(chatMembers == null || chatMembers.getUsers() == null) return null;
 
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
-            super.onChildRemoved(dataSnapshot);
-            removeChatMessage(dataSnapshot);
-        }
-    };
+        User memberUser = new User();
+        memberUser.setKey(key);
 
-    private void removeChatMessage(DataSnapshot dataSnapshot) {
-        ChatMessage chatMessage = getChatMessageBySnapshot(dataSnapshot);
-        adapter.removeChatMessage(chatMessage);
-    }
-
-    private void addChatMessage(DataSnapshot dataSnapshot) {
-        try {
-            ChatMessage message = getChatMessageBySnapshot(dataSnapshot);
-
-            User memberUser = getMemberUserByKey(message.getUser().getKey());
-            if (memberUser != null) {
-                message.setUser(memberUser);
-                addChatMessage(message);
-            } else {
-                loadUserAndAddChatMessage(message);
-            }
-        } catch(Exception exception) {
-            Log.e(TAG, "onChildAdded ", exception);
-        }
-    }
-
-    @NonNull
-    private ChatMessage getChatMessageBySnapshot(DataSnapshot dataSnapshot) {
-        final ChatMessage message = dataSnapshot.getValue(ChatMessage.class);
-        message.setKey(dataSnapshot.getKey());
-        return message;
-    }
-
-    private void loadUserAndAddChatMessage(final ChatMessage message) {
-        userServices.getUser(message.getUser().getKey(), new ValueEventListenerAdapter() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                super.onDataChange(dataSnapshot);
-                User user = dataSnapshot.getValue(User.class);
-                chatMembers.getUsers().add(user);
-
-                message.setUser(user);
-                addChatMessage(message);
-            }
-        });
+        int authUserIndex = chatMembers.getUsers().indexOf(memberUser);
+        return authUserIndex >= 0 ? chatMembers.getUsers().get(authUserIndex) : null;
     }
 
     public ChatRoom getChatRoom() {
@@ -642,13 +573,10 @@ public class ChatRoomFragment extends Fragment
     public void onChatMessageSelected(final ChatMessage chatMessage) {
         if(chatMessage.getUser().getKey().equals(UserManager.getUserId()) || UserManager.canModerate()) {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                    .setItems(R.array.chat_message_items, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch(which) {
-                                case REMOVE_CHAT_MESSAGE_POSITION:
-                                    removeChatMessageWithAlert(chatMessage);
-                            }
+                    .setItems(R.array.chat_message_items, (dialog, which) -> {
+                        switch(which) {
+                            case REMOVE_CHAT_MESSAGE_POSITION:
+                                removeChatMessageWithAlert(chatMessage);
                         }
                     }).create();
             alertDialog.show();
@@ -658,25 +586,18 @@ public class ChatRoomFragment extends Fragment
     private void removeChatMessageWithAlert(final ChatMessage chatMessage) {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
                 .setMessage(R.string.message_remove_chat_message)
-                .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        chatRoomServices.removeChatMessage(chatRoom, chatMessage, onChatMessageRemovedListener);
-                    }
-                })
+                .setPositiveButton(R.string.confirm_neutral_dialog_button,
+                        (dialog, which) -> chatRoomServices.removeChatMessage(chatRoom, chatMessage, onChatMessageRemovedListener))
                 .setNegativeButton(R.string.cancel_dialog_button, null)
                 .create();
         alertDialog.show();
     }
 
-    private Firebase.CompletionListener onChatMessageRemovedListener = new Firebase.CompletionListener() {
-        @Override
-        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-            if(firebaseError == null) {
-                displayMessage(R.string.message_delete_message_success);
-            } else {
-                displayMessage(R.string.error_remove);
-            }
+    private Firebase.CompletionListener onChatMessageRemovedListener = (firebaseError, firebase) -> {
+        if(firebaseError == null) {
+            displayMessage(R.string.message_delete_message_success);
+        } else {
+            displayMessage(R.string.error_remove);
         }
     };
 
@@ -735,6 +656,17 @@ public class ChatRoomFragment extends Fragment
             media.setPath(uri);
             media.setMetadata(metadata);
             sendMedia(media);
+        }
+    };
+
+    private RecyclerView.AdapterDataObserver adapterDataObserver = new RecyclerView.AdapterDataObserver() {
+        @Override
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            super.onItemRangeInserted(positionStart, itemCount);
+            Log.i(TAG, "onItemRangeInserted: " + positionStart);
+            if (positionStart == 0) {
+                messagesList.scrollToPosition(0);
+            }
         }
     };
 

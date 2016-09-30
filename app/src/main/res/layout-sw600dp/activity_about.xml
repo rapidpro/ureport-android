@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -37,7 +37,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="fill_vertical|top|start"
-        android:padding="20dp">
+        android:padding="20dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -116,9 +117,7 @@
                     android:layout_toEndOf="@+id/follow"
                     android:layout_marginLeft="20dp"
                     android:layout_marginStart="20dp"
-                    app:backgroundTint="#00b8ea"
-                    app:layout_anchorGravity="bottom|right|end"
-                    app:layout_anchor="@id/appbar" />
+                    app:backgroundTint="#00b8ea"/>
 
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/facebook"
@@ -131,9 +130,7 @@
                     android:layout_toEndOf="@+id/twitter"
                     android:layout_marginLeft="20dp"
                     android:layout_marginStart="20dp"
-                    app:backgroundTint="#005ed2"
-                    app:layout_anchorGravity="bottom|right|end"
-                    app:layout_anchor="@id/appbar" />
+                    app:backgroundTint="#005ed2" />
 
             </RelativeLayout>
 
@@ -141,4 +138,4 @@
 
     </ScrollView>
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -31,7 +31,7 @@ public interface RapidProApi {
             , @retrofit.http.Field("text") String text);
 
     @GET("/groups.json")
-    Response<Group> listGroups(@Header("Authorization") String apiKey);
+    Response<Group> listGroups(@Header("Authorization") String apiKey, @Query("uuid") String contact);
 
     @GET("/fields.json")
     Response<Field> listFields(@Header("Authorization") String apiKey);

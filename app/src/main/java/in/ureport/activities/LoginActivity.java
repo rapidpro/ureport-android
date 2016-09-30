@@ -18,7 +18,6 @@ import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.listener.OnUserLoadedListener;
 
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
@@ -123,33 +122,30 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     @Override
     public void onUserReady(final User user, boolean newUser) {
         if(user == null) return;
-
-        final ProgressDialog progressDialog = ProgressDialog.show(this, null
-                , getString(R.string.load_message_wait), true, false);
-
-        saveContactOnRapidPro(user, newUser, progressDialog);
+        saveContactOnRapidPro(user, newUser);
     }
 
-    private void saveContactOnRapidPro(final User user, final boolean newUser, final ProgressDialog progressDialog) {
+    private void saveContactOnRapidPro(final User user, final boolean newUser) {
         SaveContactTask saveContactTask = new SaveContactTask(this, newUser) {
+            ProgressDialog progressDialog;
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = ProgressDialog.show(LoginActivity.this, null
+                        , getString(R.string.load_message_wait), true, false);
+            }
             @Override
             protected void onPostExecute(Contact contact) {
                 super.onPostExecute(contact);
-                updateUserAndDismiss(user, progressDialog);
+                if (progressDialog != null) progressDialog.dismiss();
+                updateUserAndDismiss(user);
             }
         };
         saveContactTask.execute(user);
     }
 
-    private void updateUserAndDismiss(User user, final ProgressDialog progressDialog) {
-        UserManager.updateUserInfo(user, new OnUserLoadedListener() {
-            @Override
-            public void onUserLoaded() {
-                progressDialog.dismiss();
-                startMainActivity();
-            }
-        });
-
+    private void updateUserAndDismiss(User user) {
+        UserManager.updateUserInfo(user, this::startMainActivity);
         createGcmInstanceId();
     }
 
@@ -177,6 +173,9 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     private void startMainActivity() {
         Intent mainIntent = new Intent(this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (getIntent().getExtras() != null) {
+            mainIntent.putExtras(getIntent().getExtras());
+        }
         startActivity(mainIntent);
         finish();
     }

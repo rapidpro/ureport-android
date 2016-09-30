@@ -12,6 +12,7 @@ import br.com.ilhasoft.support.tool.ResourceUtil;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.models.CountryProgram;
+import in.ureport.models.rapidpro.AgeGroup;
 
 import static in.ureport.R.string.brasil_channel;
 import static in.ureport.R.string.chile_channel;
@@ -19,12 +20,14 @@ import static in.ureport.R.string.global_channel;
 import static in.ureport.R.string.indonesia_channel;
 import static in.ureport.R.string.ireland_channel;
 import static in.ureport.R.string.mexico_channel;
+import static in.ureport.R.string.thailand_channel;
 import static in.ureport.R.string.nigeria_channel;
 import static in.ureport.R.string.rapidpro_host_address1;
 import static in.ureport.R.string.rapidpro_host_address2;
 import static in.ureport.R.string.syria_channel;
 import static in.ureport.R.string.uganda_channel;
 import static in.ureport.R.string.ukraine_channel;
+import static in.ureport.R.string.unitedkingdom_channel;
 import static in.ureport.R.string.ureport_host_address1;
 import static in.ureport.R.string.ureport_host_address2;
 
@@ -35,6 +38,7 @@ import static in.ureport.R.style.AppTheme_Cameroun;
 import static in.ureport.R.style.AppTheme_Chile;
 import static in.ureport.R.style.AppTheme_Drc;
 import static in.ureport.R.style.AppTheme_Fiji;
+import static in.ureport.R.style.AppTheme_Guatemala;
 import static in.ureport.R.style.AppTheme_Indonesia;
 import static in.ureport.R.style.AppTheme_Ireland;
 import static in.ureport.R.style.AppTheme_Liberia;
@@ -47,8 +51,10 @@ import static in.ureport.R.style.AppTheme_Senegal;
 import static in.ureport.R.style.AppTheme_SierraLeone;
 import static in.ureport.R.style.AppTheme_Syria;
 import static in.ureport.R.style.AppTheme_Swaiziland;
+import static in.ureport.R.style.AppTheme_Thailand;
 import static in.ureport.R.style.AppTheme_Uganda;
 import static in.ureport.R.style.AppTheme_Ukraine;
+import static in.ureport.R.style.AppTheme_UnitedKingdom;
 import static in.ureport.R.style.AppTheme_Zambia;
 import static in.ureport.R.style.AppTheme_Zimbabwe;
 
@@ -121,6 +127,7 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UReportDRC", "UNICEFRDC", null));
 			countryPrograms.add(buildCountryProgram("FJI", AppTheme_Fiji, R.string.fiji_channel, "Fiji", INVALID_VALUE
 					, rapidpro_host_address1, ureport_host_address1, null, null, "UReporters"));
+            countryPrograms.add(buildGtmCountry());
             countryPrograms.add(buildCountryProgram("IDN", AppTheme_Indonesia, indonesia_channel, "Indonesia", 15
                     , rapidpro_host_address1, ureport_host_address1, "UReport_id", "UNICEFIndonesia", "UReporters_Indonesia"));
             countryPrograms.add(buildCountryProgram("IRL", AppTheme_Ireland, ireland_channel, "Ireland", 2
@@ -146,9 +153,11 @@ public class CountryProgramManager {
                     , rapidpro_host_address2, ureport_host_address2, "UReportSyria", "UReportSyria", null));
             countryPrograms.add(buildCountryProgram("SWZ", AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4
                     , rapidpro_host_address1, ureport_host_address1, "Ureportszd", "Swaziland-U-Report-1407332376221373", null));
+            countryPrograms.add(buildTha());
             countryPrograms.add(buildCountryProgram("UGA", AppTheme_Uganda, uganda_channel, "Uganda", 18
                     , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "UReportUganda", "U-Reporters"));
-			countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
+            countryPrograms.add(buildGbrCountry());
+            countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
 					, rapidpro_host_address1, ureport_host_address1, "ureportukraine", "ureportukraine", "UReporters"));
             countryPrograms.add(buildCountryProgram("ZMB", AppTheme_Zambia, INVALID_VALUE, "Zambia", INVALID_VALUE
                     , rapidpro_host_address1, ureport_host_address1, "ZambiaUReport", "Zambia-U-Report-421536867911449", null));
@@ -156,6 +165,54 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "Ureportzim", "U-Report-Zimbabwe-1477396805878097", null));
         }
         return countryPrograms;
+    }
+
+    @NonNull
+    private static CountryProgram buildGtmCountry() {
+        CountryProgram gtmCountry = buildCountryProgram("GTM", AppTheme_Guatemala, R.string.guatemala_channel, "Guatemala", 7
+                , rapidpro_host_address2, ureport_host_address2, "UReportGua", "ureportglobal", "U-Reporters");
+        gtmCountry.setMaleGroup("UReport Males");
+        gtmCountry.setFemaleGroup("UReport Female");
+        gtmCountry.setStateField("department");
+        gtmCountry.setDistrictField("district");
+        return gtmCountry;
+    }
+
+    @NonNull
+    private static CountryProgram buildTha() {
+        CountryProgram thaCountry = buildCountryProgram("THA", AppTheme_Thailand, thailand_channel, "Thailand", 5
+                , rapidpro_host_address2, ureport_host_address2, "UReportThai", "ureportglobal", "U-Reporters");
+        thaCountry.setMaleGroup("U-Reporters Male");
+        thaCountry.setFemaleGroup("U-Reporters Female");
+
+        List<AgeGroup> ageGroups = new ArrayList<>();
+        ageGroups.add(new AgeGroup("6 - 9", 6, 9));
+        ageGroups.add(new AgeGroup("10 - 13", 10, 13));
+        ageGroups.add(new AgeGroup("14 - 18", 14, 18));
+        ageGroups.add(new AgeGroup("19 - 23", 19, 23));
+        ageGroups.add(new AgeGroup("24 - 28", 24, 28));
+        ageGroups.add(new AgeGroup("29 - 33", 29, 33));
+        ageGroups.add(new AgeGroup("> 34", 34));
+        thaCountry.setAgeGroups(ageGroups);
+        thaCountry.setStateField("province");
+
+        return thaCountry;
+    }
+
+    @NonNull
+    private static CountryProgram buildGbrCountry() {
+        CountryProgram gbrCountry = buildCountryProgram("GBR", AppTheme_UnitedKingdom, unitedkingdom_channel, "United Kingdom", 3
+                , rapidpro_host_address2, ureport_host_address2, "UReportUK", "ureportglobal", "U-Reporters");
+        gbrCountry.setMaleGroup("U-Reporters Male");
+        gbrCountry.setFemaleGroup("U-Reporters Female");
+
+        List<AgeGroup> ageGroups = new ArrayList<>();
+        ageGroups.add(new AgeGroup("U-Reporters 13-18", 13, 18));
+        ageGroups.add(new AgeGroup("U-Reporters 18-25", 18, 25));
+        ageGroups.add(new AgeGroup("U-Reporters 26+", 26));
+        gbrCountry.setAgeGroups(ageGroups);
+
+        return gbrCountry;
     }
 
     @NonNull

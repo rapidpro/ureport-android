@@ -2,6 +2,7 @@ package in.ureport.network;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.Firebase;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import in.ureport.managers.UserManager;
@@ -70,25 +71,36 @@ public class StoryServices extends ProgramServices {
     }
 
     public void loadStoriesForUser(User user, ValueEventListener listener) {
-        getCountryProgram().child(user.getCountryProgram()).child(storyPath)
-                .orderByChild("user").equalTo(user.getKey()).addListenerForSingleValueEvent(listener);
+        getStoryQueryByUser(user).addListenerForSingleValueEvent(listener);
     }
 
     public void addChildEventListenerForUser(User user, ChildEventListener childEventListener) {
-        getCountryProgram().child(user.getCountryProgram()).child(storyPath)
-                .orderByChild("user").equalTo(user.getKey()).addChildEventListener(childEventListener);
+        getStoryQueryByUser(user).addChildEventListener(childEventListener);
+    }
+
+    public Query getStoryQueryByUser(User user) {
+        return getCountryProgram().child(user.getCountryProgram()).child(storyPath)
+                .orderByChild("user").equalTo(user.getKey());
     }
 
     public void addStoryModerateChildEventListener(ChildEventListener childEventListener) {
-        getDefaultRoot().child(storyModeratePath).addChildEventListener(childEventListener);
+        getStoriesModerationQuery().addChildEventListener(childEventListener);
+    }
+
+    public Firebase getStoriesModerationQuery() {
+        return getDefaultRoot().child(storyModeratePath);
+    }
+
+    public Firebase getStoryReference() {
+        return getDefaultRoot().child(storyPath);
     }
 
     public void addChildEventListener(ChildEventListener childEventListener) {
-        getDefaultRoot().child(storyPath).addChildEventListener(childEventListener);
+        getStoryReference().addChildEventListener(childEventListener);
     }
 
     public void removeChildEventListener(ChildEventListener childEventListener) {
-        getDefaultRoot().child(storyPath).removeEventListener(childEventListener);
+        getStoryReference().removeEventListener(childEventListener);
     }
 
     private void cleanStory(Story story) {

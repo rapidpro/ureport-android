@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ import in.ureport.models.holders.NavigationItem;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
+import in.ureport.services.GcmListenerService;
 import in.ureport.views.adapters.NavigationAdapter;
 
 /**
@@ -42,6 +44,8 @@ import in.ureport.views.adapters.NavigationAdapter;
  */
 public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListener, OnUserStartChattingListener,
         StoriesListFragment.OnPublishStoryListener {
+
+    private static final String TAG = "MainActivity";
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     public static final int REQUEST_CODE_CHAT_CREATION = 200;
@@ -84,7 +88,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
-        checkIntentAction();
+        checkIntentNotifications();
     }
 
     @Override
@@ -217,25 +221,45 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         return navigationItems;
     }
 
-    private void checkIntentAction() {
-        final String action = getIntent().getAction();
-        if(action != null) {
-            switch(action) {
-                case ACTION_START_CHATTING:
-                    pager.postDelayed(() -> {
-                        User user1 = getIntent().getParcelableExtra(EXTRA_USER);
-                        onUserStartChatting(user1);
-                    }, LOAD_CHAT_TIME);
-                    break;
-                case ACTION_OPEN_CHAT_NOTIFICATION:
+    private void checkIntentNotifications() {
+        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("type")) {
+            handleTypeNotification();
+        } else if(getIntent().getAction() != null) {
+            final String action = getIntent().getAction();
+            handleActionNotification(action);
+        }
+    }
+
+    private void handleActionNotification(String action) {
+        switch(action) {
+            case ACTION_START_CHATTING:
+                pager.postDelayed(() -> {
+                    User user1 = getIntent().getParcelableExtra(EXTRA_USER);
+                    onUserStartChatting(user1);
+                }, LOAD_CHAT_TIME);
+                break;
+            case ACTION_OPEN_CHAT_NOTIFICATION:
+                pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
+                break;
+            case ACTION_OPEN_MESSAGE_NOTIFICATION:
+                pager.setCurrentItem(POSITION_POLLS_FRAGMENT);
+                break;
+            case ACTION_CONTRIBUTION_NOTIFICATION:
+                story = getIntent().getParcelableExtra(EXTRA_STORY);
+        }
+    }
+
+    private void handleTypeNotification() {
+        try {
+            GcmListenerService.Type type = GcmListenerService.Type.valueOf(getIntent().getExtras().getString("type"));
+            switch (type) {
+                case Rapidpro:
+                    pager.setCurrentItem(POSITION_POLLS_FRAGMENT); break;
+                case Chat:
                     pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
-                    break;
-                case ACTION_OPEN_MESSAGE_NOTIFICATION:
-                    pager.setCurrentItem(POSITION_POLLS_FRAGMENT);
-                    break;
-                case ACTION_CONTRIBUTION_NOTIFICATION:
-                    story = getIntent().getParcelableExtra(EXTRA_STORY);
             }
+        } catch(Exception exception) {
+            Log.e(TAG, "checkIntentNotifications: ", exception);
         }
     }
 
