@@ -327,7 +327,9 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            recyclerFloatingScrollListener.onScrolled(recyclerView, dx, dy);
+            if (hasCreateStoryButton()) {
+                recyclerFloatingScrollListener.onScrolled(recyclerView, dx, dy);
+            }
             checkNewsPageLoading();
         }
     };
@@ -387,6 +389,10 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
                 createStoryButton.setVisibility(View.GONE);
             }
         }
+    }
+
+    protected boolean hasCreateStoryButton() {
+        return true;
     }
 
     private interface OnAfterStoryLoadedListener {
