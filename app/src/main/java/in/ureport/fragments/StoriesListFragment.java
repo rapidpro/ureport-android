@@ -184,9 +184,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     private void loadNewsForPage(int page) {
-        if(newsList != null) {
-            storiesAdapter.addNews(newsList);
-        } else {
+        if(newsList == null) {
             loadingNews = true;
             ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization()
                     , page, onNewsLoadedCallback);
@@ -229,6 +227,10 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
         storiesAdapter.setOnNeedUpdateStoryListener(this);
         storiesList.setAdapter(storiesAdapter);
         storiesList.setInfiniteFireArray(storyFireArray);
+
+        if (newsList != null) {
+            storiesAdapter.addNews(newsList);
+        }
     }
 
     @Override
