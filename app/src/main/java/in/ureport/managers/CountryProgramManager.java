@@ -150,7 +150,7 @@ public class CountryProgramManager {
             countryPrograms.add(buildCountryProgram("SLE", AppTheme_SierraLeone, INVALID_VALUE, "Sierra Leone", 7
                     , rapidpro_host_address1, ureport_host_address1, "UreportSL", "U-report-Sierra-Leone-361005830734231", null));
             countryPrograms.add(buildCountryProgram("SYR", AppTheme_Syria, syria_channel, "Syria", 6
-                    , rapidpro_host_address2, ureport_host_address2, "UReportSyria", "UReportSyria", null));
+                    , rapidpro_host_address2, ureport_host_address2, "UReportSyria", "UReportSyria", "U-Reporters"));
             countryPrograms.add(buildCountryProgram("SWZ", AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4
                     , rapidpro_host_address1, ureport_host_address1, "Ureportszd", "Swaziland-U-Report-1407332376221373", null));
             countryPrograms.add(buildTha());
