@@ -112,7 +112,7 @@ public class UserManager {
     }
 
     public static String getUserId() {
-        return FirebaseManager.getReference().getAuth() != null
+        return FirebaseManager.getReference() != null && FirebaseManager.getReference().getAuth() != null
             && FirebaseManager.getReference().getAuth().getUid() != null ? FirebaseManager.getReference().getAuth().getUid() : null;
     }
 

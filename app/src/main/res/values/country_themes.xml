@@ -109,6 +109,12 @@
         <item name="colorAccent">#316f35</item>
     </style>
 
+    <style name="AppTheme.Syria" parent="AppTheme">
+        <item name="colorPrimary">#48b7e5</item>
+        <item name="colorPrimaryDark">#3d9ec6</item>
+        <item name="colorAccent">#2f7a99</item>
+    </style>
+
     <style name="AppTheme.Swaiziland" parent="AppTheme">
         <item name="colorPrimary">#d7001c</item>
         <item name="colorPrimaryDark">#c3001d</item>

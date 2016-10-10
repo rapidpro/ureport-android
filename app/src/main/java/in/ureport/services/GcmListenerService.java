@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import br.com.ilhasoft.support.json.JsonDeserializer;
-import in.ureport.managers.FirebaseManager;
+import in.ureport.managers.FirebaseProxyManager;
 import in.ureport.managers.FlowManager;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
@@ -109,7 +109,7 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     }
 
     private boolean isUserAllowedForMessageNotification(User user) {
-        FirebaseManager.init(this);
+        FirebaseProxyManager.init(this);
         String authUserKey = UserManager.getUserId();
         return authUserKey != null && !user.getKey().equals(authUserKey);
     }

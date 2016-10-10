@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.ilhasoft.support.tool.ResourceUtil;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
@@ -22,6 +24,7 @@ import static in.ureport.R.string.thailand_channel;
 import static in.ureport.R.string.nigeria_channel;
 import static in.ureport.R.string.rapidpro_host_address1;
 import static in.ureport.R.string.rapidpro_host_address2;
+import static in.ureport.R.string.syria_channel;
 import static in.ureport.R.string.uganda_channel;
 import static in.ureport.R.string.ukraine_channel;
 import static in.ureport.R.string.unitedkingdom_channel;
@@ -46,6 +49,7 @@ import static in.ureport.R.style.AppTheme_Pakistan;
 import static in.ureport.R.style.AppTheme_RepubliqueCentrafricaine;
 import static in.ureport.R.style.AppTheme_Senegal;
 import static in.ureport.R.style.AppTheme_SierraLeone;
+import static in.ureport.R.style.AppTheme_Syria;
 import static in.ureport.R.style.AppTheme_Swaiziland;
 import static in.ureport.R.style.AppTheme_Thailand;
 import static in.ureport.R.style.AppTheme_Uganda;
@@ -145,6 +149,8 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "ureportsenegal", "UreportSenegal", null));
             countryPrograms.add(buildCountryProgram("SLE", AppTheme_SierraLeone, INVALID_VALUE, "Sierra Leone", 7
                     , rapidpro_host_address1, ureport_host_address1, "UreportSL", "U-report-Sierra-Leone-361005830734231", null));
+            countryPrograms.add(buildCountryProgram("SYR", AppTheme_Syria, syria_channel, "Syria", 6
+                    , rapidpro_host_address2, ureport_host_address2, "UReportSyria", "UReportSyria", "U-Reporters"));
             countryPrograms.add(buildCountryProgram("SWZ", AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4
                     , rapidpro_host_address1, ureport_host_address1, "Ureportszd", "Swaziland-U-Report-1407332376221373", null));
             countryPrograms.add(buildTha());

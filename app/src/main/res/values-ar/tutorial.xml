@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
+    
+    <string name="tutorial_title1">إنشاء قصص</string>
+    <string name="tutorial_description1">أسمعنا صوتك وشاركنا ما يحدث في مجتمعك من خلال كتابة قصص والتعليق على القصص الأخرى</string>
+    <color name="tutorial_background1">#8000cff6</color>
+
+    <string name="tutorial_title2">الرد على استطلاعات الرأي</string>
+    <string name="tutorial_description2">كل أسبوع تستطيع الإجابة على العديد من استطلاعات الرأي حول ما يحدث في مجتمعك مع الملايين من مستخدمي اليو-ريبورت الآخرين</string>
+    <color name="tutorial_background2">#c8ffa500</color>
+
+    <string name="tutorial_title3">دردشة مجانية</string>
+    <string name="tutorial_description3">تحدث مع مراسلي اليو-ريبورت الآخرين وتابع المجموعات الخاصة بقضايا الشباب</string>
+    <color name="tutorial_background3">#8000d400</color>
+    
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation" >
+    <string-array name="markers">
+        <item>المناصرة</item>
+        <item>حماية  الطفل</item>
+        <item>التعليم</item>
+        <item>الطوارئ</item>
+        <item>الصحة</item>
+        <item>فيروس  نقص المناعة البشرية/الأيدز</item>
+        <item>التغذية</item>
+        <item>السياسات</item>
+        <item>السياسة  الاجتماعية</item>
+        <item>الصرف الصحي</item>
+        <item>العنف</item>
+    </string-array>
+</resources>

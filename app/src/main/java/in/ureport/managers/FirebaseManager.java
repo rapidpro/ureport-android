@@ -3,8 +3,12 @@ package in.ureport.managers;
 import android.content.Context;
 
 import com.facebook.AccessToken;
-import com.firebase.client.AuthData;
+import com.firebase.client.Config;
 import com.firebase.client.Firebase;
+import com.firebase.client.Logger;
+import com.firebase.client.core.RepoManager;
+import com.firebase.client.utilities.ParsedUrl;
+import com.firebase.client.utilities.Utilities;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.twitter.sdk.android.core.TwitterSession;
 
@@ -21,16 +25,27 @@ import in.ureport.tasks.GetGoogleAuthTokenTask;
 public class FirebaseManager {
 
     private static Firebase reference;
-    private static Context context;
 
-    public static void init(Context context) {
+    public static void init(Context context, boolean proxyEnabled) {
         Firebase.setAndroidContext(context);
 
-        if(reference == null) {
-            Firebase.getDefaultConfig().setPersistenceEnabled(true);
-            FirebaseManager.context = context;
-            reference = new Firebase(context.getString(R.string.firebase_app));
+        Config config = new Config();
+        config.setLogLevel(Logger.Level.DEBUG);
+        config.setPersistenceEnabled(true);
+        if (proxyEnabled) {
+            config.setAuthenticationServer(context.getString(R.string.firebase_proxy_auth));
         }
+        Firebase.setDefaultConfig(config);
+
+        String appUrl = proxyEnabled
+                ? context.getString(R.string.firebase_proxy_database) : context.getString(R.string.firebase_app);
+        reference = getInstanceWithCustomName(appUrl, context.getString(R.string.firebase_app_name));
+    }
+
+    private static Firebase getInstanceWithCustomName(String url, String name) {
+        ParsedUrl parsedUrl = Utilities.parseUrl(url);
+        parsedUrl.repoInfo.namespace = name;
+        return new Firebase(RepoManager.getRepo(Firebase.getDefaultConfig(), parsedUrl.repoInfo), parsedUrl.path);
     }
 
     public static void logout() {

@@ -37,7 +37,6 @@ public class GcmRegistrationIntentService extends IntentService {
             final String pushIdentity = instanceID.getToken(getString(R.string.gcm_sender_id),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
 
-            FirebaseManager.init(this);
             String userKey = UserManager.getUserId();
 
             if(userKey != null) {

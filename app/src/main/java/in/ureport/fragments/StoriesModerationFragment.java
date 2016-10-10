@@ -66,6 +66,11 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
         }
     };
 
+    @Override
+    protected boolean hasCreateStoryButton() {
+        return false;
+    }
+
     private void displayToast(@StringRes int messageId) {
         Toast.makeText(getActivity(), messageId, Toast.LENGTH_SHORT).show();
     }
