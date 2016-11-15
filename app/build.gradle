@@ -13,13 +13,16 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'me.tatarka.retrolambda'
 
+Properties localProperties = new Properties()
+localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     signingConfigs {
         signature {
-            keyAlias 'ureport'
-            keyPassword 'htaq3XVfSucCEbS'
-            storeFile file('/Users/john-mac/Documents/Ilhasoft/U-report/signature/ureport.jks')
-            storePassword 'htaq3XVfSucCEbS'
+            keyAlias localProperties.getProperty('signature.keyAlias')
+            keyPassword localProperties.getProperty('signature.keyPassword')
+            storeFile file(localProperties.getProperty('signature.storeFile'))
+            storePassword localProperties.getProperty('signature.storePassword')
         }
     }
     lintOptions {
