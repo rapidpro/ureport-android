@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -225,6 +226,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         title.setText(story.getTitle());
 
         TextView content = (TextView) view.findViewById(R.id.content);
+        content.setMovementMethod(LinkMovementMethod.getInstance());
         content.setText(story.getContent());
 
         scrollView = (NestedScrollView) view.findViewById(R.id.scrollView);

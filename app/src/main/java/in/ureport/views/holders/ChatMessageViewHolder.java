@@ -5,6 +5,7 @@ import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,6 +94,7 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
             bindMedia(user, chatMessage);
         } else {
             message = (TextView) findIfNeeded(message, R.id.chatMessage);
+            message.setMovementMethod(LinkMovementMethod.getInstance());
             message.setText(chatMessage.getMessage());
         }
 
