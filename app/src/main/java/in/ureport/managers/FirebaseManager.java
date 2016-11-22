@@ -27,19 +27,21 @@ public class FirebaseManager {
     private static Firebase reference;
 
     public static void init(Context context, boolean proxyEnabled) {
-        Firebase.setAndroidContext(context);
+        if (reference == null) {
+            Firebase.setAndroidContext(context);
 
-        Config config = new Config();
-        config.setLogLevel(Logger.Level.DEBUG);
-        config.setPersistenceEnabled(true);
-        if (proxyEnabled) {
-            config.setAuthenticationServer(context.getString(R.string.firebase_proxy_auth));
+            Config config = new Config();
+            config.setLogLevel(Logger.Level.DEBUG);
+            config.setPersistenceEnabled(true);
+            if (proxyEnabled) {
+                config.setAuthenticationServer(context.getString(R.string.firebase_proxy_auth));
+            }
+            Firebase.setDefaultConfig(config);
+
+            String appUrl = proxyEnabled
+                    ? context.getString(R.string.firebase_proxy_database) : context.getString(R.string.firebase_app);
+            reference = getInstanceWithCustomName(appUrl, context.getString(R.string.firebase_app_name));
         }
-        Firebase.setDefaultConfig(config);
-
-        String appUrl = proxyEnabled
-                ? context.getString(R.string.firebase_proxy_database) : context.getString(R.string.firebase_app);
-        reference = getInstanceWithCustomName(appUrl, context.getString(R.string.firebase_app_name));
     }
 
     private static Firebase getInstanceWithCustomName(String url, String name) {

@@ -13,6 +13,7 @@
         android:gravity="start"
         android:ellipsize="end"
         android:textSize="17sp"
+        android:autoLink="web"
         tools:text="Boosting community development, disease control with sms-based platform" />
 
     <LinearLayout
