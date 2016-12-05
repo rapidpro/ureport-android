@@ -185,10 +185,9 @@ public class NotificationListManager {
         public void onNotificationSelected(Notification notification) {
             CountryProgramManager.switchToUserCountryProgram();
 
-            Intent openChatIntent = new Intent(context.getApplicationContext(), ChatRoomActivity.class);
-            openChatIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            openChatIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM_KEY, chatNotification.getChatRoomId());
-            context.getApplicationContext().startActivity(openChatIntent);
+            Intent chatIntent = ChatRoomActivity.createIntent(context.getApplicationContext()
+                    , chatNotification.getChatRoomId());
+            context.getApplicationContext().startActivity(chatIntent);
         }
     }
 }

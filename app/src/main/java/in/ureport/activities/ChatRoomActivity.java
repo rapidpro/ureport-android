@@ -1,5 +1,6 @@
 package in.ureport.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,6 +37,13 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatRoomFragm
     private static final int REQUEST_CODE_GROUP_INFO = 500;
 
     private ChatRoomFragment chatRoomFragment;
+
+    public static Intent createIntent(Context context, String chatKey) {
+        Intent openChatIntent = new Intent(context, ChatRoomActivity.class);
+        openChatIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        openChatIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM_KEY, chatKey);
+        return openChatIntent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
