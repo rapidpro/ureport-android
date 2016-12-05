@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -256,11 +259,22 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
                 case Rapidpro:
                     pager.setCurrentItem(POSITION_POLLS_FRAGMENT); break;
                 case Chat:
-                    pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
+                    JSONObject chatJson = new JSONObject(getIntent().getExtras().getString("chatRoom"));
+                    if (chatJson.has("key")) {
+                        startChatActivity(chatJson.getString("key"));
+                    } else {
+                        pager.setCurrentItem(POSITION_CHAT_FRAGMENT);
+                    }
             }
         } catch(Exception exception) {
             Log.e(TAG, "checkIntentNotifications: ", exception);
         }
+    }
+
+    private void startChatActivity(String chatKey) {
+        CountryProgramManager.switchToUserCountryProgram();
+        Intent chatIntent = ChatRoomActivity.createIntent(this, chatKey);
+        startActivity(chatIntent);
     }
 
     @Override
