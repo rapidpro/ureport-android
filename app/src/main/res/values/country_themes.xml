@@ -19,10 +19,10 @@
         <item name="colorAccent">#760021</item>
     </style>
 
-    <style name="AppTheme.Drc" parent="AppTheme">
-        <item name="colorPrimary">#05b5e8</item>
-        <item name="colorPrimaryDark">#048db6</item>
-        <item name="colorAccent">#047ea2</item>
+    <style name="AppTheme.CoteDIvoire" parent="AppTheme">
+        <item name="colorPrimary">#00a200</item>
+        <item name="colorPrimaryDark">#007000</item>
+        <item name="colorAccent">#005c00</item>
     </style>
 
     <style name="AppTheme.Fiji" parent="AppTheme">
@@ -91,6 +91,12 @@
         <item name="colorAccent">#005c00</item>
     </style>
 
+    <style name="AppTheme.PapuaNewGuinea" parent="AppTheme">
+        <item name="colorPrimary">#c6002a</item>
+        <item name="colorPrimaryDark">#b20028</item>
+        <item name="colorAccent">#760021</item>
+    </style>
+
     <style name="AppTheme.RepubliqueCentrafricaine" parent="AppTheme">
         <item name="colorPrimary">#d70020</item>
         <item name="colorPrimaryDark">#c3001b</item>
@@ -143,12 +149,6 @@
         <item name="colorPrimary">#05b5e8</item>
         <item name="colorPrimaryDark">#048db6</item>
         <item name="colorAccent">#047ea2</item>
-    </style>
-
-    <style name="AppTheme.Zambia" parent="AppTheme">
-        <item name="colorPrimary">#00a200</item>
-        <item name="colorPrimaryDark">#007000</item>
-        <item name="colorAccent">#005c00</item>
     </style>
 
     <style name="AppTheme.Zimbabwe" parent="AppTheme">
