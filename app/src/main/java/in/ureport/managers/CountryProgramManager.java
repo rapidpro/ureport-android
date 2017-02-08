@@ -25,6 +25,7 @@ import static in.ureport.R.string.nigeria_channel;
 import static in.ureport.R.string.rapidpro_host_address1;
 import static in.ureport.R.string.rapidpro_host_address2;
 import static in.ureport.R.string.syria_channel;
+import static in.ureport.R.string.tunisie_channel;
 import static in.ureport.R.string.uganda_channel;
 import static in.ureport.R.string.ukraine_channel;
 import static in.ureport.R.string.unitedkingdom_channel;
@@ -53,6 +54,7 @@ import static in.ureport.R.style.AppTheme_SierraLeone;
 import static in.ureport.R.style.AppTheme_Syria;
 import static in.ureport.R.style.AppTheme_Swaiziland;
 import static in.ureport.R.style.AppTheme_Thailand;
+import static in.ureport.R.style.AppTheme_Tunisia;
 import static in.ureport.R.style.AppTheme_Uganda;
 import static in.ureport.R.style.AppTheme_Ukraine;
 import static in.ureport.R.style.AppTheme_UnitedKingdom;
@@ -154,6 +156,7 @@ public class CountryProgramManager {
             countryPrograms.add(buildCountryProgram("SWZ", AppTheme_Swaiziland, INVALID_VALUE, "Swaziland", 4
                     , rapidpro_host_address1, ureport_host_address1, "Ureportszd", "Swaziland-U-Report-1407332376221373", null));
             countryPrograms.add(buildTha());
+            countryPrograms.add(buildTun());
             countryPrograms.add(buildCountryProgram("UGA", AppTheme_Uganda, uganda_channel, "Uganda", 18
                     , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "UReportUganda", "U-Reporters"));
             countryPrograms.add(buildGbrCountry());
@@ -163,6 +166,14 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "Ureportzim", "U-Report-Zimbabwe-1477396805878097", null));
         }
         return countryPrograms;
+    }
+
+    private static CountryProgram buildTun() {
+        CountryProgram tunCountry = buildCountryProgram("TUN", AppTheme_Tunisia, tunisie_channel, "Tunisie", 31,
+                rapidpro_host_address1, ureport_host_address1, "UReportTunisie", "uReportTunisie", "U-Reporters");
+        tunCountry.setMaleGroup("U-Reporters Homme");
+        tunCountry.setFemaleGroup("U-Reporters Femmes");
+        return tunCountry;
     }
 
     @NonNull

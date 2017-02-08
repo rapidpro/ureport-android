@@ -133,6 +133,12 @@
         <item name="colorAccent">#14448a</item>
     </style>
 
+    <style name="AppTheme.Tunisia" parent="AppTheme">
+        <item name="colorPrimary">#d6001f</item>
+        <item name="colorPrimaryDark">#c2001c</item>
+        <item name="colorAccent">#86001a</item>
+    </style>
+
     <style name="AppTheme.Uganda" parent="AppTheme">
         <item name="colorPrimary">#d6001f</item>
         <item name="colorPrimaryDark">#c2001c</item>
