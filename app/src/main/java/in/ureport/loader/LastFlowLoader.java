@@ -47,7 +47,8 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
             List<FlowRun> flowRuns = rapidProServices.loadRuns(getApiToken(), UserManager.getUserRapidUuid(), getMinimumDate());
 
             FlowRun lastFlowRun = flowRuns.get(0);
-            FlowDefinition flowDefinition = rapidProServices.loadFlowDefinition(getApiToken(), lastFlowRun.getFlowUuid());
+            FlowDefinition flowDefinition = rapidProServices.loadFlowDefinition(getApiToken(),
+                    lastFlowRun.getFlow().getUuid());
             flowDefinition.setContact(contact);
             flowDefinition.setFlowRun(lastFlowRun);
 
