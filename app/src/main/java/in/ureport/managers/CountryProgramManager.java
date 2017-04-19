@@ -37,7 +37,6 @@ import static in.ureport.R.style.AppTheme_Burundi;
 import static in.ureport.R.style.AppTheme_Cameroun;
 import static in.ureport.R.style.AppTheme_Chile;
 import static in.ureport.R.style.AppTheme_CoteDIvoire;
-import static in.ureport.R.style.AppTheme_Fiji;
 import static in.ureport.R.style.AppTheme_Guatemala;
 import static in.ureport.R.style.AppTheme_Indonesia;
 import static in.ureport.R.style.AppTheme_Ireland;
@@ -124,8 +123,6 @@ public class CountryProgramManager {
             countryPrograms.add(buildCountryProgram("CHL", AppTheme_Chile, chile_channel, "Chile", 12
                     , rapidpro_host_address1, ureport_host_address1, "ureportchile", "ureportchile", "UReporters"));
             countryPrograms.add(buildCoteDIvoire());
-			countryPrograms.add(buildCountryProgram("FJI", AppTheme_Fiji, R.string.fiji_channel, "Fiji", INVALID_VALUE
-					, rapidpro_host_address1, ureport_host_address1, null, null, "UReporters"));
             countryPrograms.add(buildGtmCountry());
             countryPrograms.add(buildCountryProgram("IDN", AppTheme_Indonesia, indonesia_channel, "Indonesia", 15
                     , rapidpro_host_address1, ureport_host_address1, "UReport_id", "UNICEFIndonesia", "UReporters_Indonesia"));

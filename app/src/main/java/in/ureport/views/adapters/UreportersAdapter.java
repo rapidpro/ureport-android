@@ -3,13 +3,7 @@ package in.ureport.views.adapters;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,15 +13,15 @@ import java.util.Set;
 import in.ureport.R;
 import in.ureport.listener.ItemSelectionListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
-import in.ureport.helpers.ImageLoader;
 import in.ureport.models.User;
+import in.ureport.views.holders.UreporterHolderManager;
+import in.ureport.views.holders.UreporterViewHolder;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private static final String TAG = "UreportersAdapter";
+public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements
+        UreporterHolderManager {
 
     private List<User> ureportersList;
     private List<User> searchUreportersList;
@@ -51,12 +45,12 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        return new ViewHolder(inflater.inflate(R.layout.item_ureporter, parent, false));
+        return new UreporterViewHolder(inflater.inflate(R.layout.item_ureporter, parent, false), this);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder)holder).bindView(getCurrentUreportersList().get(position));
+        ((UreporterViewHolder)holder).bindView(getCurrentUreportersList().get(position));
     }
 
     private List<User> getCurrentUreportersList() {
@@ -111,8 +105,33 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.itemSelectionListener = itemSelectionListener;
     }
 
+    @Override
+    public ItemSelectionListener<User> getItemSelectionListener() {
+        return itemSelectionListener;
+    }
+
+    @Override
+    public OnCreateIndividualChatListener getOnCreateIndividualChatListener() {
+        return onCreateIndividualChatListener;
+    }
+
+    @Override
+    public User getUser(int position) {
+        return ureportersList.get(position);
+    }
+
     public Set<User> getSelectedUreporters() {
         return selectedUreporters;
+    }
+
+    @Override
+    public boolean isSelectionEnabled() {
+        return selectionEnabled;
+    }
+
+    @Override
+    public Integer getMaxSelectionCount() {
+        return maxSelectionCount;
     }
 
     public void search(String query) {
@@ -140,72 +159,4 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return resultUreportersList;
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
-
-        private final TextView name;
-        private final ImageView picture;
-        private final CheckBox selected;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-
-            name = (TextView) itemView.findViewById(R.id.name);
-            picture = (ImageView) itemView.findViewById(R.id.picture);
-            selected = (CheckBox) itemView.findViewById(R.id.selected);
-            itemView.setOnClickListener(selectionEnabled ? null : onItemClickListener);
-            selected.setOnCheckedChangeListener(selectionEnabled ? onUserCheckedListener : null);
-            selected.setOnClickListener(selectionEnabled ? onUserSelectedListener : null);
-        }
-
-        public void bindView(User user) {
-            name.setText(user.getNickname());
-            ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
-
-            selected.setVisibility(selectionEnabled ? View.VISIBLE : View.GONE);
-            if(selectionEnabled) selected.setChecked(selectedUreporters.contains(user));
-        }
-
-        private View.OnClickListener onItemClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(onCreateIndividualChatListener != null)
-                    onCreateIndividualChatListener.onCreateIndividualChat(getCurrentUreportersList().get(getLayoutPosition()));
-            }
-        };
-
-        private View.OnClickListener onUserSelectedListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(itemSelectionListener == null) return;
-
-                User user = getCurrentUreportersList().get(getLayoutPosition());
-                if(selected.isChecked()) {
-                    itemSelectionListener.onItemSelected(user);
-                } else {
-                    itemSelectionListener.onItemDeselected(user);
-                }
-            }
-        };
-
-        private CompoundButton.OnCheckedChangeListener onUserCheckedListener = new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                User user = getCurrentUreportersList().get(getLayoutPosition());
-                if(isChecked) {
-                    if(maxSelectionCount == null || selectedUreporters.size() <= maxSelectionCount)
-                        selectedUreporters.add(user);
-                    else
-                        showMaximumNumberLimitError();
-                } else {
-                    selectedUreporters.remove(user);
-                }
-            }
-        };
-
-        private void showMaximumNumberLimitError() {
-            Toast.makeText(itemView.getContext()
-                    , itemView.getContext().getString(R.string.ureporters_selected_maximum, maxSelectionCount)
-                    , Toast.LENGTH_LONG).show();
-        }
-    }
 }

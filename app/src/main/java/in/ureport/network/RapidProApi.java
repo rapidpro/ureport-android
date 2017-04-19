@@ -24,37 +24,37 @@ import retrofit.http.Query;
 public interface RapidProApi {
 
     @FormUrlEncoded
-    @POST("/external/received/{channel}/")
+    @POST("/v1/external/received/{channel}/")
     retrofit.client.Response sendReceivedMessage(@Header("Authorization") String apiKey
             , @Path("channel") String channel
             , @retrofit.http.Field("from") String from
             , @retrofit.http.Field("text") String text);
 
-    @GET("/groups.json")
+    @GET("/v1/groups.json")
     Response<Group> listGroups(@Header("Authorization") String apiKey, @Query("uuid") String contact);
 
-    @GET("/fields.json")
+    @GET("/v1/fields.json")
     Response<Field> listFields(@Header("Authorization") String apiKey);
 
-    @GET("/boundaries.json")
+    @GET("/v1/boundaries.json")
     Response<Boundary> listBoundaries(@Header("Authorization") String apiKey
             , @Query("page") Integer page, @Query("aliases") Boolean aliases);
 
-    @GET("/runs.json")
+    @GET("/v2/runs.json")
     Response<FlowRun> listRuns(@Header("Authorization") String apiKey
             , @Query("contact") String uuid, @Query("after") String after);
 
-    @GET("/flow_definition.json")
+    @GET("/v1/flow_definition.json")
     FlowDefinition loadFlowDefinition(@Header("Authorization") String apiKey, @Query("uuid") String flowUuid);
 
-    @POST("/steps")
+    @POST("/v1/steps")
     @Headers({ "Accept: application/json", "Content-Type: application/json" })
     Map<String, Object> saveFlowStepSet(@Header("Authorization") String apiKey, @Body FlowStepSet flowStepSet);
 
-    @GET("/contacts.json")
+    @GET("/v1/contacts.json")
     Response<Contact> loadContact(@Header("Authorization") String apiKey, @Query("urns") String urn);
 
-    @POST("/contacts.json")
+    @POST("/v1/contacts.json")
     Contact saveContact(@Header("Authorization") String apiKey, @Body Contact contact);
 
 }

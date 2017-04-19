@@ -3,7 +3,6 @@ package in.ureport.network;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -21,7 +20,6 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.GameficationManager;
 import in.ureport.managers.UserManager;
-import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 
@@ -111,7 +109,7 @@ public class UserServices extends ProgramServices {
     }
 
     public void loadRanking(final OnLoadAllUsersListener onLoadAllUsersListener) {
-        FirebaseManager.getReference().child(userPath).orderByChild("points")
+        getRankingQuery()
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -130,6 +128,10 @@ public class UserServices extends ProgramServices {
                         onLoadAllUsersListener.onLoadAllUsers(users);
                     }
                 });
+    }
+
+    public Query getRankingQuery() {
+        return FirebaseManager.getReference().child(userPath).orderByChild("points");
     }
 
     public ValueEventListener loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {
@@ -188,7 +190,7 @@ public class UserServices extends ProgramServices {
         return loadUsers(onLoadAllUsersListener, query);
     }
 
-    private Query getUserCountryProgramQuery() {
+    public Query getUserCountryProgramQuery() {
         String countryCode = CountryProgramManager.getCurrentCountryProgram().getCode();
         return FirebaseManager.getReference().child(userPath).orderByChild("countryProgram").equalTo(countryCode);
     }
@@ -224,7 +226,7 @@ public class UserServices extends ProgramServices {
         children.put("nickname", user.getNickname());
         children.put("birthday", user.getBirthday().getTime());
         children.put("state", user.getState());
-        children.put("gender", user.getGender().toString());
+        children.put("gender", user.getGender());
 
         userReference.updateChildren(children, listener);
     }

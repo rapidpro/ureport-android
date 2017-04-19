@@ -70,9 +70,10 @@ public class ContactGroupsBuilder {
     }
 
     private void addGenderGroup(User user, CountryProgram countryProgram, List<String> userGroups) {
-        if(user.getGender() == User.Gender.Male) {
+        User.Gender gender = user.getGenderAsEnum();
+        if(gender == User.Gender.Male) {
             userGroups.add(countryProgram.getMaleGroup());
-        } else if(user.getGender() == User.Gender.Female) {
+        } else if(gender == User.Gender.Female) {
             userGroups.add(countryProgram.getFemaleGroup());
         }
     }

@@ -39,6 +39,7 @@ import in.ureport.managers.UserManager;
 import in.ureport.models.News;
 import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.models.holders.StoryHolder;
 import in.ureport.network.ContributionServices;
 import in.ureport.network.Response;
 import in.ureport.network.StoryServices;
@@ -70,7 +71,7 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
 
     private User user;
     private ArrayList<News> newsList;
-    private Map<String, Story> storiesLoaded;
+    private Map<String, StoryHolder> storiesLoaded;
     protected boolean publicType = true;
 
     private OnPublishStoryListener onPublishStoryListener;
@@ -254,48 +255,47 @@ public class StoriesListFragment extends Fragment implements StoriesAdapter.OnSt
     }
 
     @Override
-    public void loadStoryData(final Story story, OnStoryUpdatedListener onStoryUpdatedListener) {
+    public StoryHolder loadStoryData(final Story story) {
         if (storiesLoaded.containsKey(story.getKey())) {
-            Story storyLoaded = storiesLoaded.get(story.getKey());
+            StoryHolder storyLoaded = storiesLoaded.get(story.getKey());
             copyDynamicData(storyLoaded, story);
-            onStoryUpdatedListener.onStoryUpdated(story);
+            return storyLoaded;
         } else {
             loadUsersFromStory(story, storyWithUser ->
-                    contributionServices.getContributionCount(story, count -> {
-                        story.setContributions(Long.valueOf(count).intValue());
-                        loadStoryLikeCount(story, storyWithLikes -> {
-                            storiesLoaded.put(story.getKey(), story);
-                            onStoryUpdatedListener.onStoryUpdated(story);
-                        });
-                    }));
+                    contributionServices.getContributionCount(story, storyWithContributions ->
+                            loadStoryLikeCount(story, storyWithLikes -> {
+                                        storiesLoaded.put(story.getKey(), new StoryHolder(storyWithLikes));
+                                        storiesAdapter.updateStory(storyWithLikes);
+                                    })));
+            return null;
         }
     }
 
-    private void copyDynamicData(Story fromStory, Story toStory) {
+    private void copyDynamicData(StoryHolder fromStory, Story toStory) {
         toStory.setUserObject(fromStory.getUserObject());
         toStory.setLikes(fromStory.getLikes());
         toStory.setContributions(fromStory.getContributions());
     }
 
-    private void loadStoryLikeCount(Story story, final OnAfterStoryLoadedListener onAfterStoryLoadedListener) {
+    private void loadStoryLikeCount(Story story, final OnStoryUpdatedListener onStoryUpdatedListener) {
         storyServices.loadStoryLikeCount(story, new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 story.setLikes(dataSnapshot.exists() ? (int) dataSnapshot.getChildrenCount() : 0);
-                onAfterStoryLoadedListener.onAfterStoryLoaded(story);
+                onStoryUpdatedListener.onStoryUpdated(story);
             }
         });
     }
 
-    private void loadUsersFromStory(final Story story, final OnAfterStoryLoadedListener onAfterStoryLoadedListener) {
+    private void loadUsersFromStory(final Story story, final OnStoryUpdatedListener onStoryUpdatedListener) {
         userServices.getUser(story.getUser(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if(user != null) {
                     story.setUserObject(user);
-                    onAfterStoryLoadedListener.onAfterStoryLoaded(story);
+                    onStoryUpdatedListener.onStoryUpdated(story);
                 }
             }
         });

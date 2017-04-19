@@ -75,7 +75,7 @@ public class ContactBuilder {
         putValuesIfExists(formatDate(user.getBirthday()), contactFields, "birthday", "birthdate", "birth_day");
         putValuesIfExists(getBornFormatted(user), contactFields, "year_of_birth", "born", "birth_year");
         putValuesIfExists(getAgeFormatted(user), contactFields, "age");
-        putValuesIfExists(user.getGender().toString(), contactFields, "gender");
+        putValuesIfExists(user.getGender(), contactFields, "gender");
         putValuesIfExists(user.getState(), contactFields, possibleStates);
         putValuesIfExists(user.getDistrict(), contactFields, possibleDistricts);
         putValuesIfExists(countryCode, contactFields, "country");

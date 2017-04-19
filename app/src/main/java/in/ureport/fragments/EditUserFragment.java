@@ -143,7 +143,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
                 }
 
                 UserGender gender = (UserGender) EditUserFragment.this.gender.getSelectedItem();
-                user.setGender(gender.getGender());
+                user.setGenderAsEnum(gender.getGender());
 
                 progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_wait), true, false);
                 Log.i(TAG, "onClick editUser ");

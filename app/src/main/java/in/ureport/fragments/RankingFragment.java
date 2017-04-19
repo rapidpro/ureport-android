@@ -4,17 +4,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Collections;
-import java.util.List;
+import com.marcorei.infinitefire.InfiniteFireArray;
+import com.marcorei.infinitefire.InfiniteFireLinearRecyclerView;
 
 import in.ureport.R;
-import in.ureport.models.User;
 import in.ureport.helpers.DividerItemDecoration;
+import in.ureport.models.User;
 import in.ureport.network.UserServices;
 import in.ureport.views.adapters.RankingAdapter;
 
@@ -25,9 +24,7 @@ public class RankingFragment extends Fragment {
 
     private static final String EXTRA_USER = "user";
 
-    private User user;
-
-    private RecyclerView rankingList;
+    private InfiniteFireLinearRecyclerView rankingList;
 
     private UserServices userServices;
 
@@ -39,15 +36,6 @@ public class RankingFragment extends Fragment {
         rankingFragment.setArguments(args);
 
         return rankingFragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle extras = getArguments();
-        if(extras != null && extras.containsKey(EXTRA_USER)) {
-            user = extras.getParcelable(EXTRA_USER);
-        }
     }
 
     @Nullable
@@ -65,24 +53,24 @@ public class RankingFragment extends Fragment {
         loadData();
     }
 
-    private void loadData() {
-        userServices.loadRanking(new UserServices.OnLoadAllUsersListener() {
-            @Override
-            public void onLoadAllUsers(List<User> users) {
-                Collections.reverse(users);
-                RankingAdapter rankingAdapter = new RankingAdapter(users);
-                rankingList.setAdapter(rankingAdapter);
-            }
-        });
-    }
-
     private void setupObjects() {
         userServices = new UserServices();
     }
 
     private void setupView(View view) {
-        rankingList = (RecyclerView) view.findViewById(R.id.rankingList);
+        rankingList = (InfiniteFireLinearRecyclerView) view.findViewById(R.id.rankingList);
         rankingList.setLayoutManager(new LinearLayoutManager(getActivity()));
         rankingList.addItemDecoration(new DividerItemDecoration(getActivity()));
+    }
+
+    private void loadData() {
+        InfiniteFireArray<User> rankingArray = new InfiniteFireArray<>(User.class
+                , userServices.getRankingQuery(), 50, 50, false, false);
+
+        RankingAdapter rankingAdapter = new RankingAdapter(rankingArray);
+        rankingAdapter.setHasStableIds(true);
+
+        rankingList.setAdapter(rankingAdapter);
+        rankingList.setInfiniteFireArray(rankingArray);
     }
 }

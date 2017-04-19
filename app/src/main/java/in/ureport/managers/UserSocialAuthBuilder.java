@@ -56,7 +56,7 @@ public class UserSocialAuthBuilder {
         user.setType(User.Type.google);
         user.setNickname(getFormattedNickname(getStringValue(data, "displayName")));
         user.setPicture(getStringValue(data, "profileImageURL"));
-        user.setGender(getUserGender(getStringValue(cachedUserProfile, "gender")));
+        user.setGenderAsEnum(getUserGender(getStringValue(cachedUserProfile, "gender")));
 
         return user;
     }
@@ -73,7 +73,7 @@ public class UserSocialAuthBuilder {
         user.setNickname(getFormattedNickname(getStringValue(data, "displayName")));
         user.setPicture(getStringValue(data, "profileImageURL"));
         user.setBirthday(getFormattedDate(getStringValue(cachedUserProfile, "birthday"), "MM/dd/yyyy"));
-        user.setGender(getUserGender(getStringValue(cachedUserProfile, "gender")));
+        user.setGenderAsEnum(getUserGender(getStringValue(cachedUserProfile, "gender")));
 
         return user;
     }

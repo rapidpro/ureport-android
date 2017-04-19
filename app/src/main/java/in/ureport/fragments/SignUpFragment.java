@@ -170,7 +170,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
         user.setCountryProgram(CountryProgramManager.getCountryProgramForCode(countryCode).getCode());
 
         UserGender userGender = (UserGender)gender.getAdapter().getItem(gender.getSelectedItemPosition());
-        user.setGender(userGender.getGender());
+        user.setGenderAsEnum(userGender.getGender());
         return user;
     }
 

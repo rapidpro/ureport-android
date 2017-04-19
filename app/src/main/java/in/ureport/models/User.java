@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.StringRes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
@@ -39,7 +40,7 @@ public class User implements Parcelable {
     @Expose
     private String picture;
 
-    private Gender gender;
+    private String gender;
 
     private Type type;
 
@@ -125,12 +126,25 @@ public class User implements Parcelable {
         this.picture = picture;
     }
 
-    public Gender getGender() {
-        return gender;
+    public String getGender() {
+        return this.gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    @JsonIgnore
+    public Gender getGenderAsEnum() {
+        try {
+            return Gender.valueOf(this.gender);
+        } catch(IllegalArgumentException exception) {
+            return Gender.Male;
+        }
+    }
+
+    public void setGenderAsEnum(Gender gender) {
+        this.gender = gender.name();
     }
 
     public Type getType() {
@@ -247,7 +261,7 @@ public class User implements Parcelable {
         dest.writeString(this.state);
         dest.writeString(this.district);
         dest.writeString(this.picture);
-        dest.writeInt(this.gender == null ? -1 : this.gender.ordinal());
+        dest.writeString(this.gender);
         dest.writeInt(this.type == null ? -1 : this.type.ordinal());
         dest.writeValue(this.points);
         dest.writeValue(this.stories);
@@ -270,8 +284,7 @@ public class User implements Parcelable {
         this.state = in.readString();
         this.district = in.readString();
         this.picture = in.readString();
-        int tmpGender = in.readInt();
-        this.gender = tmpGender == -1 ? null : User.Gender.values()[tmpGender];
+        this.gender = in.readString();
         int tmpType = in.readInt();
         this.type = tmpType == -1 ? null : User.Type.values()[tmpType];
         this.points = (Integer) in.readValue(Integer.class.getClassLoader());
