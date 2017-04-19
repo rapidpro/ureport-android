@@ -131,7 +131,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
     }
 
     private void setUserGenderValue() {
-        UserGender userGender = new UserGender(getActivity(), user.getGender());
+        UserGender userGender = new UserGender(getActivity(), user.getGenderAsEnum());
         ArrayAdapter<UserGender> adapter = ((ArrayAdapter<UserGender>) gender.getAdapter());
         int position = adapter.getPosition(userGender);
 

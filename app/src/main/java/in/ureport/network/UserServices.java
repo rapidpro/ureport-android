@@ -224,7 +224,7 @@ public class UserServices extends ProgramServices {
         children.put("nickname", user.getNickname());
         children.put("birthday", user.getBirthday().getTime());
         children.put("state", user.getState());
-        children.put("gender", user.getGender().toString());
+        children.put("gender", user.getGender());
 
         userReference.updateChildren(children, listener);
     }
