@@ -139,6 +139,10 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
         }
     }
 
+    public void updateStory(Story story) {
+        notifyItemChanged(snapshots.getIndexForKey(story.getKey()));
+    }
+
     private boolean isNewsPosition(int position) {
         return position >= getLastStoryPosition();
     }

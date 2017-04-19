@@ -6,6 +6,7 @@ import com.firebase.client.Firebase;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnStoryContributionCountListener;
+import in.ureport.listener.OnStoryUpdatedListener;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
 import in.ureport.models.User;
@@ -52,12 +53,13 @@ public class ContributionServices extends ProgramServices {
         contribution.setKey(object.getKey());
     }
 
-    public void getContributionCount(Story story, final OnStoryContributionCountListener listener) {
+    public void getContributionCount(Story story, final OnStoryUpdatedListener listener) {
         getDefaultRoot().child(type.path).child(story.getKey()).addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
-                listener.onStoryContributionCountListener(dataSnapshot.getChildrenCount());
+                story.setContributions(Long.valueOf(dataSnapshot.getChildrenCount()).intValue());
+                listener.onStoryUpdated(story);
             }
         });
     }

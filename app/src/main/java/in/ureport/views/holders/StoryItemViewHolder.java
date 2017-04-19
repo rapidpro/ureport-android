@@ -18,6 +18,8 @@ import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.UserViewManager;
 import in.ureport.models.Media;
 import in.ureport.models.Story;
+import in.ureport.models.User;
+import in.ureport.models.holders.StoryHolder;
 import in.ureport.views.adapters.StoriesAdapter;
 
 /**
@@ -78,22 +80,48 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Story story) {
         this.story = story;
-        bindAuthor(story);
+
+        if(story.getUserObject() != null) {
+            bindAuthor(story.getUserObject());
+            bindLikes(story.getLikes());
+            bindContributions(story.getContributions());
+        } else if (onNeedUpdateStoryListener != null) {
+            StoryHolder storyHolder = onNeedUpdateStoryListener.loadStoryData(story);
+            bindStoryHolder(storyHolder);
+        }
         bindImage(story);
         bindMarkers(story);
         bindFilesAttached(story);
-        bindLikes(story);
 
         summary.setText(story.getContent());
         title.setText(story.getTitle());
-        contributions.setText(String.format(contributionsTemplate, story.getContributions()));
 
         picture.setOnClickListener(onUserClickListener);
         author.setOnClickListener(onUserClickListener);
     }
 
-    private void bindLikes(Story story) {
-        if(story.getLikes() != null && story.getLikes() > 0) {
+    private void bindContributions(Integer contributionsCount) {
+        if (contributionsCount != null && contributionsCount > 0) {
+            contributions.setText(String.format(contributionsTemplate, contributionsCount));
+        } else {
+            contributions.setText(String.format(contributionsTemplate, 0));
+        }
+    }
+
+    private void bindStoryHolder(StoryHolder storyHolder) {
+        if (storyHolder != null) {
+            bindAuthor(storyHolder.getUserObject());
+            bindLikes(storyHolder.getLikes());
+            bindContributions(storyHolder.getContributions());
+        } else {
+            bindAuthor(null);
+            bindLikes(null);
+            bindContributions(null);
+        }
+    }
+
+    private void bindLikes(Integer likeCount) {
+        if(likeCount != null && likeCount > 0) {
             String likes = itemView.getResources().getQuantityString(R.plurals.like_count
                     , story.getLikes(), story.getLikes());
             likeCountText.setText(likes);
@@ -151,12 +179,13 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    private void bindAuthor(Story story) {
-        if(story.getUserObject() != null) {
-            ImageLoader.loadPersonPictureToImageView(picture, story.getUserObject().getPicture());
-            author.setText(story.getUserObject().getNickname());
-        } else if (onNeedUpdateStoryListener != null) {
-            onNeedUpdateStoryListener.loadStoryData(story, this::bind);
+    private void bindAuthor(User user) {
+        if (user != null) {
+            ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
+            author.setText(user.getNickname());
+        } else {
+            picture.setImageResource(R.drawable.face);
+            author.setText("");
         }
     }
 
