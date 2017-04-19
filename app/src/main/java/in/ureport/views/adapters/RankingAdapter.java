@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
+import com.marcorei.infinitefire.InfiniteFireArray;
+import com.marcorei.infinitefire.InfiniteFireRecyclerViewAdapter;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
@@ -16,12 +17,10 @@ import in.ureport.models.User;
 /**
  * Created by johncordeiro on 18/07/15.
  */
-public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RankingAdapter extends InfiniteFireRecyclerViewAdapter<User> {
 
-    private List<User> users;
-
-    public RankingAdapter(List<User> users) {
-        this.users = users;
+    public RankingAdapter(InfiniteFireArray<User> snapshots) {
+        super(snapshots, 0, 0);
     }
 
     @Override
@@ -32,12 +31,12 @@ public class RankingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ViewHolder)holder).bindView(users.get(position));
+        ((ViewHolder)holder).bindView(getItem(position).getValue());
     }
 
     @Override
-    public int getItemCount() {
-        return users.size();
+    public long getItemId(int position) {
+        return getItem(position).getKey().hashCode();
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {

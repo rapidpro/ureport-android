@@ -55,6 +55,11 @@ public class UreportersInfiniteAdapter extends InfiniteFireRecyclerViewAdapter<U
             this.selectedUreporters = new HashSet<>();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).getKey().hashCode();
+    }
+
     public void setItemSelectionListener(ItemSelectionListener<User> itemSelectionListener) {
         this.itemSelectionListener = itemSelectionListener;
     }

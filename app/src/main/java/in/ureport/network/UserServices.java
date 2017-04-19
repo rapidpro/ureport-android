@@ -109,7 +109,7 @@ public class UserServices extends ProgramServices {
     }
 
     public void loadRanking(final OnLoadAllUsersListener onLoadAllUsersListener) {
-        FirebaseManager.getReference().child(userPath).orderByChild("points")
+        getRankingQuery()
                 .addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -128,6 +128,10 @@ public class UserServices extends ProgramServices {
                         onLoadAllUsersListener.onLoadAllUsers(users);
                     }
                 });
+    }
+
+    public Query getRankingQuery() {
+        return FirebaseManager.getReference().child(userPath).orderByChild("points");
     }
 
     public ValueEventListener loadAll(final OnLoadAllUsersListener onLoadAllUsersListener) {
