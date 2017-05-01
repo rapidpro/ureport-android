@@ -13,9 +13,9 @@ import in.ureport.models.CountryProgram;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.LocationInfo;
+import in.ureport.models.ip.ProxyResponse;
 import in.ureport.models.rapidpro.Boundary;
 import in.ureport.network.GeonamesServices;
-import in.ureport.network.ProxyApi;
 import in.ureport.network.ProxyServices;
 import in.ureport.network.RapidProServices;
 import in.ureport.network.Response;
@@ -38,9 +38,9 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
     public LocationInfo loadInBackground() {
         try {
             ProxyServices proxyServices = new ProxyServices(getContext());
-            ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(countryInfo.getIsoAlpha3());
+            ProxyResponse response = proxyServices.getAuthenticationTokenByCountry(countryInfo.getIsoAlpha3());
 
-            List<Boundary> boundaries = loadBoundariesByRapidPro(response.token);
+            List<Boundary> boundaries = loadBoundariesByRapidPro(response.getToken());
             if(boundaries.size() > 1) {
                 return getStatesByRapidproResponse(boundaries);
             } else {

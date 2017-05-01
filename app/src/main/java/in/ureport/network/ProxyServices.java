@@ -4,6 +4,7 @@ import android.content.Context;
 
 import in.ureport.BuildConfig;
 import in.ureport.R;
+import in.ureport.models.ip.ProxyResponse;
 import retrofit.RestAdapter;
 
 /**
@@ -26,7 +27,7 @@ public class ProxyServices {
         proxyApi = restAdapter.create(ProxyApi.class);
     }
 
-    public ProxyApi.Response getAuthenticationTokenByCountry(String country) {
+    public ProxyResponse getAuthenticationTokenByCountry(String country) {
         return proxyApi.getAuthenticationToken(authorization, country);
     }
 }
