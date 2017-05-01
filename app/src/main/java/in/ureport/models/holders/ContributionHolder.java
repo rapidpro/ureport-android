@@ -4,13 +4,12 @@ import com.google.gson.annotations.Expose;
 
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
-import in.ureport.network.GcmApi;
-import in.ureport.services.GcmListenerService;
+import in.ureport.models.gcm.NotificationHolder;
 
 /**
  * Created by johncordeiro on 06/10/15.
  */
-public class ContributionHolder extends GcmApi.NotificationHolder {
+public class ContributionHolder extends NotificationHolder {
 
     @Expose
     public Story story;

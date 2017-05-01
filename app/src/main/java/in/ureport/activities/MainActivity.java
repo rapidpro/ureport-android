@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,15 +30,15 @@ import in.ureport.managers.LocalNotificationManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.Notification;
 import in.ureport.models.Story;
 import in.ureport.models.User;
-import in.ureport.models.Notification;
+import in.ureport.models.gcm.Type;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
-import in.ureport.services.GcmListenerService;
 import in.ureport.views.adapters.NavigationAdapter;
 
 /**
@@ -254,7 +253,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
 
     private void handleTypeNotification() {
         try {
-            GcmListenerService.Type type = GcmListenerService.Type.valueOf(getIntent().getExtras().getString("type"));
+            Type type = Type.valueOf(getIntent().getExtras().getString("type"));
             switch (type) {
                 case Rapidpro:
                     pager.setCurrentItem(POSITION_POLLS_FRAGMENT); break;

@@ -13,6 +13,7 @@ import in.ureport.models.ChatRoom;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.models.gcm.Type;
 import in.ureport.network.GcmServices;
 import in.ureport.tasks.ChatNotificationTask;
 import in.ureport.tasks.ContributionNotificationTask;
@@ -33,12 +34,6 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
 
     private static final String EXTRA_CONTRIBUTION = "contribution";
     private static final String EXTRA_STORY = "story";
-
-    public enum Type {
-        Rapidpro,
-        Chat,
-        Contribution
-    }
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
