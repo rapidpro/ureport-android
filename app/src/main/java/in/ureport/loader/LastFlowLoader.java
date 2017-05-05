@@ -10,13 +10,13 @@ import java.util.Date;
 import java.util.List;
 
 import in.ureport.flowrunner.managers.FlowRunnerManager;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.flowrunner.models.FlowDefinition;
 import in.ureport.flowrunner.models.FlowRun;
 import in.ureport.helpers.ContactBuilder;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
-import in.ureport.flowrunner.models.Contact;
-import in.ureport.network.ProxyApi;
+import in.ureport.models.ip.ProxyResponse;
 import in.ureport.network.ProxyServices;
 import in.ureport.network.RapidProServices;
 
@@ -74,8 +74,8 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
     private void loadCountryTokenIfNeeded() {
         if(!UserManager.isCountryTokenValid()) {
             ProxyServices proxyServices = new ProxyServices(getContext());
-            ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(UserManager.getCountryCode());
-            UserManager.updateCountryToken(response.token);
+            ProxyResponse response = proxyServices.getAuthenticationTokenByCountry(UserManager.getCountryCode());
+            UserManager.updateCountryToken(response.getToken());
         }
     }
 

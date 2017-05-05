@@ -1,5 +1,6 @@
 package in.ureport.network;
 
+import in.ureport.models.ip.ProxyResponse;
 import retrofit.http.GET;
 import retrofit.http.Header;
 import retrofit.http.Path;
@@ -10,11 +11,7 @@ import retrofit.http.Path;
 public interface ProxyApi {
 
     @GET("/authentication/{country}")
-    ProxyApi.Response getAuthenticationToken(@Header("Authorization") String apiKey
+    ProxyResponse getAuthenticationToken(@Header("Authorization") String apiKey
             , @Path("country") String country);
-
-    class Response {
-        public String token;
-    }
 
 }

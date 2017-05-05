@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,15 +30,15 @@ import in.ureport.managers.LocalNotificationManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.Notification;
 import in.ureport.models.Story;
 import in.ureport.models.User;
-import in.ureport.models.Notification;
+import in.ureport.models.gcm.Type;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
-import in.ureport.services.GcmListenerService;
 import in.ureport.views.adapters.NavigationAdapter;
 
 /**
@@ -52,9 +51,6 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     public static final int REQUEST_CODE_CHAT_CREATION = 200;
-    public static final int REQUEST_CODE_CHAT_NOTIFICATION = 300;
-    public static final int REQUEST_CODE_MESSAGE_NOTIFICATION = 400;
-    public static final int REQUEST_CODE_CONTRIBUTION_NOTIFICATION = 500;
 
     private static final int POSITION_POLLS_FRAGMENT = 1;
     private static final int POSITION_CHAT_FRAGMENT = 2;
@@ -91,12 +87,18 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
-        checkIntentNotifications();
+    }
+
+    @Override
+    protected void onNewIntent(Intent newIntent) {
+        super.onNewIntent(newIntent);
+        setIntent(newIntent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        checkIntentNotifications(getIntent());
         localNotificationManager.cancelContributionNotification();
     }
 
@@ -224,20 +226,21 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         return navigationItems;
     }
 
-    private void checkIntentNotifications() {
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("type")) {
-            handleTypeNotification();
-        } else if(getIntent().getAction() != null) {
-            final String action = getIntent().getAction();
-            handleActionNotification(action);
+    private void checkIntentNotifications(Intent intent) {
+        if (intent.getExtras() != null && intent.getExtras().containsKey("type")) {
+            handleTypeNotification(intent);
+            intent.removeExtra("type");
+        } else if(intent.getAction() != null) {
+            handleActionNotification(intent);
+            intent.setAction(Intent.ACTION_DEFAULT);
         }
     }
 
-    private void handleActionNotification(String action) {
-        switch(action) {
+    private void handleActionNotification(Intent intent) {
+        switch(intent.getAction()) {
             case ACTION_START_CHATTING:
                 pager.postDelayed(() -> {
-                    User user1 = getIntent().getParcelableExtra(EXTRA_USER);
+                    User user1 = intent.getParcelableExtra(EXTRA_USER);
                     onUserStartChatting(user1);
                 }, LOAD_CHAT_TIME);
                 break;
@@ -248,18 +251,18 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
                 pager.setCurrentItem(POSITION_POLLS_FRAGMENT);
                 break;
             case ACTION_CONTRIBUTION_NOTIFICATION:
-                story = getIntent().getParcelableExtra(EXTRA_STORY);
+                story = intent.getParcelableExtra(EXTRA_STORY);
         }
     }
 
-    private void handleTypeNotification() {
+    private void handleTypeNotification(Intent intent) {
         try {
-            GcmListenerService.Type type = GcmListenerService.Type.valueOf(getIntent().getExtras().getString("type"));
+            Type type = Type.valueOf(intent.getExtras().getString("type"));
             switch (type) {
                 case Rapidpro:
                     pager.setCurrentItem(POSITION_POLLS_FRAGMENT); break;
                 case Chat:
-                    JSONObject chatJson = new JSONObject(getIntent().getExtras().getString("chatRoom"));
+                    JSONObject chatJson = new JSONObject(intent.getExtras().getString("chatRoom"));
                     if (chatJson.has("key")) {
                         startChatActivity(chatJson.getString("key"));
                     } else {

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
 
 import in.ureport.BuildConfig;
 import in.ureport.R;
@@ -13,8 +12,12 @@ import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
+import in.ureport.models.holders.ChatMessageHolder;
+import in.ureport.models.gcm.GcmInput;
+import in.ureport.models.gcm.Notification;
+import in.ureport.models.gcm.Response;
+import in.ureport.models.gcm.Type;
 import in.ureport.models.holders.ContributionHolder;
-import in.ureport.services.GcmListenerService;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 
@@ -41,15 +44,15 @@ public class GcmServices {
         gcmApi = restAdapter.create(GcmApi.class);
     }
 
-    public GcmApi.Response sendChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
+    public Response sendChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
         ChatMessageHolder chatMessageHolder = new ChatMessageHolder();
-        chatMessageHolder.chatRoom = chatRoom;
-        chatMessageHolder.chatMessage = chatMessage;
-        chatMessageHolder.setType(GcmListenerService.Type.Chat);
+        chatMessageHolder.setChatRoom(chatRoom);
+        chatMessageHolder.setChatMessage(chatMessage);
+        chatMessageHolder.setType(Type.Chat);
 
-        GcmApi.Input<ChatMessageHolder> chatMessageHolderInput = new GcmApi.Input<>(
+        GcmInput<ChatMessageHolder> chatMessageHolderInput = new GcmInput<>(
                 GcmTopicManager.CHAT_TOPICS_PATH + chatRoom.getKey(), chatMessageHolder);
-        chatMessageHolderInput.setNotification(new GcmApi.Notification(context.getString(R.string.title_chat_message)
+        chatMessageHolderInput.setNotification(new Notification(context.getString(R.string.title_chat_message)
                 , String.format("%1$s: %2$s", chatMessage.getUser().getNickname()
                 , getChatMessage(chatMessage))));
 
@@ -60,11 +63,11 @@ public class GcmServices {
         return chatMessage.getMessage() != null && !chatMessage.getMessage().isEmpty() ? chatMessage.getMessage() : context.getString(R.string.prompt_media_notification);
     }
 
-    public GcmApi.Response sendContribution(Story story, Contribution contribution) {
+    public Response sendContribution(Story story, Contribution contribution) {
         ContributionHolder contributionHolder = new ContributionHolder(story, contribution);
-        contributionHolder.setType(GcmListenerService.Type.Contribution);
+        contributionHolder.setType(Type.Contribution);
 
-        GcmApi.Input<ContributionHolder> contributionData = new GcmApi.Input<>(
+        GcmInput<ContributionHolder> contributionData = new GcmInput<>(
                 GcmTopicManager.STORY_TOPICS_PATH + story.getKey(), contributionHolder);
 
         return gcmApi.sendData(gcmKey, contributionData);
@@ -81,10 +84,4 @@ public class GcmServices {
                 .build();
     }
 
-    public class ChatMessageHolder extends GcmApi.NotificationHolder {
-        @Expose
-        ChatRoom chatRoom;
-        @Expose
-        ChatMessage chatMessage;
-    }
 }

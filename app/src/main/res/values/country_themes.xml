@@ -25,6 +25,12 @@
         <item name="colorAccent">#005c00</item>
     </style>
 
+    <style name="AppTheme.ElSalvador" parent="AppTheme">
+        <item name="colorPrimary">#004DB4</item>
+        <item name="colorPrimaryDark">#003f93</item>
+        <item name="colorAccent">#003378</item>
+    </style>
+
     <style name="AppTheme.Guatemala" parent="AppTheme">
         <item name="colorPrimary">#05b5e8</item>
         <item name="colorPrimaryDark">#048db6</item>
@@ -83,6 +89,12 @@
         <item name="colorPrimary">#00a200</item>
         <item name="colorPrimaryDark">#007000</item>
         <item name="colorAccent">#005c00</item>
+    </style>
+
+    <style name="AppTheme.Italy" parent="AppTheme">
+        <item name="colorPrimary">#8750A0</item>
+        <item name="colorPrimaryDark">#6d4081</item>
+        <item name="colorAccent">#5a366b</item>
     </style>
 
     <style name="AppTheme.PapuaNewGuinea" parent="AppTheme">

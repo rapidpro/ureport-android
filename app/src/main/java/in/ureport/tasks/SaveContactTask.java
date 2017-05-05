@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ContactBuilder;
 import in.ureport.helpers.IOHelper;
@@ -24,10 +25,9 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
-import in.ureport.flowrunner.models.Contact;
 import in.ureport.models.geonames.CountryInfo;
+import in.ureport.models.ip.ProxyResponse;
 import in.ureport.models.rapidpro.Field;
-import in.ureport.network.ProxyApi;
 import in.ureport.network.ProxyServices;
 import in.ureport.network.RapidProServices;
 import in.ureport.tasks.common.ProgressTask;
@@ -142,8 +142,8 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     private String getTokenFromProxy(CountryProgram countryProgram) {
         try {
             ProxyServices proxyServices = new ProxyServices(getContext());
-            ProxyApi.Response response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
-            return response.token;
+            ProxyResponse response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
+            return response.getToken();
         } catch(Exception exception) {
             return null;
         }
