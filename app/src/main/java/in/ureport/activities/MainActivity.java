@@ -51,8 +51,6 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     public static final int REQUEST_CODE_CHAT_CREATION = 200;
-    public static final int REQUEST_CODE_MESSAGE_NOTIFICATION = 400;
-    public static final int REQUEST_CODE_CONTRIBUTION_NOTIFICATION = 500;
 
     private static final int POSITION_POLLS_FRAGMENT = 1;
     private static final int POSITION_CHAT_FRAGMENT = 2;

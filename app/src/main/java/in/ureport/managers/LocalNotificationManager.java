@@ -71,12 +71,13 @@ public class LocalNotificationManager {
     }
 
     private PendingIntent getContributionIntent(Story story) {
+        int requestCode = (int) System.currentTimeMillis();
+
         Intent intent = new Intent(context, MainActivity.class);
         intent.setAction(MainActivity.ACTION_CONTRIBUTION_NOTIFICATION);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(MainActivity.EXTRA_STORY, story);
-        return PendingIntent.getActivity(context, MainActivity.REQUEST_CODE_CONTRIBUTION_NOTIFICATION
-                , intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        return PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     public void cancelMessageNotification() {
@@ -96,10 +97,12 @@ public class LocalNotificationManager {
     }
 
     private PendingIntent getMessageIntent() {
+        int requestCode = (int) System.currentTimeMillis();
+
         Intent intent = new Intent(context, MainActivity.class);
         intent.setAction(MainActivity.ACTION_OPEN_MESSAGE_NOTIFICATION);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        return PendingIntent.getActivity(context, MainActivity.REQUEST_CODE_MESSAGE_NOTIFICATION, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     public void cancelChatNotification() {
