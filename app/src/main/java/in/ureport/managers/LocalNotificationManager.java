@@ -143,10 +143,12 @@ public class LocalNotificationManager {
     }
 
     private PendingIntent getChatPendingIntent() {
+        int requestCode = (int) System.currentTimeMillis();
+
         Intent chatIntent = new Intent(context, MainActivity.class);
         chatIntent.setAction(MainActivity.ACTION_OPEN_CHAT_NOTIFICATION);
-        chatIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        return PendingIntent.getActivity(context, MainActivity.REQUEST_CODE_CHAT_NOTIFICATION, chatIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        chatIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return PendingIntent.getActivity(context, requestCode, chatIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     private NotificationCompat.InboxStyle buildInboxStyle(List<ChatNotification> chatNotificationList

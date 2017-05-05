@@ -51,7 +51,6 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     public static final int REQUEST_CODE_CHAT_CREATION = 200;
-    public static final int REQUEST_CODE_CHAT_NOTIFICATION = 300;
     public static final int REQUEST_CODE_MESSAGE_NOTIFICATION = 400;
     public static final int REQUEST_CODE_CONTRIBUTION_NOTIFICATION = 500;
 
@@ -90,12 +89,18 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
-        checkIntentNotifications();
+    }
+
+    @Override
+    protected void onNewIntent(Intent newIntent) {
+        super.onNewIntent(newIntent);
+        setIntent(newIntent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        checkIntentNotifications(getIntent());
         localNotificationManager.cancelContributionNotification();
     }
 
@@ -223,20 +228,21 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         return navigationItems;
     }
 
-    private void checkIntentNotifications() {
-        if (getIntent().getExtras() != null && getIntent().getExtras().containsKey("type")) {
-            handleTypeNotification();
-        } else if(getIntent().getAction() != null) {
-            final String action = getIntent().getAction();
-            handleActionNotification(action);
+    private void checkIntentNotifications(Intent intent) {
+        if (intent.getExtras() != null && intent.getExtras().containsKey("type")) {
+            handleTypeNotification(intent);
+            intent.removeExtra("type");
+        } else if(intent.getAction() != null) {
+            handleActionNotification(intent);
+            intent.setAction(Intent.ACTION_DEFAULT);
         }
     }
 
-    private void handleActionNotification(String action) {
-        switch(action) {
+    private void handleActionNotification(Intent intent) {
+        switch(intent.getAction()) {
             case ACTION_START_CHATTING:
                 pager.postDelayed(() -> {
-                    User user1 = getIntent().getParcelableExtra(EXTRA_USER);
+                    User user1 = intent.getParcelableExtra(EXTRA_USER);
                     onUserStartChatting(user1);
                 }, LOAD_CHAT_TIME);
                 break;
@@ -247,18 +253,18 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
                 pager.setCurrentItem(POSITION_POLLS_FRAGMENT);
                 break;
             case ACTION_CONTRIBUTION_NOTIFICATION:
-                story = getIntent().getParcelableExtra(EXTRA_STORY);
+                story = intent.getParcelableExtra(EXTRA_STORY);
         }
     }
 
-    private void handleTypeNotification() {
+    private void handleTypeNotification(Intent intent) {
         try {
-            Type type = Type.valueOf(getIntent().getExtras().getString("type"));
+            Type type = Type.valueOf(intent.getExtras().getString("type"));
             switch (type) {
                 case Rapidpro:
                     pager.setCurrentItem(POSITION_POLLS_FRAGMENT); break;
                 case Chat:
-                    JSONObject chatJson = new JSONObject(getIntent().getExtras().getString("chatRoom"));
+                    JSONObject chatJson = new JSONObject(intent.getExtras().getString("chatRoom"));
                     if (chatJson.has("key")) {
                         startChatActivity(chatJson.getString("key"));
                     } else {
