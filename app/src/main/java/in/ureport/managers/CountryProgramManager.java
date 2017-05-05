@@ -37,6 +37,7 @@ import static in.ureport.R.style.AppTheme_Burundi;
 import static in.ureport.R.style.AppTheme_Cameroun;
 import static in.ureport.R.style.AppTheme_Chile;
 import static in.ureport.R.style.AppTheme_CoteDIvoire;
+import static in.ureport.R.style.AppTheme_ElSalvador;
 import static in.ureport.R.style.AppTheme_Guatemala;
 import static in.ureport.R.style.AppTheme_Indonesia;
 import static in.ureport.R.style.AppTheme_Ireland;
@@ -124,6 +125,7 @@ public class CountryProgramManager {
             countryPrograms.add(buildCountryProgram("CHL", AppTheme_Chile, chile_channel, "Chile", 12
                     , rapidpro_host_address1, ureport_host_address1, "ureportchile", "ureportchile", "UReporters"));
             countryPrograms.add(buildCoteDIvoire());
+            countryPrograms.add(buildElSalvador());
             countryPrograms.add(buildGtmCountry());
             countryPrograms.add(buildCountryProgram("IDN", AppTheme_Indonesia, indonesia_channel, "Indonesia", 15
                     , rapidpro_host_address1, ureport_host_address1, "UReport_id", "UNICEFIndonesia", "UReporters_Indonesia"));
@@ -135,7 +137,6 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UReportMali", "UreportMali", null));
             countryPrograms.add(buildCountryProgram("MEX", AppTheme_Mexico, mexico_channel, "México", 9
                     , rapidpro_host_address1, ureport_host_address1, "UReportMexico", "UReportMexico", "UReporters"));
-//            countryPrograms.add(buildCountryProgram("MMR", R.style.AppTheme_Myanmar, INVALID_VALUE, "Myanmar",  INVALID_VALUE, "UReportMyanmar", "UReporters"));
             countryPrograms.add(buildCountryProgram("NGA", AppTheme_Nigeria, nigeria_channel, "Nigeria", 1
                     , rapidpro_host_address1, ureport_host_address1, "UReportNigeria", "U-report-Nigeria-1429673597287501", "UReporters"));
             countryPrograms.add(buildIta());
@@ -162,6 +163,20 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "Ureportzim", "U-Report-Zimbabwe-1477396805878097", null));
         }
         return countryPrograms;
+    }
+
+    private static CountryProgram buildElSalvador() {
+        CountryProgram elSalvadorCountry = buildCountryProgram("SLV", AppTheme_ElSalvador, R.string.italy_channel, "El Salvador", 10
+                , rapidpro_host_address2, ureport_host_address2, "ureportsv", "UReportElSalvador", "U-Reporters");
+        elSalvadorCountry.setMaleGroup("U-Reporters Male");
+        elSalvadorCountry.setFemaleGroup("U-Reporters Female");
+
+        List<AgeGroup> ageGroups = new ArrayList<>();
+        ageGroups.add(new AgeGroup("13-18 adolescents", 13, 18));
+        ageGroups.add(new AgeGroup("18 youth", 19));
+        elSalvadorCountry.setAgeGroups(ageGroups);
+        elSalvadorCountry.setStateField("state");
+        return elSalvadorCountry;
     }
 
     @NonNull
