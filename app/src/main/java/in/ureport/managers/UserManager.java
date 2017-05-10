@@ -242,9 +242,8 @@ public class UserManager {
     }
 
     public static void startLoginFlow(Context context) {
-        Intent backIntent = new Intent(context, MainActivity.class);
+        Intent backIntent = MainActivity.createIntent(context);
         backIntent.putExtra(MainActivity.EXTRA_FORCED_LOGIN, true);
-        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(backIntent);
     }
 

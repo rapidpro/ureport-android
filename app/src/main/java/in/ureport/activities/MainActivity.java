@@ -1,5 +1,6 @@
 package in.ureport.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -78,6 +79,12 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
     private int roomMembersLoaded = 0;
     private boolean chatRoomFound = false;
 
+    public static Intent createIntent(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return intent;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +99,8 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
     @Override
     protected void onNewIntent(Intent newIntent) {
         super.onNewIntent(newIntent);
+        Log.d(TAG, "onNewIntent() called with: newIntent = [" + newIntent + "]");
+        Log.d(TAG, "onNewIntent: " + newIntent.getExtras());
         setIntent(newIntent);
     }
 

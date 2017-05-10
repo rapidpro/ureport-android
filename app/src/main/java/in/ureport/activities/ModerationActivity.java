@@ -49,8 +49,7 @@ public class ModerationActivity extends BaseActivity implements OnUserStartChatt
     }
 
     private void exitFromModeration() {
-        Intent homeIntent = new Intent(this, MainActivity.class);
-        homeIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent homeIntent = MainActivity.createIntent(this);
         startActivity(homeIntent);
         finish();
     }
@@ -121,10 +120,9 @@ public class ModerationActivity extends BaseActivity implements OnUserStartChatt
     @Override
     public void onUserStartChatting(User user) {
         if(UserManager.validateKeyAction(this)) {
-            Intent startChattingIntent = new Intent(this, MainActivity.class);
+            Intent startChattingIntent = MainActivity.createIntent(this);
             startChattingIntent.putExtra(MainActivity.EXTRA_USER, user);
             startChattingIntent.setAction(MainActivity.ACTION_START_CHATTING);
-            startChattingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(startChattingIntent);
         }
     }

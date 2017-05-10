@@ -10,26 +10,18 @@ import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 
-import java.util.Locale;
-
 import in.ureport.R;
+import in.ureport.flowrunner.models.Contact;
 import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
-
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
-import in.ureport.flowrunner.models.Contact;
-import in.ureport.models.ip.IpResponse;
-import in.ureport.network.IpServices;
 import in.ureport.network.UserServices;
 import in.ureport.services.GcmRegistrationIntentService;
 import in.ureport.tasks.SaveContactTask;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -171,8 +163,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     private void startMainActivity() {
-        Intent mainIntent = new Intent(this, MainActivity.class);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent mainIntent = MainActivity.createIntent(this);
         if (getIntent().getExtras() != null) {
             mainIntent.putExtras(getIntent().getExtras());
         }
