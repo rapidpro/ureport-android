@@ -54,6 +54,7 @@ import in.ureport.models.User;
 import in.ureport.network.UserServices;
 import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.views.adapters.NotificationAdapter;
+import io.rapidpro.sdk.FcmClient;
 
 /**
  * Created by johncordeiro on 7/13/15.
@@ -82,6 +83,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         super.setContentView(R.layout.activity_base);
         setupBaseView();
         loadData();
+
+        FcmClient.requestFloatingPermissionsIfNeeded();
     }
 
     @Override

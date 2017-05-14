@@ -8,6 +8,7 @@ import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 
 import in.ureport.managers.AmazonServicesManager;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseProxyManager;
 import in.ureport.managers.UserManager;
 import in.ureport.managers.FirebaseManager;
@@ -28,6 +29,10 @@ public class UreportApplication extends MultiDexApplication {
         initializeFabric();
         ActiveAndroid.initialize(this);
         AmazonServicesManager.init(this);
+
+        if (UserManager.isUserLoggedIn()) {
+            UserManager.initializeFcmClient(CountryProgramManager.getCurrentCountryProgram());
+        }
     }
 
     private void initializeFabric() {

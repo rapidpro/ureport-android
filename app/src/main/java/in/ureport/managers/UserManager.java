@@ -16,10 +16,13 @@ import in.ureport.activities.MainActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnUserLoadedListener;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
+import io.rapidpro.sdk.FcmClient;
+import io.rapidpro.sdk.UiConfiguration;
 
 /**
  * Created by johncordeiro on 21/07/15.
@@ -51,6 +54,17 @@ public class UserManager {
         moderator = systemPreferences.isModerator();
 
         CountryProgramManager.switchCountryProgram(UserManager.getCountryCode());
+    }
+
+    public static void initializeFcmClient(CountryProgram countryProgram) {
+        FcmClient.initialize(new FcmClient.Builder(context)
+                .setHost(context.getString(R.string.fcm_client_host))
+                .setToken(context.getString(R.string.fcm_client_token))
+                .setChannel(context.getString(R.string.fcm_client_channel))
+                .setUiConfiguration(new UiConfiguration()
+                        .setIconResource(R.mipmap.icon)
+                        .setIconFloatingChat(R.mipmap.icon)
+                        .setTitleString(countryProgram.getName())));
     }
 
     public static boolean isUserCountryProgramEnabled() {
