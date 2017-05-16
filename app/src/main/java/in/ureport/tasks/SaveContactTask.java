@@ -4,36 +4,21 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.List;
-
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.flowrunner.models.Contact;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ContactBuilder;
-import in.ureport.helpers.IOHelper;
-import in.ureport.helpers.SntpClient;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.ip.ProxyResponse;
-import in.ureport.models.rapidpro.Field;
 import in.ureport.network.ProxyServices;
-import in.ureport.network.RapidProServices;
 import in.ureport.tasks.common.ProgressTask;
 import io.rapidpro.sdk.FcmClient;
-import io.rapidpro.sdk.UiConfiguration;
-import retrofit.RetrofitError;
+import io.rapidpro.sdk.core.network.RapidProServices;
 
 /**
  * Created by johncordeiro on 18/08/15.
@@ -43,6 +28,7 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
     private static final String TAG = "SaveContactTask";
 
 //    private RapidProServices rapidProServices;
+    private RapidProServices rapidProServices;
 
     private CountryInfo countryInfo;
     private final boolean newUser;
@@ -63,12 +49,13 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         try {
             User user = params[0];
             String countryProgramCode = countryInfo != null ? countryInfo.getIsoAlpha3() : user.getCountryProgram();
-
-            String rapidproEndpoint = getContext().getString(CountryProgramManager
-                    .getCountryProgramForCode(countryProgramCode).getRapidproEndpoint());
-
             CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryProgramCode);
+
+            String rapidproEndpoint = getContext().getString(countryProgram.getRapidproEndpoint());
             String countryToken = getTokenFromProxy(countryProgram);
+
+            rapidProServices = new RapidProServices(rapidproEndpoint, countryToken);
+
             UserManager.updateCountryToken(countryToken);
             if (countryToken != null && !countryToken.isEmpty()) {
                 UserManager.initializeFcmClient(countryProgram);
@@ -98,6 +85,21 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             Log.e(TAG, "doInBackground ", exception);
         }
         return null;
+    }
+
+    @Nullable
+    private String getTokenFromProxy(CountryProgram countryProgram) {
+        if (BuildConfig.DEBUG) {
+            return getContext().getString(R.string.fcm_client_token);
+        }
+
+        try {
+            ProxyServices proxyServices = new ProxyServices(getContext());
+            ProxyResponse response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
+            return response.getToken();
+        } catch(Exception exception) {
+            return null;
+        }
     }
 
 //    private void updateContactsWithGroups(String countryToken, Contact contact) {
@@ -144,18 +146,7 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
 //        }
 //        return countryCode;
 //    }
-
-    @Nullable
-    private String getTokenFromProxy(CountryProgram countryProgram) {
-        try {
-            ProxyServices proxyServices = new ProxyServices(getContext());
-            ProxyResponse response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
-            return response.getToken();
-        } catch(Exception exception) {
-            return null;
-        }
-    }
-
+//
 //    private Contact getContactForUser(String token, User user, Date registrationDate, String countryCode, CountryProgram countryProgram) {
 //        List<Field> fields = rapidProServices.loadFields(token);
 //

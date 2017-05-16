@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
+import in.ureport.BuildConfig;
+import in.ureport.R;
 import in.ureport.models.rapidpro.AgeGroup;
 
 /**
@@ -86,6 +88,9 @@ public class CountryProgram {
     }
 
     public int getChannel() {
+        if (BuildConfig.DEBUG) {
+            return R.string.fcm_client_channel;
+        }
         return channel;
     }
 
@@ -123,6 +128,9 @@ public class CountryProgram {
     }
 
     public int getRapidproEndpoint() {
+        if (BuildConfig.DEBUG) {
+            return R.string.fcm_client_host;
+        }
         return rapidproEndpoint;
     }
 

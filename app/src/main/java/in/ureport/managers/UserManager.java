@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -58,9 +57,9 @@ public class UserManager {
 
     public static void initializeFcmClient(CountryProgram countryProgram) {
         FcmClient.initialize(new FcmClient.Builder(context)
-                .setHost(context.getString(R.string.fcm_client_host))
-                .setToken(context.getString(R.string.fcm_client_token))
-                .setChannel(context.getString(R.string.fcm_client_channel))
+                .setHost(context.getString(countryProgram.getRapidproEndpoint()))
+                .setToken(getCountryToken())
+                .setChannel(context.getString(countryProgram.getChannel()))
                 .setUiConfiguration(new UiConfiguration()
                         .setIconResource(R.mipmap.icon)
                         .setIconFloatingChat(R.mipmap.icon)
