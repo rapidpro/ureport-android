@@ -12,11 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
-import in.ureport.flowrunner.models.Contact;
-import in.ureport.models.rapidpro.Field;
+import io.rapidpro.sdk.core.models.Field;
+import io.rapidpro.sdk.core.models.v1.Contact;
 
 import static java.util.Calendar.DATE;
 import static java.util.Calendar.MONTH;
@@ -27,7 +26,8 @@ import static java.util.Calendar.YEAR;
  */
 public class ContactBuilder {
 
-    private static final String URL_FORMAT = "ext:%1$s";
+    private static final String FCM_FORMAT = "fcm:%1$s";
+    private static final String EXT_FORMAT = "ext:%1$s";
 
     private List<Field> existingFields;
 
@@ -44,7 +44,7 @@ public class ContactBuilder {
         List<String> userGroups = contactGroupsBuilder.getGroupsForUser(user);
 
         List<String> urns = new ArrayList<>();
-        urns.add(formatExtUrn(user.getKey()));
+        urns.add(formatFcmUrn(user.getKey()));
 
         Contact contact = new Contact();
         contact.setEmail(user.getEmail());
@@ -54,11 +54,15 @@ public class ContactBuilder {
         return contact;
     }
 
-    public String formatExtUrn(String key) {
-        return String.format(URL_FORMAT, formatUserId(key));
+    public static String formatFcmUrn(String key) {
+        return String.format(FCM_FORMAT, key);
     }
 
-    public String formatUserId(String key) {
+    public static String formatExtUrn(String key) {
+        return String.format(EXT_FORMAT, formatUserId(key));
+    }
+
+    public static String formatUserId(String key) {
         return key.replace(":", "").replace("-", "");
     }
 

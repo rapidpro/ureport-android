@@ -1,6 +1,8 @@
 package in.ureport.services.fcm;
 
-import io.rapidpro.sdk.core.models.Contact;
+import android.util.Log;
+
+import io.rapidpro.sdk.core.models.v2.Contact;
 import io.rapidpro.sdk.services.FcmClientRegistrationIntentService;
 
 /**
@@ -10,10 +12,10 @@ import io.rapidpro.sdk.services.FcmClientRegistrationIntentService;
 
 public class UreportFcmRegistrationService extends FcmClientRegistrationIntentService {
 
+    private static final String TAG = "UreportFcmRegistrationS";
+
     @Override
     public void onFcmRegistered(String pushIdentity, Contact contact) {
-        super.onFcmRegistered(pushIdentity, contact);
-
-
+        Log.d(TAG, "onFcmRegistered() called with: pushIdentity = [" + pushIdentity + "], contact = [" + contact + "]");
     }
 }

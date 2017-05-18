@@ -18,9 +18,9 @@ import in.ureport.models.User;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.UserGender;
-import in.ureport.flowrunner.models.Contact;
 import in.ureport.network.UserServices;
 import in.ureport.tasks.SaveContactTask;
+import io.rapidpro.sdk.core.models.base.ContactBase;
 
 /**
  * Created by johncordeiro on 10/09/15.
@@ -167,7 +167,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
         private void updateContactToRapidpro() {
             SaveContactTask saveContactTask = new SaveContactTask(getActivity(), getCountrySelected(), false) {
                 @Override
-                protected void onPostExecute(Contact contact) {
+                protected void onPostExecute(ContactBase contact) {
                     super.onPostExecute(contact);
                     if(contact != null) {
                         userSettingsListener.onEditFinished();

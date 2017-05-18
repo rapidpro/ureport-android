@@ -88,7 +88,7 @@ public class LastFlowLoader extends AsyncTaskLoader<FlowDefinition> {
 
     private Contact loadContact() {
         ContactBuilder contactBuilder = new ContactBuilder();
-        Contact contact = rapidProServices.loadContact(getApiToken(), contactBuilder.formatExtUrn(UserManager.getUserId()));
+        Contact contact = rapidProServices.loadContact(getApiToken(), contactBuilder.formatFcmUrn(UserManager.getUserId()));
 
         if(!UserManager.isUserRapidUuidValid())
             UserManager.updateUserRapidUuid(contact.getUuid());

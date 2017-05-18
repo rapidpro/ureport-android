@@ -11,7 +11,6 @@ import android.widget.Toast;
 import com.firebase.client.DataSnapshot;
 
 import in.ureport.R;
-import in.ureport.flowrunner.models.Contact;
 import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
@@ -22,6 +21,7 @@ import in.ureport.models.User;
 import in.ureport.network.UserServices;
 import in.ureport.services.GcmRegistrationIntentService;
 import in.ureport.tasks.SaveContactTask;
+import io.rapidpro.sdk.core.models.base.ContactBase;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
                         , getString(R.string.load_message_wait), true, false);
             }
             @Override
-            protected void onPostExecute(Contact contact) {
+            protected void onPostExecute(ContactBase contact) {
                 super.onPostExecute(contact);
                 if (progressDialog != null) progressDialog.dismiss();
                 updateUserAndDismiss(user);
