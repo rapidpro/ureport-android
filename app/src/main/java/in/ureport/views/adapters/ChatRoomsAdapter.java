@@ -15,13 +15,16 @@ import java.util.List;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.models.IndividualChatRoom;
 import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
+import io.rapidpro.sdk.FcmClient;
 
 /**
  * Created by johncordeiro on 19/07/15.
@@ -29,6 +32,9 @@ import in.ureport.models.holders.ChatRoomHolder;
 public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "ChatRoomsAdapter";
+
+    private static final int VIEW_TYPE_RAPIDPRO = 0;
+    private static final int VIEW_TYPE_CHAT = 1;
 
     private SortedList<ChatRoomHolder> chatRooms;
     private DateFormat hourFormatter;
@@ -53,8 +59,29 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        switch (getItemViewType(position)) {
+            case VIEW_TYPE_RAPIDPRO:
+                bindCountryProgram((ViewHolder) holder);
+                break;
+            case VIEW_TYPE_CHAT:
+                bindChatRoom(holder, position);
+        }
+    }
+
+    private void bindCountryProgram(ViewHolder viewHolder) {
+        CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
+
+        viewHolder.name.setText(viewHolder.itemView.getContext().getString(R.string.ureport_name, countryProgram.getName()));
+        viewHolder.name.setVisibility(View.VISIBLE);
+        viewHolder.lastMessageText.setText(R.string.ureport_description);
+        viewHolder.lastMessageText.setVisibility(View.VISIBLE);
+        viewHolder.picture.setImageResource(R.mipmap.icon);
+        viewHolder.bindUnreadMessages(FcmClient.getUnreadMessages());
+    }
+
+    private void bindChatRoom(RecyclerView.ViewHolder holder, int position) {
         try {
-            ChatRoomHolder chatRoomHolder = chatRooms.get(position);
+            ChatRoomHolder chatRoomHolder = getItem(position);
 
             holder.itemView.setSelected(isSelected(chatRoomHolder));
             ((ViewHolder) holder).bindView(chatRoomHolder);
@@ -74,7 +101,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public long getItemId(int position) {
-        return getChatRoomId(chatRooms.get(position));
+        return getItemViewType(position) == VIEW_TYPE_RAPIDPRO ? 0 : getChatRoomId(getItem(position));
     }
 
     private int getChatRoomId(ChatRoomHolder holder) {
@@ -83,12 +110,20 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemCount() {
-        return chatRooms.size();
+        return chatRooms.size() + 1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) {
+            return VIEW_TYPE_RAPIDPRO;
+        }
+        return VIEW_TYPE_CHAT;
     }
 
     public void removeChatRoom(ChatRoomHolder chatRoom) {
         for (int position = 0; position < chatRooms.size(); position++) {
-            ChatRoomHolder chatRoomHolder = chatRooms.get(position);
+            ChatRoomHolder chatRoomHolder = getItem(position);
             if(chatRoomHolder.chatRoom.equals(chatRoom.chatRoom)) {
                 chatRooms.removeItemAt(position);
                 break;
@@ -154,13 +189,13 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             bindLastMessage(chatRoomHolder);
-            bindUnreadMessages(chatRoom);
+            bindUnreadMessages(chatRoom.getUnreadMessages());
         }
 
-        private void bindUnreadMessages(ChatRoom chatRoom) {
-            if(chatRoom.getUnreadMessages() != null && chatRoom.getUnreadMessages() > 0) {
+        private void bindUnreadMessages(Integer unreadMessagesCount) {
+            if(unreadMessagesCount != null && unreadMessagesCount > 0) {
                 unreadMessages.setVisibility(View.VISIBLE);
-                unreadMessages.setText(String.valueOf(chatRoom.getUnreadMessages()));
+                unreadMessages.setText(String.valueOf(unreadMessagesCount));
             } else {
                 unreadMessages.setVisibility(View.GONE);
             }
@@ -191,10 +226,16 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private View.OnClickListener onItemClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ChatRoomHolder chatRoomHolder = chatRooms.get(getLayoutPosition());
-                onChatRoomSelectedListener.onChatRoomSelected(chatRoomHolder.chatRoom, chatRoomHolder.members);
+                if (ChatRoomsAdapter.this.getItemViewType(getLayoutPosition()) == VIEW_TYPE_CHAT) {
+                    ChatRoomHolder chatRoomHolder = getItem(getChatPosition(getPosition()));
+                    onChatRoomSelectedListener.onChatRoomSelected(chatRoomHolder.chatRoom, chatRoomHolder.members);
 
-                selectCurrentPosition();
+                    selectCurrentPosition();
+                } else {
+                    unreadMessages.setText(null);
+                    unreadMessages.setVisibility(View.GONE);
+                    onChatRoomSelectedListener.onRapidproChatSelected();
+                }
             }
         };
 
@@ -202,10 +243,19 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             if(selectable) {
                 if(selectedItem != null)
                     notifyItemChanged(getIndexOfChatRoom(selectedItem));
-                selectedItem = chatRooms.get(getLayoutPosition());
-                notifyItemChanged(getLayoutPosition());
+                selectedItem = getItem(getChatPosition(getLayoutPosition()));
+                notifyItemChanged(getChatPosition(getLayoutPosition()));
             }
         }
+
+    }
+
+    private ChatRoomHolder getItem(int chatPosition) {
+        return chatRooms.get(chatPosition - 1);
+    }
+
+    private int getChatPosition(int listPosition) {
+        return listPosition - 1;
     }
 
     public void setOnChatRoomSelectedListener(OnChatRoomSelectedListener onChatRoomSelectedListener) {
@@ -219,7 +269,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public void selectFirst() {
         this.forceClick = true;
-        this.selectedItem = chatRooms.get(0);
+        this.selectedItem = getItem(0);
         this.notifyDataSetChanged();
     }
 
@@ -247,6 +297,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public interface OnChatRoomSelectedListener {
+        void onRapidproChatSelected();
         void onChatRoomSelected(ChatRoom chatRoom, ChatMembers chatMembers);
     }
 

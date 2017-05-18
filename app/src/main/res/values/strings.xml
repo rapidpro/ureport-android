@@ -351,6 +351,9 @@
     <string name="label_web_moderation">Web Moderation</string>
     <string name="message_authentication_started">Authentication started successfully</string>
 
+    <string name="ureport_name">U-Report %s</string>
+    <string name="ureport_description">A direct channel with us!</string>
+
     <plurals name="files_attached">
         <item quantity="one">%1$s file attached</item>
         <item quantity="other">%1$s files attached</item>

@@ -61,9 +61,10 @@ public class UserManager {
                 .setToken(getCountryToken())
                 .setChannel(context.getString(countryProgram.getChannel()))
                 .setUiConfiguration(new UiConfiguration()
-                        .setIconResource(R.mipmap.icon)
-                        .setIconFloatingChat(R.mipmap.icon)
-                        .setTitleString(countryProgram.getName())));
+                    .setIconResource(R.mipmap.icon)
+                    .setIconFloatingChat(R.mipmap.icon)
+                    .setTheme(countryProgram.getTheme())
+                    .setTitleString(context.getString(R.string.ureport_name, countryProgram.getName()))));
     }
 
     public static boolean isUserCountryProgramEnabled() {
