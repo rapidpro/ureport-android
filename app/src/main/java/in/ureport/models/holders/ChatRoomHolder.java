@@ -35,7 +35,6 @@ public class ChatRoomHolder implements Parcelable {
 
         ChatRoomHolder that = (ChatRoomHolder) o;
         return chatRoom.equals(that.chatRoom);
-
     }
 
     @Override

@@ -94,7 +94,6 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
 
         setupObjects();
         checkTutorialView();
-        checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
         checkUserRegistration();
@@ -126,6 +125,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
     protected void onResume() {
         super.onResume();
         checkIntentNotifications(getIntent());
+        checkForcedLogin();
         localNotificationManager.cancelContributionNotification();
     }
 

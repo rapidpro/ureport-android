@@ -58,7 +58,7 @@ public class ChatRoom implements Parcelable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
+        if (o == null || getClass() != o.getClass()) return false;
 
         ChatRoom chatRoom = (ChatRoom) o;
         return key.equals(chatRoom.key);

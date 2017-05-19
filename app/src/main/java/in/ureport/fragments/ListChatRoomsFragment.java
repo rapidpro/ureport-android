@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -65,6 +66,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
 
     private Map<ChatRoom, Integer> chatNotifications;
     private RecyclerView chatsList;
+    private ProgressBar progressBar;
 
     private List<ChildEventListener> chatEventListenerList;
 
@@ -153,6 +155,8 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     }
 
     private void setupView(View view) {
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
         chatsList = (RecyclerView) view.findViewById(R.id.chatsList);
         chatsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         chatsList.addItemDecoration(new DividerItemDecoration(getActivity()));
@@ -192,10 +196,12 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             super.onDataChange(dataSnapshot);
-            chatRoomsAdapter.getChatRooms().beginBatchedUpdates();
+            if (dataSnapshot.getChildrenCount() == 0) {
+                progressBar.setVisibility(View.GONE);
+                return;
+            }
 
             List<ChatRoomHolder> chatRoomHolders = new ArrayList<>();
-
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 String chatRoomKey = snapshot.getKey();
                 chatRoomServices.getChatRoom(chatRoomKey, new ChatRoomInterface.OnChatRoomLoadedListener() {
@@ -206,9 +212,11 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
                         ChatRoomHolder holder = new ChatRoomHolder(chatRoom, chatMembers, null);
                         chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
                         chatRoomHolders.add(holder);
-
                         updateChatRoomsWithLastMessage(holder);
-                        onUpdatedChatRooms(chatRoomHolders);
+
+                        if (chatRoomHolders.size() >= snapshot.getChildrenCount()) {
+                            onUpdatedChatRooms(chatRoomHolders);
+                        }
                     }
                 });
             }
@@ -229,6 +237,8 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     }
 
     private void onUpdatedChatRooms(List<ChatRoomHolder> chatRoomHolders) {
+        progressBar.setVisibility(View.GONE);
+
         updateChatRooms(chatRoomHolders);
         selectChatRoomIfNeeded(selectableChatRoom);
         chatsList.postDelayed(this::selectFirstIfNeeded, 4000);
@@ -239,6 +249,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
             @Override
             public void onChatLastMessageLoaded(ChatMessage chatMessage) {
                 chatRoomsAdapter.addChatRoom(chatRoomHolder);
+                chatRoomsAdapter.sortChatRooms();
             }
             @Override
             public void onChatLastMessageLoadFailed() {}
@@ -246,13 +257,12 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     }
 
     private void updateChatRooms(List<ChatRoomHolder> chatRoomHolders) {
-        chatRoomsAdapter.getChatRooms().beginBatchedUpdates();
         chatRoomsAdapter.getChatRooms().clear();
         for (ChatRoomHolder chatRoomHolder : chatRoomHolders) {
             chatRoomsAdapter.addChatRoom(chatRoomHolder);
         }
         chatRoomsAdapter.fillSelectableWhenNull();
-        chatRoomsAdapter.getChatRooms().endBatchedUpdates();
+        chatRoomsAdapter.sortChatRooms();
     }
 
     private void selectFirstIfNeeded() {

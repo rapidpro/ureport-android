@@ -231,7 +231,7 @@
 
         <activity android:name="io.rapidpro.sdk.chat.FcmClientChatActivity" />
 
-        <service android:name="io.rapidpro.sdk.services.FcmClientIntentService">
+        <service android:name=".services.fcm.UreportFcmReceivedListener">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

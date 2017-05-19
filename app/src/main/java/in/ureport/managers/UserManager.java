@@ -64,7 +64,7 @@ public class UserManager {
                     .setIconResource(R.mipmap.icon)
                     .setIconFloatingChat(R.mipmap.icon)
                     .setTheme(countryProgram.getTheme())
-                    .setTitleString(context.getString(R.string.ureport_name, countryProgram.getName()))));
+                    .setTitleString(countryProgram.getName())));
     }
 
     public static boolean isUserCountryProgramEnabled() {
