@@ -40,6 +40,7 @@ import in.ureport.models.holders.NavigationItem;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
+import in.ureport.tasks.SaveContactTask;
 import in.ureport.views.adapters.NavigationAdapter;
 import io.rapidpro.sdk.FcmClient;
 
@@ -96,13 +97,28 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
+        checkUserRegistration();
+    }
+
+    private void checkUserRegistration() {
+        if (!FcmClient.isContactRegistered()) {
+            UserServices userServices = new UserServices();
+            userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    super.onDataChange(dataSnapshot);
+                    User user = dataSnapshot.getValue(User.class);
+
+                    SaveContactTask saveContactTask = new SaveContactTask(MainActivity.this, false);
+                    saveContactTask.execute(user);
+                }
+            });
+        }
     }
 
     @Override
     protected void onNewIntent(Intent newIntent) {
         super.onNewIntent(newIntent);
-        Log.d(TAG, "onNewIntent() called with: newIntent = [" + newIntent + "]");
-        Log.d(TAG, "onNewIntent: " + newIntent.getExtras());
         setIntent(newIntent);
     }
 

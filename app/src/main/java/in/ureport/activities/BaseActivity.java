@@ -334,7 +334,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                 case R.id.logout:
                     UserManager.logout(BaseActivity.this);
                     UserManager.startLoginFlow(BaseActivity.this);
-                    finish();
                     return true;
                 default:
                     PrototypeManager.showPrototypeAlert(BaseActivity.this);

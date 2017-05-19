@@ -56,7 +56,7 @@ public class SaveContactTask extends ProgressTask<User, Void, ContactBase> {
         this.newUser = newUser;
     }
 
-    protected SaveContactTask(Context context, boolean newUser) {
+    public SaveContactTask(Context context, boolean newUser) {
         super(context);
         this.newUser = newUser;
     }
