@@ -13,6 +13,7 @@ import in.ureport.managers.FirebaseProxyManager;
 import in.ureport.managers.UserManager;
 import in.ureport.managers.FirebaseManager;
 import io.fabric.sdk.android.Fabric;
+import io.rapidpro.sdk.FcmClient;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -29,9 +30,14 @@ public class UreportApplication extends MultiDexApplication {
         initializeFabric();
         ActiveAndroid.initialize(this);
         AmazonServicesManager.init(this);
+        initializeFcmClient();
+    }
 
+    private void initializeFcmClient() {
         if (UserManager.isUserLoggedIn()) {
             UserManager.initializeFcmClient(CountryProgramManager.getCurrentCountryProgram());
+        } else {
+            FcmClient.initialize(this);
         }
     }
 

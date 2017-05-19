@@ -41,6 +41,7 @@ import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
 import in.ureport.views.adapters.NavigationAdapter;
+import io.rapidpro.sdk.FcmClient;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -52,6 +53,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     public static final int REQUEST_CODE_CHAT_CREATION = 200;
+    public static final int REQUEST_CODE_TUTORIAL = 201;
 
     private static final int POSITION_POLLS_FRAGMENT = 1;
     private static final int POSITION_CHAT_FRAGMENT = 2;
@@ -125,7 +127,9 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         SystemPreferences systemPreferences = new SystemPreferences(this);
         if(!systemPreferences.getTutorialView()) {
             Intent tutorialViewIntent = new Intent(this, TutorialActivity.class);
-            startActivity(tutorialViewIntent);
+            startActivityForResult(tutorialViewIntent, REQUEST_CODE_TUTORIAL);
+        } else {
+            FcmClient.requestFloatingPermissionsIfNeeded(this);
         }
     }
 
@@ -178,6 +182,9 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
             switch (requestCode) {
                 case REQUEST_CODE_CHAT_CREATION:
                     startChatRoom(data);
+                    break;
+                case REQUEST_CODE_TUTORIAL:
+                    FcmClient.requestFloatingPermissionsIfNeeded(this);
             }
         }
     }

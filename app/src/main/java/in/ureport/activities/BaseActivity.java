@@ -83,8 +83,6 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         super.setContentView(R.layout.activity_base);
         setupBaseView();
         loadData();
-
-        FcmClient.requestFloatingPermissionsIfNeeded();
     }
 
     @Override
