@@ -117,7 +117,7 @@ public class UreportersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public User getUser(int position) {
-        return ureportersList.get(position);
+        return getCurrentUreportersList().get(position);
     }
 
     public Set<User> getSelectedUreporters() {
