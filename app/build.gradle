@@ -50,8 +50,8 @@ android {
             signingConfig signingConfigs.signature
         }
         release {
-            minifyEnabled false
-            debuggable true
+            minifyEnabled true
+            debuggable false
             lintOptions { disable 'MissingTranslation' }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.signature
