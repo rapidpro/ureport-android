@@ -41,6 +41,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.signature
+            buildConfigField 'boolean', 'SANDBOX_ORG', 'true'
         }
         beta {
             minifyEnabled true
@@ -55,6 +56,7 @@ android {
             lintOptions { disable 'MissingTranslation' }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.signature
+            buildConfigField 'boolean', 'SANDBOX_ORG', 'false'
         }
     }
 

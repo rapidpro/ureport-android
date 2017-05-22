@@ -107,7 +107,7 @@ public class SaveContactTask extends ProgressTask<User, Void, ContactBase> {
 
     @Nullable
     private String getTokenFromProxy(CountryProgram countryProgram) {
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.SANDBOX_ORG) {
             return getContext().getString(R.string.fcm_client_token);
         }
 

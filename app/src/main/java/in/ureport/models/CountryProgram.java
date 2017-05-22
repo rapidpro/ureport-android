@@ -88,7 +88,7 @@ public class CountryProgram {
     }
 
     public int getChannel() {
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.SANDBOX_ORG) {
             return R.string.fcm_client_channel;
         }
         return channel;
@@ -128,7 +128,7 @@ public class CountryProgram {
     }
 
     public int getRapidproEndpoint() {
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.SANDBOX_ORG) {
             return R.string.fcm_client_host;
         }
         return rapidproEndpoint;
