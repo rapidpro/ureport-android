@@ -11,8 +11,6 @@ import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.rapidpro.AgeGroup;
-import io.rapidpro.sdk.FcmClient;
-import io.rapidpro.sdk.UiConfiguration;
 
 import static in.ureport.R.string.brasil_channel;
 import static in.ureport.R.string.chile_channel;
