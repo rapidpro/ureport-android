@@ -109,8 +109,9 @@
 }
 
 -keep class sun.misc.Unsafe { *; }
+-keep class io.rapidpro.sdk.core.models.** { *; }
+-keep class io.rapidpro.sdk.core.network.** { *; }
 -keep class in.ureport.models.** { *; }
--keep class in.ureport.flowrunner.models.** { *; }
 -keep class in.ureport.network.** { *; }
 
 #Gson

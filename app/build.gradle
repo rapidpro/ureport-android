@@ -79,11 +79,11 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':support-android')
-    compile project(':flow-runner')
     compile project(':video-compressor')
     compile('com.twitter.sdk.android:twitter:1.7.0@aar') {
         transitive = true;
     }
+    compile 'br.com.ilhasoft.support:support-view:1.0.3'
     compile 'com.google.android.gms:play-services-plus:10.2.6'
     compile 'com.google.android.gms:play-services-auth:10.2.6'
     compile 'com.google.android.gms:play-services-identity:10.2.6'
