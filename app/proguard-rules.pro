@@ -93,7 +93,22 @@
     public *;
 }
 
+# Retrofit 2.X
+## https://square.github.io/retrofit/ ##
+
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
 #Retrofit
+
+-dontwarn com.fasterxml.**
+-dontwarn okio.**
 
 -keepattributes Signature
 -keepattributes *Annotation*
@@ -152,6 +167,9 @@
 -dontwarn org.codehaus.jackson.**
 -dontwarn org.apache.commons.logging.impl.**
 -dontwarn org.apache.http.conn.scheme.**
+
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
 
 -dontwarn com.amazon.**
 -keep class com.amazon.** {*;}
