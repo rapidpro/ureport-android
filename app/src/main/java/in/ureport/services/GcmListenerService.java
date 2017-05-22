@@ -5,7 +5,6 @@ import android.util.Log;
 
 import br.com.ilhasoft.support.json.JsonDeserializer;
 import in.ureport.managers.FirebaseProxyManager;
-import in.ureport.managers.FlowManager;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMessage;
@@ -17,7 +16,6 @@ import in.ureport.models.gcm.Type;
 import in.ureport.network.GcmServices;
 import in.ureport.tasks.ChatNotificationTask;
 import in.ureport.tasks.ContributionNotificationTask;
-import in.ureport.tasks.MessageNotificationTask;
 
 /**
  * Created by johncordeiro on 21/08/15.
@@ -30,8 +28,6 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
     private static final String EXTRA_CHAT_MESSAGE = "chatMessage";
 
     private static final String EXTRA_NOTIFICATION_TYPE = "type";
-    private static final String EXTRA_MESSAGE = "message";
-
     private static final String EXTRA_CONTRIBUTION = "contribution";
     private static final String EXTRA_STORY = "story";
 
@@ -43,8 +39,6 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
             sendChatMessageNotification(data);
         } else if(from.startsWith(GcmTopicManager.STORY_TOPICS_PATH) || hasType(data, Type.Contribution)) {
             sendContributionNotification(data);
-        } else {
-            handleNotificationType(data);
         }
     }
 
@@ -63,29 +57,6 @@ public class GcmListenerService extends com.google.android.gms.gcm.GcmListenerSe
             }
         } catch(Exception exception) {
             Log.e(TAG, "sendChatMessageNotification ", exception);
-        }
-    }
-
-    private void handleNotificationType(Bundle data) {
-        try {
-            String notificationType = data.getString(EXTRA_NOTIFICATION_TYPE);
-            Type type = Type.valueOf(notificationType);
-
-            switch(type) {
-                case Rapidpro:
-                    sendRapidproNotification(data);
-            }
-        } catch(Exception exception) {
-            Log.e(TAG, "onMessageReceived ", exception);
-        }
-    }
-
-    private void sendRapidproNotification(Bundle data) {
-        String message = data.getString(EXTRA_MESSAGE);
-
-        if(FlowManager.canShowNextNotification()) {
-            MessageNotificationTask messageNotificationTask = new MessageNotificationTask(this);
-            messageNotificationTask.execute(message);
         }
     }
 
