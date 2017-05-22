@@ -34,11 +34,10 @@ public class CountryListLoader extends AsyncTaskLoader<List<CountryInfo>> {
         try {
             GeonamesServices geonamesServices = new GeonamesServices();
             countries = geonamesServices.getCountriesByLanguage(Locale.getDefault().getLanguage());
+            Collections.sort(countries, new CountryInfoComparator());
         } catch(Exception exception) {
             countries = new ArrayList<>();
         }
-
-        Collections.sort(countries, new CountryInfoComparator());
         return countries;
     }
 
