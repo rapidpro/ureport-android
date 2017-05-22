@@ -124,8 +124,6 @@
 }
 
 -keep class sun.misc.Unsafe { *; }
--keep class io.rapidpro.sdk.core.models.** { *; }
--keep class io.rapidpro.sdk.core.network.** { *; }
 -keep class in.ureport.models.** { *; }
 -keep class in.ureport.network.** { *; }
 
@@ -190,3 +188,9 @@
 -dontwarn com.amazonaws.services.sqs.**
 
 -dontnote com.amazonaws.services.sqs.QueueUrlHandler
+
+#Fcm Client
+-keep class io.rapidpro.sdk.core.models.** { *; }
+-keep class io.rapidpro.sdk.core.network.** { *; }
+-keep class io.rapidpro.sdk.services.** { *; }
+
