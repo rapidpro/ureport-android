@@ -254,15 +254,12 @@ public class ProfileFragment extends Fragment {
         public void onTransferFinished(Media media) {
             super.onTransferFinished(media);
             user.setPicture(media.getUrl());
-            userServices.editUserPicture(user, new Firebase.CompletionListener() {
-                @Override
-                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                    if (firebaseError == null) {
-                        picture.setImageURI(localMedia.getPath());
-                        progressUpload.dismiss();
-                    } else {
-                        displayPictureError();
-                    }
+            userServices.editUserPicture(user, (firebaseError, firebase) -> {
+                if (firebaseError == null) {
+                    ImageLoader.loadPersonPictureToImageView(picture, media.getUrl());
+                    progressUpload.dismiss();
+                } else {
+                    displayPictureError();
                 }
             });
         }
