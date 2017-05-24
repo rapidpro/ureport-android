@@ -35,6 +35,7 @@ import com.firebase.client.FirebaseError;
 import java.util.Date;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
+import br.com.ilhasoft.support.utils.KeyboardHandler;
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
@@ -84,6 +85,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     private UserServices userServices;
 
     private MediaViewer mediaViewer;
+    private KeyboardHandler keyboardHandler;
     private int storyLikeCount;
 
     public static StoryViewFragment newInstance(Story story, User user) {
@@ -212,6 +214,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
         userServices = new UserServices();
         storyServices = new StoryServices();
         mediaViewer = new MediaViewer((AppCompatActivity) getActivity());
+        keyboardHandler = new KeyboardHandler();
     }
 
     private void setupView(View view) {
@@ -407,16 +410,21 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
                 if(firebaseError == null) {
                     userServices.incrementContributionPoint();
 
-                    StoryViewFragment.this.contribution.setText(null);
-                    if(scrollView != null) {
-                        scrollTo(View.FOCUS_DOWN);
-                    }
+                    resetCommentsView();
                     incrementContributionsText();
                     refreshContribution();
                     addAuthorToTopic();
                     sendNotification(contribution);
                 }
             });
+        }
+    }
+
+    private void resetCommentsView() {
+        StoryViewFragment.this.contribution.setText(null);
+        if(scrollView != null) {
+            scrollTo(View.FOCUS_DOWN);
+            keyboardHandler.changeKeyboardVisibility(getActivity(), false);
         }
     }
 
