@@ -20,6 +20,7 @@ import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
+import in.ureport.services.UreportFcmRegistrationService;
 import io.rapidpro.sdk.FcmClient;
 import io.rapidpro.sdk.UiConfiguration;
 
@@ -60,6 +61,7 @@ public class UserManager {
                 .setHost(context.getString(countryProgram.getRapidproEndpoint()))
                 .setToken(getCountryToken())
                 .setChannel(context.getString(countryProgram.getChannel()))
+                .setRegistrationServiceClass(UreportFcmRegistrationService.class)
                 .setUiConfiguration(new UiConfiguration()
                     .setIconResource(R.mipmap.icon)
                     .setIconFloatingChat(R.mipmap.icon)

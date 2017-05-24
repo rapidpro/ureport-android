@@ -19,7 +19,6 @@ import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
-import in.ureport.services.GcmRegistrationIntentService;
 import in.ureport.tasks.SaveContactTask;
 import io.rapidpro.sdk.core.models.base.ContactBase;
 

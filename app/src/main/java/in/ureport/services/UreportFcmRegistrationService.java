@@ -1,42 +1,32 @@
 package in.ureport.services;
 
-import android.app.IntentService;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
 
-import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.GcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.network.StoryServices;
 import in.ureport.network.UserServices;
+import io.rapidpro.sdk.core.models.v2.Contact;
+import io.rapidpro.sdk.services.FcmClientRegistrationIntentService;
 
 /**
- * Created by johncordeiro on 21/08/15.
+ * Created by John Cordeiro on 5/15/17.
+ * Copyright © 2017 ureport-android, Inc. All rights reserved.
  */
-public class GcmRegistrationIntentService extends IntentService {
 
-    private static final String TAG = "GcmRegistrationIntent";
+public class UreportFcmRegistrationService extends FcmClientRegistrationIntentService {
 
-    public GcmRegistrationIntentService() {
-        super(TAG);
-    }
+    private static final String TAG = "UreportFcmRegistration";
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onFcmRegistered(String pushIdentity, Contact contact) {
         try {
-            InstanceID instanceID = InstanceID.getInstance(this);
-            final String pushIdentity = instanceID.getToken(getString(R.string.gcm_sender_id),
-                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-
             String userKey = UserManager.getUserId();
 
             if(userKey != null) {
@@ -85,7 +75,7 @@ public class GcmRegistrationIntentService extends IntentService {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                GcmTopicManager gcmTopicManager = new GcmTopicManager(GcmRegistrationIntentService.this);
+                GcmTopicManager gcmTopicManager = new GcmTopicManager(UreportFcmRegistrationService.this);
                 gcmTopicManager.registerToChatRoomTopics(pushIdentity, user);
                 return null;
             }
