@@ -70,7 +70,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private void bindCountryProgram(ViewHolder viewHolder) {
         CountryProgram countryProgram = CountryProgramManager.getCurrentCountryProgram();
 
-        viewHolder.name.setText(viewHolder.itemView.getContext().getString(R.string.ureport_name, countryProgram.getName()));
+        viewHolder.name.setText(countryProgram.getName());
         viewHolder.name.setVisibility(View.VISIBLE);
         viewHolder.lastMessageText.setText(R.string.ureport_description);
         viewHolder.lastMessageText.setVisibility(View.VISIBLE);
