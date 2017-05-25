@@ -32,9 +32,6 @@ public class FirebaseManager {
             Firebase.setAndroidContext(context);
 
             Config config = new Config();
-            if (BuildConfig.DEBUG) {
-                config.setLogLevel(Logger.Level.DEBUG);
-            }
             config.setPersistenceEnabled(true);
             if (proxyEnabled) {
                 config.setAuthenticationServer(context.getString(R.string.firebase_proxy_auth));

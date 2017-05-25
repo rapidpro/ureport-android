@@ -35,7 +35,7 @@ import br.com.ilhasoft.support.tool.UnitConverter;
 import br.com.ilhasoft.support.utils.KeyboardHandler;
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.FcmTopicManager;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.LocalMedia;
@@ -315,8 +315,8 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
                 super.onDataChange(dataSnapshot);
                 User user = dataSnapshot.getValue(User.class);
 
-                GcmTopicManager gcmTopicManager = new GcmTopicManager(getActivity());
-                gcmTopicManager.registerToStoryTopic(user, story);
+                FcmTopicManager fcmTopicManager = new FcmTopicManager(getActivity());
+                fcmTopicManager.registerToStoryTopic(user, story);
             }
         });
     }

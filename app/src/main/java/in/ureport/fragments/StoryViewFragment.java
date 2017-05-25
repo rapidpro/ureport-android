@@ -39,7 +39,7 @@ import br.com.ilhasoft.support.utils.KeyboardHandler;
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
-import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.FcmTopicManager;
 import in.ureport.managers.MediaViewer;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
@@ -435,8 +435,8 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     }
 
     private void addAuthorToTopic() {
-        GcmTopicManager gcmTopicManager = new GcmTopicManager(getActivity());
-        gcmTopicManager.registerToStoryTopic(user, story);
+        FcmTopicManager fcmTopicManager = new FcmTopicManager(getActivity());
+        fcmTopicManager.registerToStoryTopic(user, story);
     }
 
     private void incrementContributionsText() {

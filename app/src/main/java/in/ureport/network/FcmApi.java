@@ -9,9 +9,9 @@ import retrofit.http.POST;
 /**
  * Created by johncordeiro on 21/08/15.
  */
-public interface GcmApi {
+public interface FcmApi {
 
-    @POST("/gcm/send")
+    @POST("/fcm/send")
     Response sendData(@Header("Authorization") String senderId, @Body GcmInput gcmInput);
 
 }

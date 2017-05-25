@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import in.ureport.BuildConfig;
 import in.ureport.R;
-import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.FcmTopicManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.Contribution;
@@ -24,24 +24,26 @@ import retrofit.converter.GsonConverter;
 /**
  * Created by johncordeiro on 21/08/15.
  */
-public class GcmServices {
+public class FcmServices {
 
-    private static final String ENDPOINT = "https://gcm-http.googleapis.com";
+    static final String FCM_AUTHORIZATION = "key=%1$s";
+    private static final String TOPICS_PREFIX = "/topics/";
+
+    private static final String ENDPOINT = "https://fcm.googleapis.com";
     public static final String DATE_STYLE = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-    public static final String GCM_AUTHORIZATION = "key=%1$s";
 
-    private final GcmApi gcmApi;
+    private final FcmApi gcmApi;
     private final String gcmKey;
     private Context context;
 
-    public GcmServices(Context context) {
+    public FcmServices(Context context) {
         this.context = context;
-        this.gcmKey = String.format(GCM_AUTHORIZATION, context.getString(R.string.gcm_api_key));
+        this.gcmKey = String.format(FCM_AUTHORIZATION, context.getString(R.string.fcm_api_key));
 
         RestAdapter restAdapter = buildRestAdapter();
         if(BuildConfig.DEBUG)
             restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
-        gcmApi = restAdapter.create(GcmApi.class);
+        gcmApi = restAdapter.create(FcmApi.class);
     }
 
     public Response sendChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
@@ -51,7 +53,8 @@ public class GcmServices {
         chatMessageHolder.setType(Type.Chat);
 
         GcmInput<ChatMessageHolder> chatMessageHolderInput = new GcmInput<>(
-                GcmTopicManager.CHAT_TOPICS_PATH + chatRoom.getKey(), chatMessageHolder);
+                TOPICS_PREFIX + FcmTopicManager.CHAT_TOPICS_PATH + chatRoom.getKey(), chatMessageHolder);
+        chatMessageHolderInput.setCollapseKey(chatRoom.getKey());
         chatMessageHolderInput.setNotification(new Notification(context.getString(R.string.title_chat_message)
                 , String.format("%1$s: %2$s", chatMessage.getUser().getNickname()
                 , getChatMessage(chatMessage))));
@@ -68,7 +71,8 @@ public class GcmServices {
         contributionHolder.setType(Type.Contribution);
 
         GcmInput<ContributionHolder> contributionData = new GcmInput<>(
-                GcmTopicManager.STORY_TOPICS_PATH + story.getKey(), contributionHolder);
+                TOPICS_PREFIX + FcmTopicManager.STORY_TOPICS_PATH + story.getKey(), contributionHolder);
+        contributionData.setCollapseKey(story.getKey());
 
         return gcmApi.sendData(gcmKey, contributionData);
     }

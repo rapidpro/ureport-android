@@ -6,7 +6,7 @@ import android.util.Log;
 import com.firebase.client.DataSnapshot;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.FcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
@@ -63,8 +63,8 @@ public class UreportFcmRegistrationService extends FcmClientRegistrationIntentSe
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Story story = snapshot.getValue(Story.class);
 
-                        GcmTopicManager gcmTopicManager = new GcmTopicManager(getApplicationContext());
-                        gcmTopicManager.registerToStoryTopic(user, story);
+                        FcmTopicManager fcmTopicManager = new FcmTopicManager(getApplicationContext());
+                        fcmTopicManager.registerToStoryTopic(user, story);
                     }
                 }
             }
@@ -75,8 +75,8 @@ public class UreportFcmRegistrationService extends FcmClientRegistrationIntentSe
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                GcmTopicManager gcmTopicManager = new GcmTopicManager(UreportFcmRegistrationService.this);
-                gcmTopicManager.registerToChatRoomTopics(pushIdentity, user);
+                FcmTopicManager fcmTopicManager = new FcmTopicManager(UreportFcmRegistrationService.this);
+                fcmTopicManager.registerToChatRoomTopics(pushIdentity, user);
                 return null;
             }
         }.execute();

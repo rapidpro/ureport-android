@@ -192,6 +192,14 @@
 
         <!-- Fcm Client Channel -->
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/icon_notification" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/primary_color" />
+
         <activity android:name="io.rapidpro.sdk.chat.FcmClientChatActivity" />
 
         <service android:name=".services.UreportFcmReceivedListener">
@@ -201,7 +209,7 @@
         </service>
 
         <service
-            android:name="io.rapidpro.sdk.services.FcmClientRegistrationIntentService"
+            android:name=".services.UreportFcmRegistrationService"
             android:exported="false" />
 
         <service

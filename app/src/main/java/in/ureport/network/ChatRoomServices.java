@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import in.ureport.listener.ChatRoomInterface;
-import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.FcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatMessage;
@@ -300,8 +300,8 @@ public class ChatRoomServices extends ProgramServices {
         UserServices userServices = new UserServices();
         userServices.removeUserChatRoom(user.getKey(), chatRoomKey);
 
-        GcmTopicManager gcmTopicManager = new GcmTopicManager(context);
-        gcmTopicManager.unregisterToChatRoomTopic(user, chatRoomKey);
+        FcmTopicManager fcmTopicManager = new FcmTopicManager(context);
+        fcmTopicManager.unregisterToChatRoomTopic(user, chatRoomKey);
 
         getRootByCode(user.getCountryProgram()).child(membersPath)
                 .child(chatRoomKey)
@@ -313,8 +313,8 @@ public class ChatRoomServices extends ProgramServices {
         UserServices userServices = new UserServices();
         userServices.addUserChatRoom(user.getKey(), chatRoomKey);
 
-        GcmTopicManager gcmTopicManager = new GcmTopicManager(context);
-        gcmTopicManager.registerToChatRoomTopic(user, chatRoomKey);
+        FcmTopicManager fcmTopicManager = new FcmTopicManager(context);
+        fcmTopicManager.registerToChatRoomTopic(user, chatRoomKey);
 
         getRootByCode(user.getCountryProgram()).child(membersPath)
                 .child(chatRoomKey)

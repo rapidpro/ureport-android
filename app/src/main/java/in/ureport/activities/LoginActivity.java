@@ -137,12 +137,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     private void updateUserAndDismiss(User user) {
         UserManager.updateUserInfo(user, this::startMainActivity);
-        createGcmInstanceId();
-    }
-
-    private void createGcmInstanceId() {
-        Intent gcmRegisterIntent = new Intent(this, GcmRegistrationIntentService.class);
-        startService(gcmRegisterIntent);
     }
 
     @Override

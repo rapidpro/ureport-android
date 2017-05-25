@@ -10,7 +10,7 @@ import java.util.Map;
 import br.com.ilhasoft.support.json.JsonDeserializer;
 import in.ureport.R;
 import in.ureport.managers.FirebaseProxyManager;
-import in.ureport.managers.GcmTopicManager;
+import in.ureport.managers.FcmTopicManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
@@ -18,7 +18,7 @@ import in.ureport.models.Contribution;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.models.gcm.Type;
-import in.ureport.network.GcmServices;
+import in.ureport.network.FcmServices;
 import in.ureport.tasks.ChatNotificationTask;
 import in.ureport.tasks.ContributionNotificationTask;
 import io.rapidpro.sdk.services.FcmClientIntentService;
@@ -46,9 +46,9 @@ public class UreportFcmReceivedListener extends FcmClientIntentService {
         String from = remoteMessage.getFrom();
         Map<String, String> data = remoteMessage.getData();
 
-        if(from.startsWith(GcmTopicManager.CHAT_TOPICS_PATH) || hasType(data, Type.Chat)) {
+        if(from.startsWith(FcmTopicManager.CHAT_TOPICS_PATH) || hasType(data, Type.Chat)) {
             sendChatMessageNotification(data);
-        } else if(from.startsWith(GcmTopicManager.STORY_TOPICS_PATH) || hasType(data, Type.Contribution)) {
+        } else if(from.startsWith(FcmTopicManager.STORY_TOPICS_PATH) || hasType(data, Type.Contribution)) {
             sendContributionNotification(data);
         }
     }
@@ -100,7 +100,7 @@ public class UreportFcmReceivedListener extends FcmClientIntentService {
     private <T> T getObject(Map<String, String> data, String key, Class<T> mClass) {
         String json = data.get(key);
         JsonDeserializer<T> deserializer = new JsonDeserializer<>(json);
-        deserializer.setDateFormat(GcmServices.DATE_STYLE);
+        deserializer.setDateFormat(FcmServices.DATE_STYLE);
         return deserializer.get(mClass);
     }
 }

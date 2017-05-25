@@ -249,6 +249,7 @@ public class UserManager {
         UserManager.countryToken = null;
 
         FirebaseManager.logout();
+        FcmClient.clearContact();
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
