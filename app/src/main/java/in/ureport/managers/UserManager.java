@@ -127,6 +127,10 @@ public class UserManager {
         });
     }
 
+    public static String getFcmToken() {
+        return FcmClient.getPreferences().getFcmToken();
+    }
+
     public static String getUserId() {
         return FirebaseManager.getReference() != null && FirebaseManager.getReference().getAuth() != null
             && FirebaseManager.getReference().getAuth().getUid() != null ? FirebaseManager.getReference().getAuth().getUid() : null;
@@ -232,6 +236,7 @@ public class UserManager {
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, (dialogInterface, i) -> {
                     User user = new User();
                     user.setKey(getUserId());
+                    user.setPushIdentity(getFcmToken());
                     user.setCountryProgram(UserManager.getCountryCode());
 
                     ChatRoomServices chatRoomServices = new ChatRoomServices();
