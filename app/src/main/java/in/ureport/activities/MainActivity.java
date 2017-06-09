@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +44,7 @@ import in.ureport.pref.SystemPreferences;
 import in.ureport.tasks.SaveContactTask;
 import in.ureport.views.adapters.NavigationAdapter;
 import io.rapidpro.sdk.FcmClient;
+import io.rapidpro.sdk.core.models.base.ContactBase;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -107,12 +109,24 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     super.onDataChange(dataSnapshot);
                     User user = dataSnapshot.getValue(User.class);
-
-                    SaveContactTask saveContactTask = new SaveContactTask(MainActivity.this, false);
-                    saveContactTask.execute(user);
+                    saveContact(user);
                 }
             });
         }
+    }
+
+    private void saveContact(final User user) {
+        SaveContactTask saveContactTask = new SaveContactTask(MainActivity.this, false) {
+            @Override
+            protected void onPostExecute(ContactBase contact) {
+                super.onPostExecute(contact);
+                if (contact != null && !TextUtils.isEmpty(contact.getUuid())) {
+                    UserServices userServices = new UserServices();
+                    userServices.saveUserContactUuid(user, contact.getUuid());
+                }
+            }
+        };
+        saveContactTask.execute(user);
     }
 
     @Override

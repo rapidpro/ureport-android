@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
@@ -129,13 +130,17 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
             protected void onPostExecute(ContactBase contact) {
                 super.onPostExecute(contact);
                 if (progressDialog != null) progressDialog.dismiss();
-                updateUserAndDismiss(user);
+                updateUserAndDismiss(user, contact);
             }
         };
         saveContactTask.execute(user);
     }
 
-    private void updateUserAndDismiss(User user) {
+    private void updateUserAndDismiss(User user, ContactBase contact) {
+        if (contact != null && !TextUtils.isEmpty(contact.getUuid())) {
+            UserServices userServices = new UserServices();
+            userServices.saveUserContactUuid(user, contact.getUuid());
+        }
         UserManager.updateUserInfo(user, this::startMainActivity);
     }
 

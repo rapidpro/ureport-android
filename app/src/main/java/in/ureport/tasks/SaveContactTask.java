@@ -79,6 +79,7 @@ public class SaveContactTask extends ProgressTask<User, Void, ContactBase> {
 
                 contact = saveContact(buildContact(user, getRegistrationDate(), countryProgram));
                 FcmClient.registerContact(user.getKey(), contact.getUuid());
+                return contact;
             }
             ContactBuilder contactBuilder = new ContactBuilder();
             contact = contactBuilder.buildContactWithoutFields(user);
