@@ -174,7 +174,7 @@ public class CountryProgramManager {
         ageGroups.add(new AgeGroup("13-18 adolescents", 13, 18));
         ageGroups.add(new AgeGroup("18 youth", 19));
         elSalvadorCountry.setAgeGroups(ageGroups);
-        elSalvadorCountry.setStateField("state");
+        elSalvadorCountry.setStateField("departament");
         return elSalvadorCountry;
     }
 
