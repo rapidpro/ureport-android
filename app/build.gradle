@@ -34,8 +34,8 @@ android {
         applicationId "in.ureport"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 44
-        versionName "2.8.0"
+        versionCode 45
+        versionName "2.9.0"
         multiDexEnabled true
     }
     buildTypes {
