@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,14 +42,10 @@ public class ContactBuilder {
         ContactGroupsBuilder contactGroupsBuilder = new ContactGroupsBuilder();
         List<String> userGroups = contactGroupsBuilder.getGroupsForUser(user);
 
-        List<String> urns = new ArrayList<>();
-        urns.add(formatFcmUrn(user.getKey()));
-
         Contact contact = new Contact();
         contact.setEmail(user.getEmail());
         contact.setName(user.getNickname());
         contact.setGroups(userGroups);
-        contact.setUrns(urns);
         return contact;
     }
 

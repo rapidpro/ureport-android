@@ -78,7 +78,7 @@ public class SaveContactTask extends ProgressTask<User, Void, ContactBase> {
                 UserManager.initializeFcmClient(countryProgram);
 
                 contact = saveContact(buildContact(user, getRegistrationDate(), countryProgram));
-                FcmClient.registerContact(user.getKey());
+                FcmClient.registerContact(user.getKey(), contact.getUuid());
             }
             ContactBuilder contactBuilder = new ContactBuilder();
             contact = contactBuilder.buildContactWithoutFields(user);
@@ -121,6 +121,7 @@ public class SaveContactTask extends ProgressTask<User, Void, ContactBase> {
     }
 
     private ContactBase saveContact(Contact contact) throws IOException {
+        contact.setUrns(null);
         updateContactWithUuid(contact);
         updateContactWithGroups(contact);
         try {
