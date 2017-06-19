@@ -63,6 +63,7 @@ public class UserManager {
                 .setChannel(context.getString(countryProgram.getChannel()))
                 .setRegistrationServiceClass(UreportFcmRegistrationService.class)
                 .setUiConfiguration(new UiConfiguration()
+                    .setPermissionMessage(context.getString(R.string.message_fcm_floating_permission))
                     .setIconResource(R.mipmap.icon)
                     .setIconFloatingChat(R.mipmap.icon)
                     .setTheme(countryProgram.getTheme())

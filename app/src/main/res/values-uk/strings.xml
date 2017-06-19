@@ -285,4 +285,5 @@
   <string name="title_chat_message">Нове повідомлення в чаті</string>
   <string name="prompt_media_notification">медіа</string>
   <string name="error_message_permission">Неможливий вхід в Google+ без дозволів</string>
+    <string name="message_fcm_floating_permission">Ніколи не пропустіть повідомлення або голосування з U-Report, натисніть Прийняти нижче, і включіть нас.</string>
 </resources>

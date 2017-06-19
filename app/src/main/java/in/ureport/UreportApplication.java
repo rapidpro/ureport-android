@@ -14,6 +14,7 @@ import in.ureport.managers.UserManager;
 import in.ureport.services.UreportFcmRegistrationService;
 import io.fabric.sdk.android.Fabric;
 import io.rapidpro.sdk.FcmClient;
+import io.rapidpro.sdk.UiConfiguration;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -38,7 +39,9 @@ public class UreportApplication extends MultiDexApplication {
             UserManager.initializeFcmClient(CountryProgramManager.getCurrentCountryProgram());
         } else {
             FcmClient.initialize(new FcmClient.Builder(this)
-                    .setRegistrationServiceClass(UreportFcmRegistrationService.class));
+                    .setRegistrationServiceClass(UreportFcmRegistrationService.class)
+                    .setUiConfiguration(new UiConfiguration()
+                            .setPermissionMessage(getString(R.string.message_fcm_floating_permission))));
         }
     }
 

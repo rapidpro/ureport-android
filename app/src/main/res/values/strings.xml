@@ -350,6 +350,7 @@
     <string name="poll_comment">Add a comment</string>
     <string name="label_web_moderation">Web Moderation</string>
     <string name="message_authentication_started">Authentication started successfully</string>
+    <string name="message_fcm_floating_permission">Never miss a message or poll from U-Report, press Accept below and turn us on.</string>
 
     <string name="ureport_name">U-Report %s</string>
     <string name="ureport_description">A direct channel with us!</string>

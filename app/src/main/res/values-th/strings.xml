@@ -324,4 +324,5 @@
   <plurals name="like_count">
     <item quantity="other">%1$d ไลค์</item>
   </plurals>
+    <string name="message_fcm_floating_permission">อย่าพลาดข้อความหรือการสำรวจความคิดเห็นจาก U-Report กด Accept ด้านล่างและเปิดใช้งานเรา</string>
 </resources>
