@@ -19,11 +19,12 @@
 
     <application
         android:name=".UreportApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name" >
