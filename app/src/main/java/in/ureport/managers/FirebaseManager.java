@@ -31,7 +31,9 @@ public class FirebaseManager {
 
             Config config = new Config();
             config.setPersistenceEnabled(true);
-            config.setAuthenticationServer(context.getString(R.string.firebase_proxy_auth));
+            if (proxyEnabled) {
+                config.setAuthenticationServer(context.getString(R.string.firebase_proxy_auth));
+            }
             Firebase.setDefaultConfig(config);
 
             String appUrl = proxyEnabled
