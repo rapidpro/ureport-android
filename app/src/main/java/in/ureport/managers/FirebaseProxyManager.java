@@ -22,6 +22,12 @@ public class FirebaseProxyManager {
     private static final String TAG = "FirebaseProxyManager";
 
     private static final String COUNTRY_SYRIA = "SY";
+    private static final String COUNTRY_LEBANON = "LB";
+    private static final String COUNTRY_IRAN = "IR";
+    private static final String COUNTRY_IRAQ = "IQ";
+    private static final String COUNTRY_JORDAN = "JO";
+    private static final String COUNTRY_AZERBAIJAN = "AZ";
+    private static final String COUNTRY_AFGHANISTAN = "AF";
 
     /** List of countries that need proxy to connect with Firebase */
     private final static Map<String, CountryProgram> proxyCountries;
@@ -31,6 +37,12 @@ public class FirebaseProxyManager {
     static {
         proxyCountries = new HashMap<>();
         proxyCountries.put(COUNTRY_SYRIA, new CountryProgram("SYR"));
+        proxyCountries.put(COUNTRY_LEBANON, new CountryProgram("LBN"));
+        proxyCountries.put(COUNTRY_IRAN, new CountryProgram("IRN"));
+        proxyCountries.put(COUNTRY_IRAQ, new CountryProgram("IRQ"));
+        proxyCountries.put(COUNTRY_JORDAN, new CountryProgram("JOR"));
+        proxyCountries.put(COUNTRY_AZERBAIJAN, new CountryProgram("AZE"));
+        proxyCountries.put(COUNTRY_AFGHANISTAN, new CountryProgram("AFG"));
     }
 
     public static void init(Context context) {
