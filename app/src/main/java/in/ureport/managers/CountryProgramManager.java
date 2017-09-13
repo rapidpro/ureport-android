@@ -16,6 +16,7 @@ import static in.ureport.R.string.brasil_channel;
 import static in.ureport.R.string.chile_channel;
 import static in.ureport.R.string.cotedivoire_channel;
 import static in.ureport.R.string.global_channel;
+import static in.ureport.R.string.india_channel;
 import static in.ureport.R.string.indonesia_channel;
 import static in.ureport.R.string.ireland_channel;
 import static in.ureport.R.string.mexico_channel;
@@ -30,6 +31,7 @@ import static in.ureport.R.string.ukraine_channel;
 import static in.ureport.R.string.unitedkingdom_channel;
 import static in.ureport.R.string.ureport_host_address1;
 import static in.ureport.R.string.ureport_host_address2;
+import static in.ureport.R.string.ureport_host_address3;
 import static in.ureport.R.style.AppTheme;
 import static in.ureport.R.style.AppTheme_Brasil;
 import static in.ureport.R.style.AppTheme_Burundi;
@@ -38,6 +40,7 @@ import static in.ureport.R.style.AppTheme_Chile;
 import static in.ureport.R.style.AppTheme_CoteDIvoire;
 import static in.ureport.R.style.AppTheme_ElSalvador;
 import static in.ureport.R.style.AppTheme_Guatemala;
+import static in.ureport.R.style.AppTheme_India;
 import static in.ureport.R.style.AppTheme_Indonesia;
 import static in.ureport.R.style.AppTheme_Ireland;
 import static in.ureport.R.style.AppTheme_Italy;
@@ -111,7 +114,7 @@ public class CountryProgramManager {
     }
 
     public static List<CountryProgram> getAvailableCountryPrograms() {
-        if(countryPrograms == null) {
+        if (countryPrograms == null) {
             countryPrograms = new ArrayList<>();
             countryPrograms.add(buildCountryProgram("GLOBAL", AppTheme, global_channel, "U-Report Global", 13
                     , rapidpro_host_address1, ureport_host_address1, "UReportGlobal", "ureportglobal", "U-Reporters"));
@@ -126,6 +129,7 @@ public class CountryProgramManager {
             countryPrograms.add(buildCoteDIvoire());
             countryPrograms.add(buildElSalvador());
             countryPrograms.add(buildGtmCountry());
+            countryPrograms.add(buildIndiaCountry());
             countryPrograms.add(buildCountryProgram("IDN", AppTheme_Indonesia, indonesia_channel, "Indonesia", 15
                     , rapidpro_host_address1, ureport_host_address1, "UReport_id", "UNICEFIndonesia", "UReporters_Indonesia"));
             countryPrograms.add(buildCountryProgram("IRL", AppTheme_Ireland, ireland_channel, "Ireland", 2
@@ -157,7 +161,7 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UReportUganda", "UReportUganda", "U-Reporters"));
             countryPrograms.add(buildGbrCountry());
             countryPrograms.add(buildCountryProgram("UKR", AppTheme_Ukraine, ukraine_channel, "Ukraine", 19
-					, rapidpro_host_address1, ureport_host_address1, "ureportukraine", "ureportukraine", "UReporters"));
+                    , rapidpro_host_address1, ureport_host_address1, "ureportukraine", "ureportukraine", "UReporters"));
             countryPrograms.add(buildCountryProgram("ZWE", AppTheme_Zimbabwe, INVALID_VALUE, "Zimbabwe", 2
                     , rapidpro_host_address1, ureport_host_address1, "Ureportzim", "U-Report-Zimbabwe-1477396805878097", null));
         }
@@ -264,6 +268,22 @@ public class CountryProgramManager {
         gbrCountry.setAgeGroups(ageGroups);
 
         return gbrCountry;
+    }
+
+    @NonNull
+    private static CountryProgram buildIndiaCountry() {
+        CountryProgram indiaCountry = buildCountryProgram("IND", AppTheme_India, india_channel, "India", 25
+                , rapidpro_host_address1, ureport_host_address3, "UReportIndia", "UReport.India", "UReporters");
+        indiaCountry.setMaleGroup("UReporters Male");
+        indiaCountry.setFemaleGroup("UReporters Female");
+
+        List<AgeGroup> ageGroups = new ArrayList<>();
+        ageGroups.add(new AgeGroup("UReporter Too Young", 0, 13));
+        ageGroups.add(new AgeGroup("UReport Youth", 13, 25));
+        ageGroups.add(new AgeGroup("Ureport Adults", 25));
+        indiaCountry.setAgeGroups(ageGroups);
+
+        return indiaCountry;
     }
 
     @NonNull
