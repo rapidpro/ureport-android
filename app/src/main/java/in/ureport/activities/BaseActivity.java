@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.loader.NotificationLoader;
 import in.ureport.managers.CountryProgramManager;
@@ -213,15 +214,18 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             TextView stories = (TextView) menuHeader.findViewById(R.id.stories);
             stories.setText(getString(R.string.profile_stories, getIntegerValue(user.getStories())));
 
-            List<CountryProgram> countryProgramList = new ArrayList<>(CountryProgramManager.getAvailableCountryPrograms());
+            if (!BuildConfig.FLAVOR.equals("onthemove")) {
+                List<CountryProgram> countryProgramList = new ArrayList<>(CountryProgramManager.getAvailableCountryPrograms());
 
-            countryPrograms = (Spinner) menuHeader.findViewById(R.id.countryPrograms);
-            countryPrograms.setAdapter(getCountryProgramsAdapter(countryProgramList));
-            countryPrograms.setTag(R.id.country_program_position, 0);
-            countryPrograms.setOnItemSelectedListener(onCountryProgramClickListener);
+                countryPrograms = (Spinner) menuHeader.findViewById(R.id.countryPrograms);
+                countryPrograms.setVisibility(View.VISIBLE);
+                countryPrograms.setAdapter(getCountryProgramsAdapter(countryProgramList));
+                countryPrograms.setTag(R.id.country_program_position, 0);
+                countryPrograms.setOnItemSelectedListener(onCountryProgramClickListener);
 
-            SpinnerColorSwitcher spinnerColorSwitcher = new SpinnerColorSwitcher(this);
-            spinnerColorSwitcher.switchToColor(countryPrograms, android.R.color.white);
+                SpinnerColorSwitcher spinnerColorSwitcher = new SpinnerColorSwitcher(this);
+                spinnerColorSwitcher.switchToColor(countryPrograms, android.R.color.white);
+            }
 
             CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
             coordinatorLayout.setOnTouchListener(onCoordinatorLayoutTouchListener);

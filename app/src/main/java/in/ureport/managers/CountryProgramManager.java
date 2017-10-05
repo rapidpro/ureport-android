@@ -31,7 +31,6 @@ import static in.ureport.R.string.ukraine_channel;
 import static in.ureport.R.string.unitedkingdom_channel;
 import static in.ureport.R.string.ureport_host_address1;
 import static in.ureport.R.string.ureport_host_address2;
-import static in.ureport.R.string.ureport_host_address3;
 import static in.ureport.R.style.AppTheme;
 import static in.ureport.R.style.AppTheme_Brasil;
 import static in.ureport.R.style.AppTheme_Burundi;
@@ -273,7 +272,7 @@ public class CountryProgramManager {
     @NonNull
     private static CountryProgram buildIndiaCountry() {
         CountryProgram indiaCountry = buildCountryProgram("IND", AppTheme_India, india_channel, "India", 25
-                , rapidpro_host_address1, ureport_host_address3, "UReportIndia", "UReport.India", "UReporters");
+                , rapidpro_host_address1, ureport_host_address1, "UReportIndia", "UReport.India", "UReporters");
         indiaCountry.setMaleGroup("UReporters Male");
         indiaCountry.setFemaleGroup("UReporters Female");
 

@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ToolbarDesigner;
@@ -91,13 +92,18 @@ public class SignUpFragment extends UserInfoBaseFragment {
     public void onStatesLoaded(List<Location> locations) {}
 
     private void setupUserIfExists() {
-        if(user != null) {
-            toolbar.setBackgroundColor(getResources().getColor(R.color.light_cyan_highlight));
-            setSignupStatusBarColor(R.color.dark_cyan_highlight);
-            confirm.setBackgroundResource(R.drawable.shape_round_simple_blue_button);
+        if (BuildConfig.FLAVOR.equals("onthemove")) {
+            toolbar.setBackgroundColor(getResources().getColor(R.color.primary_color));
+            setSignupStatusBarColor(R.color.primary_color);
         } else {
-            toolbar.setBackgroundColor(getResources().getColor(R.color.light_yellow_highlight));
-            setSignupStatusBarColor(R.color.dark_yellow_highlight);
+            if (user != null) {
+                toolbar.setBackgroundColor(getResources().getColor(R.color.light_cyan_highlight));
+                setSignupStatusBarColor(R.color.dark_cyan_highlight);
+                confirm.setBackgroundResource(R.drawable.shape_round_simple_blue_button);
+            } else {
+                toolbar.setBackgroundColor(getResources().getColor(R.color.light_yellow_highlight));
+                setSignupStatusBarColor(R.color.dark_yellow_highlight);
+            }
         }
     }
 
