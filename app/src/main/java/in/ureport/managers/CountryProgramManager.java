@@ -16,7 +16,6 @@ import static in.ureport.R.string.brasil_channel;
 import static in.ureport.R.string.chile_channel;
 import static in.ureport.R.string.cotedivoire_channel;
 import static in.ureport.R.string.global_channel;
-import static in.ureport.R.string.india_channel;
 import static in.ureport.R.string.indonesia_channel;
 import static in.ureport.R.string.ireland_channel;
 import static in.ureport.R.string.mexico_channel;
@@ -39,7 +38,6 @@ import static in.ureport.R.style.AppTheme_Chile;
 import static in.ureport.R.style.AppTheme_CoteDIvoire;
 import static in.ureport.R.style.AppTheme_ElSalvador;
 import static in.ureport.R.style.AppTheme_Guatemala;
-import static in.ureport.R.style.AppTheme_India;
 import static in.ureport.R.style.AppTheme_Indonesia;
 import static in.ureport.R.style.AppTheme_Ireland;
 import static in.ureport.R.style.AppTheme_Italy;
@@ -128,7 +126,7 @@ public class CountryProgramManager {
             countryPrograms.add(buildCoteDIvoire());
             countryPrograms.add(buildElSalvador());
             countryPrograms.add(buildGtmCountry());
-            countryPrograms.add(buildIndiaCountry());
+            /*countryPrograms.add(buildIndiaCountry());*/
             countryPrograms.add(buildCountryProgram("IDN", AppTheme_Indonesia, indonesia_channel, "Indonesia", 15
                     , rapidpro_host_address1, ureport_host_address1, "UReport_id", "UNICEFIndonesia", "UReporters_Indonesia"));
             countryPrograms.add(buildCountryProgram("IRL", AppTheme_Ireland, ireland_channel, "Ireland", 2
@@ -269,7 +267,7 @@ public class CountryProgramManager {
         return gbrCountry;
     }
 
-    @NonNull
+    /*@NonNull
     private static CountryProgram buildIndiaCountry() {
         CountryProgram indiaCountry = buildCountryProgram("IND", AppTheme_India, india_channel, "India", 25
                 , rapidpro_host_address1, ureport_host_address1, "UReportIndia", "UReport.India", "UReporters");
@@ -283,7 +281,7 @@ public class CountryProgramManager {
         indiaCountry.setAgeGroups(ageGroups);
 
         return indiaCountry;
-    }
+    }*/
 
     @NonNull
     private static CountryProgram buildCountryProgram(String global, int appTheme, int channel, String name, int organization
