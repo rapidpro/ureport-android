@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -8,8 +8,8 @@
         android:id="@+id/pollsList"
         android:layout_width="500dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="fill_vertical|top|start"
         android:layout_centerHorizontal="true"
+        android:layout_gravity="fill_vertical|top|start"
         android:fillViewport="true" />
 
     <ProgressBar
@@ -19,4 +19,4 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
-</RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

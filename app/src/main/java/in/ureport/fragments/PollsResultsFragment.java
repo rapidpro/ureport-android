@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,6 +33,7 @@ public class PollsResultsFragment extends Fragment {
 
     private static final String TAG = "PollsResultsFragment";
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView pollsList;
     private ProgressBar progressBar;
 
@@ -80,6 +82,9 @@ public class PollsResultsFragment extends Fragment {
     }
 
     private void setupView(View view) {
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+
         pollsList = (RecyclerView) view.findViewById(R.id.pollsList);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -130,6 +135,11 @@ public class PollsResultsFragment extends Fragment {
                 setupPolls(polls);
             }
         }
+    };
+
+    private SwipeRefreshLayout.OnRefreshListener onRefreshListener = () -> {
+        loadData();
+        swipeRefreshLayout.setRefreshing(false);
     };
 
 }
