@@ -6,6 +6,7 @@
 
     <string name="login_email">Email</string>
     <string name="login_password">Password</string>
+    <string name="remember_me_option">Remember me</string>
     <string name="email">Email</string>
     <string name="error_required_field">Required field</string>
     <string name="login">Login</string>
