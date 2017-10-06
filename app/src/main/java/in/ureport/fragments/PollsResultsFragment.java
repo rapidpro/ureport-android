@@ -36,7 +36,6 @@ public class PollsResultsFragment extends Fragment {
     private ProgressBar progressBar;
 
     private PollServices pollServices;
-    private PollAdapter pollsAdapter;
 
     private PollAdapter.PollParticipationListener pollParticipationListener;
 
@@ -49,15 +48,14 @@ public class PollsResultsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupObjects();
         setupView(view);
+        setupObjects();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         cleanMessageNotifications();
-        loadData();
     }
 
     private void cleanMessageNotifications() {
@@ -69,7 +67,7 @@ public class PollsResultsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         FlowManager.enableFlowNotificiation();
-        if(onPollsLoadedListener != null) pollServices.removePollsListener(onPollsLoadedListener);
+        if (onPollsLoadedListener != null) pollServices.removePollsListener(onPollsLoadedListener);
     }
 
     private void loadData() {
@@ -78,6 +76,7 @@ public class PollsResultsFragment extends Fragment {
 
     private void setupObjects() {
         pollServices = new PollServices();
+        loadData();
     }
 
     private void setupView(View view) {
@@ -92,9 +91,9 @@ public class PollsResultsFragment extends Fragment {
 
     private void setupPolls(List<Poll> polls) {
         Collections.reverse(polls);
-        String [] pollColors = getResources().getStringArray(R.array.poll_colors);
+        String[] pollColors = getResources().getStringArray(R.array.poll_colors);
 
-        pollsAdapter = new PollAdapter(polls, pollColors);
+        PollAdapter pollsAdapter = new PollAdapter(polls, pollColors);
         pollsAdapter.setPollParticipationListener(pollParticipationListener);
         pollsList.setAdapter(pollsAdapter);
     }
@@ -104,9 +103,17 @@ public class PollsResultsFragment extends Fragment {
             Poll poll = snapshot.getValue(Poll.class);
             poll.setKey(snapshot.getKey());
             polls.add(poll);
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             Log.e(TAG, "onDataChange ", exception);
         }
+    }
+
+    public void setPollParticipationListener(PollAdapter.PollParticipationListener pollParticipationListener) {
+        this.pollParticipationListener = pollParticipationListener;
+    }
+
+    private void updateViewForData() {
+        progressBar.setVisibility(View.GONE);
     }
 
     private ValueEventListenerAdapter onPollsLoadedListener = new ValueEventListenerAdapter() {
@@ -124,13 +131,5 @@ public class PollsResultsFragment extends Fragment {
             }
         }
     };
-
-    public void setPollParticipationListener(PollAdapter.PollParticipationListener pollParticipationListener) {
-        this.pollParticipationListener = pollParticipationListener;
-    }
-
-    private void updateViewForData() {
-        progressBar.setVisibility(View.GONE);
-    }
 
 }
