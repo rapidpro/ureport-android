@@ -6,9 +6,9 @@
   <string name="email">البريد الالكتروني</string>
   <string name="error_required_field">حقول مطلوبة</string>
   <string name="login">الدخول</string>
-  <string name="login_facebook">فيسبوك</string>
+  <string name="login_facebook">التسجيل باستخدام الفيس بوك</string>
   <string name="login_google">غوغل+</string>
-  <string name="login_twitter">التسجيل عن طريق تويتر</string>
+  <string name="login_twitter">تويتر</string>
   <string name="login_skip">تجاوز الدخول</string>
   <string name="login_or">أو</string>
   <string name="login_sign_up">انقر هنا للتسجيل عن طريق البريد الالكتروني</string>

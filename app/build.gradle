@@ -63,6 +63,7 @@ android {
     }
 
     productFlavors {
+        regular { }
         onthemove {
             applicationIdSuffix ".onthemove"
             versionNameSuffix "-onthemove"

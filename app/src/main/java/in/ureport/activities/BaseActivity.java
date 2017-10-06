@@ -214,7 +214,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             TextView stories = (TextView) menuHeader.findViewById(R.id.stories);
             stories.setText(getString(R.string.profile_stories, getIntegerValue(user.getStories())));
 
-            if (!BuildConfig.FLAVOR.equals("onthemove")) {
+//            if (!BuildConfig.FLAVOR.equals("onthemove")) {
                 List<CountryProgram> countryProgramList = new ArrayList<>(CountryProgramManager.getAvailableCountryPrograms());
 
                 countryPrograms = (Spinner) menuHeader.findViewById(R.id.countryPrograms);
@@ -225,7 +225,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
                 SpinnerColorSwitcher spinnerColorSwitcher = new SpinnerColorSwitcher(this);
                 spinnerColorSwitcher.switchToColor(countryPrograms, android.R.color.white);
-            }
+//            }
 
             CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
             coordinatorLayout.setOnTouchListener(onCoordinatorLayoutTouchListener);

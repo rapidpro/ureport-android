@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <ScrollView
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
+                android:id="@+id/usernameInput"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                style="@style/AppTheme.FormMargin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:hint="@string/sign_up_nickname"/>
+
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
+                android:id="@+id/emailInput"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/usernameInput"
+                style="@style/AppTheme.FormMargin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:hint="@string/sign_up_email"/>
+
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
+                android:id="@+id/passwordInput"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/emailInput"
+                style="@style/AppTheme.FormMargin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="@string/login_password"/>
+
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
+                android:id="@+id/birthdayInput"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/passwordInput"
+                style="@style/AppTheme.FormMargin">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/birthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:inputType="date"
+                    android:hint="@string/sign_up_birthday"/>
+
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+
+            <Spinner
+                android:id="@+id/gender"
+                android:layout_width="@dimen/credential_item_width"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/birthdayInput"
+                android:gravity="start"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:paddingLeft="@dimen/spinner_padding_left"
+                android:paddingStart="@dimen/spinner_padding_left" />
+
+            <Button
+                android:id="@+id/confirm"
+                android:layout_width="@dimen/credential_item_width"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:layout_below="@+id/gender"
+                android:background="@drawable/shape_gray_round_button"
+                android:textColor="@android:color/white"
+                android:text="@string/sign_up_confirm"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+</LinearLayout>

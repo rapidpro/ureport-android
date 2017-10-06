@@ -6,9 +6,9 @@
   <string name="email">електронна адреса</string>
   <string name="error_required_field">Обов\'язкове поле</string>
   <string name="login">Логін</string>
-  <string name="login_facebook">Facebook</string>
+  <string name="login_facebook">Реєстрація через Facebook</string>
   <string name="login_google">Google+</string>
-  <string name="login_twitter">Реєстрація через Twitter</string>
+  <string name="login_twitter">Twitter</string>
   <string name="login_skip">Пропустити</string>
   <string name="login_or">або</string>
   <string name="login_sign_up">Натисніть тут, щоб зареєструватися за допомогою електронної пошти</string>

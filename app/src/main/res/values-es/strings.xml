@@ -6,9 +6,9 @@
   <string name="email">Correo Electrónico</string>
   <string name="error_required_field">Campo requerido</string>
   <string name="login">Registro</string>
-  <string name="login_facebook">Facebook</string>
+  <string name="login_facebook">Registrarse con Facebook</string>
   <string name="login_google">Google+</string>
-  <string name="login_twitter">Registrarse con Twitter</string>
+  <string name="login_twitter">Twitter</string>
   <string name="login_skip">Saltar Registro</string>
   <string name="login_or">o</string>
   <string name="login_sign_up">Hay click aquí para registrarte con tu mail</string>

@@ -41,10 +41,11 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 import java.util.Arrays;
 
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
+import in.ureport.BuildConfig;
 import in.ureport.R;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserSocialAuthBuilder;
 import in.ureport.models.User;
-import in.ureport.managers.FirebaseManager;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -131,7 +132,11 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
     @Override
     public void onResume() {
         super.onResume();
-        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.yellow);
+        if (BuildConfig.FLAVOR.equals("onthemove")) {
+            statusBarDesigner.setStatusBarColorById(getActivity(), R.color.primary_dark_color);
+        } else {
+            statusBarDesigner.setStatusBarColorById(getActivity(), R.color.yellow);
+        }
     }
 
     private void setupView(View view) {

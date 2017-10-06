@@ -6,9 +6,9 @@
   <string name="email">E-mail</string>
   <string name="error_required_field">Campo obrigatório</string>
   <string name="login">Login</string>
-  <string name="login_facebook">Facebook</string>
+  <string name="login_facebook">Entrar com o Facebook</string>
   <string name="login_google">Google+</string>
-  <string name="login_twitter">Entrar com o Twitter</string>
+  <string name="login_twitter">Twitter</string>
   <string name="login_skip">Pular Login</string>
   <string name="login_or">Ou</string>
   <string name="login_sign_up">Clique aqui para entrar com seu e-mail!</string>

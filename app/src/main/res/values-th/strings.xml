@@ -6,9 +6,9 @@
   <string name="email">อีเมล</string>
   <string name="error_required_field">ข้อมูลที่ต้องระบุ</string>
   <string name="login">ลงชื่อเข้าใช้</string>
-  <string name="login_facebook">Facebook</string>
+  <string name="login_facebook">ลงชื่อเข้าใช้ด้วยเฟซบุ๊ก</string>
   <string name="login_google">Google+</string>
-  <string name="login_twitter">ลงชื่อเข้าใช้ด้วยทวิตเตอร์</string>
+  <string name="login_twitter">ทวิตเตอร์</string>
   <string name="login_skip">ข้ามการลงชื่อเข้าใช้</string>
   <string name="login_or">หรือ</string>
   <string name="login_sign_up">คลิกที่นี่เพื่อลงทะเบียนด้วยอีเมล!</string>
