@@ -169,4 +169,10 @@
         <item name="colorAccent">#12418a</item>
     </style>
 
+    <style name="AppTheme.Otm" parent="AppTheme">
+        <item name="colorPrimary">#8750A0</item>
+        <item name="colorPrimaryDark">#6d4081</item>
+        <item name="colorAccent">#5a366b</item>
+    </style>
+
 </resources>

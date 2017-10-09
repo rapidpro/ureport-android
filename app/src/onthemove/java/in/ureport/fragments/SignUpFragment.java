@@ -18,10 +18,8 @@ import java.util.Map;
 import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ToolbarDesigner;
-import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
-import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
 import in.ureport.network.UserServices;
@@ -92,10 +90,8 @@ public class SignUpFragment extends UserInfoBaseFragment {
             user.setPicture(this.user.getPicture());
         }
 
-        CountryInfo countryInfo = getCountrySelected();
-        String countryCode = countryInfo.getIsoAlpha3();
-        user.setCountry(countryCode);
-        user.setCountryProgram(CountryProgramManager.getCountryProgramForCode(countryCode).getCode());
+        user.setCountry("OT");
+        user.setCountryProgram("OTM");
 
         UserGender userGender = (UserGender)gender.getAdapter().getItem(gender.getSelectedItemPosition());
         user.setGenderAsEnum(userGender.getGender());

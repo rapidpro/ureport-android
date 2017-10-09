@@ -40,22 +40,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import in.ureport.BuildConfig;
 import in.ureport.R;
+import in.ureport.helpers.DividerItemDecoration;
+import in.ureport.helpers.ImageLoader;
+import in.ureport.helpers.SpinnerColorSwitcher;
 import in.ureport.loader.NotificationLoader;
 import in.ureport.managers.CountryProgramManager;
-import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.DonationManager;
 import in.ureport.managers.PrototypeManager;
-import in.ureport.helpers.SpinnerColorSwitcher;
 import in.ureport.managers.UserManager;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.Notification;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
-import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.views.adapters.NotificationAdapter;
-import io.rapidpro.sdk.FcmClient;
 
 /**
  * Created by johncordeiro on 7/13/15.
@@ -161,7 +159,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     }
 
     private void loadData() {
-        if(UserManager.isUserLoggedIn()) {
+        if (UserManager.isUserLoggedIn()) {
             UserServices userServices = new UserServices();
             userServices.getUser(UserManager.getUserId(), new ValueEventListener() {
                 @Override
@@ -174,7 +172,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                 }
 
                 @Override
-                public void onCancelled(FirebaseError firebaseError) {}
+                public void onCancelled(FirebaseError firebaseError) {
+                }
             });
         }
     }
@@ -185,7 +184,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
     @NonNull
     private User refreshUserCountry(User user) {
-        if(user == null) {
+        if (user == null) {
             user = new User();
             user.setCountry(Locale.getDefault().getDisplayCountry());
         }
@@ -194,7 +193,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
 
     private void updateUserInfo(User user) {
         BaseActivity.this.user = user;
-        if(user != null) {
+        if (user != null) {
             menuNavigation.getMenu().clear();
             menuNavigation.inflateMenu(R.menu.main);
             setupMenuPermissions();
@@ -214,18 +213,16 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
             TextView stories = (TextView) menuHeader.findViewById(R.id.stories);
             stories.setText(getString(R.string.profile_stories, getIntegerValue(user.getStories())));
 
-//            if (!BuildConfig.FLAVOR.equals("onthemove")) {
-                List<CountryProgram> countryProgramList = new ArrayList<>(CountryProgramManager.getAvailableCountryPrograms());
+            List<CountryProgram> countryProgramList = new ArrayList<>(CountryProgramManager.getAvailableCountryPrograms());
 
-                countryPrograms = (Spinner) menuHeader.findViewById(R.id.countryPrograms);
-                countryPrograms.setVisibility(View.VISIBLE);
-                countryPrograms.setAdapter(getCountryProgramsAdapter(countryProgramList));
-                countryPrograms.setTag(R.id.country_program_position, 0);
-                countryPrograms.setOnItemSelectedListener(onCountryProgramClickListener);
+            countryPrograms = (Spinner) menuHeader.findViewById(R.id.countryPrograms);
+            countryPrograms.setVisibility(View.VISIBLE);
+            countryPrograms.setAdapter(getCountryProgramsAdapter(countryProgramList));
+            countryPrograms.setTag(R.id.country_program_position, 0);
+            countryPrograms.setOnItemSelectedListener(onCountryProgramClickListener);
 
-                SpinnerColorSwitcher spinnerColorSwitcher = new SpinnerColorSwitcher(this);
-                spinnerColorSwitcher.switchToColor(countryPrograms, android.R.color.white);
-//            }
+            SpinnerColorSwitcher spinnerColorSwitcher = new SpinnerColorSwitcher(this);
+            spinnerColorSwitcher.switchToColor(countryPrograms, android.R.color.white);
 
             CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
             coordinatorLayout.setOnTouchListener(onCoordinatorLayoutTouchListener);
@@ -252,9 +249,11 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         return user;
     }
 
-    protected void setUser(User user){}
+    protected void setUser(User user) {
+    }
 
-    protected void onMenuLoaded(){}
+    protected void onMenuLoaded() {
+    }
 
     protected Toolbar getToolbar() {
         return toolbar;
@@ -299,7 +298,8 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
     }
 
     @Override
-    public void onLoaderReset(Loader<List<Notification>> loader) {}
+    public void onLoaderReset(Loader<List<Notification>> loader) {
+    }
 
     private View.OnClickListener onMenuHeaderClickListener = new View.OnClickListener() {
         @Override
@@ -313,7 +313,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         @Override
         public boolean onNavigationItemSelected(MenuItem menuItem) {
             Intent navigationIntent;
-            switch(menuItem.getItemId()) {
+            switch (menuItem.getItemId()) {
                 case R.id.home:
                     menuItem.setChecked(true);
                     navigationIntent = new Intent(BaseActivity.this, MainActivity.class);
@@ -367,7 +367,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         @Override
         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
             Object tag = countryPrograms.getTag(R.id.country_program_position);
-            if(tag != null && !tag.equals(position) && position > 0) {
+            if (tag != null && !tag.equals(position) && position > 0) {
                 view.setTag(R.id.country_program_position, position);
 
                 CountryProgram countryProgram = (CountryProgram) adapterView.getAdapter().getItem(position);
@@ -377,10 +377,12 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
         }
 
         @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {}
+        public void onNothingSelected(AdapterView<?> adapterView) {
+        }
     };
 
-    protected void onNotificationsLoaded(List<Notification> notifications) {}
+    protected void onNotificationsLoaded(List<Notification> notifications) {
+    }
 
     protected List<Notification> getNotificationAlerts() {
         return notificationAlerts;

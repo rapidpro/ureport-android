@@ -11,18 +11,15 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.ChangeBounds;
 import android.view.View;
-import android.widget.ImageView;
 
 import in.ureport.R;
 import in.ureport.fragments.ChatRoomFragment;
-import in.ureport.fragments.MediaFragment;
 import in.ureport.fragments.MediaViewFragment;
 import in.ureport.listener.InfoGroupChatListener;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
-import in.ureport.models.Media;
 
 /**
  * Created by johncordeiro on 7/21/15.
