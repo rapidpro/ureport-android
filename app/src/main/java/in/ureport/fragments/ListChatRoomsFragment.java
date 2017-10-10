@@ -206,7 +206,9 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
                 String chatRoomKey = snapshot.getKey();
                 chatRoomServices.getChatRoom(chatRoomKey, new ChatRoomInterface.OnChatRoomLoadedListener() {
                     @Override
-                    public void onChatRoomLoadFailed() {}
+                    public void onChatRoomLoadFailed() {
+                        progressBar.setVisibility(View.GONE);
+                    }
                     @Override
                     public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
                         ChatRoomHolder holder = new ChatRoomHolder(chatRoom, chatMembers, null);

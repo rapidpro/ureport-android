@@ -11,12 +11,14 @@ import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
@@ -98,6 +100,9 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
                 if (dataSnapshot.exists()) {
                     User user = dataSnapshot.getValue(User.class);
                     user.setKey(dataSnapshot.getKey());
+                    if (BuildConfig.FLAVOR.equals("onthemove")) {
+                        user.setCountryProgram(CountryProgramManager.getCurrentCountryProgram().getCode());
+                    }
                     onUserReady(user, false);
                 } else {
                     addSignUpFragment(user);
