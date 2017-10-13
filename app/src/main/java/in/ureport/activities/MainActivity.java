@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
     }
 
     private void checkUserRegistration() {
-        if (!FcmClient.isContactRegistered()) {
+        if (!FcmClient.isContactRegistered() && UserManager.getUserId() != null) {
             UserServices userServices = new UserServices();
             userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
                 @Override

@@ -48,7 +48,7 @@ public class CountryProgramManager {
     @NonNull
     private static CountryProgram buildCountryProgramIfNeeded() {
         if (countryProgram == null) {
-            countryProgram = new CountryProgram("OTM", AppTheme_Otm, R.string.otm_channel, "U-Report", 33
+            countryProgram = new CountryProgram("OTM", AppTheme_Otm, R.string.otm_channel, "On The Move", 33
                     , rapidpro_host_address1, ureport_host_address1, "UreportOTM", "UreportOnTheMove", "U-Reporters");
             countryProgram.setMaleGroup("U-Report Males");
             countryProgram.setFemaleGroup("U-Report Females");
