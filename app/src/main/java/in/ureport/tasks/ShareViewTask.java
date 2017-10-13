@@ -8,6 +8,7 @@ import android.support.v4.app.ShareCompat;
 import android.view.View;
 
 import in.ureport.R;
+import in.ureport.models.News;
 import in.ureport.models.Story;
 import in.ureport.tasks.common.ProgressTask;
 
@@ -47,6 +48,15 @@ public abstract class ShareViewTask<T> extends ProgressTask<Void, Void, Void> {
             } else {
                 shareContent(fragment.getActivity(), fragment.getString(shareTitleId),
                         story.getContent());
+            }
+        } else if (object instanceof News) {
+            News news = ((News) object);
+            if (news.getImages() != null) {
+                shareContent(fragment.getActivity(), fragment.getString(shareTitleId),
+                        news.getTitle() + "\n\n" + news.getSummary() + "\n\n" + news.getImages().get(0));
+            } else {
+                shareContent(fragment.getActivity(), fragment.getString(shareTitleId),
+                        news.getTitle() + "\n\n" + news.getSummary());
             }
         }
         return null;
