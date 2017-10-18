@@ -3,7 +3,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'me.tatarka.retrolambda'
 
 Properties localProperties = new Properties()
-localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+localProperties.load(project.rootProject.file('signature/keys.properties').newDataInputStream())
 
 android {
     signingConfigs {
@@ -74,7 +74,11 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':support-android')
     compile project(':video-compressor')
+
     compile('com.twitter.sdk.android:twitter:1.7.0@aar') {
+        transitive = true;
+    }
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.0@aar') {
         transitive = true;
     }
 
