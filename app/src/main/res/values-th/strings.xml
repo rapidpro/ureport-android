@@ -235,6 +235,7 @@
     <string name="label_remove">เอาออก</string>
     <string name="error_remove">เกิดความขัดข้องในระหว่างกระบวนการเอาออก</string>
     <string name="message_success_remove">ข้อมูลถูกเอาออกเป็นที่เรียบร้อย!</string>
+    <string name="message_success_denounce">ข้อมูลถูกประณามด้วยความสำเร็จ</string>
     <string name="title_share_story">แบ่งปันเรื่องราวโดยใช้:</string>
     <string name="title_share_news">แบ่งปันข่าวโดยใช้:</string>
     <string name="title_share_subject">เรื่องราวที่แบ่งปันผ่านยูรีพอร์ต</string>

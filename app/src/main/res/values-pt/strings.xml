@@ -248,6 +248,7 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
     <string name="label_remove">Remover</string>
     <string name="error_remove">Ocorreu um erro durante o processo de remoção</string>
     <string name="message_success_remove">Os dados foram removidos com sucesso!</string>
+    <string name="message_success_denounce">Os dados foram denunciados com sucesso!</string>
     <string name="title_share_story">Compartilhe história usando:</string>
     <string name="title_share_news">Compartilhe notícia usando:</string>
     <string name="title_share_subject">História compartilhada usando U-Report</string>

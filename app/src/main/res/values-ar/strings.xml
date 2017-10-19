@@ -237,6 +237,7 @@
     <string name="label_remove">إزالة</string>
     <string name="error_remove">حصل خطأ أثناء عملية الحذف</string>
     <string name="message_success_remove">تم حذف البيانات بنجاح!</string>
+    <string name="message_success_denounce">تم استنكار البيانات بنجاح</string>
     <string name="title_share_story">مشاركة القصة عبر:</string>
     <string name="title_share_news">مشاركة الأخبار عبر:</string>
     <string name="title_share_subject">تم مشاركة القصة عن طريق اليو-ريبورت</string>

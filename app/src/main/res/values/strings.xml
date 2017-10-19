@@ -255,6 +255,7 @@
     <string name="label_remove">Remove</string>
     <string name="error_remove">An error occurred during removing process</string>
     <string name="message_success_remove">The data was removed with success!</string>
+    <string name="message_success_denounce">The data was denounced with success!</string>
     <string name="title_share_story">Share story using:</string>
     <string name="title_share_news">Share news using:</string>
     <string name="title_share_subject">Story shared using U-Report</string>

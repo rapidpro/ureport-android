@@ -245,6 +245,7 @@ Las celebridades de UNICEF tienen una amplia gama de talentos y logros, pero tod
     <string name="label_remove">Quitar</string>
     <string name="error_remove">Ha ocurrido un error</string>
     <string name="message_success_remove">Los datos han sido removidos exitosamente</string>
+    <string name="message_success_denounce">Los datos fueron denunciados con éxito</string>
     <string name="title_share_story">Comparte historia usando:</string>
     <string name="title_share_news">Comparte noticias usando:</string>
     <string name="title_share_subject">Historia compartida usando U-Report</string>

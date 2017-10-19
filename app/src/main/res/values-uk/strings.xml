@@ -237,6 +237,7 @@
     <string name="label_remove">Видалити</string>
     <string name="error_remove">Сталася помилка під час процесу видалення</string>
     <string name="message_success_remove">Дані видалені успішно!</string>
+    <string name="message_success_denounce">Дані були визнані успішними!</string>
     <string name="title_share_story">Історія надана:</string>
     <string name="title_share_news">Новини надані:</string>
     <string name="title_share_subject">Історія надана Ю-Репорт</string>
