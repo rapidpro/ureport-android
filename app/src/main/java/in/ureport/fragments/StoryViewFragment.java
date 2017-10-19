@@ -338,10 +338,9 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
-        if(UserManager.canModerate()) {
-            inflater.inflate(R.menu.menu_story_view, menu);
-        }
+        inflater.inflate(UserManager.canModerate()
+                ? R.menu.menu_reject_story
+                : R.menu.menu_denounce_story, menu);
 
         if(shareActionButton == null) {
             MenuItem menuItem = menu.add(Menu.NONE, R.id.share, Menu.NONE, R.string.title_share);
@@ -356,6 +355,9 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
             case R.id.disapproveStory:
                 disapproveStory();
                 break;
+            case R.id.denounceStory:
+                denounceStory();
+                break;
             case R.id.share:
                 shareStory();
         }
@@ -369,6 +371,19 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
                 if (firebaseError == null) {
                     displayToast(R.string.message_story_disapproved);
                     getActivity().finish();
+                } else {
+                    displayToast(R.string.error_remove);
+                }
+            }
+        });
+    }
+
+    private void denounceStory() {
+        storyServices.denounceStory(story, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError == null) {
+                    displayToast(R.string.message_story_denounced);
                 } else {
                     displayToast(R.string.error_remove);
                 }
