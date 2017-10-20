@@ -59,7 +59,9 @@ import in.ureport.views.adapters.MediaAdapter;
 /**
  * Created by johncordeiro on 7/16/15.
  */
-public class StoryViewFragment extends Fragment implements ContributionAdapter.OnContributionRemoveListener {
+public class StoryViewFragment extends Fragment
+        implements ContributionAdapter.OnContributionRemoveListener,
+        ContributionAdapter.OnContributionDenounceListener {
 
     private static final String EXTRA_STORY = "story";
     private static final String EXTRA_USER = "user";
@@ -272,6 +274,7 @@ public class StoryViewFragment extends Fragment implements ContributionAdapter.O
 
         contributionAdapter = new ContributionAdapter();
         contributionAdapter.setOnContributionRemoveListener(this);
+        contributionAdapter.setOnContributionDenounceListener(this);
         contributionList.setAdapter(contributionAdapter);
 
         RecyclerView mediaList = (RecyclerView) view.findViewById(R.id.mediaList);

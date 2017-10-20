@@ -28,6 +28,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<Contribution> contributions;
 
     private OnContributionRemoveListener onContributionRemoveListener;
+    private OnContributionDenounceListener onContributionDenounceListener;
 
     public ContributionAdapter() {
         contributions = new ArrayList<>();
@@ -71,6 +72,10 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void setOnContributionRemoveListener(OnContributionRemoveListener onContributionRemoveListener) {
         this.onContributionRemoveListener = onContributionRemoveListener;
+    }
+
+    public void setOnContributionDenounceListener(OnContributionDenounceListener onContributionDenounceListener) {
+        this.onContributionDenounceListener = onContributionDenounceListener;
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -127,8 +132,8 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         if (onContributionRemoveListener != null)
                             onContributionRemoveListener.onContributionRemove(contributions.get(getLayoutPosition()));
                     case R.id.denounceContribution:
-                        if (onContributionRemoveListener != null)
-                            onContributionRemoveListener.onContributionDenounce(contributions.get(getLayoutPosition()));
+                        if (onContributionDenounceListener != null)
+                            onContributionDenounceListener.onContributionDenounce(contributions.get(getLayoutPosition()));
                 }
                 return true;
             }
@@ -144,7 +149,9 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public interface OnContributionRemoveListener {
         void onContributionRemove(Contribution contribution);
+    }
 
+    public interface OnContributionDenounceListener {
         void onContributionDenounce(Contribution contribution);
     }
 }
