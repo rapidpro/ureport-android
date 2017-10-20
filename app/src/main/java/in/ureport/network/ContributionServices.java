@@ -5,7 +5,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.listener.OnStoryContributionCountListener;
 import in.ureport.listener.OnStoryUpdatedListener;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
@@ -21,19 +20,22 @@ public class ContributionServices extends ProgramServices {
 
     private static final String contributionPath = "contribution";
     private static final String contributionDisapprovedPath = "contribution_disapproved";
+    private static final String contributionDenouncedPath = "contribution_denounced";
 
 
     public enum Type {
-        Poll(pollContributionPath, pollContributionDisapprovedPath),
-        Story(contributionPath, contributionDisapprovedPath);
+        Poll(pollContributionPath, pollContributionDisapprovedPath, ""),
+        Story(contributionPath, contributionDisapprovedPath, contributionDenouncedPath);
 
-        Type(String path, String disapprovedPath) {
+        Type(String path, String disapprovedPath, String denouncedPath) {
             this.path = path;
             this.disapprovedPath = disapprovedPath;
+            this.denouncedPath = denouncedPath;
         }
 
         private String path;
         private String disapprovedPath;
+        private String denouncedPath;
 
     }
 
@@ -63,15 +65,20 @@ public class ContributionServices extends ProgramServices {
             }
         });
     }
-    
+
     public void removeContribution(String key, Contribution contribution, Firebase.CompletionListener listener) {
         getDefaultRoot().child(type.path).child(key).child(contribution.getKey()).removeValue();
         getDefaultRoot().child(type.disapprovedPath).child(key)
                 .child(contribution.getKey()).setValue(contribution, listener);
     }
 
+    public void denounceContribution(String key, Contribution contribution, Firebase.CompletionListener listener) {
+        getDefaultRoot().child(type.denouncedPath).child(key)
+                .child(contribution.getKey()).setValue(contribution, listener);
+    }
+
     public void addChildEventListener(String key, ChildEventListener childEventListener) {
         getDefaultRoot().child(type.path).child(key).addChildEventListener(childEventListener);
     }
-    
+
 }

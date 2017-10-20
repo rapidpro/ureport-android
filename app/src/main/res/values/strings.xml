@@ -247,6 +247,7 @@
     <string name="stories_moderation">Stories</string>
     <string name="label_moderation">Moderation</string>
     <string name="title_moderation">%1$s moderation</string>
+    <string name="label_denounce">Denounce</string>
     <string name="button_title_disapprove">Reject</string>
     <string name="button_title_publish">Publish</string>
     <string name="success_story_update_message">Story was updated with success!</string>
@@ -254,6 +255,7 @@
     <string name="label_remove">Remove</string>
     <string name="error_remove">An error occurred during removing process</string>
     <string name="message_success_remove">The data was removed with success!</string>
+    <string name="message_success_denounce">The data was denounced with success!</string>
     <string name="title_share_story">Share story using:</string>
     <string name="title_share_news">Share news using:</string>
     <string name="title_share_subject">Story shared using U-Report</string>
@@ -312,6 +314,7 @@
     <string name="error_video_load">An error occurred during the video load</string>
     <string name="title_click_to_play">Click to play</string>
     <string name="message_story_disapproved">This story has been successfully disapproved.</string>
+    <string name="message_story_denounced">This story has been successfully denounced.</string>
     <string name="title_chat_message">New chat message</string>
     <string name="prompt_media_notification">media</string>
     <string name="error_message_permission">It\'s not possible to login with Google+ without permissions</string>
