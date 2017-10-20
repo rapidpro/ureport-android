@@ -138,7 +138,7 @@ public class User implements Parcelable {
     public Gender getGenderAsEnum() {
         try {
             return Gender.valueOf(this.gender);
-        } catch(IllegalArgumentException exception) {
+        } catch (Exception exception) {
             return Gender.Male;
         }
     }

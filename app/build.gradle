@@ -75,9 +75,7 @@ dependencies {
     compile project(':support-android')
     compile project(':video-compressor')
 
-    compile('com.twitter.sdk.android:twitter:1.7.0@aar') {
-        transitive = true;
-    }
+    compile 'com.twitter.sdk.android:twitter:3.1.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
     }
@@ -102,6 +100,7 @@ dependencies {
     compile "com.firebase:firebase-client-android:${versions.firebaseClientVersion}"
     compile "com.facebook.android:facebook-android-sdk:${versions.facebookSdkVersion}"
     compile "com.squareup.picasso:picasso:${versions.picassoVersion}"
+    compile "com.squareup.retrofit:retrofit:${versions.retrofitVersion}"
 
     compile 'br.com.ilhasoft.support:support-view:1.0.3'
     compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
