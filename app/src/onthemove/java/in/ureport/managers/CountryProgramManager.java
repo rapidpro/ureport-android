@@ -8,7 +8,7 @@ import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.models.CountryProgram;
 
-import static in.ureport.R.string.rapidpro_host_address1;
+import static in.ureport.R.string.rapidpro_host_address2;
 import static in.ureport.R.string.ureport_host_address1;
 import static in.ureport.R.style.AppTheme_Otm;
 
@@ -49,7 +49,7 @@ public class CountryProgramManager {
     private static CountryProgram buildCountryProgramIfNeeded() {
         if (countryProgram == null) {
             countryProgram = new CountryProgram("OTM", AppTheme_Otm, R.string.otm_channel, "On The Move", 33
-                    , rapidpro_host_address1, ureport_host_address1, "UreportOTM", "UreportOnTheMove", "U-Reporters");
+                    , rapidpro_host_address2, ureport_host_address1, "UreportOTM", "UreportOnTheMove", "U-Reporters");
             countryProgram.setMaleGroup("U-Report Males");
             countryProgram.setFemaleGroup("U-Report Females");
             countryProgram.setStateField("update_value_for_region");
