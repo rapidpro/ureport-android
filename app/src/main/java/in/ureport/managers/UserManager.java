@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
 
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.activities.LoginActivity;
 import in.ureport.activities.MainActivity;
@@ -73,7 +74,7 @@ public class UserManager {
     public static boolean isUserCountryProgramEnabled() {
         Log.i(TAG, "isUserCountryProgramEnabled getCountryCode: " + getCountryCode());
         return getCountryCode() != null
-            && getCountryCode().equals(CountryProgramManager.getCurrentCountryProgram().getCode());
+            && (getCountryCode().equals(CountryProgramManager.getCurrentCountryProgram().getCode()) || BuildConfig.FLAVOR.equals("onthemove"));
     }
 
     public static void updateUserInfo(User user, final OnUserLoadedListener listener) {
