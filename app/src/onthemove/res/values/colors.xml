@@ -3,4 +3,9 @@
     <color name="primary_color">#8750A0</color>
     <color name="primary_dark_color">#6d4081</color>
     <color name="color_accent">#5a366b</color>
+
+    <string-array name="poll_colors">
+        <item>#f7c052</item>
+        <item>#c19cd2</item>
+    </string-array>
 </resources>

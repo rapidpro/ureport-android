@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.models.Poll;
 import in.ureport.models.PollCategory;
@@ -87,12 +88,18 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
 
         private int getColorByCategory(PollCategory pollCategory) {
+
+            if (BuildConfig.FLAVOR.equals("onthemove")) {
+                int layoutPosition = getLayoutPosition();
+                int colorIndex = (layoutPosition % pollColors.length);
+                return Color.parseColor(pollColors[colorIndex]);
+            }
+
             Integer categoryColor = colorMap.get(pollCategory);
             if(categoryColor != null) {
                 return categoryColor;
             } else {
                 int layoutPosition = getLayoutPosition();
-
                 int colorIndex = (layoutPosition % pollColors.length);
                 int color = Color.parseColor(pollColors[colorIndex]);
                 colorMap.put(pollCategory, color);
