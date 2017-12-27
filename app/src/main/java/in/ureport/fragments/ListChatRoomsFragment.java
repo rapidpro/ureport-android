@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,11 +31,13 @@ import java.util.Map;
 
 import in.ureport.R;
 import in.ureport.activities.ChatCreationActivity;
+import in.ureport.activities.ChatRoomActivity;
 import in.ureport.activities.InviteContactsActivity;
 import in.ureport.activities.MainActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.OnSeeOpenGroupsListener;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.LocalNotificationManager;
 import in.ureport.managers.SearchManager;
@@ -127,6 +130,28 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
                 startInviteContacts();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK && requestCode == MainActivity.REQUEST_CODE_CHAT_CREATION) {
+            startChatRoom(data);
+        }
+    }
+
+    private void startChatRoom(Intent data) {
+        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_ROOM);
+        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_MEMBERS);
+
+        if(chatRoom != null && chatMembers != null) {
+            Intent chatRoomIntent = new Intent(getContext(), ChatRoomActivity.class);
+            chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM, chatRoom);
+            chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_MEMBERS, chatMembers);
+
+            CountryProgramManager.switchToUserCountryProgram();
+            startActivity(chatRoomIntent);
+        }
     }
 
     private void startInviteContacts() {
