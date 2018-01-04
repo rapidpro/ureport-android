@@ -6,6 +6,7 @@ app/src/release/res/values/keys.xml
 app/src/beta/res/values/keys.xml
 app/src/company/res/values/keys.xml
 app/google-services.json
+app/src/regular/google-services.json
 app/src/onthemove/google-services.json
 
 ### Android ###
