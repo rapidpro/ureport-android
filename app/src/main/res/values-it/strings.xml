@@ -326,4 +326,6 @@ Le celebrità UNICEF sono di diverso tipo ma tutte condividono l\'impegno nel mi
         <item quantity="one">%1$d mi piace </item>
         <item quantity="other">%1$d mi piace</item>
     </plurals>
+
+    <string name="ureport_description">Un canale diretto con noi</string>
 </resources>
