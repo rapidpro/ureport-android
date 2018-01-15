@@ -141,7 +141,6 @@ public class CountryProgramManager {
                     , rapidpro_host_address1, ureport_host_address1, "UReportMexico", "UReportMexico", "UReporters"));
             countryPrograms.add(buildCountryProgram("NGA", AppTheme_Nigeria, nigeria_channel, "Nigeria", 1
                     , rapidpro_host_address1, ureport_host_address1, "UReportNigeria", "U-report-Nigeria-1429673597287501", "UReporters"));
-            countryPrograms.add(buildIta());
             countryPrograms.add(buildCountryProgram("PAK", AppTheme_Pakistan, INVALID_VALUE, "Pakistan", 16
                     , rapidpro_host_address1, ureport_host_address1, "PakAvaz", "ureportpakavaz", null));
             countryPrograms.add(buildPapuaNewGuinea());
@@ -179,17 +178,6 @@ public class CountryProgramManager {
         elSalvadorCountry.setAgeGroups(ageGroups);
         elSalvadorCountry.setStateField("departament");
         return elSalvadorCountry;
-    }
-
-    @NonNull
-    private static CountryProgram buildIta() {
-        CountryProgram otmCounty = buildCountryProgram("ITA", AppTheme_Italy, R.string.italy_channel, "On The Move", 33
-                , rapidpro_host_address1, ureport_host_address1, "UreportOTM", "UreportOnTheMove", "U-Reporters");
-        otmCounty.setMaleGroup("U-Report Males");
-        otmCounty.setFemaleGroup("U-Report Females");
-        otmCounty.setStateField("update_value_for_region");
-        otmCounty.setDistrictField("province");
-        return otmCounty;
     }
 
     @NonNull
