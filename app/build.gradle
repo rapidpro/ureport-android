@@ -93,7 +93,7 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
 
     compile 'com.github.Ilhasoft:Infinite-Fire:2.1.3'
-    compile('com.github.ilhasoft.rapidpro-android-sdk:fcm-channel:1.0.4') {
+    compile('com.github.ilhasoft.rapidpro-android-sdk:fcm-channel:1.0.4.1') {
         exclude group: 'com.android.support'
     }
 
