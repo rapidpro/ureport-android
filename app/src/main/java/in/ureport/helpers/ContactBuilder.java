@@ -70,7 +70,6 @@ public class ContactBuilder {
         String [] possibleDistricts = countryProgram.getDistrictField() != null ?
                 new String[]{countryProgram.getDistrictField()} : new String[]{"location", "district", "lga"};
 
-        putValuesIfExists(user.getNickname(), contactFields, "nickname", "nick_name");
         putValuesIfExists(formatDate(user.getBirthday()), contactFields, "birthday", "birthdate", "birth_day");
         putValuesIfExists(getBornFormatted(user), contactFields, "year_of_birth", "born", "birth_year");
         putValuesIfExists(getAgeFormatted(user), contactFields, "age");
