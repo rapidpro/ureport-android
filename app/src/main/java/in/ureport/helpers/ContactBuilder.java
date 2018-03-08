@@ -44,7 +44,6 @@ public class ContactBuilder {
 
         Contact contact = new Contact();
         contact.setEmail(user.getEmail());
-        contact.setName(user.getNickname());
         contact.setGroups(userGroups);
         return contact;
     }
