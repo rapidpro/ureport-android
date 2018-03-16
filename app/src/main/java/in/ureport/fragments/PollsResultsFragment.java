@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,11 +33,11 @@ public class PollsResultsFragment extends Fragment {
 
     private static final String TAG = "PollsResultsFragment";
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView pollsList;
     private ProgressBar progressBar;
 
     private PollServices pollServices;
-    private PollAdapter pollsAdapter;
 
     private PollAdapter.PollParticipationListener pollParticipationListener;
 
@@ -49,15 +50,14 @@ public class PollsResultsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupObjects();
         setupView(view);
+        setupObjects();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         cleanMessageNotifications();
-        loadData();
     }
 
     private void cleanMessageNotifications() {
@@ -69,7 +69,7 @@ public class PollsResultsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         FlowManager.enableFlowNotificiation();
-        if(onPollsLoadedListener != null) pollServices.removePollsListener(onPollsLoadedListener);
+        if (onPollsLoadedListener != null) pollServices.removePollsListener(onPollsLoadedListener);
     }
 
     private void loadData() {
@@ -78,9 +78,13 @@ public class PollsResultsFragment extends Fragment {
 
     private void setupObjects() {
         pollServices = new PollServices();
+        loadData();
     }
 
     private void setupView(View view) {
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+
         pollsList = (RecyclerView) view.findViewById(R.id.pollsList);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -92,9 +96,9 @@ public class PollsResultsFragment extends Fragment {
 
     private void setupPolls(List<Poll> polls) {
         Collections.reverse(polls);
-        String [] pollColors = getResources().getStringArray(R.array.poll_colors);
+        String[] pollColors = getResources().getStringArray(R.array.poll_colors);
 
-        pollsAdapter = new PollAdapter(polls, pollColors);
+        PollAdapter pollsAdapter = new PollAdapter(polls, pollColors);
         pollsAdapter.setPollParticipationListener(pollParticipationListener);
         pollsList.setAdapter(pollsAdapter);
     }
@@ -104,9 +108,17 @@ public class PollsResultsFragment extends Fragment {
             Poll poll = snapshot.getValue(Poll.class);
             poll.setKey(snapshot.getKey());
             polls.add(poll);
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             Log.e(TAG, "onDataChange ", exception);
         }
+    }
+
+    public void setPollParticipationListener(PollAdapter.PollParticipationListener pollParticipationListener) {
+        this.pollParticipationListener = pollParticipationListener;
+    }
+
+    private void updateViewForData() {
+        progressBar.setVisibility(View.GONE);
     }
 
     private ValueEventListenerAdapter onPollsLoadedListener = new ValueEventListenerAdapter() {
@@ -125,12 +137,9 @@ public class PollsResultsFragment extends Fragment {
         }
     };
 
-    public void setPollParticipationListener(PollAdapter.PollParticipationListener pollParticipationListener) {
-        this.pollParticipationListener = pollParticipationListener;
-    }
-
-    private void updateViewForData() {
-        progressBar.setVisibility(View.GONE);
-    }
+    private SwipeRefreshLayout.OnRefreshListener onRefreshListener = () -> {
+        loadData();
+        swipeRefreshLayout.setRefreshing(false);
+    };
 
 }

@@ -1,11 +1,11 @@
 package in.ureport.views.adapters;
 
 import android.graphics.Color;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Map<PollCategory, Integer> colorMap = new HashMap<>();
     private PollParticipationListener pollParticipationListener;
 
-    public PollAdapter(List<Poll> polls, String [] pollColors) {
+    public PollAdapter(List<Poll> polls, String[] pollColors) {
         this.polls = polls;
         this.pollColors = pollColors;
         setHasStableIds(true);
@@ -42,7 +42,7 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((PastPollViewHolder)holder).bindView(polls.get(position));
+        ((PastPollViewHolder) holder).bindView(polls.get(position));
     }
 
     @Override
@@ -61,17 +61,18 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private final TextView category;
         private final TextView info;
         private final View infoBackground;
+        private final CardView cardView;
 
         PastPollViewHolder(View itemView) {
             super(itemView);
 
+            cardView = (CardView) itemView.findViewById(R.id.pollResults);
             info = (TextView) itemView.findViewById(R.id.info);
             category = (TextView) itemView.findViewById(R.id.category);
             title = (TextView) itemView.findViewById(R.id.description);
             infoBackground = itemView.findViewById(R.id.infoBackground);
 
-            Button results = (Button) itemView.findViewById(R.id.results);
-            results.setOnClickListener(onSeeResultsClickListener);
+            cardView.setOnClickListener(onSeeResultsClickListener);
         }
 
         private void bindView(Poll poll) {
@@ -96,7 +97,7 @@ public class PollAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
 
             Integer categoryColor = colorMap.get(pollCategory);
-            if(categoryColor != null) {
+            if (categoryColor != null) {
                 return categoryColor;
             } else {
                 int layoutPosition = getLayoutPosition();

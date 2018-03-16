@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,12 +25,14 @@ import com.firebase.client.FirebaseError;
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.helpers.ToolbarDesigner;
+import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.Login;
 import in.ureport.network.UserServices;
-import in.ureport.helpers.ValueEventListenerAdapter;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -37,6 +41,8 @@ public class CredentialsLoginFragment extends Fragment {
 
     private EditText email;
     private EditText password;
+    private CheckBox checkBox;
+    private SharedPreferences loginPreferences;
 
     private EditTextValidator validator = new EditTextValidator();
 
@@ -60,6 +66,24 @@ public class CredentialsLoginFragment extends Fragment {
         setLoginStatusBarColor();
     }
 
+    @Override
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+        if (activity instanceof LoginFragment.LoginListener) {
+            loginListener = (LoginFragment.LoginListener) activity;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getFragmentManager().popBackStack();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void setLoginStatusBarColor() {
         StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
         statusBarDesigner.setStatusBarColorById(getActivity(), R.color.dark_green_highlight);
@@ -69,34 +93,28 @@ public class CredentialsLoginFragment extends Fragment {
         email = (EditText) view.findViewById(R.id.email);
         password = (EditText) view.findViewById(R.id.password);
 
+        checkBox = (CheckBox) view.findViewById(R.id.rememberMe);
+        loginPreferences = getContext().getSharedPreferences("loginPreferences", MODE_PRIVATE);
+
         TextView forgotPassword = (TextView) view.findViewById(R.id.forgotPassword);
         forgotPassword.setOnClickListener(onForgotPasswordClickListener);
 
         Button login = (Button) view.findViewById(R.id.login);
         login.setOnClickListener(onLoginClickListener);
 
-        Toolbar toolbar = (Toolbar)view.findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
         ToolbarDesigner toolbarDesigner = new ToolbarDesigner();
         toolbarDesigner.setupFragmentDefaultToolbar(toolbar, R.string.label_login, this);
+
+        checkRememberMeOption();
     }
 
-    @Override
-    public void onAttach(Context activity) {
-        super.onAttach(activity);
-        if(activity instanceof LoginFragment.LoginListener) {
-            loginListener = (LoginFragment.LoginListener)activity;
+    private void checkRememberMeOption() {
+        if (loginPreferences.getBoolean("rememberMe", false)) {
+            email.setText(loginPreferences.getString("email", ""));
+            checkBox.setChecked(true);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case android.R.id.home:
-                getFragmentManager().popBackStack();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private boolean validateFields() {
@@ -107,6 +125,7 @@ public class CredentialsLoginFragment extends Fragment {
     }
 
     private void login(Login login) {
+        saveLoginPreferences(login);
         final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_logging), true, false);
 
         FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
@@ -121,6 +140,18 @@ public class CredentialsLoginFragment extends Fragment {
                 showLoginError();
             }
         });
+    }
+
+    private void saveLoginPreferences(Login login) {
+        SharedPreferences.Editor loginPreferencesEditor = loginPreferences.edit();
+        if (checkBox.isChecked()) {
+            loginPreferencesEditor.putBoolean("rememberMe", true);
+            loginPreferencesEditor.putString("email", login.getEmail());
+            loginPreferencesEditor.apply();
+        } else {
+            loginPreferencesEditor.clear();
+            loginPreferencesEditor.commit();
+        }
     }
 
     private void getUserInfoAndContinue(AuthData authData, final ProgressDialog progressDialog) {
@@ -155,7 +186,7 @@ public class CredentialsLoginFragment extends Fragment {
     private View.OnClickListener onForgotPasswordClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(loginListener != null)
+            if (loginListener != null)
                 loginListener.onForgotPassword();
         }
     };

@@ -28,6 +28,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<Contribution> contributions;
 
     private OnContributionRemoveListener onContributionRemoveListener;
+    private OnContributionDenounceListener onContributionDenounceListener;
 
     public ContributionAdapter() {
         contributions = new ArrayList<>();
@@ -42,7 +43,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((ItemViewHolder)holder).bindView(contributions.get(position));
+        ((ItemViewHolder) holder).bindView(contributions.get(position));
     }
 
     @Override
@@ -52,7 +53,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        if(contributions == null) return 0;
+        if (contributions == null) return 0;
         return contributions.size();
     }
 
@@ -63,7 +64,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void removeContribution(Contribution contribution) {
         int indexOfContribution = contributions.indexOf(contribution);
-        if(indexOfContribution >= 0) {
+        if (indexOfContribution >= 0) {
             contributions.remove(indexOfContribution);
             notifyDataSetChanged();
         }
@@ -71,6 +72,10 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void setOnContributionRemoveListener(OnContributionRemoveListener onContributionRemoveListener) {
         this.onContributionRemoveListener = onContributionRemoveListener;
+    }
+
+    public void setOnContributionDenounceListener(OnContributionDenounceListener onContributionDenounceListener) {
+        this.onContributionDenounceListener = onContributionDenounceListener;
     }
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -98,15 +103,15 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         private void setupViewForModeration(View itemView) {
-            if(UserManager.canModerate()) {
-                ImageView moderationOptions = (ImageView) itemView.findViewById(R.id.moderationOptions);
-                moderationOptions.setVisibility(View.VISIBLE);
-                moderationOptions.setOnClickListener(onModerationOptionsClickListener);
+            ImageView moderationOptions = (ImageView) itemView.findViewById(R.id.moderationOptions);
+            moderationOptions.setVisibility(View.VISIBLE);
+            moderationOptions.setOnClickListener(onModerationOptionsClickListener);
 
-                popupMenu = new PopupMenu(itemView.getContext(), moderationOptions, Gravity.CENTER);
-                popupMenu.inflate(R.menu.menu_contribution_moderator);
-                popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
-            }
+            popupMenu = new PopupMenu(itemView.getContext(), moderationOptions, Gravity.CENTER);
+            popupMenu.inflate(UserManager.canModerate()
+                    ? R.menu.menu_remove_contribution
+                    : R.menu.menu_denounce_contribution);
+            popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
         }
 
         private void bindView(Contribution contribution) {
@@ -122,10 +127,13 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private PopupMenu.OnMenuItemClickListener onMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch(item.getItemId()) {
+                switch (item.getItemId()) {
                     case R.id.removeContribution:
-                        if(onContributionRemoveListener != null)
+                        if (onContributionRemoveListener != null)
                             onContributionRemoveListener.onContributionRemove(contributions.get(getLayoutPosition()));
+                    case R.id.denounceContribution:
+                        if (onContributionDenounceListener != null)
+                            onContributionDenounceListener.onContributionDenounce(contributions.get(getLayoutPosition()));
                 }
                 return true;
             }
@@ -141,5 +149,9 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public interface OnContributionRemoveListener {
         void onContributionRemove(Contribution contribution);
+    }
+
+    public interface OnContributionDenounceListener {
+        void onContributionDenounce(Contribution contribution);
     }
 }

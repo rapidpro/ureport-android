@@ -8,10 +8,10 @@
     android:foreground="?attr/selectableItemBackground">
 
     <RelativeLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="@dimen/item_story_height"
+        android:orientation="vertical"
         android:padding="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -22,36 +22,58 @@
             android:transitionName="@string/transition_profile_picture"
             tools:src="@drawable/face" />
 
-        <TextView
-            android:id="@+id/tags"
+        <LinearLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_toRightOf="@+id/picture"
-            android:layout_toEndOf="@+id/picture"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp"
-            android:gravity="center_vertical|start"
-            android:textAlignment="viewStart"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:transitionName="@string/transition_profile_nickname"
-            tools:text="\@Jon Snow"/>
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/picture"
+            android:layout_toRightOf="@+id/picture"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/tags"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:gravity="center_vertical|start"
+                android:textAlignment="viewStart"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:transitionName="@string/transition_profile_nickname"
+                tools:text="\@Jon Snow" />
+
+            <TextView
+                android:id="@+id/publishedDate"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:gravity="center_vertical|start"
+                android:textAlignment="viewStart"
+                android:textColor="@android:color/black"
+                android:textSize="12sp"
+                android:transitionName="@string/transition_profile_nickname"
+                tools:text="\@Jon Snow" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/container"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/tags"
+            android:ellipsize="end"
             android:gravity="start"
             android:maxLines="2"
             android:textColor="@android:color/black"
-            android:textStyle="bold"
             android:textSize="20sp"
-            android:ellipsize="end"
+            android:textStyle="bold"
             android:transitionName="@string/transition_story_title"
-            tools:text="Boosting community development, disease control with sms-based platform"/>
+            tools:text="Boosting community development, disease control with sms-based platform" />
 
         <TextView
             android:id="@+id/markers"
@@ -59,15 +81,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
             android:layout_marginTop="5dp"
-            android:maxLines="2"
+            android:drawableLeft="@drawable/ic_marker"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_marker"
             android:ellipsize="end"
             android:gravity="center_vertical|start"
+            android:maxLines="2"
             android:textAlignment="viewStart"
             android:visibility="visible"
-            android:drawableLeft="@drawable/ic_marker"
-            android:drawableStart="@drawable/ic_marker"
-            android:drawablePadding="5dp"
-            tools:text="Water, Violence, Education"/>
+            tools:text="Water, Violence, Education" />
 
         <TextView
             android:id="@+id/filesAttached"
@@ -75,59 +97,59 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/markers"
             android:layout_marginTop="5dp"
-            android:maxLines="2"
+            android:drawableLeft="@drawable/ic_file_attached"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/ic_file_attached"
             android:ellipsize="end"
             android:gravity="center_vertical|start"
+            android:maxLines="2"
             android:textAlignment="viewStart"
             android:visibility="visible"
-            android:drawableLeft="@drawable/ic_file_attached"
-            android:drawableStart="@drawable/ic_file_attached"
-            android:drawablePadding="5dp"
-            tools:text="3 files attached"/>
+            tools:text="3 files attached" />
 
         <View
             android:id="@+id/line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_below="@+id/filesAttached"
             android:layout_marginTop="10dp"
-            android:background="@color/line"
-            android:layout_below="@+id/filesAttached"/>
+            android:background="@color/line" />
 
         <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
             android:layout_height="@dimen/item_story_height"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
-            android:scaleType="centerCrop"
-            tools:src="@drawable/tutorial_item1"
             android:layout_below="@+id/line"
-            android:visibility="visible"/>
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:scaleType="centerCrop"
+            android:visibility="visible"
+            tools:src="@drawable/tutorial_item1" />
 
         <TextView
             android:id="@+id/summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_below="@+id/image"
+            android:layout_marginTop="5dp"
             android:ellipsize="end"
-            android:maxLines="4"
             android:gravity="center_vertical|start"
+            android:maxLines="4"
             android:textAlignment="viewStart"
             android:textColor="@android:color/black"
             android:textSize="16sp"
-            tools:text="Story 1 content"/>
+            tools:text="Story 1 content" />
 
         <TextView
             android:id="@+id/contributors"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_below="@+id/summary"
-            android:gravity="center_vertical"
-            android:drawablePadding="5dp"
+            android:layout_marginTop="10dp"
             android:drawableLeft="@drawable/ic_person_black_24dp"
+            android:drawablePadding="5dp"
             android:drawableStart="@drawable/ic_person_black_24dp"
+            android:gravity="center_vertical"
             android:textSize="14sp"
             tools:text="25 contributions" />
 
@@ -135,16 +157,16 @@
             android:id="@+id/likeCountText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginTop="2dp"
-            android:drawablePadding="10dp"
-            android:drawableLeft="@drawable/ic_like_small"
-            android:drawableStart="@drawable/ic_like_small"
             android:layout_below="@id/contributors"
+            android:layout_marginTop="2dp"
+            android:drawableLeft="@drawable/ic_like_small"
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_like_small"
+            android:gravity="center_vertical"
             android:textSize="14sp"
             android:visibility="gone"
-            tools:visibility="visible"
-            tools:text="25 likes" />
+            tools:text="25 likes"
+            tools:visibility="visible" />
 
         <Button
             android:id="@+id/readFullStory"
@@ -152,18 +174,18 @@
             android:layout_height="35dp"
             android:layout_below="@+id/likeCountText"
             android:background="@null"
-            android:textColor="?attr/colorPrimary"
-            android:text="@string/story_item_contribute_to_story"/>
+            android:text="@string/story_item_contribute_to_story"
+            android:textColor="?attr/colorPrimary" />
 
         <include
             android:id="@+id/storyModeration"
+            layout="@layout/view_moderation_story"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginTop="5dp"
             android:layout_below="@+id/likeCountText"
+            android:layout_marginTop="5dp"
             android:visibility="gone"
-            tools:visibility="visible"
-            layout="@layout/view_moderation_story" />
+            tools:visibility="visible" />
 
     </RelativeLayout>
 

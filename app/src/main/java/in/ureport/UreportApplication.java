@@ -1,11 +1,15 @@
 package in.ureport;
 
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
 
-import com.twitter.sdk.android.Twitter;
+import com.crashlytics.android.Crashlytics;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
 
 import in.ureport.managers.AmazonServicesManager;
 import in.ureport.managers.CountryProgramManager;
@@ -25,10 +29,19 @@ public class UreportApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
+        TwitterConfig config = new TwitterConfig.Builder(this)
+                .logger(new DefaultLogger(BuildConfig.DEBUG ? Log.DEBUG : Log.ASSERT))
+                .twitterAuthConfig(new TwitterAuthConfig(getString(R.string.twitter_key), getString(R.string.twitter_secret)))
+                .debug(BuildConfig.DEBUG)
+                .build();
+        Twitter.initialize(config);
+
         AnalyticsTracker.initialize(this);
         UserManager.init(this);
         FirebaseProxyManager.init(this);
-        initializeFabric();
         ActiveAndroid.initialize(this);
         AmazonServicesManager.init(this);
         initializeFcmClient();
@@ -45,8 +58,4 @@ public class UreportApplication extends MultiDexApplication {
         }
     }
 
-    private void initializeFabric() {
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(getString(R.string.twitter_key), getString(R.string.twitter_secret));
-        Fabric.with(this, new Twitter(authConfig));
-    }
 }

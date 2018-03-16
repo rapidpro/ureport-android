@@ -18,6 +18,7 @@ public class StoryServices extends ProgramServices {
     private static final String storyLikePath = "story_like";
     private static final String storyModeratePath = "story_moderate";
     private static final String storyDisapprovedPath = "story_disapproved";
+    private static final String storyDenouncedPath = "story_denounced";
 
     public void saveStory(final Story story, final Firebase.CompletionListener listener) {
         cleanStory(story);
@@ -68,6 +69,11 @@ public class StoryServices extends ProgramServices {
         cleanStory(story);
         getDefaultRoot().child(storyModeratePath).child(story.getKey()).removeValue();
         getDefaultRoot().child(storyDisapprovedPath).child(story.getKey()).setValue(story, listener);
+    }
+
+    public void denounceStory(Story story, Firebase.CompletionListener listener) {
+        cleanStory(story);
+        getDefaultRoot().child(storyDenouncedPath).child(story.getKey()).setValue(story, listener);
     }
 
     public void loadStoriesForUser(User user, ValueEventListener listener) {
