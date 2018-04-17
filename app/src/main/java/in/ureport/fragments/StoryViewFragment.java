@@ -495,7 +495,9 @@ public class StoryViewFragment extends Fragment
         @Override
         public void onAfterLoadUser(Contribution contribution) {
             updateViewForContribution();
-            contributionAdapter.addContribution(contribution);
+            if (contribution.getAuthor() != null) {
+                contributionAdapter.addContribution(contribution);
+            }
         }
     };
 
