@@ -24,8 +24,6 @@ android {
         applicationId "in.ureport"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 46
-        versionName "2.8.4"
         multiDexEnabled true
     }
     buildTypes {
@@ -54,10 +52,19 @@ android {
     }
 
     productFlavors {
-        regular { }
+        regular {
+            defaultConfig {
+                versionCode 47
+                versionName "2.8.5"
+            }
+        }
         onthemove {
             applicationIdSuffix ".onthemove"
             versionNameSuffix "-onthemove"
+            defaultConfig {
+                versionCode 1
+                versionName "1.0.0"
+            }
         }
     }
 
