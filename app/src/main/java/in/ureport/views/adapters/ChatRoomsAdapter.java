@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -85,11 +86,11 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             holder.itemView.setSelected(isSelected(chatRoomHolder));
             ((ViewHolder) holder).bindView(chatRoomHolder);
 
-            if(forceClick && isSelected(chatRoomHolder)) {
+            if (forceClick && isSelected(chatRoomHolder)) {
                 forceClick = false;
                 holder.itemView.performClick();
             }
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             Log.e(TAG, "onBindViewHolder: " + exception.getLocalizedMessage());
         }
     }
@@ -123,7 +124,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void removeChatRoom(ChatRoomHolder chatRoom) {
         for (int position = 0; position < chatRooms.size(); position++) {
             ChatRoomHolder chatRoomHolder = getItem(position);
-            if(chatRoomHolder.chatRoom.equals(chatRoom.chatRoom)) {
+            if (chatRoomHolder.chatRoom.equals(chatRoom.chatRoom)) {
                 chatRooms.remove(position);
                 break;
             }
@@ -136,7 +137,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public int addChatRoom(ChatRoomHolder newChatRoomHolder) {
         int indexOfChatRoom = getIndexOfChatRoom(newChatRoomHolder);
-        if(indexOfChatRoom < 0) {
+        if (indexOfChatRoom < 0) {
             chatRooms.add(newChatRoomHolder);
             return chatRooms.size() - 1;
         } else {
@@ -146,7 +147,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public void fillSelectableWhenNull() {
-        if(selectable && (selectedItem == null || getIndexOfChatRoom(selectedItem) < 0)) {
+        if (selectable && (selectedItem == null || getIndexOfChatRoom(selectedItem) < 0)) {
             selectFirst();
         }
     }
@@ -183,14 +184,14 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private void bindView(ChatRoomHolder chatRoomHolder) {
             ChatRoom chatRoom = chatRoomHolder.chatRoom;
 
-            if(chatRoom instanceof IndividualChatRoom) {
+            if (chatRoom instanceof IndividualChatRoom) {
                 User friend = getFriend(chatRoomHolder);
-                if(friend != null) {
+                if (friend != null) {
                     name.setText(friend.getNickname());
                     ImageLoader.loadPersonPictureToImageView(picture, friend.getPicture());
                 }
-            } else if(chatRoom instanceof GroupChatRoom) {
-                GroupChatRoom chatGroup = ((GroupChatRoom)chatRoom);
+            } else if (chatRoom instanceof GroupChatRoom) {
+                GroupChatRoom chatGroup = ((GroupChatRoom) chatRoom);
                 name.setText(chatGroup.getTitle());
                 ImageLoader.loadGroupPictureToImageView(picture, chatGroup.getPicture());
             }
@@ -200,7 +201,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         private void bindUnreadMessages(Integer unreadMessagesCount) {
-            if(unreadMessagesCount != null && unreadMessagesCount > 0) {
+            if (unreadMessagesCount != null && unreadMessagesCount > 0) {
                 unreadMessages.setVisibility(View.VISIBLE);
                 unreadMessages.setText(String.valueOf(unreadMessagesCount));
             } else {
@@ -209,7 +210,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
         private void bindLastMessage(ChatRoomHolder chatRoomHolder) {
-            if(chatRoomHolder.lastMessage != null) {
+            if (chatRoomHolder.lastMessage != null) {
                 lastMessageText.setVisibility(View.VISIBLE);
                 lastMessageText.setText(chatRoomHolder.lastMessage.getMessage());
 
@@ -223,7 +224,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         private User getFriend(ChatRoomHolder chatRoomHolder) {
             for (User user : chatRoomHolder.members.getUsers()) {
-                if(!user.getKey().equals(UserManager.getUserId())) {
+                if (!user.getKey().equals(UserManager.getUserId())) {
                     return user;
                 }
             }
@@ -241,14 +242,21 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 } else {
                     unreadMessages.setText(null);
                     unreadMessages.setVisibility(View.GONE);
-                    onChatRoomSelectedListener.onRapidproChatSelected();
+                    final CountryProgram currentCountryProgram = CountryProgramManager.getCurrentCountryProgram();
+                    if (!name.getText().equals(currentCountryProgram.getName())) {
+                        Toast.makeText(view.getContext(), R.string.error_message_dont_work_for_global_adms, Toast.LENGTH_SHORT).show();
+                    } else if (currentCountryProgram.getChannel() != CountryProgramManager.INVALID_VALUE) {
+                        onChatRoomSelectedListener.onRapidproChatSelected();
+                    } else {
+                        Toast.makeText(view.getContext(), R.string.error_message_channel_not_configured, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         };
 
         private void selectCurrentPosition() {
-            if(selectable) {
-                if(selectedItem != null)
+            if (selectable) {
+                if (selectedItem != null)
                     notifyItemChanged(getIndexOfChatRoom(selectedItem));
                 selectedItem = getItem(getChatPosition(getLayoutPosition()));
                 notifyItemChanged(getChatPosition(getLayoutPosition()));
@@ -284,7 +292,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         ChatRoomHolder holder = new ChatRoomHolder(chatRoom);
         int indexOfChat = getIndexOfChatRoom(holder);
 
-        if(indexOfChat >= 0) {
+        if (indexOfChat >= 0) {
             selectedItem = holder;
             notifyItemChanged(indexOfChat);
         }
@@ -306,6 +314,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     public interface OnChatRoomSelectedListener {
         void onRapidproChatSelected();
+
         void onChatRoomSelected(ChatRoom chatRoom, ChatMembers chatMembers);
     }
 

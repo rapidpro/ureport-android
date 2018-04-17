@@ -329,4 +329,5 @@
         <item quantity="other">%1$d ไลค์</item>
     </plurals>
     <string name="message_fcm_floating_permission">อย่าพลาดข้อความหรือการสำรวจความคิดเห็นจาก U-Report กด Accept ด้านล่างและเปิดใช้งานเรา</string>
+    <string name="error_message_channel_not_configured">ไม่ได้กำหนดค่าช่องติดต่อผู้ดูแลระบบประเทศ</string>
 </resources>

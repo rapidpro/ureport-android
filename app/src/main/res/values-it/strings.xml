@@ -328,4 +328,5 @@ Le celebrità UNICEF sono di diverso tipo ma tutte condividono l\'impegno nel mi
     </plurals>
 
     <string name="ureport_description">Un canale diretto con noi</string>
+    <string name="error_message_channel_not_configured">Il canale non è configurato, contattare l\'amministratore del paese.</string>
 </resources>

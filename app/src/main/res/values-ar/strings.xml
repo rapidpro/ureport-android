@@ -286,4 +286,5 @@
     <string name="prompt_media_notification">وسائط متعددة</string>
     <string name="error_message_permission">لا يمكن الدخول عن طريق حساب غوغل+ بدون صلاحيات دخول</string>
     <string name="message_fcm_floating_permission">لا يفوتون رسالة أو استطلاع من U- تقرير، اضغط على قبول أدناه وتشغيل لنا.</string>
+    <string name="error_message_channel_not_configured">لم يتم تكوين القناة ، اتصل بمسؤول البلد.</string>
 </resources>

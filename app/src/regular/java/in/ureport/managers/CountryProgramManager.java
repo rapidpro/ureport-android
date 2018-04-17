@@ -12,14 +12,13 @@ import in.ureport.R;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.rapidpro.AgeGroup;
 
+import static in.ureport.R.string.argentina_channel;
 import static in.ureport.R.string.brazil_channel;
 import static in.ureport.R.string.cotedivoire_channel;
 import static in.ureport.R.string.elsalvador_channel;
-import static in.ureport.R.string.global_channel;
-import static in.ureport.R.string.argentina_channel;
+import static in.ureport.R.string.france_channel;
 import static in.ureport.R.string.guatemala_channel;
 import static in.ureport.R.string.ireland_channel;
-import static in.ureport.R.string.france_channel;
 import static in.ureport.R.string.jamaica_channel;
 import static in.ureport.R.string.moldova_channel;
 import static in.ureport.R.string.new_zealand_channel;
@@ -537,7 +536,7 @@ public class CountryProgramManager {
         return new CountryProgram(
                 "GLOBAL",
                 AppTheme,
-                global_channel,
+                INVALID_VALUE,
                 "U-Report Global",
                 13,
                 rapidpro_host_address1,

@@ -323,4 +323,6 @@ Las celebridades de UNICEF tienen una amplia gama de talentos y logros, pero tod
     <string name="prompt_done">Hecho</string>
     <string name="message_upload_cancel">La subida fue cancelado!</string>
     <string name="message_fcm_floating_permission">Nunca pierdas un mensaje o encuesta de U-Report, presiona Aceptar a continuación y enciéndanos.</string>
+    <string name="error_message_channel_not_configured">El canal no está configurado, comuníquese con el administrador del país.</string>
 </resources>
+

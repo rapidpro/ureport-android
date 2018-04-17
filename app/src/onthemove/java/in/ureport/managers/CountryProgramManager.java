@@ -17,6 +17,7 @@ import static in.ureport.R.style.AppTheme_Otm;
  */
 public class CountryProgramManager {
 
+    public static final int INVALID_VALUE = -1;
     private static CountryProgram countryProgram;
 
     public static void switchCountryProgram(String countryCode) {

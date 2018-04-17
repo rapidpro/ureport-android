@@ -58,6 +58,7 @@ public class UserManager {
     }
 
     public static void initializeFcmClient(CountryProgram countryProgram) {
+        if (countryProgram.getChannel() == CountryProgramManager.INVALID_VALUE) return;
         FcmClient.initialize(new FcmClient.Builder(context)
                 .setHost(context.getString(countryProgram.getRapidproEndpoint()))
                 .setToken(getCountryToken())

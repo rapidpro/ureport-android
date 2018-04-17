@@ -355,6 +355,8 @@
     <string name="label_web_moderation">Web Moderation</string>
     <string name="message_authentication_started">Authentication started successfully</string>
     <string name="message_fcm_floating_permission">Never miss a message or poll from U-Report, press Accept below and turn us on.</string>
+    <string name="error_message_channel_not_configured">The channel is not configured, contact the country administrator.</string>
+    <string name="error_message_dont_work_for_global_adms">It does not work for global administrators.</string>
 
     <string name="ureport_name">U-Report %s</string>
     <string name="ureport_description">A direct channel with us!</string>
