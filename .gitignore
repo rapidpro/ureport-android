@@ -8,6 +8,7 @@ app/src/company/res/values/keys.xml
 app/google-services.json
 app/src/regular/google-services.json
 app/src/onthemove/google-services.json
+signature
 
 ### Android ###
 # Built application files
