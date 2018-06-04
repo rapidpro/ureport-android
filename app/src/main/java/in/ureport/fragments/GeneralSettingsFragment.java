@@ -53,7 +53,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 user = dataSnapshot.getValue(User.class);
-                updateViewForUser(user);
+                if (user != null) updateViewForUser(user);
             }
         });
     }
