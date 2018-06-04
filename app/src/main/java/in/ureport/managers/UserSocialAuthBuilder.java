@@ -80,9 +80,9 @@ public class UserSocialAuthBuilder {
 
     @Nullable
     private User.Gender getUserGender(String gender) {
-        if(gender != null && !gender.isEmpty())
-            return gender.equals("male") ? User.Gender.Male : User.Gender.Female;
-        return null;
+        if (gender != null && gender.equals("female"))
+            return User.Gender.Female;
+        return User.Gender.Male;
     }
 
     private String getFormattedNickname(String name) {
