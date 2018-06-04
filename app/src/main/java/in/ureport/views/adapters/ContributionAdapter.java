@@ -115,9 +115,11 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         private void bindView(Contribution contribution) {
-            ImageLoader.loadPersonPictureToImageView(picture, contribution.getAuthor().getPicture());
+            if (contribution.getAuthor() != null) {
+                ImageLoader.loadPersonPictureToImageView(picture, contribution.getAuthor().getPicture());
+                this.author.setText(contribution.getAuthor().getNickname());
+            }
             this.contribution.setText(contribution.getContent());
-            this.author.setText(contribution.getAuthor().getNickname());
 
             String timeElapsed = dateFormatter.getTimeElapsed(contribution.getCreatedDate().getTime()
                     , itemView.getContext().getString(R.string.date_now));
