@@ -40,25 +40,29 @@ public abstract class ShareViewTask<T> extends ProgressTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
+        StringBuilder sharableTextBuilder = new StringBuilder();
         if (object instanceof Story) {
             Story story = ((Story) object);
-            if (story.getMedias() != null) {
-                shareContent(fragment.getActivity(), fragment.getString(shareTitleId),
-                        story.getContent() + "\n" + story.getCover().getUrl());
-            } else {
-                shareContent(fragment.getActivity(), fragment.getString(shareTitleId),
-                        story.getContent());
-            }
+            sharableTextBuilder
+                    .append(story.getContent());
+
+            if (story.getMedias() != null)
+                sharableTextBuilder
+                        .append("\n\n")
+                        .append(story.getCover().getUrl());
         } else if (object instanceof News) {
             News news = ((News) object);
-            if (news.getImages() != null) {
-                shareContent(fragment.getActivity(), fragment.getString(shareTitleId),
-                        news.getTitle() + "\n\n" + news.getSummary() + "\n\n" + news.getImages().get(0));
-            } else {
-                shareContent(fragment.getActivity(), fragment.getString(shareTitleId),
-                        news.getTitle() + "\n\n" + news.getSummary());
-            }
+            sharableTextBuilder
+                    .append(news.getTitle())
+                    .append("\n\n")
+                    .append(news.getSummary());
+
+            if (news.getImages() != null && !news.getImages().isEmpty())
+                sharableTextBuilder
+                        .append("\n\n")
+                        .append(news.getImages().get(0));
         }
+        shareContent(fragment.getActivity(), fragment.getString(shareTitleId), sharableTextBuilder.toString());
         return null;
     }
 
