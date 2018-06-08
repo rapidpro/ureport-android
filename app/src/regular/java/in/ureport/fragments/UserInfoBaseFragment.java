@@ -286,7 +286,8 @@ public abstract class UserInfoBaseFragment extends Fragment implements LoaderMan
                 updateStateSpinner(locationInfo);
 
                 districts = locationInfo.getDistricts();
-                updateDistrictSpinnerForState((Location) state.getSelectedItem());
+                if (state.getSelectedItem() instanceof Location)
+                    updateDistrictSpinnerForState((Location) state.getSelectedItem());
         }
     }
 
