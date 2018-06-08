@@ -157,8 +157,15 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public void sortChatRooms() {
-        Collections.sort(chatRooms, (item1, item2) -> item1.lastMessage != null && item2.lastMessage != null
-                ? item2.lastMessage.getDate().compareTo(item1.lastMessage.getDate()) : 1);
+        Collections.sort(chatRooms, (item1, item2) -> {
+            if (item1.lastMessage == null && item2.lastMessage == null)
+                return 0;
+            if (item1.lastMessage == null)
+                return 1;
+            if (item2.lastMessage == null)
+                return -1;
+            return item2.lastMessage.getDate().compareTo(item1.lastMessage.getDate());
+        });
         notifyDataSetChanged();
     }
 
