@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
@@ -10,8 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.util.List;
@@ -24,7 +21,6 @@ import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.managers.CountryProgramManager;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
@@ -32,7 +28,6 @@ import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.ip.IpResponse;
 import in.ureport.network.IpServices;
-import in.ureport.network.UserServices;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -45,8 +40,6 @@ public class SignUpFragment extends UserInfoBaseFragment {
     private static final String TAG = "SignUpFragment";
 
     private LoginFragment.LoginListener loginListener;
-
-    private ProgressDialog progressDialog;
 
     public static SignUpFragment newInstance(User user) {
         SignUpFragment signUpFragment = new SignUpFragment();
@@ -69,8 +62,53 @@ public class SignUpFragment extends UserInfoBaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setupContextDependencies();
         setupView();
         setupUserIfExists();
+    }
+
+    @Override
+    protected String getLoadingMessage() {
+        return getString(R.string.load_registering_user);
+    }
+
+    private void setupContextDependencies() {
+        SignUpFragmentHolder.registerFirebaseValueResultHandler(new SignUpFragmentHolder.ValueResultHandlerWrapper() {
+            @Override
+            public void onSuccess(Map<String, Object> result, Login login, User user) {
+                user.setKey(result.get("uid").toString());
+                SignUpFragmentHolder.authWithPassword(login, user);
+            }
+
+            @Override
+            public void onError(FirebaseError firebaseError) {
+                dismissLoading();
+                Toast.makeText(getContext(), R.string.error_email_already_exists, Toast.LENGTH_LONG).show();
+                AnalyticsHelper.sendFirebaseError(firebaseError);
+            }
+        });
+
+        SignUpFragmentHolder.registerFirebaseAuthResultHandler(new SignUpFragmentHolder.AuthResultHandlerWrapper() {
+            @Override
+            public void onAuthenticated(User user) {
+                dismissLoading();
+                storeUserAndFinish(user);
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                dismissLoading();
+                Toast.makeText(getContext(), R.string.error_valid_email, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        SignUpFragmentHolder.registerFirebaseCompletionListener((firebaseError, firebase) -> {
+            dismissLoading();
+            if (firebaseError != null)
+                Toast.makeText(getContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+            else
+                loginListener.onUserReady(user, true);
+        });
     }
 
     protected void setupView() {
@@ -180,73 +218,26 @@ public class SignUpFragment extends UserInfoBaseFragment {
         return user;
     }
 
-    private View.OnClickListener onConfirmClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(isFieldsValid()) {
-                showDialog();
+    private View.OnClickListener onConfirmClickListener = view -> {
+        if (isFieldsValid()) {
+            showLoading();
 
-                final User user = createUser();
-                Login login = getLoginData(user);
+            final User user = createUser();
+            Login login = getLoginData(user);
 
-                switch (user.getType()) {
-                    case ureport:
-                        createUserAndAuthenticate(login, user);
-                        break;
-                    default:
-                        storeUserAndFinish(user);
-                }
+            switch (user.getType()) {
+                case ureport:
+                    SignUpFragmentHolder.createUserAndAuthenticate(login, user);
+                    break;
+                default:
+                    storeUserAndFinish(user);
             }
         }
     };
 
-    private void createUserAndAuthenticate(final Login login, final User user) {
-        FirebaseManager.getReference().createUser(login.getEmail(), login.getPassword(), new Firebase.ValueResultHandler<Map<String, Object>>() {
-            @Override
-            public void onSuccess(Map<String, Object> result) {
-                user.setKey(result.get("uid").toString());
-                authenticateAndSaveUser(login, user);
-            }
-
-            @Override
-            public void onError(FirebaseError firebaseError) {
-                dismissDialog();
-                Toast.makeText(getActivity(), R.string.error_email_already_exists, Toast.LENGTH_LONG).show();
-
-                AnalyticsHelper.sendFirebaseError(firebaseError);
-            }
-        });
-    }
-
-    private void authenticateAndSaveUser(Login login, final User user) {
-        FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                dismissDialog();
-                storeUserAndFinish(user);
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                dismissDialog();
-                Toast.makeText(getActivity(), R.string.error_valid_email, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
     private void storeUserAndFinish(final User user) {
-        showDialog();
-        UserServices userServices = new UserServices();
-        userServices.saveUser(user, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                dismissDialog();
-                if (firebaseError != null)
-                    Toast.makeText(getActivity().getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
-                else
-                    loginListener.onUserReady(user, true);
-            }
-        });
+        showLoading();
+        SignUpFragmentHolder.saveUser(user);
     }
 
     @NonNull
@@ -257,13 +248,4 @@ public class SignUpFragment extends UserInfoBaseFragment {
         return new Login(email, password);
     }
 
-    private void showDialog() {
-        progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_registering_user)
-                , true, false);
-    }
-
-    private void dismissDialog() {
-        if(progressDialog != null && progressDialog.isShowing())
-            progressDialog.dismiss();
-    }
 }

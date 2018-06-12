@@ -1,7 +1,6 @@
 package in.ureport.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -10,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +48,7 @@ import in.ureport.models.User;
 /**
  * Created by johncordeiro on 7/7/15.
  */
-public class LoginFragment extends Fragment implements Firebase.AuthResultHandler {
+public class LoginFragment extends LoadingFragment implements Firebase.AuthResultHandler {
 
     public static final String [] FACEBOOK_PERMISSIONS = { "email", "user_birthday" };
     public static final int ERROR_RESOLUTION_REQUEST_CODE = 300;
@@ -64,14 +62,13 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
     private TwitterAuthClient twitterAuthClient;
     private GoogleApiClient googleApiClient;
 
-    private ProgressDialog loadUserDialog;
-
     private boolean resolvingGoogleSignin = false;
     private boolean shouldResolveErrors = true;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setupContextDependencies();
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
@@ -111,6 +108,74 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+    }
+
+    @Override
+    protected String getLoadingMessage() {
+        return getString(R.string.login_load_user_message);
+    }
+
+    @Override
+    public void onAuthenticated(AuthData authData) {
+        dismissLoading();
+        User user = userSocialAuthBuilder.build(authData);
+        if (loginListener != null) {
+            loginListener.onLoginWithSocialNetwork(user);
+        }
+    }
+
+    @Override
+    public void onAuthenticationError(FirebaseError firebaseError) {
+        dismissLoading();
+        showLoginErrorAlert();
+    }
+
+    private void setupContextDependencies() {
+        LoginFragmentHolder.registerFirebaseAuthResultHandler(new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                dismissLoading();
+                User user = userSocialAuthBuilder.build(authData);
+                if (loginListener != null) {
+                    loginListener.onLoginWithSocialNetwork(user);
+                }
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                dismissLoading();
+                showLoginErrorAlert();
+            }
+        });
+
+        LoginFragmentHolder.registerFacebookLoginCallback(new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                showLoading();
+                LoginFragmentHolder.authenticateWithFacebook(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() { }
+
+            @Override
+            public void onError(FacebookException exception) {
+                showLoginErrorAlert();
+            }
+        });
+
+        LoginFragmentHolder.registerTwitterCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                showLoading();
+                LoginFragmentHolder.authenticateWithTwitter(result.data);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                showLoginErrorAlert();
+            }
+        });
     }
 
     private void setupObjects() {
@@ -185,29 +250,6 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         }
     };
 
-    private FacebookCallback<LoginResult> onFacebookLoginCallback = new FacebookCallback<LoginResult>() {
-
-        @Override
-        public void onSuccess(LoginResult loginResult) {
-            loadUserDialog = showLoadUserProgress();
-            FirebaseManager.authenticateWithFacebook(loginResult.getAccessToken(), LoginFragment.this);
-        }
-
-        @Override
-        public void onCancel() {}
-
-        @Override
-        public void onError(FacebookException exception) {
-            showLoginErrorAlert();
-        }
-    };
-
-    @NonNull
-    private ProgressDialog showLoadUserProgress() {
-        return ProgressDialog.show(getActivity()
-                    , null, getString(R.string.login_load_user_message), true, false);
-    }
-
     private void showLoginErrorAlert() {
         Toast.makeText(getActivity(), R.string.login_error, Toast.LENGTH_LONG).show();
     }
@@ -215,7 +257,7 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
     private View.OnClickListener onTwitterLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            twitterAuthClient.authorize(getActivity(), twitterLoginCallback);
+            LoginFragmentHolder.loginWithTwitter(getActivity(), twitterAuthClient);
         }
     };
 
@@ -243,23 +285,10 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
                         googleApiClient.connect();
                     }
                 } else {
-                    loadUserDialog.dismiss();
+                    dismissLoading();
                     showLoginErrorAlert();
                 }
             }
-        }
-    };
-
-    private Callback<TwitterSession> twitterLoginCallback = new Callback<TwitterSession>() {
-        @Override
-        public void success(Result<TwitterSession> result) {
-            loadUserDialog = showLoadUserProgress();
-            FirebaseManager.authenticateWithTwitter(result.data, LoginFragment.this);
-        }
-
-        @Override
-        public void failure(TwitterException exception) {
-            showLoginErrorAlert();
         }
     };
 
@@ -267,7 +296,7 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         @Override
         public void onClick(View view) {
             LoginManager loginManager = LoginManager.getInstance();
-            loginManager.registerCallback(callbackManager, onFacebookLoginCallback);
+            LoginFragmentHolder.loginWithFacebook(callbackManager);
             loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
         }
     };
@@ -288,9 +317,9 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
     };
 
     private void loginWithGooglePlus() {
-        loadUserDialog = showLoadUserProgress();
+        showLoading();
 
-        if(!googleApiClient.isConnected()) {
+        if (!googleApiClient.isConnected()) {
             googleApiClient.connect();
         } else {
             googleConnectionCallbacks.onConnected(null);
@@ -305,22 +334,6 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         }
     };
 
-    @Override
-    public void onAuthenticated(AuthData authData) {
-        loadUserDialog.dismiss();
-
-        User user = userSocialAuthBuilder.build(authData);
-        if(loginListener != null) {
-            loginListener.onLoginWithSocialNetwork(user);
-        }
-    }
-
-    @Override
-    public void onAuthenticationError(FirebaseError firebaseError) {
-        loadUserDialog.dismiss();
-        showLoginErrorAlert();
-    }
-
     public interface LoginListener {
         void onLoginWithSocialNetwork(User user);
         void onLoginWithCredentials();
@@ -330,4 +343,5 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         void onForgotPassword();
         void onPasswordReset();
     }
+
 }

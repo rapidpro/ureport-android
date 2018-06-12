@@ -44,7 +44,7 @@ import in.ureport.models.holders.UserGender;
 /**
  * Created by johncordeiro on 10/09/15.
  */
-public abstract class UserInfoBaseFragment extends Fragment implements LoaderManager.LoaderCallbacks, DatePickerDialog.OnDateSetListener {
+public abstract class UserInfoBaseFragment extends LoadingFragment implements LoaderManager.LoaderCallbacks, DatePickerDialog.OnDateSetListener {
 
     private static final String TAG = "UserInfoBaseFragment";
 

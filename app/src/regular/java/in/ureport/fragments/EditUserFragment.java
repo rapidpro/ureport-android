@@ -61,6 +61,11 @@ public class EditUserFragment extends UserInfoBaseFragment {
         }
     }
 
+    @Override
+    protected String getLoadingMessage() {
+        return getString(R.string.load_message_wait);
+    }
+
     private void setupView() {
         password.setVisibility(View.GONE);
         email.setVisibility(View.GONE);
