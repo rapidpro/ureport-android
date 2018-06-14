@@ -1,7 +1,6 @@
 package in.ureport.fragments;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -12,6 +11,7 @@ import com.facebook.login.LoginResult;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -26,12 +26,12 @@ public class LoginFragmentHolder {
     private static Firebase.AuthResultHandler firebaseAuthResultHandler;
     private static Callback<TwitterSession> twitterCallback;
 
-    public static void registerFacebookLoginCallback(FacebookCallback<LoginResult> callback) {
-        facebookLoginCallback = callback;
-    }
-
     public static void registerFirebaseAuthResultHandler(Firebase.AuthResultHandler listener) {
         firebaseAuthResultHandler = listener;
+    }
+
+    public static void registerFacebookLoginCallback(FacebookCallback<LoginResult> callback) {
+        facebookLoginCallback = callback;
     }
 
     public static void registerTwitterCallback(Callback<TwitterSession> callback) {
@@ -72,7 +72,6 @@ public class LoginFragmentHolder {
     }
 
     public static void loginWithTwitter(Activity activity, TwitterAuthClient authClient) {
-        Log.d("logincrash", "holder = " + authClient);
         authClient.authorize(activity, new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
@@ -88,6 +87,20 @@ public class LoginFragmentHolder {
 
     public static void authenticateWithTwitter(TwitterSession session) {
         FirebaseManager.authenticateWithTwitter(session, new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                firebaseAuthResultHandler.onAuthenticated(authData);
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                firebaseAuthResultHandler.onAuthenticationError(firebaseError);
+            }
+        });
+    }
+
+    public static void authenticateWithGoogle(GoogleApiClient googleApiClient) {
+        FirebaseManager.authenticateWithGoogle(googleApiClient, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
                 firebaseAuthResultHandler.onAuthenticated(authData);

@@ -48,7 +48,7 @@ import in.ureport.models.User;
 /**
  * Created by johncordeiro on 7/7/15.
  */
-public class LoginFragment extends LoadingFragment implements Firebase.AuthResultHandler {
+public class LoginFragment extends LoadingFragment {
 
     public static final String [] FACEBOOK_PERMISSIONS = { "email", "user_birthday" };
     public static final int ERROR_RESOLUTION_REQUEST_CODE = 300;
@@ -113,21 +113,6 @@ public class LoginFragment extends LoadingFragment implements Firebase.AuthResul
     @Override
     protected String getLoadingMessage() {
         return getString(R.string.login_load_user_message);
-    }
-
-    @Override
-    public void onAuthenticated(AuthData authData) {
-        dismissLoading();
-        User user = userSocialAuthBuilder.build(authData);
-        if (loginListener != null) {
-            loginListener.onLoginWithSocialNetwork(user);
-        }
-    }
-
-    @Override
-    public void onAuthenticationError(FirebaseError firebaseError) {
-        dismissLoading();
-        showLoginErrorAlert();
     }
 
     private void setupContextDependencies() {
@@ -232,87 +217,67 @@ public class LoginFragment extends LoadingFragment implements Firebase.AuthResul
         }
     }
 
-    private View.OnClickListener onLoginWithCredentialsClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(loginListener != null) {
-                loginListener.onLoginWithCredentials();
-            }
+    private View.OnClickListener onLoginWithCredentialsClickListener = view -> {
+        if (loginListener != null) {
+            loginListener.onLoginWithCredentials();
         }
     };
 
-    private View.OnClickListener onSignUpClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (loginListener != null) {
-                loginListener.onSignUp();
-            }
+    private View.OnClickListener onSignUpClickListener = view -> {
+        if (loginListener != null) {
+            loginListener.onSignUp();
         }
     };
 
     private void showLoginErrorAlert() {
-        Toast.makeText(getActivity(), R.string.login_error, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), R.string.login_error, Toast.LENGTH_LONG).show();
     }
 
-    private View.OnClickListener onTwitterLoginClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            LoginFragmentHolder.loginWithTwitter(getActivity(), twitterAuthClient);
-        }
-    };
+    private View.OnClickListener onTwitterLoginClickListener = view -> LoginFragmentHolder.loginWithTwitter(getActivity(), twitterAuthClient);
 
     private GoogleApiClient.ConnectionCallbacks googleConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
             shouldResolveErrors = false;
-            FirebaseManager.authenticateWithGoogle(googleApiClient, LoginFragment.this);
+            LoginFragmentHolder.authenticateWithGoogle(googleApiClient);
         }
 
         @Override
         public void onConnectionSuspended(int connectionSuspended) {}
     };
 
-    private GoogleApiClient.OnConnectionFailedListener googleConnectionFailedListener = new GoogleApiClient.OnConnectionFailedListener() {
-        @Override
-        public void onConnectionFailed(ConnectionResult connectionResult) {
-            if (!resolvingGoogleSignin && shouldResolveErrors) {
-                if (connectionResult.hasResolution()) {
-                    try {
-                        connectionResult.startResolutionForResult(getActivity(), ERROR_RESOLUTION_REQUEST_CODE);
-                        resolvingGoogleSignin = true;
-                    } catch (IntentSender.SendIntentException exception) {
-                        resolvingGoogleSignin = false;
-                        googleApiClient.connect();
-                    }
-                } else {
-                    dismissLoading();
-                    showLoginErrorAlert();
-                }
-            }
-        }
-    };
-
-    private View.OnClickListener onFacebookLoginClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            LoginManager loginManager = LoginManager.getInstance();
-            LoginFragmentHolder.loginWithFacebook(callbackManager);
-            loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
-        }
-    };
-
-    private View.OnClickListener onGoogleLoginClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                int hasWriteContactsPermission = getActivity().checkSelfPermission(android.Manifest.permission.GET_ACCOUNTS);
-                if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[] { android.Manifest.permission.GET_ACCOUNTS }
-                            , REQUEST_CODE_GET_ACCOUNTS_PERMISSION);
+    private GoogleApiClient.OnConnectionFailedListener googleConnectionFailedListener = connectionResult -> {
+        if (!resolvingGoogleSignin && shouldResolveErrors) {
+            if (connectionResult.hasResolution()) {
+                try {
+                    connectionResult.startResolutionForResult(getActivity(), ERROR_RESOLUTION_REQUEST_CODE);
+                    resolvingGoogleSignin = true;
+                } catch (IntentSender.SendIntentException exception) {
+                    resolvingGoogleSignin = false;
+                    googleApiClient.connect();
                 }
             } else {
-                loginWithGooglePlus();
+                dismissLoading();
+                showLoginErrorAlert();
             }
+        }
+    };
+
+    private View.OnClickListener onFacebookLoginClickListener = view -> {
+        LoginManager loginManager = LoginManager.getInstance();
+        LoginFragmentHolder.loginWithFacebook(callbackManager);
+        loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
+    };
+
+    private View.OnClickListener onGoogleLoginClickListener = view -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int hasWriteContactsPermission = getActivity().checkSelfPermission(android.Manifest.permission.GET_ACCOUNTS);
+            if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.GET_ACCOUNTS}
+                        , REQUEST_CODE_GET_ACCOUNTS_PERMISSION);
+            }
+        } else {
+            loginWithGooglePlus();
         }
     };
 
@@ -326,12 +291,9 @@ public class LoginFragment extends LoadingFragment implements Firebase.AuthResul
         }
     }
 
-    private View.OnClickListener onSkipLoginClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (loginListener != null)
-                loginListener.onSkipLogin();
-        }
+    private View.OnClickListener onSkipLoginClickListener = view -> {
+        if (loginListener != null)
+            loginListener.onSkipLogin();
     };
 
     public interface LoginListener {
