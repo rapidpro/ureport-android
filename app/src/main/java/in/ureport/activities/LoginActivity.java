@@ -31,16 +31,74 @@ import io.rapidpro.sdk.core.models.base.ContactBase;
 public class LoginActivity extends AppCompatActivity implements LoginFragment.LoginListener {
 
     private static final String TAG = "LoginActivity";
+    private static final String BUNDLE_LOADING_KEY = "loading";
+
+    private ProgressDialog progressDialog;
+    private boolean loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setupContextDependecies();
 
         if(savedInstanceState == null) {
             addLoginFragment();
         }
         checkVersionAndProceed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(BUNDLE_LOADING_KEY, loading);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null)
+            loading = savedInstanceState.getBoolean(BUNDLE_LOADING_KEY);
+
+        if (loading) showLoading();
+        else dismissLoading();
+    }
+
+    private void setupContextDependecies() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.load_message_wait));
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+
+        LoginActivityHolder.registerContactSavingRapidProListener(new LoginActivityHolder.RapidProContactSavingListener() {
+            @Override
+            public void onStart() {
+                showLoading();
+            }
+
+            @Override
+            public void onFinished(ContactBase contact, User user) {
+                dismissLoading();
+                updateUserAndDismiss(user, contact);
+            }
+        });
+    }
+
+    private void showLoading() {
+        loading = true;
+        progressDialog.show();
+    }
+
+    private void dismissLoading() {
+        loading = false;
+        progressDialog.dismiss();
     }
 
     private void checkVersionAndProceed() {
@@ -118,27 +176,8 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onUserReady(final User user, boolean newUser) {
-        if(user == null) return;
-        saveContactOnRapidPro(user, newUser);
-    }
-
-    private void saveContactOnRapidPro(final User user, final boolean newUser) {
-        SaveContactTask saveContactTask = new SaveContactTask(this, newUser) {
-            ProgressDialog progressDialog;
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = ProgressDialog.show(LoginActivity.this, null
-                        , getString(R.string.load_message_wait), true, false);
-            }
-            @Override
-            protected void onPostExecute(ContactBase contact) {
-                super.onPostExecute(contact);
-                if (progressDialog != null) progressDialog.dismiss();
-                updateUserAndDismiss(user, contact);
-            }
-        };
-        saveContactTask.execute(user);
+        if (user == null) return;
+        LoginActivityHolder.saveContactOnRapidPro(this, user, newUser);
     }
 
     private void updateUserAndDismiss(User user, ContactBase contact) {
