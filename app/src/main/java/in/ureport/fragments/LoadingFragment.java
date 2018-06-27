@@ -43,7 +43,6 @@ public abstract class LoadingFragment extends Fragment {
             loading = savedInstanceState.getBoolean(BUNDLE_LOADING_KEY);
 
         if (loading) showLoading();
-        else dismissLoading();
     }
 
     protected void showLoading() {

@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
     }
 
     private void saveContact(final User user) {
-        SaveContactTask saveContactTask = new SaveContactTask(MainActivity.this, false) {
+        SaveContactTask saveContactTask = new SaveContactTask(this, user, false) {
             @Override
             protected void onPostExecute(ContactBase contact) {
                 super.onPostExecute(contact);
@@ -126,7 +126,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
                 }
             }
         };
-        saveContactTask.execute(user);
+        saveContactTask.execute();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package in.ureport.tasks;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -29,7 +29,6 @@ import in.ureport.models.User;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.ip.ProxyResponse;
 import in.ureport.network.ProxyServices;
-import in.ureport.tasks.common.ProgressTask;
 import io.rapidpro.sdk.FcmClient;
 import io.rapidpro.sdk.core.models.Field;
 import io.rapidpro.sdk.core.models.base.ContactBase;
@@ -40,7 +39,7 @@ import retrofit.RetrofitError;
 /**
  * Created by johncordeiro on 18/08/15.
  */
-public class SaveContactTask extends ProgressTask<User, Void, ContactBase> {
+public class SaveContactTask extends AsyncTask<Void, Void, ContactBase> {
 
     private static final String TAG = "SaveContactTask";
 
@@ -48,32 +47,46 @@ public class SaveContactTask extends ProgressTask<User, Void, ContactBase> {
 
     private CountryInfo countryInfo;
     private Contact currentContact;
+    private User user;
     private final boolean newUser;
 
-    protected SaveContactTask(Context context, CountryInfo countryInfo, boolean newUser) {
-        super(context, R.string.load_message_save_user);
-        this.countryInfo = countryInfo;
+    private CountryProgram countryProgram;
+    private String rapidproEndpoint;
+    private String countryInfoJson;
+
+    private String proxyToken;
+
+    protected SaveContactTask(Context context, User user, boolean newUser) {
+        this.user = user;
         this.newUser = newUser;
+        this.countryProgram = getCountryProgram(user);
+        this.rapidproEndpoint = context.getString(countryProgram.getRapidproEndpoint());
+        this.countryInfoJson = IOHelper.loadJSONFromAsset(context, "countryInfo.json");
+
+        if (BuildConfig.SANDBOX_ORG) {
+            proxyToken = context.getString(R.string.fcm_client_token);
+        } else {
+            ProxyServices proxyServices = new ProxyServices(context);
+            try {
+                ProxyResponse response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
+                proxyToken = response.getToken();
+            } catch(Exception exception) { proxyToken = null; }
+        }
     }
 
-    public SaveContactTask(Context context, boolean newUser) {
-        super(context);
-        this.newUser = newUser;
+    protected SaveContactTask(Context context, User user, boolean newUser, CountryInfo countryInfo) {
+        this(context, user, newUser);
+        this.countryInfo = countryInfo;
     }
 
     @Override
-    protected ContactBase doInBackground(User... params) {
+    protected ContactBase doInBackground(Void... params) {
         ContactBase contact = null;
         try {
-            User user = params[0];
-            CountryProgram countryProgram = getCountryProgram(user);
+            rapidProServices = new RapidProServices(rapidproEndpoint, proxyToken);
 
-            String rapidproEndpoint = getContext().getString(countryProgram.getRapidproEndpoint());
-            String countryToken = getTokenFromProxy(countryProgram);
-            rapidProServices = new RapidProServices(rapidproEndpoint, countryToken);
-
-            UserManager.updateCountryToken(countryToken);
-            if (countryToken != null && !countryToken.isEmpty()) {
+            UserManager.updateCountryToken(proxyToken);
+            if (proxyToken != null && !proxyToken.isEmpty()) {
                 currentContact = loadCurrentContact(user);
                 UserManager.initializeFcmClient(countryProgram);
 
@@ -104,21 +117,6 @@ public class SaveContactTask extends ProgressTask<User, Void, ContactBase> {
             contact = loadContactWithUrn(fcmUrn);
         }
         return contact;
-    }
-
-    @Nullable
-    private String getTokenFromProxy(CountryProgram countryProgram) {
-        if (BuildConfig.SANDBOX_ORG) {
-            return getContext().getString(R.string.fcm_client_token);
-        }
-
-        try {
-            ProxyServices proxyServices = new ProxyServices(getContext());
-            ProxyResponse response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
-            return response.getToken();
-        } catch(Exception exception) {
-            return null;
-        }
     }
 
     private ContactBase saveContact(Contact contact) throws IOException {
@@ -203,19 +201,22 @@ public class SaveContactTask extends ProgressTask<User, Void, ContactBase> {
 
     private List<CountryInfo> getCountryInfoList() {
         try {
-            String json = IOHelper.loadJSONFromAsset(getContext(), "countryInfo.json");
-
             Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.TRANSIENT).create();
             Type type = new TypeToken<List<CountryInfo>>(){}.getType();
 
             JsonParser jsonParser = new JsonParser();
-            JsonObject jsonObject = (JsonObject) jsonParser.parse(json);
+            JsonObject jsonObject = (JsonObject) jsonParser.parse(countryInfoJson);
 
             return gson.fromJson(jsonObject.get("geonames"), type);
         } catch (Exception exception) {
             Log.e(TAG, "doInBackground: ", exception);
         }
         return null;
+    }
+
+    public interface Listener {
+        void onStart();
+        void onFinished(ContactBase contact, User user);
     }
 
 }

@@ -15,7 +15,7 @@ public class LoginActivityHolder {
     }
 
     public static void saveContactOnRapidPro(Context context, User user, boolean newUser) {
-        new SaveContactTask(context, newUser) {
+        new SaveContactTask(context, user, newUser) {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -26,7 +26,7 @@ public class LoginActivityHolder {
                 super.onPostExecute(contact);
                 rapidProContactSavingListener.onFinished(contact, user);
             }
-        }.execute(user);
+        }.execute();
     }
 
     interface RapidProContactSavingListener {

@@ -22,7 +22,6 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
-import in.ureport.tasks.SaveContactTask;
 import io.rapidpro.sdk.core.models.base.ContactBase;
 
 /**
@@ -68,7 +67,6 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
             loading = savedInstanceState.getBoolean(BUNDLE_LOADING_KEY);
 
         if (loading) showLoading();
-        else dismissLoading();
     }
 
     private void setupContextDependecies() {

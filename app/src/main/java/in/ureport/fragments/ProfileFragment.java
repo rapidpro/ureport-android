@@ -86,12 +86,24 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setupObjects();
         setupView(view);
-        loadUser();
+        setupContextDependencies();
+        ProfileFragmentHolder.loadUser();
     }
 
     private void setupObjects() {
         userServices = new UserServices();
         mediaSelector = new MediaSelector(getContext());
+    }
+
+    private void setupContextDependencies() {
+        ProfileFragmentHolder.registerFirebaseValueEventListenerAdapter(new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                user = dataSnapshot.getValue(User.class);
+                updateUser(user);
+            }
+        });
     }
 
     @Override
@@ -106,18 +118,6 @@ public class ProfileFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mediaSelector.onActivityResult(this, onLoadLocalMediaListener, requestCode, resultCode, data);
-    }
-
-    public void loadUser() {
-        UserServices userServices = new UserServices();
-        userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                super.onDataChange(dataSnapshot);
-                user = dataSnapshot.getValue(User.class);
-                updateUser(user);
-            }
-        });
     }
 
     private void setupView(View view) {
