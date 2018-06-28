@@ -23,15 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 
 import in.ureport.R;
 import in.ureport.activities.ProfileActivity;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.helpers.ImageLoader;
 import in.ureport.listener.OnEditProfileListener;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
@@ -70,7 +68,7 @@ public class ProfileFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle extras = getArguments();
-        if(extras != null && extras.containsKey(EXTRA_USER)) {
+        if (extras != null && extras.containsKey(EXTRA_USER)) {
             user = extras.getParcelable(EXTRA_USER);
         }
     }
@@ -87,7 +85,7 @@ public class ProfileFragment extends Fragment {
         setupObjects();
         setupView(view);
         setupContextDependencies();
-        ProfileFragmentHolder.loadUser();
+        loadUser();
     }
 
     private void setupObjects() {
@@ -109,9 +107,13 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof OnEditProfileListener) {
+        if (context instanceof OnEditProfileListener) {
             onEditProfileListener = (OnEditProfileListener) context;
         }
+    }
+
+    public void loadUser() {
+        ProfileFragmentHolder.loadUser();
     }
 
     @Override
@@ -172,42 +174,31 @@ public class ProfileFragment extends Fragment {
 
     private void checkRankingAction() {
         String action = getActivity().getIntent().getAction();
-        if(action != null && action.equals(ProfileActivity.ACTION_DISPLAY_RANKING)) {
+        if (action != null && action.equals(ProfileActivity.ACTION_DISPLAY_RANKING)) {
             pager.setCurrentItem(RANKING_POSITION);
         }
     }
 
-    private View.OnClickListener onLogoutClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            logout();
+    private View.OnClickListener onLogoutClickListener = view -> logout();
+
+    private View.OnClickListener onEditClickListener = view -> {
+        if (onEditProfileListener != null) {
+            onEditProfileListener.onEditProfile(user);
         }
     };
 
-    private View.OnClickListener onEditClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(onEditProfileListener != null) {
-                onEditProfileListener.onEditProfile(user);
-            }
-        }
-    };
-
-    private View.OnClickListener onPictureClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                    .setMessage(R.string.message_question_profile_picture)
-                    .setNegativeButton(R.string.cancel_dialog_button, null)
-                    .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mediaSelector.selectImage(ProfileFragment.this);
-                        }
-                    })
-                    .create();
-            alertDialog.show();
-        }
+    private View.OnClickListener onPictureClickListener = view -> {
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+                .setMessage(R.string.message_question_profile_picture)
+                .setNegativeButton(R.string.cancel_dialog_button, null)
+                .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mediaSelector.selectImage(ProfileFragment.this);
+                    }
+                })
+                .create();
+        alertDialog.show();
     };
 
     private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
@@ -280,4 +271,5 @@ public class ProfileFragment extends Fragment {
         UserManager.startLoginFlow(getContext());
         getActivity().finish();
     }
+
 }
