@@ -1,10 +1,8 @@
 package in.ureport.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +16,12 @@ import com.firebase.client.FirebaseError;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.helpers.ToolbarDesigner;
 
 /**
  * Created by johncordeiro on 17/08/15.
  */
-public class ForgotPasswordFragment extends Fragment {
+public class ForgotPasswordFragment extends LoadingFragment {
 
     private EditText email;
 
@@ -48,6 +45,12 @@ public class ForgotPasswordFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
+        setupContextDependencies();
+    }
+
+    @Override
+    protected String getLoadingMessage() {
+        return getString(R.string.load_message_reset_password);
     }
 
     private void setupView(View view) {
@@ -62,30 +65,27 @@ public class ForgotPasswordFragment extends Fragment {
         toolbarDesigner.setupFragmentDefaultToolbar(toolbar, R.string.label_forgot_password, this);
     }
 
-    private View.OnClickListener onSendClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(validateFields()) {
-                String email = ForgotPasswordFragment.this.email.getText().toString();
-                
-                final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
-                        , getString(R.string.load_message_reset_password), true, false);
-
-                FirebaseManager.getReference().resetPassword(email, new Firebase.ResultHandler() {
-                    @Override
-                    public void onSuccess() {
-                        progressDialog.dismiss();
-                        if(loginListener != null)
-                            loginListener.onPasswordReset();
-                    }
-
-                    @Override
-                    public void onError(FirebaseError firebaseError) {
-                        progressDialog.dismiss();
-                        Toast.makeText(getActivity(), R.string.error_forgot_password, Toast.LENGTH_LONG).show();
-                    }
-                });
+    private void setupContextDependencies() {
+        ForgotPasswordFragmentHolder.registerFirebasePasswordResultHandler(new Firebase.ResultHandler() {
+            @Override
+            public void onSuccess() {
+                dismissLoading();
+                if (loginListener != null)
+                    loginListener.onPasswordReset();
             }
+
+            @Override
+            public void onError(FirebaseError firebaseError) {
+                dismissLoading();
+                Toast.makeText(getContext(), R.string.error_forgot_password, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private View.OnClickListener onSendClickListener = view -> {
+        if (validateFields()) {
+            showLoading();
+            ForgotPasswordFragmentHolder.resetPassword(email.getText().toString());
         }
     };
 
