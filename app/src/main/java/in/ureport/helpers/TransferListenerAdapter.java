@@ -60,11 +60,13 @@ public abstract class TransferListenerAdapter implements TransferListener {
         Log.e(TAG, "Uploading error! Transfer ID: " + id, ex);
     }
 
-    public void onTransferFinished(Media media) {}
+    public void onStart() { }
 
-    public void onTransferFailed(){}
+    public void onTransferFinished(Media media) { }
 
-    public void onTransferWaitingNetwork(){}
+    public void onTransferFailed() { }
+
+    public void onTransferWaitingNetwork() { }
 
     public void setFilename(String filename) {
         this.filename = filename;
@@ -81,4 +83,5 @@ public abstract class TransferListenerAdapter implements TransferListener {
     public String getKey() {
         return filename;
     }
+
 }

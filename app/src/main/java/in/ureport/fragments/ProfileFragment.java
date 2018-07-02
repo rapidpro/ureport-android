@@ -1,14 +1,13 @@
 package in.ureport.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
+import com.squareup.picasso.Picasso;
 
 import in.ureport.R;
 import in.ureport.activities.ProfileActivity;
@@ -31,7 +31,6 @@ import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnEditProfileListener;
-import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
@@ -43,7 +42,7 @@ import in.ureport.views.adapters.NavigationAdapter;
 /**
  * Created by johncordeiro on 18/07/15.
  */
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends LoadingFragment {
 
     private static final String TAG = "ProfileFragment";
 
@@ -88,6 +87,11 @@ public class ProfileFragment extends Fragment {
         loadUser();
     }
 
+    @Override
+    protected String getLoadingMessage() {
+        return getString(R.string.load_message_uploading_image);
+    }
+
     private void setupObjects() {
         userServices = new UserServices();
         mediaSelector = new MediaSelector(getContext());
@@ -100,6 +104,45 @@ public class ProfileFragment extends Fragment {
                 super.onDataChange(dataSnapshot);
                 user = dataSnapshot.getValue(User.class);
                 updateUser(user);
+            }
+        });
+        ProfileFragmentHolder.registerImageTransferListenerAdapter(new TransferListenerAdapter(getContext(), null) {
+            @Override
+            public void onStart() {
+                super.onStart();
+                showLoading();
+            }
+
+            @Override
+            public void onTransferFinished(Media media) {
+                super.onTransferFinished(media);
+                dismissLoading();
+                if (user == null)
+                    return;
+
+                showLoading();
+                user.setPicture(media.getUrl());
+                userServices.editUserPicture(user, (firebaseError, firebase) -> {
+                    dismissLoading();
+                    if (firebaseError == null)
+                        ImageLoader.loadPersonPictureToImageView(picture, media.getUrl());
+                    else
+                        displayPictureError();
+                });
+            }
+
+            @Override
+            public void onTransferFailed() {
+                super.onTransferFailed();
+                dismissLoading();
+                displayPictureError();
+            }
+
+            @Override
+            public void onError(int id, Exception ex) {
+                super.onError(id, ex);
+                dismissLoading();
+                displayPictureError();
             }
         });
     }
@@ -188,7 +231,7 @@ public class ProfileFragment extends Fragment {
     };
 
     private View.OnClickListener onPictureClickListener = view -> {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(getContext())
                 .setMessage(R.string.message_question_profile_picture)
                 .setNegativeButton(R.string.cancel_dialog_button, null)
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
@@ -197,8 +240,7 @@ public class ProfileFragment extends Fragment {
                         mediaSelector.selectImage(ProfileFragment.this);
                     }
                 })
-                .create();
-        alertDialog.show();
+                .show();
     };
 
     private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
@@ -206,64 +248,21 @@ public class ProfileFragment extends Fragment {
         public void onLoadLocalImage(Uri uri) {
             LocalMedia localMedia = new LocalMedia(uri);
             localMedia.setType(Media.Type.Picture);
-            transferMedia(localMedia);
+            ProfileFragmentHolder.transferMedia(getContext(), localMedia);
         }
 
         @Override
-        public void onLoadLocalVideo(Uri uri) {}
+        public void onLoadLocalVideo(Uri uri) { }
 
         @Override
-        public void onLoadFile(Uri uri) {}
+        public void onLoadFile(Uri uri) { }
 
         @Override
-        public void onLoadAudio(Uri uri, int duration) {}
-
-        private void transferMedia(final LocalMedia localMedia) {
-            try {
-                final ProgressDialog progressUpload = ProgressDialog.show(getActivity(), null
-                        , getString(R.string.load_message_uploading_image), true, true);
-
-                TransferManager transferManager = new TransferManager(getActivity());
-                transferManager.transferMedia(localMedia, "user", new ImageTransferListener(progressUpload, localMedia));
-            } catch(Exception exception) {
-                Log.e(TAG, "onLoadLocalImage ", exception);
-                displayPictureError();
-            }
-        }
-    };
-
-    private class ImageTransferListener extends TransferListenerAdapter {
-        private ProgressDialog progressUpload;
-        private LocalMedia localMedia;
-        public ImageTransferListener(ProgressDialog progressUpload, LocalMedia localMedia) {
-            super(getContext(), localMedia);
-            this.progressUpload = progressUpload;
-            this.localMedia = localMedia;
-        }
-
-        @Override
-        public void onTransferFinished(Media media) {
-            super.onTransferFinished(media);
-            user.setPicture(media.getUrl());
-            userServices.editUserPicture(user, (firebaseError, firebase) -> {
-                if (firebaseError == null) {
-                    ImageLoader.loadPersonPictureToImageView(picture, media.getUrl());
-                    progressUpload.dismiss();
-                } else {
-                    displayPictureError();
-                }
-            });
-        }
-
-        @Override
-        public void onError(int id, Exception ex) {
-            super.onError(id, ex);
-            displayPictureError();
-        }
+        public void onLoadAudio(Uri uri, int duration) { }
     };
 
     private void displayPictureError() {
-        Toast.makeText(getActivity(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
     }
 
     private void logout() {
