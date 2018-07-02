@@ -1,11 +1,9 @@
 package in.ureport.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,7 +40,7 @@ import in.ureport.views.adapters.UreportersAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class NewChatFragment extends Fragment implements OnCreateIndividualChatListener
+public class NewChatFragment extends LoadingFragment implements OnCreateIndividualChatListener
         , SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
     private static final String TAG = "NewChatFragment";
@@ -103,6 +101,7 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
 
         setupObject();
         setupView(view);
+        setupContextDependencies();
         loadData();
         createChatRoomIfNeeded();
     }
@@ -111,6 +110,11 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     public void onDestroyView() {
         super.onDestroyView();
         if(userEventListener != null) userServices.removeCountryCodeListener(userEventListener);
+    }
+
+    @Override
+    protected String getLoadingMessage() {
+        return getString(R.string.load_message_wait);
     }
 
     private void createChatRoomIfNeeded() {
@@ -141,6 +145,13 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
 
         ureportersList = (RecyclerView) view.findViewById(R.id.ureportersList);
         ureportersList.setLayoutManager(new LinearLayoutManager(getActivity()));
+    }
+
+    private void setupContextDependencies() {
+        NewChatFragmentHolder.registerChatRoomSavedListener((chatRoom, chatMembers) -> {
+            dismissLoading();
+            onChatRoomSavedListener.onChatRoomSaved(chatRoom, chatMembers);
+        });
     }
 
     private void setupCreateGroupForModerators(TextView createGroup) {
@@ -218,18 +229,11 @@ public class NewChatFragment extends Fragment implements OnCreateIndividualChatL
     }
 
     private void checkIfExistsAndSaveChat(final User me, final User friend) {
-        if(existingChatRooms != null && containsChatRoom(me, friend)) {
+        if (existingChatRooms != null && containsChatRoom(me, friend)) {
             displayDuplicateAlert();
         } else {
-            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
-                    , getString(R.string.load_message_wait), true, false);
-            chatRoomServices.saveIndividualChatRoom(getActivity(), me, friend, new ChatRoomInterface.OnChatRoomSavedListener() {
-                @Override
-                public void onChatRoomSaved(ChatRoom chatRoom, ChatMembers chatMembers) {
-                    progressDialog.dismiss();
-                    onChatRoomSavedListener.onChatRoomSaved(chatRoom, chatMembers);
-                }
-            });
+            showLoading();
+            NewChatFragmentHolder.saveIndividualChatRoom(getContext(), me, friend);
         }
     }
 
