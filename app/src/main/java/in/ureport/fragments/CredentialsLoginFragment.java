@@ -56,6 +56,7 @@ public class CredentialsLoginFragment extends LoadingFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
+        setLoadingMessage(getString(R.string.load_message_logging));
     }
 
     @Override
@@ -80,11 +81,6 @@ public class CredentialsLoginFragment extends LoadingFragment {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected String getLoadingMessage() {
-        return getString(R.string.load_message_logging);
     }
 
     private void setLoginStatusBarColor() {

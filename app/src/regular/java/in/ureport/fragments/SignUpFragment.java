@@ -65,11 +65,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
         setupContextDependencies();
         setupView();
         setupUserIfExists();
-    }
-
-    @Override
-    protected String getLoadingMessage() {
-        return getString(R.string.load_registering_user);
+        setLoadingMessage(getString(R.string.load_registering_user));
     }
 
     private void setupContextDependencies() {

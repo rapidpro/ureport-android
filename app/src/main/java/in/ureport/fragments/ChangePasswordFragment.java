@@ -75,11 +75,7 @@ public class ChangePasswordFragment extends LoadingFragment {
         setupObjects();
         setupView(view);
         setupContextDependencies();
-    }
-
-    @Override
-    protected String getLoadingMessage() {
-        return getString(R.string.load_message_wait);
+        setLoadingMessage(getString(R.string.load_message_wait));
     }
 
     private void setupView(View view) {

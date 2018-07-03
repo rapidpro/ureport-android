@@ -77,6 +77,7 @@ public class LoginFragment extends LoadingFragment {
         super.onViewCreated(view, savedInstanceState);
         setupObjects();
         setupView(view);
+        setLoadingMessage(getString(R.string.login_load_user_message));
     }
 
     @Override
@@ -108,11 +109,6 @@ public class LoginFragment extends LoadingFragment {
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-    }
-
-    @Override
-    protected String getLoadingMessage() {
-        return getString(R.string.login_load_user_message);
     }
 
     private void setupContextDependencies() {

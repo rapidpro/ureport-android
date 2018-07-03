@@ -38,9 +38,9 @@ public class EditUserFragment extends UserInfoBaseFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupContextDependencies();
         setupView();
+        setLoadingMessage(getString(R.string.load_message_save_user));
     }
 
     @Override
@@ -49,11 +49,6 @@ public class EditUserFragment extends UserInfoBaseFragment {
         if(context instanceof UserSettingsFragment.UserSettingsListener) {
             userSettingsListener = (UserSettingsFragment.UserSettingsListener) context;
         }
-    }
-
-    @Override
-    protected String getLoadingMessage() {
-        return getString(R.string.load_message_save_user);
     }
 
     private void setupContextDependencies() {

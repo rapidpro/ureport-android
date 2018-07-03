@@ -46,11 +46,7 @@ public class ForgotPasswordFragment extends LoadingFragment {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
         setupContextDependencies();
-    }
-
-    @Override
-    protected String getLoadingMessage() {
-        return getString(R.string.load_message_reset_password);
+        setLoadingMessage(getString(R.string.load_message_reset_password));
     }
 
     private void setupView(View view) {
@@ -66,7 +62,7 @@ public class ForgotPasswordFragment extends LoadingFragment {
     }
 
     private void setupContextDependencies() {
-        ForgotPasswordFragmentHolder.registerFirebasePasswordResultHandler(new Firebase.ResultHandler() {
+        ForgotPasswordFragmentHolder.registerFirebaseForgotPasswordResultHandler(new Firebase.ResultHandler() {
             @Override
             public void onSuccess() {
                 dismissLoading();

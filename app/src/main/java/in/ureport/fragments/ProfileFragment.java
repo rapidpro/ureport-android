@@ -85,11 +85,7 @@ public class ProfileFragment extends LoadingFragment {
         setupView(view);
         setupContextDependencies();
         loadUser();
-    }
-
-    @Override
-    protected String getLoadingMessage() {
-        return getString(R.string.load_message_uploading_image);
+        setLoadingMessage(getString(R.string.load_message_uploading_image));
     }
 
     private void setupObjects() {

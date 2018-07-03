@@ -104,17 +104,13 @@ public class NewChatFragment extends LoadingFragment implements OnCreateIndividu
         setupContextDependencies();
         loadData();
         createChatRoomIfNeeded();
+        setLoadingMessage(getString(R.string.load_message_wait));
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         if(userEventListener != null) userServices.removeCountryCodeListener(userEventListener);
-    }
-
-    @Override
-    protected String getLoadingMessage() {
-        return getString(R.string.load_message_wait);
     }
 
     private void createChatRoomIfNeeded() {

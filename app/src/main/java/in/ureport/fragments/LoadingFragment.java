@@ -12,13 +12,10 @@ public abstract class LoadingFragment extends Fragment {
     private ProgressDialog progressDialog;
     private boolean loading;
 
-    abstract protected String getLoadingMessage();
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage(getLoadingMessage());
         progressDialog.setIndeterminate(true);
         progressDialog.setCancelable(false);
     }
@@ -43,6 +40,11 @@ public abstract class LoadingFragment extends Fragment {
             loading = savedInstanceState.getBoolean(BUNDLE_LOADING_KEY);
 
         if (loading) showLoading();
+    }
+
+    protected void setLoadingMessage(String message) {
+        if (progressDialog != null)
+            progressDialog.setMessage(message);
     }
 
     protected void showLoading() {
