@@ -8,9 +8,11 @@ import android.support.v4.app.Fragment;
 public abstract class LoadingFragment extends Fragment {
 
     private static final String BUNDLE_LOADING_KEY = "loading";
+    private static final String BUNDLE_LOADING_MESSAGE_KEY = "lastMessage";
 
     private ProgressDialog progressDialog;
     private boolean loading;
+    private String loadingMessage;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,32 +33,33 @@ public abstract class LoadingFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(BUNDLE_LOADING_KEY, loading);
+        outState.putString(BUNDLE_LOADING_MESSAGE_KEY, loadingMessage);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             loading = savedInstanceState.getBoolean(BUNDLE_LOADING_KEY);
-
-        if (loading) showLoading();
+            setLoadingMessage(savedInstanceState.getString(BUNDLE_LOADING_MESSAGE_KEY));
+        }
+        if (loading)
+            showLoading();
     }
 
     protected void setLoadingMessage(String message) {
-        if (progressDialog != null)
-            progressDialog.setMessage(message);
+        loadingMessage = message;
+        progressDialog.setMessage(message);
     }
 
     protected void showLoading() {
         loading = true;
-        if (!isDetached())
-            progressDialog.show();
+        if (isAdded()) progressDialog.show();
     }
 
     protected void dismissLoading() {
         loading = false;
-        if (!isDetached())
-            progressDialog.dismiss();
+        if (isAdded()) progressDialog.dismiss();
     }
 
 }

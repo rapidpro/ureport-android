@@ -1,12 +1,9 @@
 package in.ureport.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -34,6 +31,7 @@ import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import br.com.ilhasoft.support.utils.KeyboardHandler;
 import in.ureport.R;
+import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.FcmTopicManager;
 import in.ureport.managers.TransferManager;
@@ -44,14 +42,13 @@ import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.network.StoryServices;
-import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.network.UserServices;
 import in.ureport.views.adapters.MediaAdapter;
 
 /**
  * Created by johncordeiro on 7/14/15.
  */
-public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaListener
+public class CreateStoryFragment extends LoadingFragment implements MediaAdapter.MediaListener
         , PickMediaFragment.OnPickMediaListener {
 
     private static final String TAG = "CreateStoryFragment";
@@ -74,8 +71,6 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private StoryCreationListener storyCreationListener;
     private KeyboardHandler keyboardHandler = new KeyboardHandler();
 
-    public ProgressDialog progressDialog;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,10 +85,11 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         setupObjects();
         setupView(view);
         setupSelectedMedia(savedInstanceState);
+        setupContextDependencies();
     }
 
     private void setupSelectedMedia(@Nullable Bundle savedInstanceState) {
-        if(savedInstanceState != null && savedInstanceState.containsKey(EXTRA_SELECTED_MEDIA)) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(EXTRA_SELECTED_MEDIA)) {
             Media selectedMedia = savedInstanceState.getParcelable(EXTRA_SELECTED_MEDIA);
             mediaAdapter.setSelectedMedia(selectedMedia);
         }
@@ -120,7 +116,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void setupObjects() {
-        if(mediaList == null) {
+        if (mediaList == null) {
             mediaList = new ArrayList<>();
         }
     }
@@ -148,20 +144,43 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         mediaAddList.setAdapter(mediaAdapter);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if(context instanceof StoryCreationListener) {
-            this.storyCreationListener = (StoryCreationListener) context;
-        }
+    private void setupContextDependencies() {
+        CreateStoryFragmentHolder.registerMediasTransferListener(new TransferManager.OnTransferMediasListener() {
+            @Override
+            public void onTransferMedias(Map<LocalMedia, Media> medias) {
+                dismissLoading();
+                createStoryWithMediasAndSave(new ArrayList<>(medias.values()), getCoverFromMediasUploaded(medias));
+            }
+
+            @Override
+            public void onWaitingConnection() {
+                setLoadingMessage(getString(R.string.load_message_waiting_connection));
+            }
+
+            @Override
+            public void onFailed() {
+                dismissLoading();
+                displayMediaUploadError();
+            }
+        });
+        CreateStoryFragmentHolder.registerFirebaseStorySavingCompletionListener((firebaseError, firebase, story) -> {
+            dismissLoading();
+            finishPublishing();
+            if (firebaseError == null && storyCreationListener != null) {
+                story.setKey(firebase.getKey());
+
+                incrementStoryCount(story);
+                storyCreationListener.onStoryCreated(story);
+                registerAuthorToGcm(story);
+            }
+        });
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(progressDialog != null) {
-            progressDialog.dismiss();
-            progressDialog = null;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof StoryCreationListener) {
+            this.storyCreationListener = (StoryCreationListener) context;
         }
     }
 
@@ -174,7 +193,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.publish:
                 item.setEnabled(false);
                 publishStory();
@@ -195,10 +214,10 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void publishStory() {
-        if(isFieldsValid()) {
+        if (isFieldsValid()) {
             List<Media> mediasToUpload = getMediasToUpload();
 
-            if(mediasToUpload.size() > 0) {
+            if (mediasToUpload.size() > 0) {
                 uploadMediasAndCreateStory();
             } else {
                 createStoryWithMediasAndSave(mediaList, null);
@@ -209,7 +228,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void finishPublishing() {
-        if(publishItem != null)
+        if (publishItem != null)
             publishItem.setEnabled(true);
     }
 
@@ -217,7 +236,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     private List<Media> getMediasToUpload() {
         List<Media> mediasToUpload = new ArrayList<>();
         for (Media media : mediaList) {
-            if(media instanceof LocalMedia) {
+            if (media instanceof LocalMedia) {
                 mediasToUpload.add(media);
             }
         }
@@ -225,59 +244,28 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
     }
 
     private void uploadMediasAndCreateStory() {
-        try {
-            final TransferManager transferManager = new TransferManager(getActivity());
+        setLoadingMessage(getString(R.string.load_message_uploading_image));
+        showLoading();
+        CreateStoryFragmentHolder.transferMedias(getContext(), mediaList);
 
-            final ProgressDialog progressUpload = ProgressDialog.show(getActivity(), null
-                    , getString(R.string.load_message_uploading_image), true, true);
-            progressUpload.setOnCancelListener((DialogInterface dialog) -> {
-                finishPublishing();
-                transferManager.cancelTransfer();
-                Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
-            });
-
-            transferManager.transferMedias(mediaList, "story", new TransferManager.OnTransferMediasListener() {
-                @Override
-                public void onTransferMedias(Map<LocalMedia, Media> medias) {
-                    progressUpload.dismiss();
-                    createStoryWithMediasAndSave(new ArrayList<>(medias.values()), getCoverFromMediasUploaded(medias));
-                }
-
-                @Override
-                public void onWaitingConnection() {
-                    progressUpload.setMessage(getString(R.string.load_message_waiting_connection));
-                }
-
-                @Override
-                public void onFailed() {
-                    progressUpload.dismiss();
-                    displayMediaUploadError();
-                }
-            });
-        } catch(Exception exception) {
-            showErrorImageUpload();
-            Log.e(TAG, "uploadMediasAndCreateStory ", exception);
-        }
+//        progressUpload.setOnCancelListener((DialogInterface dialog) -> {
+//            finishPublishing();
+//            transferManager.cancelTransfer();
+//            Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
+//        });
     }
 
     private void displayMediaUploadError() {
         finishPublishing();
-
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext())
+        new AlertDialog.Builder(getContext())
                 .setMessage(R.string.error_media_upload)
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, null)
-                .create();
-        alertDialog.show();
-    }
-
-    private void showErrorImageUpload() {
-        finishPublishing();
-        Toast.makeText(getActivity(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
+                .show();
     }
 
     private void createStoryWithMediasAndSave(List<Media> medias, Media cover) {
-        final ProgressDialog progressCreation = ProgressDialog.show(getActivity(), null
-                , getString(R.string.load_message_wait), true, true);
+        setLoadingMessage(getString(R.string.load_message_wait));
+        showLoading();
 
         final Story story = new Story();
         story.setTitle(title.getText().toString());
@@ -290,21 +278,7 @@ public class CreateStoryFragment extends Fragment implements MediaAdapter.MediaL
         String markersText = markers.getText().toString();
         story.setMarkers(markersText.length() == 0 ? "" : markersText);
 
-        StoryServices storyServices = new StoryServices();
-        storyServices.saveStory(story, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                finishPublishing();
-                progressCreation.dismiss();
-                if (firebaseError == null && storyCreationListener != null) {
-                    story.setKey(firebase.getKey());
-
-                    incrementStoryCount(story);
-                    storyCreationListener.onStoryCreated(story);
-                    registerAuthorToGcm(story);
-                }
-            }
-        });
+        CreateStoryFragmentHolder.saveStory(story);
     }
 
     private void registerAuthorToGcm(final Story story) {
