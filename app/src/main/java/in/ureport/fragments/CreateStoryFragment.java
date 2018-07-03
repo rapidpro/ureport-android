@@ -1,6 +1,7 @@
 package in.ureport.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,8 +19,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +39,6 @@ import in.ureport.models.Marker;
 import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
-import in.ureport.network.StoryServices;
 import in.ureport.network.UserServices;
 import in.ureport.views.adapters.MediaAdapter;
 
@@ -86,6 +83,12 @@ public class CreateStoryFragment extends LoadingFragment implements MediaAdapter
         setupView(view);
         setupSelectedMedia(savedInstanceState);
         setupContextDependencies();
+        setLoadingCancelable(true);
+        setLoadingCancelListener(dialogInterface -> {
+            finishPublishing();
+            CreateStoryFragmentHolder.cancelTransfer(getContext());
+            Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void setupSelectedMedia(@Nullable Bundle savedInstanceState) {
@@ -247,12 +250,6 @@ public class CreateStoryFragment extends LoadingFragment implements MediaAdapter
         setLoadingMessage(getString(R.string.load_message_uploading_image));
         showLoading();
         CreateStoryFragmentHolder.transferMedias(getContext(), mediaList);
-
-//        progressUpload.setOnCancelListener((DialogInterface dialog) -> {
-//            finishPublishing();
-//            transferManager.cancelTransfer();
-//            Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
-//        });
     }
 
     private void displayMediaUploadError() {

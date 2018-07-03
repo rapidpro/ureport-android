@@ -52,6 +52,15 @@ public class CreateStoryFragmentHolder {
         }
     }
 
+    public static void cancelTransfer(Context context) {
+        try {
+            TransferManager transferManager = new TransferManager(context);
+            transferManager.cancelTransfer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void saveStory(Story story) {
         StoryServices storyServices = new StoryServices();
         storyServices.saveStory(story, (firebaseError, firebase) ->
