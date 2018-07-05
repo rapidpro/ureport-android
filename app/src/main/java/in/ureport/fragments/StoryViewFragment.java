@@ -1,12 +1,10 @@
 package in.ureport.fragments;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -59,7 +57,7 @@ import in.ureport.views.adapters.MediaAdapter;
 /**
  * Created by johncordeiro on 7/16/15.
  */
-public class StoryViewFragment extends Fragment
+public class StoryViewFragment extends LoadingFragment
         implements ContributionAdapter.OnContributionRemoveListener,
         ContributionAdapter.OnContributionDenounceListener {
 
@@ -86,6 +84,9 @@ public class StoryViewFragment extends Fragment
     private StoryServices storyServices;
     private UserServices userServices;
 
+    private static Firebase.CompletionListener firebaseContributionDenouncedListener;
+    private static Firebase.CompletionListener firebaseContributionRemovedListener;
+
     private MediaViewer mediaViewer;
     private KeyboardHandler keyboardHandler;
     private int storyLikeCount;
@@ -109,6 +110,7 @@ public class StoryViewFragment extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupContextDependentListeners();
         if (getArguments() != null && getArguments().containsKey(EXTRA_STORY)
                 && getArguments().containsKey(EXTRA_USER)) {
             story = getArguments().getParcelable(EXTRA_STORY);
@@ -128,12 +130,30 @@ public class StoryViewFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
 
         setupObjects();
+        setLoadingMessage(getString(R.string.load_message_wait));
         if (isLoaded) {
             setupView(view);
             loadData();
         } else {
             loadStoryAndSetupView(view);
         }
+    }
+
+    private void setupContextDependentListeners() {
+        firebaseContributionDenouncedListener = (firebaseError, firebase) -> {
+            dismissLoading();
+            if (firebaseError == null)
+                displayToast(R.string.message_success_denounce);
+            else
+                displayToast(R.string.error_remove);
+        };
+        firebaseContributionRemovedListener = (firebaseError, firebase) -> {
+            dismissLoading();
+            if (firebaseError == null)
+                displayToast(R.string.message_success_remove);
+            else
+                displayToast(R.string.error_remove);
+        };
     }
 
     private void loadStoryAndSetupView(final View view) {
@@ -544,36 +564,16 @@ public class StoryViewFragment extends Fragment
 
     @Override
     public void onContributionRemove(Contribution contribution) {
-        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
-                , getString(R.string.load_message_wait), true, false);
-        contributionServices.removeContribution(story.getKey(), contribution, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                progressDialog.dismiss();
-                if (firebaseError == null) {
-                    displayToast(R.string.message_success_remove);
-                } else {
-                    displayToast(R.string.error_remove);
-                }
-            }
-        });
+        showLoading();
+        contributionServices.removeContribution(story.getKey(), contribution, (firebaseError, firebase) ->
+                firebaseContributionRemovedListener.onComplete(firebaseError, firebase));
     }
 
     @Override
     public void onContributionDenounce(Contribution contribution) {
-        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null
-                , getString(R.string.load_message_wait), true, false);
-        contributionServices.denounceContribution(story.getKey(), contribution, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                progressDialog.dismiss();
-                if (firebaseError == null) {
-                    displayToast(R.string.message_success_denounce);
-                } else {
-                    displayToast(R.string.error_remove);
-                }
-            }
-        });
+        showLoading();
+        contributionServices.denounceContribution(story.getKey(), contribution, (firebaseError, firebase) ->
+                firebaseContributionDenouncedListener.onComplete(firebaseError, firebase));
     }
 
     private void cleanNotification() {
@@ -582,21 +582,18 @@ public class StoryViewFragment extends Fragment
     }
 
     private void displayToast(@StringRes int messageId) {
-        Toast.makeText(getActivity(), messageId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT).show();
     }
 
-    private View.OnClickListener onLikeClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (UserManager.validateKeyAction(getActivity())) {
-                boolean selected = view.isSelected();
-                view.setSelected(!selected);
+    private View.OnClickListener onLikeClickListener = view -> {
+        if (UserManager.validateKeyAction(getActivity())) {
+            boolean selected = view.isSelected();
+            view.setSelected(!selected);
 
-                storyLikeCount += selected ? -1 : 1;
-                updateLikes(storyLikeCount);
+            storyLikeCount += selected ? -1 : 1;
+            updateLikes(storyLikeCount);
 
-                toggleLike(view, selected);
-            }
+            toggleLike(view, selected);
         }
     };
 
