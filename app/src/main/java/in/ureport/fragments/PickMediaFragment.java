@@ -35,7 +35,7 @@ import in.ureport.tasks.CompressVideoTask;
 /**
  * Created by john-mac on 2/5/16.
  */
-public class PickMediaFragment extends Fragment
+public class PickMediaFragment extends LoadingFragment
         implements MediaSelector.OnLoadLocalMediaListener, YoutubePicker.OnPickYoutubeVideoListener {
 
     private static final String TAG = "PickMediaFragment";
@@ -45,9 +45,14 @@ public class PickMediaFragment extends Fragment
     private MediaSelector mediaSelector;
     private YoutubeThumbnailHandler youtubeThumbnailHandler;
 
-    private ProgressDialog progressDialog;
-
     private OnPickMediaListener onPickMediaListener;
+    private static CompressVideoTaskListener compressVideoTaskListener;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setupContextDependentListeners();
+    }
 
     @Nullable
     @Override
@@ -60,6 +65,7 @@ public class PickMediaFragment extends Fragment
         super.onViewCreated(view, savedInstanceState);
         setupObjects();
         setupView(view);
+        setLoadingMessage(getString(R.string.message_compressing_video));
     }
 
     @Override
@@ -72,6 +78,24 @@ public class PickMediaFragment extends Fragment
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mediaSelector.onRequestPermissionResult(this, requestCode, grantResults);
+    }
+
+    private void setupContextDependentListeners() {
+        compressVideoTaskListener = new CompressVideoTaskListener() {
+            @Override
+            public void onStart() {
+                showLoading();
+            }
+
+            @Override
+            public void onComplete(Uri uri) {
+                dismissLoading();
+                if (uri != null)
+                    addLocalMedia(uri, Media.Type.VideoPhone, null);
+                else
+                    Toast.makeText(getContext(), R.string.error_compressing_video, Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
     private void setupObjects() {
@@ -201,18 +225,12 @@ public class PickMediaFragment extends Fragment
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progressDialog = ProgressDialog.show(getActivity(), null
-                        , getString(R.string.message_compressing_video), true, false);
+                compressVideoTaskListener.onStart();
             }
 
             @Override
             protected void onPostExecute(Uri uri) {
-                progressDialog.cancel();
-                if(uri != null) {
-                    addLocalMedia(uri, Media.Type.VideoPhone, null);
-                } else {
-                    Toast.makeText(getContext(), R.string.error_compressing_video, Toast.LENGTH_SHORT).show();
-                }
+                compressVideoTaskListener.onComplete(uri);
             }
         }.execute(uri);
     }
@@ -273,4 +291,10 @@ public class PickMediaFragment extends Fragment
     public interface OnPickMediaListener {
         void onPickMedia(Media media);
     }
+
+    interface CompressVideoTaskListener {
+        void onStart();
+        void onComplete(Uri uri);
+    }
+
 }

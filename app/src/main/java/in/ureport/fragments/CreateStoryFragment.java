@@ -1,7 +1,6 @@
 package in.ureport.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -51,6 +50,7 @@ public class CreateStoryFragment extends LoadingFragment implements MediaAdapter
     private static final String TAG = "CreateStoryFragment";
     public static final int MEDIA_GAP = 5;
 
+    private static final String TAG_PICK_MEDIA_FRAGMENT = "picK_media_fragment";
     private static final String EXTRA_MARKERS = "markers";
     private static final String EXTRA_MEDIAS = "medias";
     private static final String EXTRA_SELECTED_MEDIA = "selectedMedia";
@@ -67,6 +67,17 @@ public class CreateStoryFragment extends LoadingFragment implements MediaAdapter
 
     private StoryCreationListener storyCreationListener;
     private KeyboardHandler keyboardHandler = new KeyboardHandler();
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            PickMediaFragment pickMediaFragment = (PickMediaFragment) getFragmentManager()
+                    .findFragmentByTag(TAG_PICK_MEDIA_FRAGMENT);
+            if (pickMediaFragment != null)
+                pickMediaFragment.setOnPickMediaListener(this);
+        }
+    }
 
     @Nullable
     @Override
@@ -343,7 +354,7 @@ public class CreateStoryFragment extends LoadingFragment implements MediaAdapter
         getFragmentManager().beginTransaction()
                 .addToBackStack(null)
                 .setCustomAnimations(R.anim.slide_in_top, R.anim.slide_out_bottom, R.anim.slide_out_bottom, R.anim.slide_in_top)
-                .replace(R.id.details, pickMediaFragment)
+                .replace(R.id.details, pickMediaFragment, TAG_PICK_MEDIA_FRAGMENT)
                 .commit();
     }
 
