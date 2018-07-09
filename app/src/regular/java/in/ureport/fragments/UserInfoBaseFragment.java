@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
@@ -44,7 +43,7 @@ import in.ureport.models.holders.UserGender;
 /**
  * Created by johncordeiro on 10/09/15.
  */
-public abstract class UserInfoBaseFragment extends LoadingFragment implements LoaderManager.LoaderCallbacks, DatePickerDialog.OnDateSetListener {
+public abstract class UserInfoBaseFragment extends ProgressFragment implements LoaderManager.LoaderCallbacks, DatePickerDialog.OnDateSetListener {
 
     private static final String TAG = "UserInfoBaseFragment";
 

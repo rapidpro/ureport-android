@@ -51,7 +51,7 @@ import in.ureport.views.adapters.UreportersAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class CreateGroupFragment extends LoadingFragment {
+public class CreateGroupFragment extends ProgressFragment {
 
     private static final String TAG = "CreateGroupFragment";
 

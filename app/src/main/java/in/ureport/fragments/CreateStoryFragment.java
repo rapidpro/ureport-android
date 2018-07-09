@@ -44,7 +44,7 @@ import in.ureport.views.adapters.MediaAdapter;
 /**
  * Created by johncordeiro on 7/14/15.
  */
-public class CreateStoryFragment extends LoadingFragment implements MediaAdapter.MediaListener
+public class CreateStoryFragment extends ProgressFragment implements MediaAdapter.MediaListener
         , PickMediaFragment.OnPickMediaListener {
 
     private static final String TAG = "CreateStoryFragment";

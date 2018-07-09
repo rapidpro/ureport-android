@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-public abstract class LoadingFragment extends Fragment {
+public abstract class ProgressFragment extends Fragment {
 
     private static final String BUNDLE_LOADING_KEY = "loading";
     private static final String BUNDLE_LOADING_MESSAGE_KEY = "loadingLastMessage";

@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,7 +52,7 @@ import retrofit.RetrofitError;
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class StoriesListFragment extends LoadingFragment implements StoriesAdapter.OnStoryViewListener
+public class StoriesListFragment extends ProgressFragment implements StoriesAdapter.OnStoryViewListener
         , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener, OnNeedUpdateStoryListener, FloatingActionButtonListener {
 
     private static final String TAG = "StoriesListFragment";

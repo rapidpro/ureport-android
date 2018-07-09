@@ -3,7 +3,6 @@ package in.ureport.fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
-import com.squareup.picasso.Picasso;
 
 import in.ureport.R;
 import in.ureport.activities.ProfileActivity;
@@ -42,7 +39,7 @@ import in.ureport.views.adapters.NavigationAdapter;
 /**
  * Created by johncordeiro on 18/07/15.
  */
-public class ProfileFragment extends LoadingFragment {
+public class ProfileFragment extends ProgressFragment {
 
     private static final String TAG = "ProfileFragment";
 

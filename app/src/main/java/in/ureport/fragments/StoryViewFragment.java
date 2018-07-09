@@ -57,7 +57,7 @@ import in.ureport.views.adapters.MediaAdapter;
 /**
  * Created by johncordeiro on 7/16/15.
  */
-public class StoryViewFragment extends LoadingFragment
+public class StoryViewFragment extends ProgressFragment
         implements ContributionAdapter.OnContributionRemoveListener,
         ContributionAdapter.OnContributionDenounceListener {
 

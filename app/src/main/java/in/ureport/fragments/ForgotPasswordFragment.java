@@ -21,7 +21,7 @@ import in.ureport.helpers.ToolbarDesigner;
 /**
  * Created by johncordeiro on 17/08/15.
  */
-public class ForgotPasswordFragment extends LoadingFragment {
+public class ForgotPasswordFragment extends ProgressFragment {
 
     private EditText email;
 

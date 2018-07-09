@@ -33,7 +33,7 @@ import in.ureport.tasks.CompressVideoTask;
 /**
  * Created by john-mac on 2/5/16.
  */
-public class PickMediaFragment extends LoadingFragment
+public class PickMediaFragment extends ProgressFragment
         implements MediaSelector.OnLoadLocalMediaListener, YoutubePicker.OnPickYoutubeVideoListener {
 
     private static final String TAG = "PickMediaFragment";

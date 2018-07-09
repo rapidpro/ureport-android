@@ -25,7 +25,6 @@ import com.facebook.login.LoginResult;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
@@ -41,14 +40,13 @@ import java.util.Arrays;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.BuildConfig;
 import in.ureport.R;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserSocialAuthBuilder;
 import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 7/7/15.
  */
-public class LoginFragment extends LoadingFragment {
+public class LoginFragment extends ProgressFragment {
 
     public static final String [] FACEBOOK_PERMISSIONS = { "email", "user_birthday" };
     public static final int ERROR_RESOLUTION_REQUEST_CODE = 300;

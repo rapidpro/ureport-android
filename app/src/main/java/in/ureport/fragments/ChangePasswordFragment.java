@@ -16,13 +16,12 @@ import com.firebase.client.FirebaseError;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 11/09/15.
  */
-public class ChangePasswordFragment extends LoadingFragment {
+public class ChangePasswordFragment extends ProgressFragment {
 
     private static final String EXTRA_USER = "user";
 

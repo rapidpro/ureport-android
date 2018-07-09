@@ -29,7 +29,6 @@ import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
 import in.ureport.managers.SearchManager;
 import in.ureport.managers.UserManager;
-import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
@@ -40,7 +39,7 @@ import in.ureport.views.adapters.UreportersAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class NewChatFragment extends LoadingFragment implements OnCreateIndividualChatListener
+public class NewChatFragment extends ProgressFragment implements OnCreateIndividualChatListener
         , SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
     private static final String TAG = "NewChatFragment";

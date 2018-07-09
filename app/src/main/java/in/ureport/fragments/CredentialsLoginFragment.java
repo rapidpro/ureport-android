@@ -34,7 +34,7 @@ import static android.content.Context.MODE_PRIVATE;
 /**
  * Created by johncordeiro on 7/7/15.
  */
-public class CredentialsLoginFragment extends LoadingFragment {
+public class CredentialsLoginFragment extends ProgressFragment {
 
     private EditText email;
     private EditText password;
