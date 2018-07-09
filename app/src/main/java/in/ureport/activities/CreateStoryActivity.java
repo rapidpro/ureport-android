@@ -28,6 +28,9 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
     public static final String EXTRA_USER = "user";
 
     private static final String TAG_CREATE_STORY = "createStoryFragmentTag";
+    private static final String BUNDLE_CREATED_STORY = "createdStory";
+
+    private Story createdStory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +39,23 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
         setContentView(R.layout.activity_create_story);
         setupView();
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null)
             addCreateStoryFragment();
-        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(BUNDLE_CREATED_STORY, createdStory);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null)
+            createdStory = savedInstanceState.getParcelable(BUNDLE_CREATED_STORY);
+
+        if (createdStory != null) showStoryGameficationAlert(createdStory);
     }
 
     @Override
@@ -79,7 +96,7 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
         keyboardHandler.changeKeyboardVisibility(this, false);
 
         MarkersFragment markersFragment;
-        if(selectedMarkers != null && selectedMarkers.size() > 0)
+        if (selectedMarkers != null && selectedMarkers.size() > 0)
             markersFragment = MarkersFragment.newInstance((ArrayList<Marker>)selectedMarkers);
         else
             markersFragment = new MarkersFragment();
@@ -93,6 +110,11 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
 
     @Override
     public void onStoryCreated(final Story story) {
+        createdStory = story;
+        showStoryGameficationAlert(story);
+    }
+
+    private void showStoryGameficationAlert(final Story story) {
         UserViewManager userViewManager = new UserViewManager(this);
         userViewManager.showStoryPublishingWarning(() -> showPointsEarningAndClose(story));
     }
@@ -108,7 +130,7 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
     @Override
     public void onSelectionResult(List<Marker> markers) {
         CreateStoryFragment createStoryFragment = (CreateStoryFragment) getSupportFragmentManager().findFragmentByTag(TAG_CREATE_STORY);
-        if(createStoryFragment != null)
+        if (createStoryFragment != null)
             createStoryFragment.setSelectedMarkers(markers);
     }
 
