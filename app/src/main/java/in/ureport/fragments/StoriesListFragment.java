@@ -53,7 +53,7 @@ import retrofit.RetrofitError;
 /**
  * Created by johncordeiro on 7/13/15.
  */
-public class StoriesListFragment extends Fragment implements StoriesAdapter.OnStoryViewListener
+public class StoriesListFragment extends LoadingFragment implements StoriesAdapter.OnStoryViewListener
         , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener, OnNeedUpdateStoryListener, FloatingActionButtonListener {
 
     private static final String TAG = "StoriesListFragment";
