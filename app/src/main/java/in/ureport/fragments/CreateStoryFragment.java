@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +40,7 @@ import in.ureport.models.Marker;
 import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
+import in.ureport.network.StoryServices;
 import in.ureport.network.UserServices;
 import in.ureport.views.adapters.MediaAdapter;
 
@@ -68,6 +71,9 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
     private StoryCreationListener storyCreationListener;
     private KeyboardHandler keyboardHandler = new KeyboardHandler();
 
+    private static TransferManager.OnTransferMediasListener mediasTransferListener;
+    private static FirebaseStorySavingCompletionListener firebaseStoryCompletionListener;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +103,7 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
         setLoadingCancelable(true);
         setLoadingCancelListener(dialogInterface -> {
             finishPublishing();
-            CreateStoryFragmentHolder.cancelTransfer(getContext());
+            cancelTransfers();
             Toast.makeText(getContext(), R.string.message_upload_cancel, Toast.LENGTH_SHORT).show();
         });
     }
@@ -159,7 +165,7 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
     }
 
     private void setupContextDependencies() {
-        CreateStoryFragmentHolder.registerMediasTransferListener(new TransferManager.OnTransferMediasListener() {
+        mediasTransferListener = new TransferManager.OnTransferMediasListener() {
             @Override
             public void onTransferMedias(Map<LocalMedia, Media> medias) {
                 dismissLoading();
@@ -176,8 +182,8 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
                 dismissLoading();
                 displayMediaUploadError();
             }
-        });
-        CreateStoryFragmentHolder.registerFirebaseStorySavingCompletionListener((firebaseError, firebase, story) -> {
+        };
+        firebaseStoryCompletionListener = (firebaseError, firebase, story) -> {
             dismissLoading();
             finishPublishing();
             if (firebaseError == null && storyCreationListener != null) {
@@ -187,7 +193,7 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
                 storyCreationListener.onStoryCreated(story);
                 registerAuthorToGcm(story);
             }
-        });
+        };
     }
 
     @Override
@@ -260,7 +266,37 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
     private void uploadMediasAndCreateStory() {
         setLoadingMessage(getString(R.string.load_message_uploading_image));
         showLoading();
-        CreateStoryFragmentHolder.transferMedias(getContext(), mediaList);
+        try {
+            TransferManager transferManager = new TransferManager(getContext());
+            transferManager.transferMedias(mediaList, "story", new TransferManager.OnTransferMediasListener() {
+                @Override
+                public void onTransferMedias(Map<LocalMedia, Media> medias) {
+                    mediasTransferListener.onTransferMedias(medias);
+                }
+
+                @Override
+                public void onWaitingConnection() {
+                    mediasTransferListener.onWaitingConnection();
+                }
+
+                @Override
+                public void onFailed() {
+                    mediasTransferListener.onFailed();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            mediasTransferListener.onFailed();
+        }
+    }
+
+    private void cancelTransfers() {
+        try {
+            TransferManager transferManager = new TransferManager(getContext());
+            transferManager.cancelTransfer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void displayMediaUploadError() {
@@ -286,7 +322,10 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
         String markersText = markers.getText().toString();
         story.setMarkers(markersText.length() == 0 ? "" : markersText);
 
-        CreateStoryFragmentHolder.saveStory(story);
+        StoryServices storyServices = new StoryServices();
+        storyServices.saveStory(story, (firebaseError, firebase) ->
+                firebaseStoryCompletionListener.onComplete(firebaseError, firebase, story)
+        );
     }
 
     private void registerAuthorToGcm(final Story story) {
@@ -375,4 +414,9 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
         void onAddMarkers(List<Marker> markers);
         void onStoryCreated(Story story);
     }
+
+    interface FirebaseStorySavingCompletionListener {
+        void onComplete(FirebaseError firebaseError, Firebase firebase, Story story);
+    }
+
 }

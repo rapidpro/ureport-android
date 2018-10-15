@@ -24,7 +24,7 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         publicType = false;
-        setupContextDependentListeners();
+        setupContextDependencies();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
                 firebaseUpdateFinishedListener.onComplete(firebaseError, firebase));
     }
 
-    private void setupContextDependentListeners() {
+    private void setupContextDependencies() {
         firebaseUpdateFinishedListener = (firebaseError, firebase) -> {
             dismissLoading();
             if (firebaseError == null)
