@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.firebase.client.AuthData;
+import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
@@ -28,6 +31,7 @@ import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
 import in.ureport.models.ip.IpResponse;
 import in.ureport.network.IpServices;
+import in.ureport.network.UserServices;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -40,6 +44,10 @@ public class SignUpFragment extends UserInfoBaseFragment {
     private static final String TAG = "SignUpFragment";
 
     private LoginFragment.LoginListener loginListener;
+
+    private static ValueResultHandlerWrapper firebaseValueResultHandler;
+    private static AuthResultHandlerWrapper firebaseAuthResultHandler;
+    private static Firebase.CompletionListener firebaseCompletionListener;
 
     public static SignUpFragment newInstance(User user) {
         SignUpFragment signUpFragment = new SignUpFragment();
@@ -69,11 +77,11 @@ public class SignUpFragment extends UserInfoBaseFragment {
     }
 
     private void setupContextDependencies() {
-        SignUpFragmentHolder.registerFirebaseValueResultHandler(new SignUpFragmentHolder.ValueResultHandlerWrapper() {
+        firebaseValueResultHandler = new ValueResultHandlerWrapper() {
             @Override
             public void onSuccess(Map<String, Object> result, Login login, User user) {
                 user.setKey(result.get("uid").toString());
-                SignUpFragmentHolder.authWithPassword(login, user);
+                authenticateAndSaveUser(login, user);
             }
 
             @Override
@@ -82,9 +90,8 @@ public class SignUpFragment extends UserInfoBaseFragment {
                 Toast.makeText(getContext(), R.string.error_email_already_exists, Toast.LENGTH_LONG).show();
                 AnalyticsHelper.sendFirebaseError(firebaseError);
             }
-        });
-
-        SignUpFragmentHolder.registerFirebaseAuthResultHandler(new SignUpFragmentHolder.AuthResultHandlerWrapper() {
+        };
+        firebaseAuthResultHandler = new AuthResultHandlerWrapper() {
             @Override
             public void onAuthenticated(User user) {
                 dismissLoading();
@@ -96,9 +103,8 @@ public class SignUpFragment extends UserInfoBaseFragment {
                 dismissLoading();
                 Toast.makeText(getContext(), R.string.error_valid_email, Toast.LENGTH_LONG).show();
             }
-        });
-
-        SignUpFragmentHolder.registerFirebaseCompletionListener((firebaseError, firebase) -> {
+        };
+        firebaseCompletionListener = ((firebaseError, firebase) -> {
             dismissLoading();
             if (firebaseError != null)
                 Toast.makeText(getContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
@@ -223,7 +229,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
 
             switch (user.getType()) {
                 case ureport:
-                    SignUpFragmentHolder.createUserAndAuthenticate(login, user);
+                    createUserAndAuthenticate(login, user);
                     break;
                 default:
                     storeUserAndFinish(user);
@@ -231,9 +237,39 @@ public class SignUpFragment extends UserInfoBaseFragment {
         }
     };
 
+    private void createUserAndAuthenticate(final Login login, final User user) {
+        FirebaseManager.getReference().createUser(login.getEmail(), login.getPassword(), new Firebase.ValueResultHandler<Map<String, Object>>() {
+            @Override
+            public void onSuccess(Map<String, Object> result) {
+                firebaseValueResultHandler.onSuccess(result, login, user);
+            }
+
+            @Override
+            public void onError(FirebaseError firebaseError) {
+                firebaseValueResultHandler.onError(firebaseError);
+            }
+        });
+    }
+
+    private void authenticateAndSaveUser(final Login login, final User user) {
+        FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                firebaseAuthResultHandler.onAuthenticated(user);
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                firebaseAuthResultHandler.onAuthenticationError(firebaseError);
+            }
+        });
+    }
+
     private void storeUserAndFinish(final User user) {
         showLoading();
-        SignUpFragmentHolder.saveUser(user);
+        UserServices userServices = new UserServices();
+        userServices.saveUser(user, (firebaseError, firebase) ->
+                firebaseCompletionListener.onComplete(firebaseError, firebase));
     }
 
     @NonNull
@@ -242,6 +278,16 @@ public class SignUpFragment extends UserInfoBaseFragment {
         String password = SignUpFragment.this.password.getText().toString();
 
         return new Login(email, password);
+    }
+
+    interface ValueResultHandlerWrapper {
+        void onSuccess(Map<String, Object> result, Login login, User user);
+        void onError(FirebaseError firebaseError);
+    }
+
+    interface AuthResultHandlerWrapper {
+        void onAuthenticated(User user);
+        void onAuthenticationError(FirebaseError firebaseError);
     }
 
 }
