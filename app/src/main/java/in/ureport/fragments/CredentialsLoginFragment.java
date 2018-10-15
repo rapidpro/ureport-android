@@ -25,6 +25,7 @@ import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.Login;
 import in.ureport.network.UserServices;
@@ -44,6 +45,8 @@ public class CredentialsLoginFragment extends ProgressFragment {
     private EditTextValidator validator = new EditTextValidator();
 
     private LoginFragment.LoginListener loginListener;
+
+    private static Firebase.AuthResultHandler firebaseAuthCallback;
 
     @Nullable
     @Override
@@ -89,7 +92,7 @@ public class CredentialsLoginFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        CredentialsLoginFragmentHolder.registerFirebaseAuthResultHandler(new Firebase.AuthResultHandler() {
+        firebaseAuthCallback = new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
                 dismissLoading();
@@ -101,7 +104,7 @@ public class CredentialsLoginFragment extends ProgressFragment {
                 dismissLoading();
                 showLoginError();
             }
-        });
+        };
     }
 
     private void setupView(View view) {
@@ -142,7 +145,17 @@ public class CredentialsLoginFragment extends ProgressFragment {
     private void login(Login login) {
         saveLoginPreferences(login);
         showLoading();
-        CredentialsLoginFragmentHolder.authWithPassword(login.getEmail(), login.getPassword());
+        FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                firebaseAuthCallback.onAuthenticated(authData);
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                firebaseAuthCallback.onAuthenticationError(firebaseError);
+            }
+        });
     }
 
     private void saveLoginPreferences(Login login) {

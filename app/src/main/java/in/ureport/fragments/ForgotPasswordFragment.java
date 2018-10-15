@@ -17,6 +17,7 @@ import com.firebase.client.FirebaseError;
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.helpers.ToolbarDesigner;
+import in.ureport.managers.FirebaseManager;
 
 /**
  * Created by johncordeiro on 17/08/15.
@@ -26,6 +27,8 @@ public class ForgotPasswordFragment extends ProgressFragment {
     private EditText email;
 
     private LoginFragment.LoginListener loginListener;
+
+    private static Firebase.ResultHandler firebaseForgotPasswordCallback;
 
     @Nullable
     @Override
@@ -62,7 +65,7 @@ public class ForgotPasswordFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        ForgotPasswordFragmentHolder.registerFirebaseForgotPasswordResultHandler(new Firebase.ResultHandler() {
+        firebaseForgotPasswordCallback = new Firebase.ResultHandler() {
             @Override
             public void onSuccess() {
                 dismissLoading();
@@ -75,13 +78,23 @@ public class ForgotPasswordFragment extends ProgressFragment {
                 dismissLoading();
                 Toast.makeText(getContext(), R.string.error_forgot_password, Toast.LENGTH_LONG).show();
             }
-        });
+        };
     }
 
     private View.OnClickListener onSendClickListener = view -> {
         if (validateFields()) {
             showLoading();
-            ForgotPasswordFragmentHolder.resetPassword(email.getText().toString());
+            FirebaseManager.getReference().resetPassword(email.getText().toString(), new Firebase.ResultHandler() {
+                @Override
+                public void onSuccess() {
+                    firebaseForgotPasswordCallback.onSuccess();
+                }
+
+                @Override
+                public void onError(FirebaseError firebaseError) {
+                    firebaseForgotPasswordCallback.onError(firebaseError);
+                }
+            });
         }
     };
 
