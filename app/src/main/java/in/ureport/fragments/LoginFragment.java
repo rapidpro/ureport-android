@@ -40,6 +40,7 @@ import java.util.Arrays;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.BuildConfig;
 import in.ureport.R;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserSocialAuthBuilder;
 import in.ureport.models.User;
 
@@ -62,6 +63,10 @@ public class LoginFragment extends ProgressFragment {
 
     private boolean resolvingGoogleSignin = false;
     private boolean shouldResolveErrors = true;
+
+    private static Firebase.AuthResultHandler firebaseAuthCallback;
+    private static FacebookCallback<LoginResult> facebookAuthCallback;
+    private static Callback<TwitterSession> twitterAuthCallback;
 
     @Nullable
     @Override
@@ -110,7 +115,7 @@ public class LoginFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        LoginFragmentHolder.registerFirebaseAuthResultHandler(new Firebase.AuthResultHandler() {
+        firebaseAuthCallback = new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
                 dismissLoading();
@@ -125,13 +130,22 @@ public class LoginFragment extends ProgressFragment {
                 dismissLoading();
                 showLoginErrorAlert();
             }
-        });
-
-        LoginFragmentHolder.registerFacebookLoginCallback(new FacebookCallback<LoginResult>() {
+        };
+        facebookAuthCallback = new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 showLoading();
-                LoginFragmentHolder.authenticateWithFacebook(loginResult.getAccessToken());
+                FirebaseManager.authenticateWithFacebook(loginResult.getAccessToken(), new Firebase.AuthResultHandler() {
+                    @Override
+                    public void onAuthenticated(AuthData authData) {
+                        firebaseAuthCallback.onAuthenticated(authData);
+                    }
+
+                    @Override
+                    public void onAuthenticationError(FirebaseError firebaseError) {
+                        firebaseAuthCallback.onAuthenticationError(firebaseError);
+                    }
+                });
             }
 
             @Override
@@ -141,20 +155,29 @@ public class LoginFragment extends ProgressFragment {
             public void onError(FacebookException exception) {
                 showLoginErrorAlert();
             }
-        });
-
-        LoginFragmentHolder.registerTwitterCallback(new Callback<TwitterSession>() {
+        };
+        twitterAuthCallback = new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
                 showLoading();
-                LoginFragmentHolder.authenticateWithTwitter(result.data);
+                FirebaseManager.authenticateWithTwitter(result.data, new Firebase.AuthResultHandler() {
+                    @Override
+                    public void onAuthenticated(AuthData authData) {
+                        firebaseAuthCallback.onAuthenticated(authData);
+                    }
+
+                    @Override
+                    public void onAuthenticationError(FirebaseError firebaseError) {
+                        firebaseAuthCallback.onAuthenticationError(firebaseError);
+                    }
+                });
             }
 
             @Override
             public void failure(TwitterException exception) {
                 showLoginErrorAlert();
             }
-        });
+        };
     }
 
     private void setupObjects() {
@@ -227,17 +250,39 @@ public class LoginFragment extends ProgressFragment {
         Toast.makeText(getContext(), R.string.login_error, Toast.LENGTH_LONG).show();
     }
 
-    private View.OnClickListener onTwitterLoginClickListener = view -> LoginFragmentHolder.loginWithTwitter(getActivity(), twitterAuthClient);
+    private View.OnClickListener onTwitterLoginClickListener = view -> {
+        twitterAuthClient.authorize(getActivity(), new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                twitterAuthCallback.success(result);
+            }
+
+            @Override
+            public void failure(TwitterException e) {
+                twitterAuthCallback.failure(e);
+            }
+        });
+    };
 
     private GoogleApiClient.ConnectionCallbacks googleConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
             shouldResolveErrors = false;
-            LoginFragmentHolder.authenticateWithGoogle(googleApiClient);
+            FirebaseManager.authenticateWithGoogle(googleApiClient, new Firebase.AuthResultHandler() {
+                @Override
+                public void onAuthenticated(AuthData authData) {
+                    firebaseAuthCallback.onAuthenticated(authData);
+                }
+
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError) {
+                    firebaseAuthCallback.onAuthenticationError(firebaseError);
+                }
+            });
         }
 
         @Override
-        public void onConnectionSuspended(int connectionSuspended) {}
+        public void onConnectionSuspended(int connectionSuspended) { }
     };
 
     private GoogleApiClient.OnConnectionFailedListener googleConnectionFailedListener = connectionResult -> {
@@ -259,7 +304,22 @@ public class LoginFragment extends ProgressFragment {
 
     private View.OnClickListener onFacebookLoginClickListener = view -> {
         LoginManager loginManager = LoginManager.getInstance();
-        LoginFragmentHolder.loginWithFacebook(callbackManager);
+        loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                facebookAuthCallback.onSuccess(loginResult);
+            }
+
+            @Override
+            public void onCancel() {
+                facebookAuthCallback.onCancel();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                facebookAuthCallback.onError(error);
+            }
+        });
         loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
     };
 
