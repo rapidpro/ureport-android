@@ -29,6 +29,7 @@ import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
 import in.ureport.managers.SearchManager;
 import in.ureport.managers.UserManager;
+import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
@@ -61,6 +62,8 @@ public class NewChatFragment extends ProgressFragment implements OnCreateIndivid
     private User user;
 
     private ValueEventListener userEventListener;
+
+    private static ChatRoomInterface.OnChatRoomSavedListener chatRoomSavedListener;
 
     public static NewChatFragment newInstance(ArrayList<ChatRoomHolder> chatRooms, User user) {
         NewChatFragment fragment = NewChatFragment.newInstance(chatRooms);
@@ -143,7 +146,7 @@ public class NewChatFragment extends ProgressFragment implements OnCreateIndivid
     }
 
     private void setupContextDependencies() {
-        NewChatFragmentHolder.registerChatRoomSavedListener((chatRoom, chatMembers) -> {
+        chatRoomSavedListener = ((chatRoom, chatMembers) -> {
             dismissLoading();
             onChatRoomSavedListener.onChatRoomSaved(chatRoom, chatMembers);
         });
@@ -228,7 +231,9 @@ public class NewChatFragment extends ProgressFragment implements OnCreateIndivid
             displayDuplicateAlert();
         } else {
             showLoading();
-            NewChatFragmentHolder.saveIndividualChatRoom(getContext(), me, friend);
+            final ChatRoomServices services = new ChatRoomServices();
+            services.saveIndividualChatRoom(getContext(), me, friend, (chatRoom, chatMembers) ->
+                    chatRoomSavedListener.onChatRoomSaved(chatRoom, chatMembers));
         }
     }
 

@@ -49,7 +49,7 @@ public class PickMediaFragment extends ProgressFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupContextDependentListeners();
+        setupContextDependencies();
     }
 
     @Nullable
@@ -78,7 +78,7 @@ public class PickMediaFragment extends ProgressFragment
         mediaSelector.onRequestPermissionResult(this, requestCode, grantResults);
     }
 
-    private void setupContextDependentListeners() {
+    private void setupContextDependencies() {
         compressVideoTaskListener = new CompressVideoTaskListener() {
             @Override
             public void onStart() {
