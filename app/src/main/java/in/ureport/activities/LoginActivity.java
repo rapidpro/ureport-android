@@ -1,6 +1,7 @@
 package in.ureport.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
+import in.ureport.tasks.SaveContactTask;
 import io.rapidpro.sdk.core.models.base.ContactBase;
 
 /**
@@ -34,6 +36,8 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     private ProgressDialog progressDialog;
     private boolean loading;
+
+    private static RapidProContactSavingListener rapidProContactSavingListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         progressDialog.setIndeterminate(true);
         progressDialog.setCancelable(false);
 
-        LoginActivityHolder.registerContactSavingRapidProListener(new LoginActivityHolder.RapidProContactSavingListener() {
+        rapidProContactSavingListener = new RapidProContactSavingListener() {
             @Override
             public void onStart() {
                 showLoading();
@@ -86,7 +90,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
                 dismissLoading();
                 updateUserAndDismiss(user, contact);
             }
-        });
+        };
     }
 
     private void showLoading() {
@@ -175,7 +179,23 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     @Override
     public void onUserReady(final User user, boolean newUser) {
         if (user == null) return;
-        LoginActivityHolder.saveContactOnRapidPro(this, user, newUser);
+        saveContactOnRapidPro(this, user, newUser);
+    }
+
+    private static void saveContactOnRapidPro(final Context context, final User user, final boolean newUser) {
+        new SaveContactTask(context, user, newUser) {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                rapidProContactSavingListener.onStart();
+            }
+
+            @Override
+            protected void onPostExecute(ContactBase contact) {
+                super.onPostExecute(contact);
+                rapidProContactSavingListener.onFinished(contact, user);
+            }
+        }.execute();
     }
 
     private void updateUserAndDismiss(User user, ContactBase contact) {
@@ -223,4 +243,10 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
                 .addToBackStack(null)
                 .commit();
     }
+
+    interface RapidProContactSavingListener {
+        void onStart();
+        void onFinished(ContactBase contact, User user);
+    }
+
 }
