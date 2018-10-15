@@ -28,6 +28,7 @@ import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnEditProfileListener;
+import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
@@ -60,6 +61,9 @@ public class ProfileFragment extends ProgressFragment {
     private MediaSelector mediaSelector;
     private UserServices userServices;
 
+    private static ValueEventListenerAdapter firebaseValueEventListenerAdapter;
+    private static TransferListenerAdapter firebaseImageTransferListenerAdapter;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,15 +95,15 @@ public class ProfileFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        ProfileFragmentHolder.registerFirebaseValueEventListenerAdapter(new ValueEventListenerAdapter() {
+        firebaseValueEventListenerAdapter = new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 user = dataSnapshot.getValue(User.class);
                 updateUser(user);
             }
-        });
-        ProfileFragmentHolder.registerImageTransferListenerAdapter(new TransferListenerAdapter(getContext(), null) {
+        };
+        firebaseImageTransferListenerAdapter = new TransferListenerAdapter(getContext(), null) {
             @Override
             public void onStart() {
                 super.onStart();
@@ -137,7 +141,7 @@ public class ProfileFragment extends ProgressFragment {
                 dismissLoading();
                 displayPictureError();
             }
-        });
+        };
     }
 
     @Override
@@ -149,7 +153,16 @@ public class ProfileFragment extends ProgressFragment {
     }
 
     public void loadUser() {
-        ProfileFragmentHolder.loadUser();
+        if (firebaseValueEventListenerAdapter == null)
+            return;
+
+        UserServices userServices = new UserServices();
+        userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                firebaseValueEventListenerAdapter.onDataChange(dataSnapshot);
+            }
+        });
     }
 
     @Override
@@ -241,7 +254,7 @@ public class ProfileFragment extends ProgressFragment {
         public void onLoadLocalImage(Uri uri) {
             LocalMedia localMedia = new LocalMedia(uri);
             localMedia.setType(Media.Type.Picture);
-            ProfileFragmentHolder.transferMedia(getContext(), localMedia);
+            transferMedia(getContext(), localMedia);
         }
 
         @Override
@@ -252,6 +265,32 @@ public class ProfileFragment extends ProgressFragment {
 
         @Override
         public void onLoadAudio(Uri uri, int duration) { }
+
+        private void transferMedia(Context context, LocalMedia localMedia) {
+            if (firebaseImageTransferListenerAdapter == null)
+                return;
+
+            firebaseImageTransferListenerAdapter.onStart();
+            try {
+                TransferManager transferManager = new TransferManager(context);
+                transferManager.transferMedia(localMedia, "user", new TransferListenerAdapter(context, localMedia) {
+                    @Override
+                    public void onTransferFinished(Media media) {
+                        super.onTransferFinished(media);
+                        firebaseImageTransferListenerAdapter.onTransferFinished(media);
+                    }
+
+                    @Override
+                    public void onError(int id, Exception ex) {
+                        super.onError(id, ex);
+                        firebaseImageTransferListenerAdapter.onError(id, ex);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                firebaseImageTransferListenerAdapter.onTransferFailed();
+            }
+        }
     };
 
     private void displayPictureError() {
