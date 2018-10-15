@@ -16,6 +16,7 @@ import com.firebase.client.FirebaseError;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 
 /**
@@ -33,6 +34,8 @@ public class ChangePasswordFragment extends ProgressFragment {
     private EditText newPassword;
 
     private User user;
+
+    private static Firebase.ResultHandler firebaseResultCallback;
 
     public static ChangePasswordFragment newInstance(User user) {
         ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
@@ -90,7 +93,7 @@ public class ChangePasswordFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        ChangePasswordFragmentHolder.registerPasswordResultHandler(new Firebase.ResultHandler() {
+        firebaseResultCallback = new Firebase.ResultHandler() {
             @Override
             public void onSuccess() {
                 dismissLoading();
@@ -110,17 +113,24 @@ public class ChangePasswordFragment extends ProgressFragment {
                         Toast.makeText(getContext(), R.string.error_no_internet, Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        };
     }
 
     private View.OnClickListener onConfirmClickListener = view -> {
         if (validateFields()) {
             showLoading();
-            ChangePasswordFragmentHolder.changePassword(
-                    user,
-                    oldPassword.getText().toString(),
-                    newPassword.getText().toString()
-            );
+            FirebaseManager.changePassword(user, oldPassword.getText().toString(),
+                    newPassword.getText().toString(), new Firebase.ResultHandler() {
+                @Override
+                public void onSuccess() {
+                    firebaseResultCallback.onSuccess();
+                }
+
+                @Override
+                public void onError(FirebaseError firebaseError) {
+                    firebaseResultCallback.onError(firebaseError);
+                }
+            });
         }
     };
 
