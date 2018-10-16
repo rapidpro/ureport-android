@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        setupContextDependecies();
+        setupContextDependencies();
 
         if(savedInstanceState == null) {
             addLoginFragment();
@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         if (loading) showLoading();
     }
 
-    private void setupContextDependecies() {
+    private void setupContextDependencies() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.load_message_wait));
         progressDialog.setIndeterminate(true);

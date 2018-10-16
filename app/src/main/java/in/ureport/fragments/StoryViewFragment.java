@@ -110,7 +110,7 @@ public class StoryViewFragment extends ProgressFragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupContextDependentListeners();
+        setupContextDependencies();
         if (getArguments() != null && getArguments().containsKey(EXTRA_STORY)
                 && getArguments().containsKey(EXTRA_USER)) {
             story = getArguments().getParcelable(EXTRA_STORY);
@@ -139,7 +139,7 @@ public class StoryViewFragment extends ProgressFragment
         }
     }
 
-    private void setupContextDependentListeners() {
+    private void setupContextDependencies() {
         firebaseContributionDenouncedListener = (firebaseError, firebase) -> {
             dismissLoading();
             if (firebaseError == null)

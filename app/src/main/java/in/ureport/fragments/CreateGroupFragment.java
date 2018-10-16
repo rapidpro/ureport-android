@@ -110,7 +110,7 @@ public class CreateGroupFragment extends ProgressFragment {
             groupChatRoom = args.getParcelable(EXTRA_CHAT_ROOM);
             members = args.getParcelable(EXTRA_CHAT_MEMBERS);
         }
-        setupContextDependentListeners();
+        setupContextDependencies();
     }
 
     @Nullable
@@ -129,7 +129,7 @@ public class CreateGroupFragment extends ProgressFragment {
         loadUsers();
     }
 
-    private void setupContextDependentListeners() {
+    private void setupContextDependencies() {
         pictureTransferListener = new PictureTransferListener() {
             @Override
             public void onTransferFinished(GroupChatRoom groupChatRoom, Media media) {
