@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
-import com.firebase.client.DataSnapshot;
+import com.google.firebase.database.DataSnapshot;
 
 import in.ureport.BuildConfig;
 import in.ureport.R;
@@ -135,8 +135,9 @@ public class UserManager {
     }
 
     public static String getUserId() {
-        return FirebaseManager.getReference() != null && FirebaseManager.getReference().getAuth() != null
-            && FirebaseManager.getReference().getAuth().getUid() != null ? FirebaseManager.getReference().getAuth().getUid() : null;
+        return "";
+//        return FirebaseManager.getReference() != null && FirebaseManager.getReference().getAuth() != null
+//            && FirebaseManager.getReference().getAuth().getUid() != null ? FirebaseManager.getReference().getAuth().getUid() : null;
     }
 
     public static void updateUserRapidUuid(String userRapidUuid) {

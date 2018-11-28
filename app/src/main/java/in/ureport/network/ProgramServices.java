@@ -1,6 +1,6 @@
 package in.ureport.network;
 
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
 
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
@@ -12,16 +12,16 @@ public abstract class ProgramServices {
 
     public static final String countryProgramPath = "country_program";
 
-    protected Firebase getCountryProgram() {
+    protected DatabaseReference getCountryProgram() {
         return FirebaseManager.getReference().child(countryProgramPath);
     }
 
-    protected Firebase getDefaultRoot() {
+    protected DatabaseReference getDefaultRoot() {
         return FirebaseManager.getReference().child(countryProgramPath)
                 .child(CountryProgramManager.getCurrentCountryProgram().getCode());
     }
 
-    protected Firebase getRootByCode(String countryCode) {
+    protected DatabaseReference getRootByCode(String countryCode) {
         return FirebaseManager.getReference().child(countryProgramPath)
                 .child(countryCode);
     }

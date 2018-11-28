@@ -3,8 +3,7 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.firebase.database.Exclude;
 import com.google.gson.annotations.Expose;
 
 import java.util.Date;
@@ -13,7 +12,6 @@ import java.util.List;
 /**
  * Created by johncordeiro on 7/14/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Story implements Parcelable {
 
     @Expose
@@ -31,7 +29,7 @@ public class Story implements Parcelable {
 
     private Integer contributions;
 
-    @JsonIgnore
+    @Exclude
     private Integer likes;
 
     private String markers;

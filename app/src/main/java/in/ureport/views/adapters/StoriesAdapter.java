@@ -139,6 +139,10 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
         }
     }
 
+    private InfiniteFireSnapshot<Story> getItem(int position) {
+        return snapshots.getItem(position - indexOffset);
+    }
+
     public void updateStory(Story story) {
         notifyItemChanged(snapshots.getIndexForKey(story.getKey()));
     }

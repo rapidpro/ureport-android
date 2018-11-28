@@ -17,9 +17,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,7 +72,7 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
     private KeyboardHandler keyboardHandler = new KeyboardHandler();
 
     private static TransferManager.OnTransferMediasListener mediasTransferListener;
-    private static FirebaseStorySavingCompletionListener firebaseStoryCompletionListener;
+    private static FirebaseStorySavingCompletionListener storyCompletionListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -183,11 +183,11 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
                 displayMediaUploadError();
             }
         };
-        firebaseStoryCompletionListener = (firebaseError, firebase, story) -> {
+        storyCompletionListener = (error, reference, story) -> {
             dismissLoading();
             finishPublishing();
-            if (firebaseError == null && storyCreationListener != null) {
-                story.setKey(firebase.getKey());
+            if (error == null && storyCreationListener != null) {
+                story.setKey(reference.getKey());
 
                 incrementStoryCount(story);
                 storyCreationListener.onStoryCreated(story);
@@ -323,8 +323,8 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
         story.setMarkers(markersText.length() == 0 ? "" : markersText);
 
         StoryServices storyServices = new StoryServices();
-        storyServices.saveStory(story, (firebaseError, firebase) ->
-                firebaseStoryCompletionListener.onComplete(firebaseError, firebase, story)
+        storyServices.saveStory(story, (error, reference) ->
+                storyCompletionListener.onComplete(error, reference, story)
         );
     }
 
@@ -332,7 +332,7 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
         UserServices userServices = new UserServices();
         userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 User user = dataSnapshot.getValue(User.class);
 
@@ -416,7 +416,7 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
     }
 
     interface FirebaseStorySavingCompletionListener {
-        void onComplete(FirebaseError firebaseError, Firebase firebase, Story story);
+        void onComplete(DatabaseError error, DatabaseReference reference, Story story);
     }
 
 }

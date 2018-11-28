@@ -21,9 +21,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +34,7 @@ import in.ureport.activities.ChatCreationActivity;
 import in.ureport.activities.ChatRoomActivity;
 import in.ureport.activities.InviteContactsActivity;
 import in.ureport.activities.MainActivity;
+import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.OnSeeOpenGroupsListener;
@@ -50,7 +51,6 @@ import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
-import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.tasks.GetUnreadMessagesTask;
 import in.ureport.views.adapters.ChatRoomsAdapter;
 
@@ -219,7 +219,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
 
     private ValueEventListener valueListener = new ValueEventListenerAdapter() {
         @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             super.onDataChange(dataSnapshot);
             if (dataSnapshot.getChildrenCount() == 0) {
                 progressBar.setVisibility(View.GONE);

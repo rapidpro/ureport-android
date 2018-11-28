@@ -2,15 +2,10 @@ package in.ureport.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class PollCategory implements Parcelable {
 
     private String name;

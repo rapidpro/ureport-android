@@ -4,12 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,12 +85,12 @@ public class ChatRoomServices extends ProgramServices {
         getDefaultRoot().child(chatRoomPath).child(chatRoom.getKey()).removeValue();
     }
 
-    public void removeChatMessage(ChatRoom chatRoom, ChatMessage chatMessage, Firebase.CompletionListener listener) {
+    public void removeChatMessage(ChatRoom chatRoom, ChatMessage chatMessage, DatabaseReference.CompletionListener listener) {
         getDefaultRoot().child(messagesPath).child(chatRoom.getKey())
                 .child(chatMessage.getKey()).removeValue(listener);
     }
 
-    public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage, Firebase.CompletionListener listener) {
+    public void saveChatMessage(ChatRoom chatRoom, ChatMessage chatMessage, DatabaseReference.CompletionListener listener) {
         setUserIfNeeded(chatMessage);
         getDefaultRoot().child(messagesPath).child(chatRoom.getKey())
                 .push().setValue(chatMessage, listener);
@@ -105,7 +105,7 @@ public class ChatRoomServices extends ProgramServices {
         }
     }
 
-    public Firebase getChatRoomReference(String key) {
+    public DatabaseReference getChatRoomReference(String key) {
         return getDefaultRoot().child(chatRoomPath).child(key);
     }
 
@@ -242,9 +242,9 @@ public class ChatRoomServices extends ProgramServices {
         groupChatRoom.setAdministrator(administrator);
 
         getDefaultRoot().child(chatRoomPath).push().setValue(groupChatRoom
-                , new Firebase.CompletionListener() {
+                , new DatabaseReference.CompletionListener() {
             @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+            public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
                 Log.i(TAG, "onComplete firebaseError: " + firebaseError);
                 if (firebaseError == null) {
                     members.add(administrator);
@@ -270,9 +270,9 @@ public class ChatRoomServices extends ProgramServices {
         chatRoom.setCreatedDate(new Date());
 
         getDefaultRoot().child(chatRoomPath).push().setValue(chatRoom
-                , new Firebase.CompletionListener() {
+                , new DatabaseReference.CompletionListener() {
             @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+            public void onComplete(DatabaseError firebaseError, DatabaseReference firebase) {
                 if (firebaseError == null) {
                     addChatMember(context, me, firebase.getKey());
                     addChatMember(context, friend, firebase.getKey());

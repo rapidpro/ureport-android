@@ -2,6 +2,7 @@ package in.ureport.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -18,14 +19,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.firebase.client.DataSnapshot;
+import com.google.firebase.database.DataSnapshot;
 
 import java.text.DateFormat;
 
 import in.ureport.R;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.InfoGroupChatListener;
-import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
@@ -178,7 +179,7 @@ public class GroupInfoFragment extends Fragment {
         UserServices userServices = new UserServices();
         userServices.getUser(chatRoom.getAdministrator().getKey(), new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
 
                 if (dataSnapshot.exists()) {

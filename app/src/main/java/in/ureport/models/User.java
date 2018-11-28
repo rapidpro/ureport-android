@@ -4,8 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.StringRes;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.firebase.database.Exclude;
 import com.google.gson.annotations.Expose;
 
 import java.util.Date;
@@ -16,7 +15,6 @@ import in.ureport.R;
 /**
  * Created by johncordeiro on 7/9/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Parcelable {
 
     @Expose
@@ -27,7 +25,7 @@ public class User implements Parcelable {
     @Expose
     private String nickname;
 
-    private Date birthday;
+    private long birthday;
 
     private String country;
 
@@ -79,10 +77,10 @@ public class User implements Parcelable {
     }
 
     public Date getBirthday() {
-        return birthday;
+        return new Date(birthday);
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(long birthday) {
         this.birthday = birthday;
     }
 
@@ -134,7 +132,7 @@ public class User implements Parcelable {
         this.gender = gender;
     }
 
-    @JsonIgnore
+    @Exclude
     public Gender getGenderAsEnum() {
         try {
             return Gender.valueOf(this.gender);
@@ -255,7 +253,7 @@ public class User implements Parcelable {
         dest.writeString(this.key);
         dest.writeString(this.email);
         dest.writeString(this.nickname);
-        dest.writeLong(birthday != null ? birthday.getTime() : -1);
+        dest.writeLong(birthday);
         dest.writeString(this.country);
         dest.writeString(this.countryProgram);
         dest.writeString(this.state);
@@ -277,8 +275,7 @@ public class User implements Parcelable {
         this.key = in.readString();
         this.email = in.readString();
         this.nickname = in.readString();
-        long tmpBirthday = in.readLong();
-        this.birthday = tmpBirthday == -1 ? null : new Date(tmpBirthday);
+        this.birthday = in.readLong();
         this.country = in.readString();
         this.countryProgram = in.readString();
         this.state = in.readString();

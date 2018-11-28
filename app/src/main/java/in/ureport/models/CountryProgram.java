@@ -3,8 +3,6 @@ package in.ureport.models;
 import android.support.annotation.StringRes;
 import android.support.annotation.StyleRes;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.List;
 
 import in.ureport.BuildConfig;
@@ -14,7 +12,6 @@ import in.ureport.models.rapidpro.AgeGroup;
 /**
  * Created by johncordeiro on 7/23/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class CountryProgram {
 
     public static final String GROUP_UREPORT_MALES = "UReport Males";

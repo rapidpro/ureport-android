@@ -24,7 +24,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup">
+        tools:replace="android:allowBackup"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_name" >
@@ -203,23 +204,23 @@
 
         <activity android:name="io.rapidpro.sdk.chat.FcmClientChatActivity" />
 
-        <service android:name=".services.UreportFcmReceivedListener">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+        <!--<service android:name=".services.UreportFcmReceivedListener">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.firebase.MESSAGING_EVENT" />-->
+            <!--</intent-filter>-->
+        <!--</service>-->
 
         <service
             android:name=".services.UreportFcmRegistrationService"
             android:exported="false" />
 
-        <service
-            android:name="io.rapidpro.sdk.services.FcmClientInstanceIntentIdService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
+        <!--<service-->
+            <!--android:name="io.rapidpro.sdk.services.FcmClientInstanceIntentIdService"-->
+            <!--android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT" />-->
+            <!--</intent-filter>-->
+        <!--</service>-->
 
         <service android:name="io.rapidpro.sdk.chat.menu.FcmClientMenuService" />
 

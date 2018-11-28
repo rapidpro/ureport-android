@@ -1,14 +1,14 @@
 package in.ureport.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 
 import in.ureport.R;
 import in.ureport.helpers.ValueEventListenerAdapter;
@@ -50,7 +50,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
     private void loadUser() {
         userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 user = dataSnapshot.getValue(User.class);
                 if (user != null) updateViewForUser(user);
@@ -75,14 +75,11 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
         }
     };
 
-    private Firebase.CompletionListener onSettingsSavedListener = new Firebase.CompletionListener() {
-        @Override
-        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-            if(firebaseError == null) {
-                displayMessage(R.string.message_success_user_update);
-            } else {
-                displayMessage(R.string.error_update_user);
-            }
+    private DatabaseReference.CompletionListener onSettingsSavedListener = (error, reference) -> {
+        if (error == null) {
+            displayMessage(R.string.message_success_user_update);
+        } else {
+            displayMessage(R.string.error_update_user);
         }
     };
 

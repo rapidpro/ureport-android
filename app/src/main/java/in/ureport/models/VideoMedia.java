@@ -2,12 +2,9 @@ package in.ureport.models;
 
 import android.os.Parcel;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * Created by johncordeiro on 02/09/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class VideoMedia extends Media {
 
     private String path;

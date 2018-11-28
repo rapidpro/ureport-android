@@ -2,9 +2,9 @@ package in.ureport.helpers;
 
 import android.support.annotation.NonNull;
 
-import com.firebase.client.FirebaseError;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.google.firebase.database.DatabaseError;
 
 import in.ureport.AnalyticsTracker;
 
@@ -21,7 +21,7 @@ public class AnalyticsHelper {
                 .build());
     }
 
-    public static void sendFirebaseError(FirebaseError firebaseError) {
+    public static void sendFirebaseError(DatabaseError firebaseError) {
         Tracker tracker = AnalyticsTracker.get(AnalyticsTracker.Target.APP);
         tracker.send(new HitBuilders.ExceptionBuilder()
                 .setDescription(getFirebaseErrorDescription(firebaseError))
@@ -35,7 +35,7 @@ public class AnalyticsHelper {
     }
 
     @NonNull
-    private static String getFirebaseErrorDescription(FirebaseError firebaseError) {
+    private static String getFirebaseErrorDescription(DatabaseError firebaseError) {
         return firebaseError.getCode() + " - " + firebaseError.getMessage() + " \n" + firebaseError.getDetails();
     }
 

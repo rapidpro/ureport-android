@@ -3,12 +3,9 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * Created by johncordeiro on 18/07/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class PollResult implements Parcelable {
 
     public enum Type {

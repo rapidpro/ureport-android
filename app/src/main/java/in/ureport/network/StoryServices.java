@@ -1,9 +1,9 @@
 package in.ureport.network;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.Firebase;
-import com.firebase.client.Query;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import in.ureport.managers.UserManager;
 import in.ureport.models.Story;
@@ -20,7 +20,7 @@ public class StoryServices extends ProgramServices {
     private static final String storyDisapprovedPath = "story_disapproved";
     private static final String storyDenouncedPath = "story_denounced";
 
-    public void saveStory(final Story story, final Firebase.CompletionListener listener) {
+    public void saveStory(final Story story, final DatabaseReference.CompletionListener listener) {
         cleanStory(story);
         story.setUser(UserManager.getUserId());
         getDefaultRoot().child(storyModeratePath).push().setValue(story, listener);
@@ -35,12 +35,12 @@ public class StoryServices extends ProgramServices {
                 .child(story.getKey()).addListenerForSingleValueEvent(listener);
     }
 
-    public void addStoryLike(Story story, User user, Firebase.CompletionListener listener) {
+    public void addStoryLike(Story story, User user, DatabaseReference.CompletionListener listener) {
         getDefaultRoot().child(storyLikePath).child(story.getKey())
                 .child(user.getKey()).setValue(true, listener);
     }
 
-    public void removeStoryLike(Story story, User user, Firebase.CompletionListener listener) {
+    public void removeStoryLike(Story story, User user, DatabaseReference.CompletionListener listener) {
         getDefaultRoot().child(storyLikePath).child(story.getKey())
                 .child(user.getKey()).removeValue(listener);
     }
@@ -53,25 +53,25 @@ public class StoryServices extends ProgramServices {
         }
     }
 
-    public void approveStory(Story story, Firebase.CompletionListener listener) {
+    public void approveStory(Story story, DatabaseReference.CompletionListener listener) {
         cleanStory(story);
         getDefaultRoot().child(storyModeratePath).child(story.getKey()).removeValue();
         getDefaultRoot().child(storyPath).child(story.getKey()).setValue(story, listener);
     }
 
-    public void removeStory(Story story, Firebase.CompletionListener listener) {
+    public void removeStory(Story story, DatabaseReference.CompletionListener listener) {
         cleanStory(story);
         getDefaultRoot().child(storyPath).child(story.getKey()).removeValue();
         getDefaultRoot().child(storyDisapprovedPath).child(story.getKey()).setValue(story, listener);
     }
 
-    public void disapprovedStory(Story story, Firebase.CompletionListener listener) {
+    public void disapprovedStory(Story story, DatabaseReference.CompletionListener listener) {
         cleanStory(story);
         getDefaultRoot().child(storyModeratePath).child(story.getKey()).removeValue();
         getDefaultRoot().child(storyDisapprovedPath).child(story.getKey()).setValue(story, listener);
     }
 
-    public void denounceStory(Story story, Firebase.CompletionListener listener) {
+    public void denounceStory(Story story, DatabaseReference.CompletionListener listener) {
         cleanStory(story);
         getDefaultRoot().child(storyDenouncedPath).child(story.getKey()).setValue(story, listener);
     }
@@ -93,11 +93,11 @@ public class StoryServices extends ProgramServices {
         getStoriesModerationQuery().addChildEventListener(childEventListener);
     }
 
-    public Firebase getStoriesModerationQuery() {
+    public DatabaseReference getStoriesModerationQuery() {
         return getDefaultRoot().child(storyModeratePath);
     }
 
-    public Firebase getStoryReference() {
+    public DatabaseReference getStoryReference() {
         return getDefaultRoot().child(storyPath);
     }
 

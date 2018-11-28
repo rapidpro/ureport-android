@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,6 @@ import in.ureport.listener.OnCreateGroupListener;
 import in.ureport.listener.OnCreateIndividualChatListener;
 import in.ureport.managers.SearchManager;
 import in.ureport.managers.UserManager;
-import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
@@ -218,7 +218,7 @@ public class NewChatFragment extends ProgressFragment implements OnCreateIndivid
     private void createChatWithUser(final User friend) {
         userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 User me = dataSnapshot.getValue(User.class);
                 checkIfExistsAndSaveChat(me, friend);

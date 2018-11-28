@@ -22,9 +22,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.firebase.client.AuthData;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
@@ -40,7 +37,6 @@ import java.util.Arrays;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.BuildConfig;
 import in.ureport.R;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserSocialAuthBuilder;
 import in.ureport.models.User;
 
@@ -64,9 +60,9 @@ public class LoginFragment extends ProgressFragment {
     private boolean resolvingGoogleSignin = false;
     private boolean shouldResolveErrors = true;
 
-    private static Firebase.AuthResultHandler firebaseAuthCallback;
-    private static FacebookCallback<LoginResult> facebookAuthCallback;
-    private static Callback<TwitterSession> twitterAuthCallback;
+//    private static Firebase.AuthResultHandler firebaseAuthCallback;
+//    private static FacebookCallback<LoginResult> facebookAuthCallback;
+//    private static Callback<TwitterSession> twitterAuthCallback;
 
     @Nullable
     @Override
@@ -115,69 +111,69 @@ public class LoginFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        firebaseAuthCallback = new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                dismissLoading();
-                User user = userSocialAuthBuilder.build(authData);
-                if (loginListener != null) {
-                    loginListener.onLoginWithSocialNetwork(user);
-                }
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                dismissLoading();
-                showLoginErrorAlert();
-            }
-        };
-        facebookAuthCallback = new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                showLoading();
-                FirebaseManager.authenticateWithFacebook(loginResult.getAccessToken(), new Firebase.AuthResultHandler() {
-                    @Override
-                    public void onAuthenticated(AuthData authData) {
-                        firebaseAuthCallback.onAuthenticated(authData);
-                    }
-
-                    @Override
-                    public void onAuthenticationError(FirebaseError firebaseError) {
-                        firebaseAuthCallback.onAuthenticationError(firebaseError);
-                    }
-                });
-            }
-
-            @Override
-            public void onCancel() { }
-
-            @Override
-            public void onError(FacebookException exception) {
-                showLoginErrorAlert();
-            }
-        };
-        twitterAuthCallback = new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                showLoading();
-                FirebaseManager.authenticateWithTwitter(result.data, new Firebase.AuthResultHandler() {
-                    @Override
-                    public void onAuthenticated(AuthData authData) {
-                        firebaseAuthCallback.onAuthenticated(authData);
-                    }
-
-                    @Override
-                    public void onAuthenticationError(FirebaseError firebaseError) {
-                        firebaseAuthCallback.onAuthenticationError(firebaseError);
-                    }
-                });
-            }
-
-            @Override
-            public void failure(TwitterException exception) {
-                showLoginErrorAlert();
-            }
-        };
+//        firebaseAuthCallback = new Firebase.AuthResultHandler() {
+//            @Override
+//            public void onAuthenticated(AuthData authData) {
+//                dismissLoading();
+//                User user = userSocialAuthBuilder.build(authData);
+//                if (loginListener != null) {
+//                    loginListener.onLoginWithSocialNetwork(user);
+//                }
+//            }
+//
+//            @Override
+//            public void onAuthenticationError(FirebaseError firebaseError) {
+//                dismissLoading();
+//                showLoginErrorAlert();
+//            }
+//        };
+//        facebookAuthCallback = new FacebookCallback<LoginResult>() {
+//            @Override
+//            public void onSuccess(LoginResult loginResult) {
+//                showLoading();
+//                FirebaseManager.authenticateWithFacebook(loginResult.getAccessToken(), new Firebase.AuthResultHandler() {
+//                    @Override
+//                    public void onAuthenticated(AuthData authData) {
+//                        firebaseAuthCallback.onAuthenticated(authData);
+//                    }
+//
+//                    @Override
+//                    public void onAuthenticationError(FirebaseError firebaseError) {
+//                        firebaseAuthCallback.onAuthenticationError(firebaseError);
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onCancel() { }
+//
+//            @Override
+//            public void onError(FacebookException exception) {
+//                showLoginErrorAlert();
+//            }
+//        };
+//        twitterAuthCallback = new Callback<TwitterSession>() {
+//            @Override
+//            public void success(Result<TwitterSession> result) {
+//                showLoading();
+//                FirebaseManager.authenticateWithTwitter(result.data, new Firebase.AuthResultHandler() {
+//                    @Override
+//                    public void onAuthenticated(AuthData authData) {
+//                        firebaseAuthCallback.onAuthenticated(authData);
+//                    }
+//
+//                    @Override
+//                    public void onAuthenticationError(FirebaseError firebaseError) {
+//                        firebaseAuthCallback.onAuthenticationError(firebaseError);
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void failure(TwitterException exception) {
+//                showLoginErrorAlert();
+//            }
+//        };
     }
 
     private void setupObjects() {
@@ -254,12 +250,12 @@ public class LoginFragment extends ProgressFragment {
         twitterAuthClient.authorize(getActivity(), new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                twitterAuthCallback.success(result);
+//                twitterAuthCallback.success(result);
             }
 
             @Override
             public void failure(TwitterException e) {
-                twitterAuthCallback.failure(e);
+//                twitterAuthCallback.failure(e);
             }
         });
     };
@@ -267,18 +263,18 @@ public class LoginFragment extends ProgressFragment {
     private GoogleApiClient.ConnectionCallbacks googleConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
-            shouldResolveErrors = false;
-            FirebaseManager.authenticateWithGoogle(googleApiClient, new Firebase.AuthResultHandler() {
-                @Override
-                public void onAuthenticated(AuthData authData) {
-                    firebaseAuthCallback.onAuthenticated(authData);
-                }
-
-                @Override
-                public void onAuthenticationError(FirebaseError firebaseError) {
-                    firebaseAuthCallback.onAuthenticationError(firebaseError);
-                }
-            });
+//            shouldResolveErrors = false;
+//            FirebaseManager.authenticateWithGoogle(googleApiClient, new Firebase.AuthResultHandler() {
+//                @Override
+//                public void onAuthenticated(AuthData authData) {
+//                    firebaseAuthCallback.onAuthenticated(authData);
+//                }
+//
+//                @Override
+//                public void onAuthenticationError(FirebaseError firebaseError) {
+//                    firebaseAuthCallback.onAuthenticationError(firebaseError);
+//                }
+//            });
         }
 
         @Override
@@ -307,17 +303,17 @@ public class LoginFragment extends ProgressFragment {
         loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                facebookAuthCallback.onSuccess(loginResult);
+//                facebookAuthCallback.onSuccess(loginResult);
             }
 
             @Override
             public void onCancel() {
-                facebookAuthCallback.onCancel();
+//                facebookAuthCallback.onCancel();
             }
 
             @Override
             public void onError(FacebookException error) {
-                facebookAuthCallback.onError(error);
+//                facebookAuthCallback.onError(error);
             }
         });
         loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
@@ -337,7 +333,6 @@ public class LoginFragment extends ProgressFragment {
 
     private void loginWithGooglePlus() {
         showLoading();
-
         if (!googleApiClient.isConnected()) {
             googleApiClient.connect();
         } else {

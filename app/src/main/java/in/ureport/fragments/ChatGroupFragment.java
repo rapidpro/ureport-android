@@ -14,7 +14,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.client.DataSnapshot;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.List;
 import in.ureport.R;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.DividerItemDecoration;
-import in.ureport.listener.OnSeeOpenGroupsListener;
 import in.ureport.managers.SearchManager;
 import in.ureport.models.GroupChatRoom;
 import in.ureport.network.ChatRoomServices;

@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -15,17 +16,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.Login;
 import in.ureport.network.UserServices;
@@ -46,7 +46,14 @@ public class CredentialsLoginFragment extends ProgressFragment {
 
     private LoginFragment.LoginListener loginListener;
 
-    private static Firebase.AuthResultHandler firebaseAuthCallback;
+    private FirebaseAuth firebaseAuth;
+    private OnCompleteListener<AuthResult> authResultTask;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        firebaseAuth = FirebaseAuth.getInstance();
+    }
 
     @Nullable
     @Override
@@ -92,16 +99,11 @@ public class CredentialsLoginFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        firebaseAuthCallback = new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                dismissLoading();
-                getUserInfoAndContinue(authData);
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                dismissLoading();
+        authResultTask = task -> {
+            dismissLoading();
+            if (task.isSuccessful() && task.getResult() != null) {
+                getUserInfoAndContinue(task.getResult());
+            } else {
                 showLoginError();
             }
         };
@@ -145,17 +147,8 @@ public class CredentialsLoginFragment extends ProgressFragment {
     private void login(Login login) {
         saveLoginPreferences(login);
         showLoading();
-        FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                firebaseAuthCallback.onAuthenticated(authData);
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                firebaseAuthCallback.onAuthenticationError(firebaseError);
-            }
-        });
+        firebaseAuth.signInWithEmailAndPassword(login.getEmail(), login.getPassword())
+                .addOnCompleteListener(getActivity(), task -> authResultTask.onComplete(task));
     }
 
     private void saveLoginPreferences(Login login) {
@@ -170,11 +163,11 @@ public class CredentialsLoginFragment extends ProgressFragment {
         }
     }
 
-    private void getUserInfoAndContinue(AuthData authData) {
-        UserServices userServices = new UserServices();
-        userServices.getUser(authData.getUid(), new ValueEventListenerAdapter() {
+    private void getUserInfoAndContinue(final AuthResult authResult) {
+        final UserServices userServices = new UserServices();
+        userServices.getUser(authResult.getUser().getUid(), new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 User user = dataSnapshot.getValue(User.class);
                 loginListener.onUserReady(user, false);
@@ -183,26 +176,19 @@ public class CredentialsLoginFragment extends ProgressFragment {
     }
 
     private void showLoginError() {
-        Toast.makeText(getContext(), "Email/password not found", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), R.string.message_invalid_login, Toast.LENGTH_LONG).show();
     }
 
-    private View.OnClickListener onLoginClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (validateFields()) {
-                Login login = new Login(email.getText().toString()
-                        , password.getText().toString());
-                login(login);
-            }
+    private View.OnClickListener onLoginClickListener = view -> {
+        if (validateFields()) {
+            Login login = new Login(email.getText().toString(), password.getText().toString());
+            login(login);
         }
     };
 
-    private View.OnClickListener onForgotPasswordClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (loginListener != null)
-                loginListener.onForgotPassword();
-        }
+    private View.OnClickListener onForgotPasswordClickListener = view -> {
+        if (loginListener != null)
+            loginListener.onForgotPassword();
     };
 
 }

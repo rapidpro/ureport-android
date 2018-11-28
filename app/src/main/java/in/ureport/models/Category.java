@@ -3,13 +3,11 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by johncordeiro on 01/10/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Category implements Parcelable {
 
     @SerializedName("image_url")

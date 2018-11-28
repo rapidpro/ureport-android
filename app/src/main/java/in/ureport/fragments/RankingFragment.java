@@ -9,12 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.marcorei.infinitefire.InfiniteFireArray;
-import com.marcorei.infinitefire.InfiniteFireLinearRecyclerView;
 
 import in.ureport.R;
 import in.ureport.helpers.DividerItemDecoration;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
+import in.ureport.views.widgets.InfiniteFireLinearRecyclerView;
 import in.ureport.views.adapters.RankingAdapter;
 
 /**

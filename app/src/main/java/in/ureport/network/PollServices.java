@@ -1,8 +1,8 @@
 package in.ureport.network;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.Query;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import in.ureport.models.Poll;
 
@@ -34,7 +34,7 @@ public class PollServices extends ProgramServices {
         getPollsResultsQuery(poll).removeEventListener(listener);
     }
 
-    private Firebase getPollsResultsQuery(Poll poll) {
+    private DatabaseReference getPollsResultsQuery(Poll poll) {
         return getDefaultRoot().child(pollResultPath).child(poll.getKey());
     }
 

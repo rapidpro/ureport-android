@@ -1,8 +1,8 @@
 package in.ureport.network;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnStoryUpdatedListener;
@@ -45,12 +45,12 @@ public class ContributionServices extends ProgramServices {
         this.type = type;
     }
 
-    public void saveContribution(String key, Contribution contribution, Firebase.CompletionListener listener) {
+    public void saveContribution(String key, Contribution contribution, DatabaseReference.CompletionListener listener) {
         User user = new User();
         user.setKey(contribution.getAuthor().getKey());
         contribution.setAuthor(user);
 
-        Firebase object = getDefaultRoot().child(type.path).child(key).push();
+        DatabaseReference object = getDefaultRoot().child(type.path).child(key).push();
         object.setValue(contribution, listener);
         contribution.setKey(object.getKey());
     }
@@ -66,13 +66,13 @@ public class ContributionServices extends ProgramServices {
         });
     }
 
-    public void removeContribution(String key, Contribution contribution, Firebase.CompletionListener listener) {
+    public void removeContribution(String key, Contribution contribution, DatabaseReference.CompletionListener listener) {
         getDefaultRoot().child(type.path).child(key).child(contribution.getKey()).removeValue();
         getDefaultRoot().child(type.disapprovedPath).child(key)
                 .child(contribution.getKey()).setValue(contribution, listener);
     }
 
-    public void denounceContribution(String key, Contribution contribution, Firebase.CompletionListener listener) {
+    public void denounceContribution(String key, Contribution contribution, DatabaseReference.CompletionListener listener) {
         getDefaultRoot().child(type.denouncedPath).child(key)
                 .child(contribution.getKey()).setValue(contribution, listener);
     }

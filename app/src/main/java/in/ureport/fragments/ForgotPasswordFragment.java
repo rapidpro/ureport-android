@@ -9,15 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
 import in.ureport.helpers.ToolbarDesigner;
-import in.ureport.managers.FirebaseManager;
 
 /**
  * Created by johncordeiro on 17/08/15.
@@ -28,7 +23,7 @@ public class ForgotPasswordFragment extends ProgressFragment {
 
     private LoginFragment.LoginListener loginListener;
 
-    private static Firebase.ResultHandler firebaseForgotPasswordCallback;
+//    private static Firebase.ResultHandler firebaseForgotPasswordCallback;
 
     @Nullable
     @Override
@@ -65,36 +60,36 @@ public class ForgotPasswordFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        firebaseForgotPasswordCallback = new Firebase.ResultHandler() {
-            @Override
-            public void onSuccess() {
-                dismissLoading();
-                if (loginListener != null)
-                    loginListener.onPasswordReset();
-            }
-
-            @Override
-            public void onError(FirebaseError firebaseError) {
-                dismissLoading();
-                Toast.makeText(getContext(), R.string.error_forgot_password, Toast.LENGTH_LONG).show();
-            }
-        };
+//        firebaseForgotPasswordCallback = new Firebase.ResultHandler() {
+//            @Override
+//            public void onSuccess() {
+//                dismissLoading();
+//                if (loginListener != null)
+//                    loginListener.onPasswordReset();
+//            }
+//
+//            @Override
+//            public void onError(FirebaseError firebaseError) {
+//                dismissLoading();
+//                Toast.makeText(getContext(), R.string.error_forgot_password, Toast.LENGTH_LONG).show();
+//            }
+//        };
     }
 
     private View.OnClickListener onSendClickListener = view -> {
         if (validateFields()) {
-            showLoading();
-            FirebaseManager.getReference().resetPassword(email.getText().toString(), new Firebase.ResultHandler() {
-                @Override
-                public void onSuccess() {
-                    firebaseForgotPasswordCallback.onSuccess();
-                }
-
-                @Override
-                public void onError(FirebaseError firebaseError) {
-                    firebaseForgotPasswordCallback.onError(firebaseError);
-                }
-            });
+//            showLoading();
+//            FirebaseManager.getReference().resetPassword(email.getText().toString(), new Firebase.ResultHandler() {
+//                @Override
+//                public void onSuccess() {
+//                    firebaseForgotPasswordCallback.onSuccess();
+//                }
+//
+//                @Override
+//                public void onError(FirebaseError firebaseError) {
+//                    firebaseForgotPasswordCallback.onError(firebaseError);
+//                }
+//            });
         }
     };
 

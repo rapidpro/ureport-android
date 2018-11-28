@@ -9,14 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 
 /**
@@ -35,7 +30,7 @@ public class ChangePasswordFragment extends ProgressFragment {
 
     private User user;
 
-    private static Firebase.ResultHandler firebaseResultCallback;
+//    private static Firebase.ResultHandler firebaseResultCallback;
 
     public static ChangePasswordFragment newInstance(User user) {
         ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
@@ -93,44 +88,44 @@ public class ChangePasswordFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        firebaseResultCallback = new Firebase.ResultHandler() {
-            @Override
-            public void onSuccess() {
-                dismissLoading();
-                if (userSettingsListener != null) {
-                    userSettingsListener.onEditFinished();
-                }
-            }
-
-            @Override
-            public void onError(FirebaseError firebaseError) {
-                dismissLoading();
-                switch(firebaseError.getCode()) {
-                    case FirebaseError.INVALID_PASSWORD:
-                        Toast.makeText(getContext(), R.string.error_change_password, Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        Toast.makeText(getContext(), R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
+//        firebaseResultCallback = new Firebase.ResultHandler() {
+//            @Override
+//            public void onSuccess() {
+//                dismissLoading();
+//                if (userSettingsListener != null) {
+//                    userSettingsListener.onEditFinished();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(FirebaseError firebaseError) {
+//                dismissLoading();
+//                switch(firebaseError.getCode()) {
+//                    case FirebaseError.INVALID_PASSWORD:
+//                        Toast.makeText(getContext(), R.string.error_change_password, Toast.LENGTH_SHORT).show();
+//                        break;
+//                    default:
+//                        Toast.makeText(getContext(), R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        };
     }
 
     private View.OnClickListener onConfirmClickListener = view -> {
         if (validateFields()) {
-            showLoading();
-            FirebaseManager.changePassword(user, oldPassword.getText().toString(),
-                    newPassword.getText().toString(), new Firebase.ResultHandler() {
-                @Override
-                public void onSuccess() {
-                    firebaseResultCallback.onSuccess();
-                }
-
-                @Override
-                public void onError(FirebaseError firebaseError) {
-                    firebaseResultCallback.onError(firebaseError);
-                }
-            });
+//            showLoading();
+//            FirebaseManager.changePassword(user, oldPassword.getText().toString(),
+//                    newPassword.getText().toString(), new Firebase.ResultHandler() {
+//                @Override
+//                public void onSuccess() {
+//                    firebaseResultCallback.onSuccess();
+//                }
+//
+//                @Override
+//                public void onError(FirebaseError firebaseError) {
+//                    firebaseResultCallback.onError(firebaseError);
+//                }
+//            });
         }
     };
 

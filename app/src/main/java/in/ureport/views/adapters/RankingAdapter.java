@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.marcorei.infinitefire.InfiniteFireArray;
 import com.marcorei.infinitefire.InfiniteFireRecyclerViewAdapter;
+import com.marcorei.infinitefire.InfiniteFireSnapshot;
 
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
@@ -37,6 +38,10 @@ public class RankingAdapter extends InfiniteFireRecyclerViewAdapter<User> {
     @Override
     public long getItemId(int position) {
         return getItem(position).getKey().hashCode();
+    }
+
+    private InfiniteFireSnapshot<User> getItem(int position) {
+        return snapshots.getItem(position - indexOffset);
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {

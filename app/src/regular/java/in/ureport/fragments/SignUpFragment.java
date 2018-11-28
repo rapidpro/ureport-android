@@ -9,9 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
 import java.util.Locale;
@@ -23,7 +22,6 @@ import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ToolbarDesigner;
 import in.ureport.managers.CountryProgramManager;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
@@ -47,7 +45,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
 
     private static ValueResultHandlerWrapper firebaseValueResultHandler;
     private static AuthResultHandlerWrapper firebaseAuthResultHandler;
-    private static Firebase.CompletionListener firebaseCompletionListener;
+    private static DatabaseReference.CompletionListener firebaseCompletionListener;
 
     public static SignUpFragment newInstance(User user) {
         SignUpFragment signUpFragment = new SignUpFragment();
@@ -85,10 +83,10 @@ public class SignUpFragment extends UserInfoBaseFragment {
             }
 
             @Override
-            public void onError(FirebaseError firebaseError) {
+            public void onError(DatabaseError error) {
                 dismissLoading();
                 Toast.makeText(getContext(), R.string.error_email_already_exists, Toast.LENGTH_LONG).show();
-                AnalyticsHelper.sendFirebaseError(firebaseError);
+                AnalyticsHelper.sendFirebaseError(error);
             }
         };
         firebaseAuthResultHandler = new AuthResultHandlerWrapper() {
@@ -99,15 +97,15 @@ public class SignUpFragment extends UserInfoBaseFragment {
             }
 
             @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
+            public void onAuthenticationError(DatabaseError error) {
                 dismissLoading();
                 Toast.makeText(getContext(), R.string.error_valid_email, Toast.LENGTH_LONG).show();
             }
         };
-        firebaseCompletionListener = ((firebaseError, firebase) -> {
+        firebaseCompletionListener = ((error, reference) -> {
             dismissLoading();
-            if (firebaseError != null)
-                Toast.makeText(getContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+            if (error != null)
+                Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             else
                 loginListener.onUserReady(user, true);
         });
@@ -195,7 +193,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
         user.setType(userType);
         user.setNickname(username.getText().toString());
         user.setEmail(email.getText().toString());
-        user.setBirthday(getBirthdayDate());
+        user.setBirthday(getBirthdayDate().getTime());
 
         Location state = (Location)this.state.getSelectedItem();
         user.setState(state.getName());
@@ -238,31 +236,31 @@ public class SignUpFragment extends UserInfoBaseFragment {
     };
 
     private void createUserAndAuthenticate(final Login login, final User user) {
-        FirebaseManager.getReference().createUser(login.getEmail(), login.getPassword(), new Firebase.ValueResultHandler<Map<String, Object>>() {
-            @Override
-            public void onSuccess(Map<String, Object> result) {
-                firebaseValueResultHandler.onSuccess(result, login, user);
-            }
-
-            @Override
-            public void onError(FirebaseError firebaseError) {
-                firebaseValueResultHandler.onError(firebaseError);
-            }
-        });
+//        FirebaseManager.getReference().createUser(login.getEmail(), login.getPassword(), new Firebase.ValueResultHandler<Map<String, Object>>() {
+//            @Override
+//            public void onSuccess(Map<String, Object> result) {
+//                firebaseValueResultHandler.onSuccess(result, login, user);
+//            }
+//
+//            @Override
+//            public void onError(FirebaseError firebaseError) {
+//                firebaseValueResultHandler.onError(firebaseError);
+//            }
+//        });
     }
 
     private void authenticateAndSaveUser(final Login login, final User user) {
-        FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                firebaseAuthResultHandler.onAuthenticated(user);
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                firebaseAuthResultHandler.onAuthenticationError(firebaseError);
-            }
-        });
+//        FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
+//            @Override
+//            public void onAuthenticated(AuthData authData) {
+//                firebaseAuthResultHandler.onAuthenticated(user);
+//            }
+//
+//            @Override
+//            public void onAuthenticationError(FirebaseError firebaseError) {
+//                firebaseAuthResultHandler.onAuthenticationError(firebaseError);
+//            }
+//        });
     }
 
     private void storeUserAndFinish(final User user) {
@@ -282,12 +280,12 @@ public class SignUpFragment extends UserInfoBaseFragment {
 
     interface ValueResultHandlerWrapper {
         void onSuccess(Map<String, Object> result, Login login, User user);
-        void onError(FirebaseError firebaseError);
+        void onError(DatabaseError error);
     }
 
     interface AuthResultHandlerWrapper {
         void onAuthenticated(User user);
-        void onAuthenticationError(FirebaseError firebaseError);
+        void onAuthenticationError(DatabaseError firebaseError);
     }
 
 }

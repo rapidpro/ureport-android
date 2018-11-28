@@ -3,11 +3,11 @@ package in.ureport.network;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class UserServices extends ProgramServices {
                 .child(userKey).child("chatRooms").child(chatRoomKey).removeValue();
     }
 
-    public Firebase getUserChatRoomsReference(String key) {
+    public DatabaseReference getUserChatRoomsReference(String key) {
         return FirebaseManager.getReference().child(userPath).child(key)
                 .child("chatRooms");
     }
@@ -139,11 +139,11 @@ public class UserServices extends ProgramServices {
         return loadUsers(onLoadAllUsersListener, query);
     }
 
-    public void addCountryModerator(User user, Firebase.CompletionListener listener) {
+    public void addCountryModerator(User user, DatabaseReference.CompletionListener listener) {
         getDefaultRoot().child(userModeratorPath).child(user.getKey()).setValue(true, listener);
     }
 
-    public void removeCountryModerator(User user, Firebase.CompletionListener listener) {
+    public void removeCountryModerator(User user, DatabaseReference.CompletionListener listener) {
         getDefaultRoot().child(userModeratorPath).child(user.getKey()).removeValue(listener);
     }
 
@@ -203,29 +203,29 @@ public class UserServices extends ProgramServices {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {}
+            public void onCancelled(DatabaseError firebaseError) {}
         };
         query.addValueEventListener(listener);
         return listener;
     }
 
-    public void changePublicProfile(User user, Boolean publicProfile, Firebase.CompletionListener listener) {
-        Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
+    public void changePublicProfile(User user, Boolean publicProfile, DatabaseReference.CompletionListener listener) {
+        DatabaseReference userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
         userReference.child("publicProfile").setValue(publicProfile, listener);
     }
 
     public void saveUserContactUuid(User user, String contactUUid) {
-        Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
+        DatabaseReference userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
         userReference.child("contactUuid").setValue(contactUUid);
     }
 
-    public void editUserPicture(User user, Firebase.CompletionListener listener) {
-        Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
+    public void editUserPicture(User user, DatabaseReference.CompletionListener listener) {
+        DatabaseReference userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
         userReference.child("picture").setValue(user.getPicture(), listener);
     }
 
-    public void editUser(User user, Firebase.CompletionListener listener) {
-        Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
+    public void editUser(User user, DatabaseReference.CompletionListener listener) {
+        DatabaseReference userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
 
         Map<String, Object> children = new HashMap<>();
         children.put("nickname", user.getNickname());
@@ -236,7 +236,7 @@ public class UserServices extends ProgramServices {
         userReference.updateChildren(children, listener);
     }
 
-    public void saveUser(User user, Firebase.CompletionListener listener) {
+    public void saveUser(User user, DatabaseReference.CompletionListener listener) {
         FirebaseManager.getReference().child(userPath).child(user.getKey()).setValue(user, listener);
     }
 
