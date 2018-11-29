@@ -15,7 +15,7 @@ public class GroupChatRoom extends ChatRoom {
 
     private Media picture;
 
-    private Date createdDate;
+    private long createdDate;
 
     private Boolean privateAccess;
 
@@ -48,10 +48,10 @@ public class GroupChatRoom extends ChatRoom {
     }
 
     public Date getCreatedDate() {
-        return createdDate;
+        return new Date(createdDate);
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(long createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -90,7 +90,7 @@ public class GroupChatRoom extends ChatRoom {
         dest.writeString(this.title);
         dest.writeString(this.subject);
         dest.writeParcelable(this.picture, 0);
-        dest.writeLong(createdDate != null ? createdDate.getTime() : -1);
+        dest.writeLong(createdDate);
         dest.writeValue(this.privateAccess);
         dest.writeValue(this.mediaAllowed);
         dest.writeParcelable(this.administrator, 0);
@@ -105,8 +105,7 @@ public class GroupChatRoom extends ChatRoom {
         this.title = in.readString();
         this.subject = in.readString();
         this.picture = in.readParcelable(Media.class.getClassLoader());
-        long tmpCreationDate = in.readLong();
-        this.createdDate = tmpCreationDate == -1 ? null : new Date(tmpCreationDate);
+        this.createdDate = in.readLong();
         this.privateAccess = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.mediaAllowed = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.administrator = in.readParcelable(User.class.getClassLoader());

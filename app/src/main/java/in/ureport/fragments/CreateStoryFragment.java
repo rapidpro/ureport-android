@@ -315,7 +315,7 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
         story.setTitle(title.getText().toString());
         story.setContributions(0);
         story.setContent(content.getText().toString());
-        story.setCreatedDate(new Date());
+        story.setCreatedDate(new Date().getTime());
         story.setMedias(medias.size() > 0 ? medias : null);
         story.setCover(cover);
 

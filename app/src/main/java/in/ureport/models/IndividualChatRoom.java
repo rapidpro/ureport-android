@@ -9,15 +9,15 @@ import java.util.Date;
  */
 public class IndividualChatRoom extends ChatRoom {
 
-    private Date createdDate;
+    private long createdDate;
 
     private String blocked;
 
     public Date getCreatedDate() {
-        return createdDate;
+        return new Date(createdDate);
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(long createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -41,14 +41,13 @@ public class IndividualChatRoom extends ChatRoom {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
-        dest.writeLong(createdDate != null ? createdDate.getTime() : -1);
+        dest.writeLong(createdDate);
         dest.writeString(this.blocked);
     }
 
     protected IndividualChatRoom(Parcel in) {
         super(in);
-        long tmpCreatedDate = in.readLong();
-        this.createdDate = tmpCreatedDate == -1 ? null : new Date(tmpCreatedDate);
+        this.createdDate = in.readLong();
         this.blocked = in.readString();
     }
 

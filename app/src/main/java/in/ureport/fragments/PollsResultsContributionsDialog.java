@@ -130,7 +130,7 @@ public class PollsResultsContributionsDialog extends BottomSheetDialogFragment i
     public void addContribution(String content) {
         if(UserManager.validateKeyAction(getActivity())) {
             final Contribution contribution = new Contribution(content, user);
-            contribution.setCreatedDate(new Date());
+            contribution.setCreatedDate(new Date().getTime());
 
             contributionServices.saveContribution(poll.getKey(), contribution, (firebaseError, firebase) -> {
                 if(firebaseError == null) {

@@ -19,7 +19,7 @@ public class ChatMessage implements Parcelable {
     private String message;
 
     @Expose
-    private Date date;
+    private long date;
 
     @Expose
     private User user;
@@ -44,10 +44,10 @@ public class ChatMessage implements Parcelable {
     }
 
     public Date getDate() {
-        return date;
+        return new Date(date);
     }
 
-    public void setDate(Date date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -102,7 +102,7 @@ public class ChatMessage implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.key);
         dest.writeString(this.message);
-        dest.writeLong(date != null ? date.getTime() : -1);
+        dest.writeLong(date);
         dest.writeParcelable(this.user, 0);
         dest.writeParcelable(this.media, 0);
     }
@@ -113,8 +113,7 @@ public class ChatMessage implements Parcelable {
     protected ChatMessage(Parcel in) {
         this.key = in.readString();
         this.message = in.readString();
-        long tmpDate = in.readLong();
-        this.date = tmpDate == -1 ? null : new Date(tmpDate);
+        this.date = in.readLong();
         this.user = in.readParcelable(User.class.getClassLoader());
         this.media = in.readParcelable(Media.class.getClassLoader());
     }

@@ -21,7 +21,7 @@ public class Story implements Parcelable {
 
     private String content;
 
-    private Date createdDate;
+    private long createdDate;
 
     private String user;
 
@@ -66,10 +66,10 @@ public class Story implements Parcelable {
     }
 
     public Date getCreatedDate() {
-        return createdDate;
+        return new Date(createdDate);
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(long createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -139,7 +139,7 @@ public class Story implements Parcelable {
         dest.writeString(this.key);
         dest.writeString(this.title);
         dest.writeString(this.content);
-        dest.writeLong(createdDate != null ? createdDate.getTime() : -1);
+        dest.writeLong(createdDate);
         dest.writeString(this.user);
         dest.writeParcelable(this.userObject, 0);
         dest.writeValue(this.contributions);
@@ -153,8 +153,7 @@ public class Story implements Parcelable {
         this.key = in.readString();
         this.title = in.readString();
         this.content = in.readString();
-        long tmpCreatedDate = in.readLong();
-        this.createdDate = tmpCreatedDate == -1 ? null : new Date(tmpCreatedDate);
+        this.createdDate = in.readLong();
         this.user = in.readString();
         this.userObject = in.readParcelable(User.class.getClassLoader());
         this.contributions = (Integer) in.readValue(Integer.class.getClassLoader());

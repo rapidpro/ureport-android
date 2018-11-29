@@ -305,7 +305,7 @@ public class CreateGroupFragment extends ProgressFragment {
     private void createGroup() {
         if (validateFields()) {
             final GroupChatRoom groupChatRoom = new GroupChatRoom();
-            groupChatRoom.setCreatedDate(new Date());
+            groupChatRoom.setCreatedDate(new Date().getTime());
             groupChatRoom.setTitle(title.getText().toString());
             groupChatRoom.setSubject(description.getText().toString());
             groupChatRoom.setPrivateAccess(privateGroup.isChecked());

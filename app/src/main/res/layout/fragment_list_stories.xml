@@ -6,12 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.marcorei.infinitefire.InfiniteFireLinearRecyclerView
-        android:id="@+id/storiesList"
-        android:layout_width="550dp"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    <!--<com.marcorei.infinitefire.InfiniteFireLinearRecyclerView-->
+        <!--android:id="@+id/storiesList"-->
+        <!--android:layout_width="550dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/createStoryButton"

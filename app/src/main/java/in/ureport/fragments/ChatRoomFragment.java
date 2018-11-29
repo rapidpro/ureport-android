@@ -215,7 +215,7 @@ public class ChatRoomFragment extends Fragment
     private void sendChatMessageWithMedia(Media media) {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setUser(user);
-        chatMessage.setDate(new Date());
+        chatMessage.setDate(new Date().getTime());
         chatMessage.setMedia(media);
         saveChatMessage(chatMessage);
     }
@@ -507,7 +507,7 @@ public class ChatRoomFragment extends Fragment
             String messageText = message.getText().toString();
             if(messageText.length() > 0) {
                 ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setDate(new Date());
+                chatMessage.setDate(new Date().getTime());
                 chatMessage.setMessage(messageText);
                 chatMessage.setUser(user);
 

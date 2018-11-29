@@ -62,7 +62,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     private static final String EXTRA_NEWS = "news";
     private static final String EXTRA_PUBLIC_TYPE = "publicType";
 
-    private InfiniteFireLinearRecyclerView storiesList;
+//    private InfiniteFireLinearRecyclerView storiesList;
     private View info;
     private FloatingActionButton createStoryButton;
 
@@ -196,11 +196,11 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         info = view.findViewById(R.id.info);
         info.setVisibility(publicType ? View.GONE : View.VISIBLE);
 
-        storiesList = (InfiniteFireLinearRecyclerView) view.findViewById(R.id.storiesList);
+//        storiesList = (InfiniteFireLinearRecyclerView) view.findViewById(R.id.storiesList);
 
         layoutManager = new LinearLayoutManager(getActivity());
-        storiesList.setLayoutManager(layoutManager);
-        storiesList.addOnScrollListener(onStoriesListScrollListener);
+//        storiesList.setLayoutManager(layoutManager);
+//        storiesList.addOnScrollListener(onStoriesListScrollListener);
 
         recyclerFloatingScrollListener = new RecyclerScrollListener(this);
 
@@ -226,8 +226,8 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         storiesAdapter.setOnPublishStoryListener(onPublishStoryListener);
         storiesAdapter.setOnUserStartChattingListener(onUserStartChattingListener);
         storiesAdapter.setOnNeedUpdateStoryListener(this);
-        storiesList.setAdapter(storiesAdapter);
-        storiesList.setInfiniteFireArray(storyFireArray);
+//        storiesList.setAdapter(storiesAdapter);
+//        storiesList.setInfiniteFireArray(storyFireArray);
 
         if (newsList != null) {
             storiesAdapter.addNews(newsList);

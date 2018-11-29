@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 
 import in.ureport.BuildConfig;
@@ -135,9 +137,8 @@ public class UserManager {
     }
 
     public static String getUserId() {
-        return "";
-//        return FirebaseManager.getReference() != null && FirebaseManager.getReference().getAuth() != null
-//            && FirebaseManager.getReference().getAuth().getUid() != null ? FirebaseManager.getReference().getAuth().getUid() : null;
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        return currentUser != null ? currentUser.getUid() : null;
     }
 
     public static void updateUserRapidUuid(String userRapidUuid) {

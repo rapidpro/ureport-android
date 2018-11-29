@@ -267,7 +267,7 @@ public class ChatRoomServices extends ProgramServices {
     public void saveIndividualChatRoom(final Context context, final User me, final User friend
             , final ChatRoomInterface.OnChatRoomSavedListener onChatRoomSavedListener) {
         final IndividualChatRoom chatRoom = new IndividualChatRoom();
-        chatRoom.setCreatedDate(new Date());
+        chatRoom.setCreatedDate(new Date().getTime());
 
         getDefaultRoot().child(chatRoomPath).push().setValue(chatRoom
                 , new DatabaseReference.CompletionListener() {

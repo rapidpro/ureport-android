@@ -16,7 +16,7 @@ public class ChatGroup implements Parcelable {
 
     private String picture;
 
-    private Date creationDate;
+    private long creationDate;
 
     public String getTitle() {
         return title;
@@ -43,10 +43,10 @@ public class ChatGroup implements Parcelable {
     }
 
     public Date getCreationDate() {
-        return creationDate;
+        return new Date(creationDate);
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -60,7 +60,7 @@ public class ChatGroup implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.description);
         dest.writeString(this.picture);
-        dest.writeLong(creationDate != null ? creationDate.getTime() : -1);
+        dest.writeLong(creationDate);
     }
 
     public ChatGroup() {
@@ -70,8 +70,7 @@ public class ChatGroup implements Parcelable {
         this.title = in.readString();
         this.description = in.readString();
         this.picture = in.readString();
-        long tmpCreationDate = in.readLong();
-        this.creationDate = tmpCreationDate == -1 ? null : new Date(tmpCreationDate);
+        this.creationDate = in.readLong();
     }
 
     public static final Creator<ChatGroup> CREATOR = new Creator<ChatGroup>() {
