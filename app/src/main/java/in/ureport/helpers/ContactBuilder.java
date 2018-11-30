@@ -69,7 +69,7 @@ public class ContactBuilder {
         String [] possibleDistricts = countryProgram.getDistrictField() != null ?
                 new String[]{countryProgram.getDistrictField()} : new String[]{"location", "district", "lga"};
 
-        putValuesIfExists(formatDate(user.getBirthday()), contactFields, "birthday", "birthdate", "birth_day");
+        putValuesIfExists(formatDate(new Date(user.getBirthday())), contactFields, "birthday", "birthdate", "birth_day");
         putValuesIfExists(getBornFormatted(user), contactFields, "year_of_birth", "born", "birth_year");
         putValuesIfExists(getAgeFormatted(user), contactFields, "age");
         putValuesIfExists(user.getGender(), contactFields, "gender");
@@ -109,7 +109,7 @@ public class ContactBuilder {
     public Integer getBorn(User user) {
         if(user.getBirthday() != null) {
             Calendar calendarBirthday = Calendar.getInstance();
-            calendarBirthday.setTime(user.getBirthday());
+            calendarBirthday.setTime(new Date(user.getBirthday()));
             return calendarBirthday.get(YEAR);
         }
         return null;
@@ -122,9 +122,9 @@ public class ContactBuilder {
 
     @Nullable
     public static Integer getAge(User user) {
-        if(user.getBirthday() != null) {
+        if (user.getBirthday() != null) {
             Calendar a = Calendar.getInstance();
-            a.setTime(user.getBirthday());
+            a.setTime(new Date(user.getBirthday()));
 
             Calendar b = Calendar.getInstance();
 

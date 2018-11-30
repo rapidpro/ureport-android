@@ -117,7 +117,7 @@ public abstract class UserInfoBaseFragment extends ProgressFragment implements L
 
             setEditTextValue(username, user.getNickname());
             setEditTextValue(email, user.getEmail());
-            setEditTextDate(birthday, user.getBirthday());
+            setEditTextDate(birthday, new Date(user.getBirthday()));
             setPasswordVisibility();
             setUserGenderValue();
         }

@@ -210,9 +210,9 @@
             <!--</intent-filter>-->
         <!--</service>-->
 
-        <service
-            android:name=".services.UreportFcmRegistrationService"
-            android:exported="false" />
+        <!--<service-->
+            <!--android:name=".services.UreportFcmRegistrationService"-->
+            <!--android:exported="false" />-->
 
         <!--<service-->
             <!--android:name="io.rapidpro.sdk.services.FcmClientInstanceIntentIdService"-->

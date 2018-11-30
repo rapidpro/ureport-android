@@ -13,8 +13,8 @@ public class IndividualChatRoom extends ChatRoom {
 
     private String blocked;
 
-    public Date getCreatedDate() {
-        return new Date(createdDate);
+    public long getCreatedDate() {
+        return createdDate;
     }
 
     public void setCreatedDate(long createdDate) {

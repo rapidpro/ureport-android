@@ -25,7 +25,7 @@ public class User implements Parcelable {
     @Expose
     private String nickname;
 
-    private long birthday;
+    private Long birthday;
 
     private String country;
 
@@ -76,11 +76,11 @@ public class User implements Parcelable {
         this.nickname = nickname;
     }
 
-    public Date getBirthday() {
-        return new Date(birthday);
+    public Long getBirthday() {
+        return birthday;
     }
 
-    public void setBirthday(long birthday) {
+    public void setBirthday(Long birthday) {
         this.birthday = birthday;
     }
 

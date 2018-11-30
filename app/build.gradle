@@ -17,11 +17,11 @@ android {
         disable 'MissingTranslation'
     }
 
-    compileSdkVersion 26
+    compileSdkVersion 28
     defaultConfig {
         applicationId "in.ureport"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 28
         multiDexEnabled true
     }
     buildTypes {
@@ -110,13 +110,15 @@ dependencies {
     implementation "com.android.support:preference-v7:${versions.androidSupportVersion}"
     implementation 'com.android.support:multidex:1.0.1'
 
-    implementation 'com.github.marcorei:Infinite-Fire:2.0.0'
+    implementation 'com.github.allancslima:Infinite-Fire:2.0.1'
     implementation('com.github.ilhasoft.rapidpro-android-sdk:fcm-channel:1.0.4.2') {
         exclude group: 'com.android.support'
         exclude group: 'com.google.firebase'
     }
 
-    implementation 'com.google.firebase:firebase-database:16.0.2'
+    implementation('com.google.firebase:firebase-database:16.0.2') {
+        exclude group: 'com.android.support'
+    }
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     implementation "com.facebook.android:facebook-android-sdk:${versions.facebookSdkVersion}"
     implementation "com.squareup.picasso:picasso:${versions.picassoVersion}"

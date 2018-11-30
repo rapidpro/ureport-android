@@ -43,8 +43,8 @@ public class ChatMessage implements Parcelable {
         this.message = message;
     }
 
-    public Date getDate() {
-        return new Date(date);
+    public long getDate() {
+        return date;
     }
 
     public void setDate(long date) {

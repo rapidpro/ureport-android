@@ -1,7 +1,7 @@
 buildscript {
     ext.versions = [
             'gradleVersion'        : '3.2.1',
-            'androidSupportVersion': '26.1.0',
+            'androidSupportVersion': '28.0.0',
             'facebookSdkVersion'   : '4.5.0',
             'picassoVersion'       : '2.5.2',
             'retrofitVersion'      : '1.6.0'

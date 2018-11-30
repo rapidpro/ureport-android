@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import in.ureport.R;
@@ -99,7 +100,7 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
         }
 
         date = (TextView) findIfNeeded(date, R.id.chatMessageDate);
-        date.setText(hourFormatter.format(chatMessage.getDate()));
+        date.setText(hourFormatter.format(new Date(chatMessage.getDate())));
     }
 
     private void bindMedia(User user, ChatMessage chatMessage) {

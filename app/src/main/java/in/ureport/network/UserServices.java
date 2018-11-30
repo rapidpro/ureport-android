@@ -229,7 +229,7 @@ public class UserServices extends ProgramServices {
 
         Map<String, Object> children = new HashMap<>();
         children.put("nickname", user.getNickname());
-        children.put("birthday", user.getBirthday().getTime());
+        children.put("birthday", user.getBirthday());
         children.put("state", user.getState());
         children.put("gender", user.getGender());
 
