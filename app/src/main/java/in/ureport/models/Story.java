@@ -21,7 +21,7 @@ public class Story implements Parcelable {
 
     private String content;
 
-    private long createdDate;
+    private Long createdDate;
 
     private String user;
 
@@ -65,11 +65,11 @@ public class Story implements Parcelable {
         this.content = content;
     }
 
-    public Date getCreatedDate() {
-        return new Date(createdDate);
+    public Long getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedDate(long createdDate) {
+    public void setCreatedDate(Long createdDate) {
         this.createdDate = createdDate;
     }
 

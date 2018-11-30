@@ -121,7 +121,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             this.contribution.setText(contribution.getContent());
 
-            String timeElapsed = dateFormatter.getTimeElapsed(contribution.getCreatedDate().getTime()
+            String timeElapsed = dateFormatter.getTimeElapsed(contribution.getCreatedDate()
                     , itemView.getContext().getString(R.string.date_now));
             this.date.setText(timeElapsed.toLowerCase());
         }

@@ -18,7 +18,7 @@ public class Contribution {
     @Expose
     private User author;
 
-    private long createdDate;
+    private Long createdDate;
 
     public Contribution() {
     }
@@ -52,11 +52,11 @@ public class Contribution {
         this.author = author;
     }
 
-    public Date getCreatedDate() {
-        return new Date(createdDate);
+    public Long getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreatedDate(long createdDate) {
+    public void setCreatedDate(Long createdDate) {
         this.createdDate = createdDate;
     }
 

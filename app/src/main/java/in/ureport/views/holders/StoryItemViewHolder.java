@@ -108,7 +108,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         DateFormatter dateFormatter;
         dateFormatter = new DateFormatter();
 
-        String timeElapsed = dateFormatter.getTimeElapsed(story.getCreatedDate().getTime()
+        String timeElapsed = dateFormatter.getTimeElapsed(story.getCreatedDate()
                 , itemView.getContext().getString(R.string.date_now));
         this.publishedDate.setText(timeElapsed.toLowerCase());
     }
