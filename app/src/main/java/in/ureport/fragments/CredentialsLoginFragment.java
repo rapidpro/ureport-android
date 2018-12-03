@@ -47,7 +47,7 @@ public class CredentialsLoginFragment extends ProgressFragment {
     private LoginFragment.LoginListener loginListener;
 
     private FirebaseAuth firebaseAuth;
-    private OnCompleteListener<AuthResult> authResultTask;
+    private OnCompleteListener<AuthResult> authResultListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,7 +99,7 @@ public class CredentialsLoginFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        authResultTask = task -> {
+        authResultListener = task -> {
             dismissLoading();
             if (task.isSuccessful() && task.getResult() != null) {
                 getUserInfoAndContinue(task.getResult());
@@ -148,7 +148,7 @@ public class CredentialsLoginFragment extends ProgressFragment {
         saveLoginPreferences(login);
         showLoading();
         firebaseAuth.signInWithEmailAndPassword(login.getEmail(), login.getPassword())
-                .addOnCompleteListener(getActivity(), task -> authResultTask.onComplete(task));
+                .addOnCompleteListener(task -> authResultListener.onComplete(task));
     }
 
     private void saveLoginPreferences(Login login) {
