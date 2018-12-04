@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.facebook.AccessToken;
 //import com.firebase.client.Config;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 //import com.firebase.client.core.RepoManager;
 //import com.firebase.client.utilities.ParsedUrl;
@@ -53,7 +54,7 @@ public class FirebaseManager {
     }
 
     public static void logout() {
-//        reference.unauth();
+        FirebaseAuth.getInstance().signOut();
     }
 
 //    public static void changePassword(User user, String oldPassword, String newPassword, Firebase.ResultHandler resultHanlder) {
