@@ -2,6 +2,11 @@ package in.ureport.managers;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
+
+import com.google.firebase.auth.AdditionalUserInfo;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,18 +21,18 @@ import in.ureport.models.User;
  */
 public class UserSocialAuthBuilder {
 
-//    public User build(AuthData authData) {
-//        String provider = authData.getProvider();
-//        switch(User.Type.valueOf(provider)) {
+    public User build(AuthResult authResult) {
+        String provider1 = authResult.getAdditionalUserInfo().getProviderId().replace(".com", "");
+        switch (User.Type.valueOf(provider1)) {
 //            case twitter:
 //                return buildUserFromTwitter(authData);
-//            case facebook:
-//                return buildUserFromFacebook(authData);
+            case facebook:
+                return buildUserFromFacebook(authResult);
 //            case google:
 //                return buildUserFromGoogle(authData);
-//        }
-//        return null;
-//    }
+        }
+        return null;
+    }
 //
 //    @NonNull
 //    public User buildUserFromTwitter(AuthData authData) {
@@ -59,48 +64,63 @@ public class UserSocialAuthBuilder {
 //        return user;
 //    }
 //
-//    @NonNull
-//    public User buildUserFromFacebook(AuthData authData) {
-//        Map<String, Object> data = authData.getProviderData();
-//        Map<String, Object> cachedUserProfile = (Map<String, Object>) authData.getProviderData().get("cachedUserProfile");
-//
-//        User user = new User();
-//        user.setKey(authData.getUid());
-//        user.setType(User.Type.facebook);
-//        user.setEmail(getStringValue(data, "email"));
-//        user.setNickname(getFormattedNickname(getStringValue(data, "displayName")));
-//        user.setPicture(getStringValue(data, "profileImageURL"));
-//        user.setBirthday(getFormattedDate(getStringValue(cachedUserProfile, "birthday"), "MM/dd/yyyy"));
-//        user.setGenderAsEnum(getUserGender(getStringValue(cachedUserProfile, "gender")));
-//
-//        return user;
-//    }
-//
-//    @Nullable
-//    private User.Gender getUserGender(String gender) {
-//        if (gender != null && gender.equals("female"))
-//            return User.Gender.Female;
-//        return User.Gender.Male;
-//    }
-//
-//    private String getFormattedNickname(String name) {
-//        return name.replace(" ", "");
-//    }
-//
-//    @Nullable
-//    private Date getFormattedDate(String birthdayDate, String format) {
-//        try {
-//            DateFormat dateFormat = new SimpleDateFormat(format, Locale.US);
-//            return dateFormat.parse(birthdayDate);
-//        } catch (Exception exception) {
-//            return null;
-//        }
-//    }
-//
-//    @Nullable
-//    private String getStringValue(Map<String, Object> data, String key) {
-//        Object value = data.get(key);
-//        return value != null ? value.toString() : null;
-//    }
+
+    @NonNull
+    public User buildUserFromFacebook(AuthResult authResult) {
+        final FirebaseUser userInfo = authResult.getUser();
+        final AdditionalUserInfo additionalUserInfo = authResult.getAdditionalUserInfo();
+        final User user = new User();
+
+        String pictureUrl;
+        try {
+            final Map<String, Object> pictureData = ((ArrayMap<String, Object>)
+                    ((ArrayMap<String, Object>) additionalUserInfo.getProfile().get("picture")).get("data"));
+            pictureUrl = (String) pictureData.get("url");
+        } catch (Exception e) {
+            pictureUrl = "";
+        }
+
+        user.setKey(userInfo.getUid());
+        user.setType(User.Type.facebook);
+        user.setEmail(getStringValue(additionalUserInfo.getProfile(), "email"));
+        user.setPicture(pictureUrl);
+
+        final String nickname = getStringValue(additionalUserInfo.getProfile(), "name");
+        final Date birthday = getFormattedDate(getStringValue(authResult.getAdditionalUserInfo()
+                .getProfile(), "birthday"), "MM/dd/yyyy");
+
+        user.setNickname(nickname == null ? "" : getFormattedNickname(nickname));
+        user.setBirthday(birthday == null ? 0 : birthday.getTime());
+        user.setGenderAsEnum(getUserGender(getStringValue(additionalUserInfo.getProfile(), "gender")));
+        user.setPicture(getStringValue(additionalUserInfo.getProfile(), "profileImageURL"));
+
+        return user;
+    }
+
+    private User.Gender getUserGender(String gender) {
+        if (gender != null && gender.equals("female"))
+            return User.Gender.Female;
+        return User.Gender.Male;
+    }
+
+    private String getFormattedNickname(String name) {
+        return name.replace(" ", "");
+    }
+
+    @Nullable
+    private Date getFormattedDate(String birthdayDate, String format) {
+        try {
+            DateFormat dateFormat = new SimpleDateFormat(format, Locale.US);
+            return dateFormat.parse(birthdayDate);
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+
+    @Nullable
+    private String getStringValue(Map<String, Object> data, String key) {
+        Object value = data.get(key);
+        return value != null ? value.toString() : null;
+    }
 
 }

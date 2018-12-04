@@ -26,6 +26,12 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -45,7 +51,7 @@ import in.ureport.models.User;
  */
 public class LoginFragment extends ProgressFragment {
 
-    public static final String [] FACEBOOK_PERMISSIONS = { "email", "user_birthday" };
+    public static final String[] FACEBOOK_PERMISSIONS = {"email", "user_birthday"};
     public static final int ERROR_RESOLUTION_REQUEST_CODE = 300;
     public static final int REQUEST_CODE_GET_ACCOUNTS_PERMISSION = 101;
 
@@ -60,9 +66,18 @@ public class LoginFragment extends ProgressFragment {
     private boolean resolvingGoogleSignin = false;
     private boolean shouldResolveErrors = true;
 
-//    private static Firebase.AuthResultHandler firebaseAuthCallback;
-//    private static FacebookCallback<LoginResult> facebookAuthCallback;
+    private FirebaseAuth firebaseAuth;
+
+    private static OnCompleteListener<AuthResult> userSigninListener;
+    private static FacebookCallback<LoginResult> facebookAuthCallback;
 //    private static Callback<TwitterSession> twitterAuthCallback;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        firebaseAuth = FirebaseAuth.getInstance();
+    }
 
     @Nullable
     @Override
@@ -97,12 +112,12 @@ public class LoginFragment extends ProgressFragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode) {
+        switch (requestCode) {
             case REQUEST_CODE_GET_ACCOUNTS_PERMISSION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     loginWithGooglePlus();
                 } else {
-                    Toast.makeText(getContext(),  R.string.error_message_permission, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.error_message_permission, Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -111,6 +126,17 @@ public class LoginFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
+        userSigninListener = task -> {
+            dismissLoading();
+            if (task.isSuccessful() && task.getResult() != null) {
+                User user = userSocialAuthBuilder.build(task.getResult());
+                if (loginListener != null) {
+                    loginListener.onLoginWithSocialNetwork(user);
+                }
+            } else {
+                showLoginErrorAlert();
+            }
+        };
 //        firebaseAuthCallback = new Firebase.AuthResultHandler() {
 //            @Override
 //            public void onAuthenticated(AuthData authData) {
@@ -127,31 +153,26 @@ public class LoginFragment extends ProgressFragment {
 //                showLoginErrorAlert();
 //            }
 //        };
-//        facebookAuthCallback = new FacebookCallback<LoginResult>() {
-//            @Override
-//            public void onSuccess(LoginResult loginResult) {
-//                showLoading();
-//                FirebaseManager.authenticateWithFacebook(loginResult.getAccessToken(), new Firebase.AuthResultHandler() {
-//                    @Override
-//                    public void onAuthenticated(AuthData authData) {
-//                        firebaseAuthCallback.onAuthenticated(authData);
-//                    }
-//
-//                    @Override
-//                    public void onAuthenticationError(FirebaseError firebaseError) {
-//                        firebaseAuthCallback.onAuthenticationError(firebaseError);
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancel() { }
-//
-//            @Override
-//            public void onError(FacebookException exception) {
-//                showLoginErrorAlert();
-//            }
-//        };
+        facebookAuthCallback = new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                showLoading();
+                AuthCredential credential = FacebookAuthProvider
+                        .getCredential(loginResult.getAccessToken().getToken());
+
+                firebaseAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(task -> userSigninListener.onComplete(task));
+            }
+
+            @Override
+            public void onCancel() {
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                showLoginErrorAlert();
+            }
+        };
 //        twitterAuthCallback = new Callback<TwitterSession>() {
 //            @Override
 //            public void success(Result<TwitterSession> result) {
@@ -225,8 +246,8 @@ public class LoginFragment extends ProgressFragment {
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-        if(activity instanceof LoginListener) {
-            loginListener = (LoginListener)activity;
+        if (activity instanceof LoginListener) {
+            loginListener = (LoginListener) activity;
         }
     }
 
@@ -278,7 +299,8 @@ public class LoginFragment extends ProgressFragment {
         }
 
         @Override
-        public void onConnectionSuspended(int connectionSuspended) { }
+        public void onConnectionSuspended(int connectionSuspended) {
+        }
     };
 
     private GoogleApiClient.OnConnectionFailedListener googleConnectionFailedListener = connectionResult -> {
@@ -303,17 +325,17 @@ public class LoginFragment extends ProgressFragment {
         loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-//                facebookAuthCallback.onSuccess(loginResult);
+                facebookAuthCallback.onSuccess(loginResult);
             }
 
             @Override
             public void onCancel() {
-//                facebookAuthCallback.onCancel();
+                facebookAuthCallback.onCancel();
             }
 
             @Override
             public void onError(FacebookException error) {
-//                facebookAuthCallback.onError(error);
+                facebookAuthCallback.onError(error);
             }
         });
         loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
@@ -347,11 +369,17 @@ public class LoginFragment extends ProgressFragment {
 
     public interface LoginListener {
         void onLoginWithSocialNetwork(User user);
+
         void onLoginWithCredentials();
+
         void onSkipLogin();
+
         void onSignUp();
+
         void onUserReady(User user, boolean newUser);
+
         void onForgotPassword();
+
         void onPasswordReset();
     }
 
