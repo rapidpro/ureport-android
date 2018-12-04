@@ -110,7 +110,7 @@ dependencies {
     implementation "com.android.support:preference-v7:${versions.androidSupportVersion}"
     implementation 'com.android.support:multidex:1.0.1'
 
-    implementation 'com.github.allancslima:Infinite-Fire:2.0.1'
+    implementation 'com.github.marcorei:Infinite-Fire:2.0.0'
     implementation('com.github.ilhasoft.rapidpro-android-sdk:fcm-channel:1.0.4.2') {
         exclude group: 'com.android.support'
         exclude group: 'com.google.firebase'

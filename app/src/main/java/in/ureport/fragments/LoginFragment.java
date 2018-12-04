@@ -29,9 +29,9 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.TwitterAuthProvider;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -70,8 +70,7 @@ public class LoginFragment extends ProgressFragment {
 
     private static OnCompleteListener<AuthResult> userSigninListener;
     private static FacebookCallback<LoginResult> facebookAuthCallback;
-//    private static Callback<TwitterSession> twitterAuthCallback;
-
+    private static Callback<TwitterSession> twitterAuthCallback;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -137,29 +136,12 @@ public class LoginFragment extends ProgressFragment {
                 showLoginErrorAlert();
             }
         };
-//        firebaseAuthCallback = new Firebase.AuthResultHandler() {
-//            @Override
-//            public void onAuthenticated(AuthData authData) {
-//                dismissLoading();
-//                User user = userSocialAuthBuilder.build(authData);
-//                if (loginListener != null) {
-//                    loginListener.onLoginWithSocialNetwork(user);
-//                }
-//            }
-//
-//            @Override
-//            public void onAuthenticationError(FirebaseError firebaseError) {
-//                dismissLoading();
-//                showLoginErrorAlert();
-//            }
-//        };
         facebookAuthCallback = new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 showLoading();
-                AuthCredential credential = FacebookAuthProvider
-                        .getCredential(loginResult.getAccessToken().getToken());
-
+                final AuthCredential credential = FacebookAuthProvider.getCredential(
+                        loginResult.getAccessToken().getToken());
                 firebaseAuth.signInWithCredential(credential)
                         .addOnCompleteListener(task -> userSigninListener.onComplete(task));
             }
@@ -173,28 +155,22 @@ public class LoginFragment extends ProgressFragment {
                 showLoginErrorAlert();
             }
         };
-//        twitterAuthCallback = new Callback<TwitterSession>() {
-//            @Override
-//            public void success(Result<TwitterSession> result) {
-//                showLoading();
-//                FirebaseManager.authenticateWithTwitter(result.data, new Firebase.AuthResultHandler() {
-//                    @Override
-//                    public void onAuthenticated(AuthData authData) {
-//                        firebaseAuthCallback.onAuthenticated(authData);
-//                    }
-//
-//                    @Override
-//                    public void onAuthenticationError(FirebaseError firebaseError) {
-//                        firebaseAuthCallback.onAuthenticationError(firebaseError);
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void failure(TwitterException exception) {
-//                showLoginErrorAlert();
-//            }
-//        };
+        twitterAuthCallback = new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                showLoading();
+                final AuthCredential credential = TwitterAuthProvider.getCredential(
+                        result.data.getAuthToken().token,
+                        result.data.getAuthToken().secret);
+                firebaseAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(task -> userSigninListener.onComplete(task));
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                showLoginErrorAlert();
+            }
+        };
     }
 
     private void setupObjects() {
@@ -267,20 +243,6 @@ public class LoginFragment extends ProgressFragment {
         Toast.makeText(getContext(), R.string.login_error, Toast.LENGTH_LONG).show();
     }
 
-    private View.OnClickListener onTwitterLoginClickListener = view -> {
-        twitterAuthClient.authorize(getActivity(), new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-//                twitterAuthCallback.success(result);
-            }
-
-            @Override
-            public void failure(TwitterException e) {
-//                twitterAuthCallback.failure(e);
-            }
-        });
-    };
-
     private GoogleApiClient.ConnectionCallbacks googleConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
@@ -334,11 +296,25 @@ public class LoginFragment extends ProgressFragment {
             }
 
             @Override
-            public void onError(FacebookException error) {
-                facebookAuthCallback.onError(error);
+            public void onError(FacebookException exception) {
+                facebookAuthCallback.onError(exception);
             }
         });
         loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
+    };
+
+    private View.OnClickListener onTwitterLoginClickListener = view -> {
+        twitterAuthClient.authorize(requireActivity(), new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                twitterAuthCallback.success(result);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                twitterAuthCallback.failure(exception);
+            }
+        });
     };
 
     private View.OnClickListener onGoogleLoginClickListener = view -> {

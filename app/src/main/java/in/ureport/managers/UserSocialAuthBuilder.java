@@ -22,10 +22,10 @@ import in.ureport.models.User;
 public class UserSocialAuthBuilder {
 
     public User build(AuthResult authResult) {
-        String provider1 = authResult.getAdditionalUserInfo().getProviderId().replace(".com", "");
-        switch (User.Type.valueOf(provider1)) {
-//            case twitter:
-//                return buildUserFromTwitter(authData);
+        String provider = authResult.getAdditionalUserInfo().getProviderId().replace(".com", "");
+        switch (User.Type.valueOf(provider)) {
+            case twitter:
+                return buildUserFromTwitter(authResult);
             case facebook:
                 return buildUserFromFacebook(authResult);
 //            case google:
@@ -33,19 +33,17 @@ public class UserSocialAuthBuilder {
         }
         return null;
     }
-//
-//    @NonNull
-//    public User buildUserFromTwitter(AuthData authData) {
-//        Map<String, Object> data = authData.getProviderData();
-//
-//        User user = new User();
-//        user.setKey(authData.getUid());
-//        user.setType(User.Type.twitter);
-//        user.setNickname(getStringValue(data, "username"));
+
+    @NonNull
+    public User buildUserFromTwitter(AuthResult authResult) {
+        User user = new User();
+        user.setKey(authResult.getUser().getUid());
+        user.setType(User.Type.twitter);
+        user.setNickname(authResult.getAdditionalUserInfo().getUsername());
 //        user.setPicture(getBiggerTwitterProfilePicture(getStringValue(data, "profileImageURL")));
-//        return user;
-//    }
-//
+        return user;
+    }
+
 //    private String getBiggerTwitterProfilePicture(String profileImageUrl) {
 //        return profileImageUrl.replace("_normal", "_bigger");
 //    }

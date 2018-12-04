@@ -72,19 +72,6 @@ public class FirebaseManager {
 //        getGoogleAuthTokenTask.execute(client);
 //    }
 
-//    public static void authenticateWithFacebook(AccessToken token, final Firebase.AuthResultHandler handler) {
-//        reference.authWithOAuthToken("facebook", token.getToken(), handler);
-//    }
-
-//    public static void authenticateWithTwitter(TwitterSession session, final Firebase.AuthResultHandler handler) {
-//        Map<String, String> options = new HashMap<>();
-//        options.put("oauth_token", session.getAuthToken().token);
-//        options.put("oauth_token_secret", session.getAuthToken().secret);
-//        options.put("user_id", String.valueOf(session.getUserId()));
-//
-//        reference.authWithOAuthToken("twitter", options, handler);
-//    }
-
     public static void authorizeCode(String code) {
         DatabaseReference authorization = reference.child("backend_authorization").child(code);
         authorization.child("checked").setValue(true);
