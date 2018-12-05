@@ -8,10 +8,6 @@ import com.google.firebase.auth.AdditionalUserInfo;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 
 import in.ureport.models.User;
@@ -35,19 +31,24 @@ public class UserSocialAuthBuilder {
     }
 
     @NonNull
-    public User buildUserFromTwitter(AuthResult authResult) {
-        User user = new User();
+    private User buildUserFromTwitter(AuthResult authResult) {
+        final String profileImageUrl = (String) authResult.getAdditionalUserInfo()
+                .getProfile().get("profile_image_url");
+        final User user = new User();
+
         user.setKey(authResult.getUser().getUid());
         user.setType(User.Type.twitter);
         user.setNickname(authResult.getAdditionalUserInfo().getUsername());
-//        user.setPicture(getBiggerTwitterProfilePicture(getStringValue(data, "profileImageURL")));
+        if (profileImageUrl != null) {
+            user.setPicture(getBiggerTwitterProfilePicture(profileImageUrl));
+        }
         return user;
     }
 
-//    private String getBiggerTwitterProfilePicture(String profileImageUrl) {
-//        return profileImageUrl.replace("_normal", "_bigger");
-//    }
-//
+    private String getBiggerTwitterProfilePicture(String profileImageUrl) {
+        return profileImageUrl.replace("_normal", "_bigger");
+    }
+
 //    public User buildUserFromGoogle(AuthData authData) {
 //        Map<String, Object> data = authData.getProviderData();
 //        Map<String, Object> cachedUserProfile = (Map<String, Object>) data.get("cachedUserProfile");
@@ -64,7 +65,7 @@ public class UserSocialAuthBuilder {
 //
 
     @NonNull
-    public User buildUserFromFacebook(AuthResult authResult) {
+    private User buildUserFromFacebook(AuthResult authResult) {
         final FirebaseUser userInfo = authResult.getUser();
         final AdditionalUserInfo additionalUserInfo = authResult.getAdditionalUserInfo();
         final User user = new User();
@@ -84,11 +85,7 @@ public class UserSocialAuthBuilder {
         user.setPicture(pictureUrl);
 
         final String nickname = getStringValue(additionalUserInfo.getProfile(), "name");
-        final Date birthday = getFormattedDate(getStringValue(authResult.getAdditionalUserInfo()
-                .getProfile(), "birthday"), "MM/dd/yyyy");
-
         user.setNickname(nickname == null ? "" : getFormattedNickname(nickname));
-        user.setBirthday(birthday == null ? 0 : birthday.getTime());
         user.setGenderAsEnum(getUserGender(getStringValue(additionalUserInfo.getProfile(), "gender")));
         user.setPicture(getStringValue(additionalUserInfo.getProfile(), "profileImageURL"));
 
@@ -103,16 +100,6 @@ public class UserSocialAuthBuilder {
 
     private String getFormattedNickname(String name) {
         return name.replace(" ", "");
-    }
-
-    @Nullable
-    private Date getFormattedDate(String birthdayDate, String format) {
-        try {
-            DateFormat dateFormat = new SimpleDateFormat(format, Locale.US);
-            return dateFormat.parse(birthdayDate);
-        } catch (Exception exception) {
-            return null;
-        }
     }
 
     @Nullable
