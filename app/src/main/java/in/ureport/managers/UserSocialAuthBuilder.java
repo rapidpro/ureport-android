@@ -24,8 +24,8 @@ public class UserSocialAuthBuilder {
                 return buildUserFromTwitter(authResult);
             case facebook:
                 return buildUserFromFacebook(authResult);
-//            case google:
-//                return buildUserFromGoogle(authData);
+            case google:
+                return buildUserFromGoogle(authResult);
         }
         return null;
     }
@@ -48,21 +48,6 @@ public class UserSocialAuthBuilder {
     private String getBiggerTwitterProfilePicture(String profileImageUrl) {
         return profileImageUrl.replace("_normal", "_bigger");
     }
-
-//    public User buildUserFromGoogle(AuthData authData) {
-//        Map<String, Object> data = authData.getProviderData();
-//        Map<String, Object> cachedUserProfile = (Map<String, Object>) data.get("cachedUserProfile");
-//
-//        User user = new User();
-//        user.setKey(authData.getUid());
-//        user.setType(User.Type.google);
-//        user.setNickname(getFormattedNickname(getStringValue(data, "displayName")));
-//        user.setPicture(getStringValue(data, "profileImageURL"));
-//        user.setGenderAsEnum(getUserGender(getStringValue(cachedUserProfile, "gender")));
-//
-//        return user;
-//    }
-//
 
     @NonNull
     private User buildUserFromFacebook(AuthResult authResult) {
@@ -88,6 +73,21 @@ public class UserSocialAuthBuilder {
         user.setNickname(nickname == null ? "" : getFormattedNickname(nickname));
         user.setGenderAsEnum(getUserGender(getStringValue(additionalUserInfo.getProfile(), "gender")));
         user.setPicture(getStringValue(additionalUserInfo.getProfile(), "profileImageURL"));
+
+        return user;
+    }
+
+    private User buildUserFromGoogle(AuthResult authResult) {
+        final String displayName = authResult.getUser().getDisplayName();
+        final String pictureUrl = (String) authResult.getAdditionalUserInfo().getProfile().get("picture");
+        final User user = new User();
+
+        user.setKey(authResult.getUser().getUid());
+        user.setType(User.Type.google);
+        if (displayName != null) {
+            user.setNickname(getFormattedNickname(displayName));
+        }
+        user.setPicture(pictureUrl);
 
         return user;
     }

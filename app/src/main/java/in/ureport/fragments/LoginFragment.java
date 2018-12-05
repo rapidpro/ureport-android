@@ -31,6 +31,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -45,6 +46,7 @@ import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.managers.UserSocialAuthBuilder;
 import in.ureport.models.User;
+import in.ureport.tasks.GetGoogleAuthTokenTask;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -181,7 +183,7 @@ public class LoginFragment extends ProgressFragment {
         callbackManager = CallbackManager.Factory.create();
         twitterAuthClient = new TwitterAuthClient();
 
-        googleApiClient = new GoogleApiClient.Builder(getActivity())
+        googleApiClient = new GoogleApiClient.Builder(requireContext())
                 .addConnectionCallbacks(googleConnectionCallbacks)
                 .addOnConnectionFailedListener(googleConnectionFailedListener)
                 .addApi(Plus.API)
@@ -246,18 +248,17 @@ public class LoginFragment extends ProgressFragment {
     private GoogleApiClient.ConnectionCallbacks googleConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
-//            shouldResolveErrors = false;
-//            FirebaseManager.authenticateWithGoogle(googleApiClient, new Firebase.AuthResultHandler() {
-//                @Override
-//                public void onAuthenticated(AuthData authData) {
-//                    firebaseAuthCallback.onAuthenticated(authData);
-//                }
-//
-//                @Override
-//                public void onAuthenticationError(FirebaseError firebaseError) {
-//                    firebaseAuthCallback.onAuthenticationError(firebaseError);
-//                }
-//            });
+            shouldResolveErrors = false;
+            GetGoogleAuthTokenTask getGoogleAuthTokenTask = new GetGoogleAuthTokenTask() {
+                @Override
+                protected void onPostExecute(String token) {
+                    super.onPostExecute(token);
+                    AuthCredential credential = GoogleAuthProvider.getCredential(null, token);
+                    firebaseAuth.signInWithCredential(credential)
+                            .addOnCompleteListener(task -> userSigninListener.onComplete(task));
+                }
+            };
+            getGoogleAuthTokenTask.execute(googleApiClient);
         }
 
         @Override
@@ -319,14 +320,14 @@ public class LoginFragment extends ProgressFragment {
 
     private View.OnClickListener onGoogleLoginClickListener = view -> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasWriteContactsPermission = getActivity().checkSelfPermission(android.Manifest.permission.GET_ACCOUNTS);
+            int hasWriteContactsPermission = requireActivity().checkSelfPermission(android.Manifest.permission.GET_ACCOUNTS);
             if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{android.Manifest.permission.GET_ACCOUNTS}
-                        , REQUEST_CODE_GET_ACCOUNTS_PERMISSION);
+                requestPermissions(new String[]{android.Manifest.permission.GET_ACCOUNTS},
+                        REQUEST_CODE_GET_ACCOUNTS_PERMISSION);
+                return;
             }
-        } else {
-            loginWithGooglePlus();
         }
+        loginWithGooglePlus();
     };
 
     private void loginWithGooglePlus() {

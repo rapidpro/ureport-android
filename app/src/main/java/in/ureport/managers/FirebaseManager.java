@@ -2,23 +2,16 @@ package in.ureport.managers;
 
 import android.content.Context;
 
-import com.facebook.AccessToken;
-//import com.firebase.client.Config;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import in.ureport.R;
+
+//import com.firebase.client.Config;
 //import com.firebase.client.core.RepoManager;
 //import com.firebase.client.utilities.ParsedUrl;
 //import com.firebase.client.utilities.Utilities;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.database.FirebaseDatabase;
-import com.twitter.sdk.android.core.TwitterSession;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import in.ureport.R;
-import in.ureport.models.User;
-import in.ureport.tasks.GetGoogleAuthTokenTask;
 
 /**
  * Created by johncordeiro on 15/08/15.
@@ -59,17 +52,6 @@ public class FirebaseManager {
 
 //    public static void changePassword(User user, String oldPassword, String newPassword, Firebase.ResultHandler resultHanlder) {
 //        reference.changePassword(user.getEmail(), oldPassword, newPassword, resultHanlder);
-//    }
-
-//    public static void authenticateWithGoogle(GoogleApiClient client, final Firebase.AuthResultHandler handler) {
-//        GetGoogleAuthTokenTask getGoogleAuthTokenTask = new GetGoogleAuthTokenTask() {
-//            @Override
-//            protected void onPostExecute(String token) {
-//                super.onPostExecute(token);
-//                reference.authWithOAuthToken("google", token, handler);
-//            }
-//        };
-//        getGoogleAuthTokenTask.execute(client);
 //    }
 
     public static void authorizeCode(String code) {
