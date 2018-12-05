@@ -24,8 +24,8 @@ public class ItemChoice implements Parcelable {
         return value;
     }
 
-    public void setValue(Integer value) {
-        this.value = value;
+    public void setValue(String value) {
+        this.value = Integer.parseInt(value);
     }
 
     @Override
