@@ -52,7 +52,7 @@ public class UreportApplication extends MultiDexApplication {
             UserManager.initializeFcmClient(CountryProgramManager.getCurrentCountryProgram());
         } else {
             FcmClient.initialize(new FcmClient.Builder(this)
-//                    .setRegistrationServiceClass(UreportFcmRegistrationService.class)
+                    .setRegistrationServiceClass(UreportFcmRegistrationService.class)
                     .setUiConfiguration(new UiConfiguration()
                             .setPermissionMessage(getString(R.string.message_fcm_floating_permission))));
         }

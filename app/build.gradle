@@ -95,7 +95,7 @@ dependencies {
 
     implementation 'com.twitter.sdk.android:twitter:3.1.1'
     implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
-        transitive = true;
+        transitive = true
     }
 
     implementation 'com.google.android.gms:play-services-plus:16.0.0'
@@ -120,6 +120,7 @@ dependencies {
         exclude group: 'com.android.support'
     }
     implementation 'com.google.firebase:firebase-auth:16.0.5'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation "com.facebook.android:facebook-android-sdk:${versions.facebookSdkVersion}"
     implementation "com.squareup.picasso:picasso:${versions.picassoVersion}"
     implementation "com.squareup.retrofit:retrofit:${versions.retrofitVersion}"

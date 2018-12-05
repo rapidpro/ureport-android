@@ -65,7 +65,7 @@ public class UserManager {
                 .setHost(context.getString(countryProgram.getRapidproEndpoint()))
                 .setToken(getCountryToken())
                 .setChannel(context.getString(countryProgram.getChannel()))
-//                .setRegistrationServiceClass(UreportFcmRegistrationService.class)
+                .setRegistrationServiceClass(UreportFcmRegistrationService.class)
                 .setUiConfiguration(new UiConfiguration()
                     .setPermissionMessage(context.getString(R.string.message_fcm_floating_permission))
                     .setIconResource(R.mipmap.icon)
