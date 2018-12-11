@@ -19,14 +19,11 @@ import com.google.firebase.auth.FirebaseUser;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
-import in.ureport.models.User;
 
 /**
  * Created by johncordeiro on 11/09/15.
  */
 public class ChangePasswordFragment extends ProgressFragment {
-
-    private static final String EXTRA_USER = "user";
 
     private EditTextValidator validator;
 
@@ -39,26 +36,10 @@ public class ChangePasswordFragment extends ProgressFragment {
     private static OnCompleteListener<Void> userReauthenticationListener;
     private static OnCompleteListener<Void> passwordChangeListener;
 
-    private User user;
-
-    public static ChangePasswordFragment newInstance(User user) {
-        ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
-
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_USER, user);
-
-        changePasswordFragment.setArguments(args);
-        return changePasswordFragment;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
         firebaseAuth = FirebaseAuth.getInstance();
-        if (args != null && args.containsKey(EXTRA_USER)) {
-            user = args.getParcelable(EXTRA_USER);
-        }
     }
 
     @Override

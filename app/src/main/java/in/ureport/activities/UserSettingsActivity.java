@@ -49,7 +49,7 @@ public class UserSettingsActivity extends SettingsActivity implements UserSettin
 
     @Override
     public void onChangePassword() {
-        ChangePasswordFragment changePasswordFragment = ChangePasswordFragment.newInstance(user);
+        ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
         getSupportFragmentManager().beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(R.id.content, changePasswordFragment)

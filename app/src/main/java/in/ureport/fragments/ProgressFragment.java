@@ -3,6 +3,7 @@ package in.ureport.fragments;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
@@ -31,7 +32,7 @@ public abstract class ProgressFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(BUNDLE_LOADING_KEY, loading);
         outState.putString(BUNDLE_LOADING_MESSAGE_KEY, loadingMessage);
