@@ -50,10 +50,6 @@ public class FirebaseManager {
         FirebaseAuth.getInstance().signOut();
     }
 
-//    public static void changePassword(User user, String oldPassword, String newPassword, Firebase.ResultHandler resultHanlder) {
-//        reference.changePassword(user.getEmail(), oldPassword, newPassword, resultHanlder);
-//    }
-
     public static void authorizeCode(String code) {
         DatabaseReference authorization = reference.child("backend_authorization").child(code);
         authorization.child("checked").setValue(true);
