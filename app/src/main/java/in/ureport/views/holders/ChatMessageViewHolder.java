@@ -169,7 +169,8 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
         playAudio.setImageResource(R.drawable.ic_play_arrow_blue_36dp);
         Map<String, Object> metadata = chatMessage.getMedia().getMetadata();
         if(metadata != null && metadata.containsKey(Media.KEY_DURATION)) {
-            durationAudio.setText(TimeFormatter.getDurationString((Integer)metadata.get(Media.KEY_DURATION)));
+            Long duration = (Long) metadata.get(Media.KEY_DURATION);
+            durationAudio.setText(TimeFormatter.getDurationString(duration.intValue()));
         } else {
             durationAudio.setText(null);
         }
