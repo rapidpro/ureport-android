@@ -97,7 +97,7 @@ public abstract class UserInfoBaseFragment extends Fragment implements DatePicke
 
             setEditTextValue(username, user.getNickname());
             setEditTextValue(email, user.getEmail());
-            setEditTextDate(birthday, user.getBirthday());
+            setEditTextDate(birthday, new Date(user.getBirthday()));
             setPasswordVisibility();
             setUserGenderValue();
         }

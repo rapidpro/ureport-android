@@ -8,8 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import in.ureport.R;
 import in.ureport.models.User;
@@ -73,7 +73,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
         public void onClick(View view) {
             if(validFieldsForCustomUser()) {
                 user.setNickname(username.getText().toString());
-                user.setBirthday(getBirthdayDate());
+                user.setBirthday(getBirthdayDate().getTime());
 
                 UserGender gender = (UserGender) EditUserFragment.this.gender.getSelectedItem();
                 user.setGenderAsEnum(gender.getGender());
@@ -85,12 +85,12 @@ public class EditUserFragment extends UserInfoBaseFragment {
         }
     };
 
-    private Firebase.CompletionListener onUserUpdatedListener = new Firebase.CompletionListener() {
+    private DatabaseReference.CompletionListener onUserUpdatedListener = new DatabaseReference.CompletionListener() {
         @Override
-        public void onComplete(final FirebaseError firebaseError, Firebase firebase) {
+        public void onComplete(final DatabaseError error, DatabaseReference reference) {
             Log.i(TAG, "onComplete editUser");
             progressDialog.dismiss();
-            if(firebaseError == null) {
+            if (error == null) {
                 updateContactToRapidpro();
             } else {
                 displayError();
@@ -98,7 +98,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
         }
 
         private void updateContactToRapidpro() {
-            SaveContactTask saveContactTask = new SaveContactTask(getActivity(), getCountrySelected(), false) {
+            SaveContactTask saveContactTask = new SaveContactTask(requireContext(), user, false) {
                 @Override
                 protected void onPostExecute(ContactBase contact) {
                     super.onPostExecute(contact);
@@ -109,7 +109,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
                     }
                 }
             };
-            saveContactTask.execute(user);
+            saveContactTask.execute();
         }
     };
 

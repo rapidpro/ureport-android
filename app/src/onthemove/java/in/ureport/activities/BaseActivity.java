@@ -28,9 +28,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +43,7 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.DonationManager;
 import in.ureport.managers.PrototypeManager;
 import in.ureport.managers.UserManager;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.Notification;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
@@ -164,7 +165,7 @@ public abstract class BaseActivity extends AppCompatActivity implements LoaderMa
                 }
 
                 @Override
-                public void onCancelled(FirebaseError firebaseError) {}
+                public void onCancelled(DatabaseError error) {}
             });
         }
     }
