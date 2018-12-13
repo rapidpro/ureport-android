@@ -47,7 +47,7 @@ public class CredentialsLoginFragment extends ProgressFragment {
     private LoginFragment.LoginListener loginListener;
 
     private FirebaseAuth firebaseAuth;
-    private OnCompleteListener<AuthResult> authResultListener;
+    private static OnCompleteListener<AuthResult> authResultListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
