@@ -10,7 +10,7 @@ import in.ureport.managers.CountryProgramManager;
 /**
  * Created by johncordeiro on 18/09/15.
  */
-public class SettingsActivity extends AppCompatActivity {
+public abstract class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
