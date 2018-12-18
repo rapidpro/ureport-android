@@ -10,9 +10,9 @@ import java.util.Map;
 import in.ureport.models.CountryProgram;
 import in.ureport.models.ip.IpResponse;
 import in.ureport.network.IpServices;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by john-mac on 7/21/16.
@@ -50,18 +50,19 @@ public class FirebaseProxyManager {
 
     private static void requestIp(final Context context) {
         IpServices ipServices = new IpServices();
-        ipServices.getIp(new Callback<IpResponse>() {
+        ipServices.getIp().enqueue(new Callback<IpResponse>() {
             @Override
-            public void success(IpResponse ipResponse, Response response) {
-                if (ipResponse.getCountryCode() != null) {
-                    proxyEnabled = proxyCountries.containsKey(ipResponse.getCountryCode());
+            public void onResponse(Call<IpResponse> call, Response<IpResponse> response) {
+                IpResponse body = response.body();
+                if (body != null && body.getCountryCode() != null) {
+                    proxyEnabled = proxyCountries.containsKey(body.getCountryCode());
                 }
                 updateFirebaseManager(context);
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                Log.e(TAG, "failure: ", error);
+            public void onFailure(Call<IpResponse> call, Throwable t) {
+                Log.e(TAG, "failure: ", t);
                 proxyEnabled = false;
                 updateFirebaseManager(context);
             }

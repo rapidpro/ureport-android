@@ -5,21 +5,18 @@ import android.content.Context;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.managers.FcmTopicManager;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
-import in.ureport.models.holders.ChatMessageHolder;
 import in.ureport.models.gcm.GcmInput;
 import in.ureport.models.gcm.Notification;
 import in.ureport.models.gcm.Response;
 import in.ureport.models.gcm.Type;
+import in.ureport.models.holders.ChatMessageHolder;
 import in.ureport.models.holders.ContributionHolder;
-import retrofit.RestAdapter;
-import retrofit.converter.GsonConverter;
 
 /**
  * Created by johncordeiro on 21/08/15.
@@ -29,7 +26,7 @@ public class FcmServices {
     static final String FCM_AUTHORIZATION = "key=%1$s";
     private static final String TOPICS_PREFIX = "/topics/";
 
-    private static final String ENDPOINT = "https://fcm.googleapis.com";
+        private static final String ENDPOINT = "https://fcm.googleapis.com";
     public static final String DATE_STYLE = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     private final FcmApi gcmApi;
@@ -40,10 +37,11 @@ public class FcmServices {
         this.context = context;
         this.gcmKey = String.format(FCM_AUTHORIZATION, context.getString(R.string.fcm_api_key));
 
-        RestAdapter restAdapter = buildRestAdapter();
-        if(BuildConfig.DEBUG)
-            restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
-        gcmApi = restAdapter.create(FcmApi.class);
+        Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .setDateFormat(DATE_STYLE)
+                .create();
+        gcmApi = ServiceFactory.create(FcmApi.class, ENDPOINT, gson);
     }
 
     public Response sendChatMessage(ChatRoom chatRoom, ChatMessage chatMessage) {
@@ -75,17 +73,6 @@ public class FcmServices {
         contributionData.setCollapseKey(story.getKey());
 
         return gcmApi.sendData(gcmKey, contributionData);
-    }
-
-    private RestAdapter buildRestAdapter() {
-        Gson gson = new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation()
-                .setDateFormat(DATE_STYLE).create();
-
-        return new RestAdapter.Builder()
-                .setEndpoint(ENDPOINT)
-                .setConverter(new GsonConverter(gson))
-                .build();
     }
 
 }

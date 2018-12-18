@@ -1,9 +1,9 @@
 package in.ureport.network;
 
 import in.ureport.models.ip.ProxyResponse;
-import retrofit.http.GET;
-import retrofit.http.Header;
-import retrofit.http.Path;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Path;
 
 /**
  * Created by johncordeiro on 26/10/15.

@@ -372,4 +372,9 @@
         <item quantity="other">%1$d likes</item>
     </plurals>
 
+    <string name="download_your_data">Download your data</string>
+    <string name="message_user_data_export">Want to download your data?</string>
+    <string name="close_your_account">Close your account</string>
+    <string name="message_user_account_close">Want to delete your account?</string>
+
 </resources>

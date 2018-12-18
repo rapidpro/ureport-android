@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
 import java.util.Locale;
@@ -31,9 +30,9 @@ import in.ureport.models.holders.UserGender;
 import in.ureport.models.ip.IpResponse;
 import in.ureport.network.IpServices;
 import in.ureport.network.UserServices;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -162,9 +161,10 @@ public class SignUpFragment extends UserInfoBaseFragment {
 
     private void selectCurrentUserLocale(List<CountryInfo> countries) {
         IpServices ipServices = new IpServices();
-        ipServices.getIp(new Callback<IpResponse>() {
+        ipServices.getIp().enqueue(new Callback<IpResponse>() {
             @Override
-            public void success(IpResponse ipResponse, Response response) {
+            public void onResponse(Call<IpResponse> call, Response<IpResponse> response) {
+                final IpResponse ipResponse = response.body();
                 if (ipResponse != null) {
                     CountryInfo countryInfo = new CountryInfo(ipResponse.getCountryCode());
                     setupCountryInfo(countryInfo, countries);
@@ -172,7 +172,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onFailure(Call<IpResponse> call, Throwable t) {
                 Locale locale = Locale.getDefault();
                 CountryInfo countryInfo = new CountryInfo(locale.getCountry());
                 setupCountryInfo(countryInfo, countries);

@@ -1,8 +1,8 @@
 package in.ureport.network;
 
 import in.ureport.models.ip.IpResponse;
-import retrofit.Callback;
-import retrofit.http.POST;
+import retrofit2.Call;
+import retrofit2.http.POST;
 
 /**
  * Created by john-mac on 7/21/16.
@@ -10,6 +10,6 @@ import retrofit.http.POST;
 public interface IpApi {
 
     @POST("/json")
-    void getIpResponse(Callback<IpResponse> callback);
+    Call<IpResponse> getIpResponse();
 
 }
