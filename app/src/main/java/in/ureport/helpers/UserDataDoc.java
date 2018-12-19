@@ -71,7 +71,6 @@ public class UserDataDoc {
         document.add(new Paragraph(res.getString(R.string.user_data_stories).toUpperCase()));
         document.add(new Paragraph("\n"));
 
-        document.add(new Paragraph("\n"));
         document.add(new Paragraph(res.getString(R.string.user_data_published_stories).toUpperCase()));
         document.add(new Paragraph(makeStoriesText(res, userData.stories.publishedStories)));
 

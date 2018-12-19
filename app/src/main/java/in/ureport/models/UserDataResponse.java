@@ -13,7 +13,6 @@ public class UserDataResponse {
     public Contributions contributions;
 
     public class Chat {
-        @SerializedName("chatType")
         public String type;
         public List<String> messages;
     }
@@ -31,7 +30,6 @@ public class UserDataResponse {
     }
 
     public class Contribution {
-        @SerializedName(value = "storyTitle", alternate = {"pollTitle"})
         public String title;
         public String contribution;
         public Long createdDate;

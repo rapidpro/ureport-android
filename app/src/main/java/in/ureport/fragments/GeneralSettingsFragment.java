@@ -11,10 +11,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.SwitchPreferenceCompat;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GetTokenResult;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.functions.FirebaseFunctions;
@@ -25,8 +28,6 @@ import com.itextpdf.text.DocumentException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
 
 import in.ureport.R;
 import in.ureport.helpers.PermissionHelper;
@@ -50,7 +51,6 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
     private static final int REQUEST_CODE_WRITE_PDF = 100;
 
     private UserServices userServices;
-    private FirebaseAuth firebaseAuth;
     private FirebaseFunctions firebaseFunctions;
 
     private SwitchPreferenceCompat publicProfilePreference;
@@ -59,7 +59,6 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        firebaseAuth = FirebaseAuth.getInstance();
         firebaseFunctions = FirebaseFunctions.getInstance();
     }
 
@@ -113,41 +112,28 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_WRITE_PDF);
             return;
         }
-        if (firebaseAuth.getCurrentUser() == null)
-            return;
-
         final ProgressDialog progressDialog = ProgressDialog.show(getContext(), null,
                 getString(R.string.load_message_wait), true, false);
 
-        firebaseAuth.getCurrentUser().getIdToken(true).addOnCompleteListener(idTokenTask -> {
-            progressDialog.dismiss();
-
-            final GetTokenResult idTokenTaskResult = idTokenTask.getResult();
-            if (idTokenTaskResult == null)
-                return;
-
-            Map<String, Object> data = new HashMap<>();
-            data.put("idToken", idTokenTaskResult.getToken());
-
-            progressDialog.show();
-            firebaseFunctions.getHttpsCallable("exportData")
-                    .call(data)
-                    .continueWith(task -> {
-                        try {
-                            final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-                            final JsonElement json = gson.toJsonTree(task.getResult().getData());
-                            return gson.fromJson(json, UserDataResponse.class);
-                        } catch (Exception e) {
-                            return null;
-                        }
-                    })
-                    .addOnCompleteListener(task -> {
-                        progressDialog.dismiss();
-                        if (task.getResult() != null) {
-                            generateUserDataPdf(task.getResult());
-                        }
-                    });
-        });
+        firebaseFunctions.getHttpsCallable("exportData")
+                .call()
+                .continueWith(task -> {
+                    try {
+                        final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+                        final JsonElement json = gson.toJsonTree(task.getResult().getData());
+                        return gson.fromJson(json, UserDataResponse.class);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .addOnFailureListener(Throwable::printStackTrace)
+                .addOnCompleteListener(task -> {
+                    progressDialog.dismiss();
+                    if (task.getResult() != null) {
+                        generateUserDataPdf(task.getResult());
+                    }
+                });
     }
 
     private void generateUserDataPdf(final UserDataResponse response) {
@@ -166,6 +152,46 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
             e.printStackTrace();
             displayMessage(R.string.user_data_pdf_error);
         }
+    }
+
+    private void displayAccountClosureAlert() {
+        final View confirmView = LayoutInflater.from(requireContext())
+                .inflate(R.layout.dialog_account_closure, null);
+        final TextView confirmWarning = confirmView.findViewById(R.id.confirmWarning);
+        final EditText confirmInput = confirmView.findViewById(R.id.confirmInput);
+
+        final String confirmText = getString(R.string.confirm).toUpperCase();
+        confirmWarning.setText(getString(R.string.type_confirm, confirmText));
+
+        new AlertDialog.Builder(requireContext())
+                .setMessage(R.string.are_you_sure)
+                .setView(confirmView)
+                .setPositiveButton(R.string.yes, (dialog, i) -> {
+                    if (confirmInput.getText().toString().equals(confirmText)) {
+                        deleteUserAccount();
+                    } else {
+                        Toast.makeText(requireContext(), R.string.error_type_confirm, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.no, (dialog, i) -> dialog.cancel())
+                .show();
+    }
+
+    private void deleteUserAccount() {
+        final ProgressDialog progressDialog = ProgressDialog.show(getContext(), null,
+                getString(R.string.load_message_wait), true, false);
+
+        firebaseFunctions.getHttpsCallable("clearData")
+                .call()
+                .continueWith(Task::getResult)
+                .addOnCompleteListener(task -> {
+                    progressDialog.dismiss();
+                    if (task.getResult() != null) {
+                        Toast.makeText(requireContext(), "Account deleted", Toast.LENGTH_LONG).show();
+                        UserManager.logout(requireContext());
+                        UserManager.startLoginFlow(requireContext());
+                    }
+                });
     }
 
     private Preference.OnPreferenceChangeListener onPublicProfilePreferenceChangeListener = new Preference.OnPreferenceChangeListener() {
@@ -205,8 +231,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
     private Preference.OnPreferenceClickListener accountCloseClickListener = preference -> {
         new AlertDialog.Builder(requireContext())
                 .setMessage(R.string.message_user_account_close)
-                .setPositiveButton(R.string.yes, (dialog, i) -> {
-                })
+                .setPositiveButton(R.string.yes, (dialog, i) -> displayAccountClosureAlert())
                 .setNegativeButton(R.string.no, (dialog, i) -> dialog.dismiss())
                 .show();
         return true;

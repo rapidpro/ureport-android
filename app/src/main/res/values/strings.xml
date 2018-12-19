@@ -376,6 +376,11 @@
     <string name="message_user_data_export">Want to download your data?</string>
     <string name="close_your_account">Close your account</string>
     <string name="message_user_account_close">Want to delete your account?</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="type_confirm">Type \"%1$s\" to close your account:</string>
+    <string name="confirm">Confirm</string>
+    <string name="error_type_confirm">Wrong input</string>
+    <string name="account_deleted">Account deleted</string>
 
     <string name="user_data_user">User information</string>
     <string name="user_data_nickname">Nickname: %s</string>
