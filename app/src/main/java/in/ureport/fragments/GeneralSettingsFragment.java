@@ -170,7 +170,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
                     if (confirmInput.getText().toString().equals(confirmText)) {
                         deleteUserAccount();
                     } else {
-                        Toast.makeText(requireContext(), R.string.error_type_confirm, Toast.LENGTH_SHORT).show();
+                        displayMessage(R.string.error_type_confirm);
                     }
                 })
                 .setNegativeButton(R.string.no, (dialog, i) -> dialog.cancel())
@@ -187,7 +187,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
                 .addOnCompleteListener(task -> {
                     progressDialog.dismiss();
                     if (task.getResult() != null) {
-                        Toast.makeText(requireContext(), "Account deleted", Toast.LENGTH_LONG).show();
+                        displayMessage(R.string.account_deleted);
                         UserManager.logout(requireContext());
                         UserManager.startLoginFlow(requireContext());
                     }

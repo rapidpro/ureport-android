@@ -248,6 +248,7 @@
     <string name="stories_moderation">Stories</string>
     <string name="label_moderation">Moderation</string>
     <string name="title_moderation">%1$s moderation</string>
+    <string name="label_delete">Delete</string>
     <string name="label_denounce">Denounce</string>
     <string name="button_title_disapprove">Reject</string>
     <string name="button_title_publish">Publish</string>
@@ -263,6 +264,7 @@
     <string name="story_share_info">Download U-Report app: http://goo.gl/Xxyodt</string>
     <string name="label_country_moderator">Country Moderators</string>
     <string name="message_success_user_update">User was updated with success!</string>
+    <string name="error_request">An error occurred during request</string>
 
     <string-array name="spinner_loading">
         <item>Loading...</item>
