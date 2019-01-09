@@ -214,6 +214,11 @@ public class UserServices extends ProgramServices {
         userReference.child("publicProfile").setValue(publicProfile, listener);
     }
 
+    public void saveUserContactUuid(User user, String contactUUid) {
+        Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
+        userReference.child("contactUuid").setValue(contactUUid);
+    }
+
     public void editUserPicture(User user, Firebase.CompletionListener listener) {
         Firebase userReference = FirebaseManager.getReference().child(userPath).child(user.getKey());
         userReference.child("picture").setValue(user.getPicture(), listener);

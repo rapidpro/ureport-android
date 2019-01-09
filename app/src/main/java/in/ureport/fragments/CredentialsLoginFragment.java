@@ -1,16 +1,16 @@
 package in.ureport.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,28 +23,35 @@ import com.firebase.client.FirebaseError;
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.helpers.ToolbarDesigner;
+import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.Login;
 import in.ureport.network.UserServices;
-import in.ureport.helpers.ValueEventListenerAdapter;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by johncordeiro on 7/7/15.
  */
-public class CredentialsLoginFragment extends Fragment {
+public class CredentialsLoginFragment extends ProgressFragment {
 
     private EditText email;
     private EditText password;
+    private CheckBox checkBox;
+    private SharedPreferences loginPreferences;
 
     private EditTextValidator validator = new EditTextValidator();
 
     private LoginFragment.LoginListener loginListener;
 
+    private static Firebase.AuthResultHandler firebaseAuthCallback;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setupContextDependencies();
         return inflater.inflate(R.layout.fragment_credentials_login, container, false);
     }
 
@@ -52,6 +59,7 @@ public class CredentialsLoginFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupView(view);
+        setLoadingMessage(getString(R.string.load_message_logging));
     }
 
     @Override
@@ -60,14 +68,51 @@ public class CredentialsLoginFragment extends Fragment {
         setLoginStatusBarColor();
     }
 
+    @Override
+    public void onAttach(Context activity) {
+        super.onAttach(activity);
+        if (activity instanceof LoginFragment.LoginListener) {
+            loginListener = (LoginFragment.LoginListener) activity;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getFragmentManager().popBackStack();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void setLoginStatusBarColor() {
         StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
         statusBarDesigner.setStatusBarColorById(getActivity(), R.color.dark_green_highlight);
     }
 
+    private void setupContextDependencies() {
+        firebaseAuthCallback = new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                dismissLoading();
+                getUserInfoAndContinue(authData);
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                dismissLoading();
+                showLoginError();
+            }
+        };
+    }
+
     private void setupView(View view) {
         email = (EditText) view.findViewById(R.id.email);
         password = (EditText) view.findViewById(R.id.password);
+
+        checkBox = (CheckBox) view.findViewById(R.id.rememberMe);
+        loginPreferences = getContext().getSharedPreferences("loginPreferences", MODE_PRIVATE);
 
         TextView forgotPassword = (TextView) view.findViewById(R.id.forgotPassword);
         forgotPassword.setOnClickListener(onForgotPasswordClickListener);
@@ -75,28 +120,19 @@ public class CredentialsLoginFragment extends Fragment {
         Button login = (Button) view.findViewById(R.id.login);
         login.setOnClickListener(onLoginClickListener);
 
-        Toolbar toolbar = (Toolbar)view.findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
         ToolbarDesigner toolbarDesigner = new ToolbarDesigner();
         toolbarDesigner.setupFragmentDefaultToolbar(toolbar, R.string.label_login, this);
+
+        checkRememberMeOption();
     }
 
-    @Override
-    public void onAttach(Context activity) {
-        super.onAttach(activity);
-        if(activity instanceof LoginFragment.LoginListener) {
-            loginListener = (LoginFragment.LoginListener)activity;
+    private void checkRememberMeOption() {
+        if (loginPreferences.getBoolean("rememberMe", false)) {
+            email.setText(loginPreferences.getString("email", ""));
+            checkBox.setChecked(true);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case android.R.id.home:
-                getFragmentManager().popBackStack();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private boolean validateFields() {
@@ -107,30 +143,39 @@ public class CredentialsLoginFragment extends Fragment {
     }
 
     private void login(Login login) {
-        final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_logging), true, false);
-
+        saveLoginPreferences(login);
+        showLoading();
         FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
-                getUserInfoAndContinue(authData, progressDialog);
+                firebaseAuthCallback.onAuthenticated(authData);
             }
 
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
-                progressDialog.dismiss();
-                showLoginError();
+                firebaseAuthCallback.onAuthenticationError(firebaseError);
             }
         });
     }
 
-    private void getUserInfoAndContinue(AuthData authData, final ProgressDialog progressDialog) {
+    private void saveLoginPreferences(Login login) {
+        SharedPreferences.Editor loginPreferencesEditor = loginPreferences.edit();
+        if (checkBox.isChecked()) {
+            loginPreferencesEditor.putBoolean("rememberMe", true);
+            loginPreferencesEditor.putString("email", login.getEmail());
+            loginPreferencesEditor.apply();
+        } else {
+            loginPreferencesEditor.clear();
+            loginPreferencesEditor.commit();
+        }
+    }
+
+    private void getUserInfoAndContinue(AuthData authData) {
         UserServices userServices = new UserServices();
         userServices.getUser(authData.getUid(), new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
-                progressDialog.dismiss();
-
                 User user = dataSnapshot.getValue(User.class);
                 loginListener.onUserReady(user, false);
             }
@@ -138,7 +183,7 @@ public class CredentialsLoginFragment extends Fragment {
     }
 
     private void showLoginError() {
-        Toast.makeText(getActivity(), "Email/password not found", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Email/password not found", Toast.LENGTH_LONG).show();
     }
 
     private View.OnClickListener onLoginClickListener = new View.OnClickListener() {
@@ -155,8 +200,9 @@ public class CredentialsLoginFragment extends Fragment {
     private View.OnClickListener onForgotPasswordClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if(loginListener != null)
+            if (loginListener != null)
                 loginListener.onForgotPassword();
         }
     };
+
 }

@@ -1,21 +1,17 @@
 package in.ureport.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,11 +32,11 @@ import java.util.List;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
 import in.ureport.R;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.helpers.MediaPicker;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
-import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.ChatMembers;
@@ -55,7 +51,7 @@ import in.ureport.views.adapters.UreportersAdapter;
 /**
  * Created by johncordeiro on 19/07/15.
  */
-public class CreateGroupFragment extends Fragment {
+public class CreateGroupFragment extends ProgressFragment {
 
     private static final String TAG = "CreateGroupFragment";
 
@@ -91,6 +87,8 @@ public class CreateGroupFragment extends Fragment {
 
     private ValueEventListener userEventListener;
 
+    private static PictureTransferListener pictureTransferListener;
+
     public static CreateGroupFragment newInstance(GroupChatRoom chatRoom, ChatMembers members) {
         CreateGroupFragment createGroupFragment = new CreateGroupFragment();
 
@@ -112,6 +110,7 @@ public class CreateGroupFragment extends Fragment {
             groupChatRoom = args.getParcelable(EXTRA_CHAT_ROOM);
             members = args.getParcelable(EXTRA_CHAT_MEMBERS);
         }
+        setupContextDependencies();
     }
 
     @Nullable
@@ -130,14 +129,32 @@ public class CreateGroupFragment extends Fragment {
         loadUsers();
     }
 
+    private void setupContextDependencies() {
+        pictureTransferListener = new PictureTransferListener() {
+            @Override
+            public void onTransferFinished(GroupChatRoom groupChatRoom, Media media) {
+                dismissLoading();
+                groupChatRoom.setPicture(media);
+                saveGroupChatRoom(groupChatRoom);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                e.printStackTrace();
+                dismissLoading();
+                showUploadError();
+            }
+        };
+    }
+
     private void setupViewWhenEditMode() {
-        if(editMode) {
+        if (editMode) {
             title.setText(groupChatRoom.getTitle());
             description.setText(groupChatRoom.getSubject());
             privateGroup.setChecked(groupChatRoom.getPrivateAccess() != null && groupChatRoom.getPrivateAccess());
             mediaAllowed.setChecked(groupChatRoom.getMediaAllowed() != null && groupChatRoom.getMediaAllowed());
 
-            if(groupChatRoom.getPicture() != null)
+            if (groupChatRoom.getPicture() != null)
                 ImageLoader.loadGroupPictureToImageView(addPicture, groupChatRoom.getPicture());
         }
     }
@@ -145,7 +162,7 @@ public class CreateGroupFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             switch(requestCode) {
                 case MediaPicker.REQUEST_PICK_FROM_GALLERY:
                     saveChoosenPicture(data);
@@ -156,13 +173,13 @@ public class CreateGroupFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(userEventListener != null) userServices.removeCountryCodeListener(userEventListener);
+        if (userEventListener != null) userServices.removeCountryCodeListener(userEventListener);
     }
 
     private void saveChoosenPicture(Intent data) {
         pictureUri = data.getData();
 
-        if(pictureUri != null)
+        if (pictureUri != null)
             addPicture.setImageURI(pictureUri);
     }
 
@@ -183,7 +200,7 @@ public class CreateGroupFragment extends Fragment {
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-        if(activity instanceof ChatRoomInterface.OnChatRoomSavedListener)
+        if (activity instanceof ChatRoomInterface.OnChatRoomSavedListener)
             onChatRoomSavedListener = (ChatRoomInterface.OnChatRoomSavedListener)activity;
     }
 
@@ -229,18 +246,17 @@ public class CreateGroupFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.saveGroup:
-                if(editMode) {
+                if (editMode)
                     editGroup();
-                } else {
+                else
                     createGroup();
-                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void editGroup() {
-        if(validateFields()) {
+        if (validateFields()) {
             groupChatRoom.setTitle(title.getText().toString());
             groupChatRoom.setSubject(description.getText().toString());
             groupChatRoom.setPrivateAccess(privateGroup.isChecked());
@@ -251,7 +267,7 @@ public class CreateGroupFragment extends Fragment {
             removeUreportersFromGroup(selectedUreporters);
             addUreportersToGroup(selectedUreporters);
 
-            if(pictureUri != null) {
+            if (pictureUri != null) {
                 uploadPictureAndSaveRoom(groupChatRoom);
             } else {
                 saveGroupChatRoom(groupChatRoom);
@@ -260,10 +276,10 @@ public class CreateGroupFragment extends Fragment {
     }
 
     private void addUreportersToGroup(List<User> selectedUreporters) {
-        if(members.getUsers() != null) {
+        if (members.getUsers() != null) {
             List<User> addedUsers = new ArrayList<>();
             for (User selectedUreporter : selectedUreporters) {
-                if(!members.getUsers().contains(selectedUreporter)) {
+                if (!members.getUsers().contains(selectedUreporter)) {
                     addedUsers.add(selectedUreporter);
                     chatRoomServices.addChatMember(getActivity(), selectedUreporter, groupChatRoom.getKey());
                 }
@@ -273,10 +289,10 @@ public class CreateGroupFragment extends Fragment {
     }
 
     private void removeUreportersFromGroup(List<User> selectedUreporters) {
-        if(members.getUsers() != null) {
+        if (members.getUsers() != null) {
             List<User> removedUsers = new ArrayList<>();
             for (User user : members.getUsers()) {
-                if(!selectedUreporters.contains(user)) {
+                if (!selectedUreporters.contains(user)) {
                     removedUsers.add(user);
                     chatRoomServices.removeChatMember(getActivity(), user, groupChatRoom.getKey());
                 }
@@ -286,7 +302,7 @@ public class CreateGroupFragment extends Fragment {
     }
 
     private void createGroup() {
-        if(validateFields()) {
+        if (validateFields()) {
             final GroupChatRoom groupChatRoom = new GroupChatRoom();
             groupChatRoom.setCreatedDate(new Date());
             groupChatRoom.setTitle(title.getText().toString());
@@ -294,7 +310,7 @@ public class CreateGroupFragment extends Fragment {
             groupChatRoom.setPrivateAccess(privateGroup.isChecked());
             groupChatRoom.setMediaAllowed(mediaAllowed.isChecked());
 
-            if(pictureUri != null) {
+            if (pictureUri != null) {
                 uploadPictureAndSaveRoom(groupChatRoom);
             } else {
                 saveGroupChatRoom(groupChatRoom);
@@ -303,10 +319,10 @@ public class CreateGroupFragment extends Fragment {
     }
 
     private void uploadPictureAndSaveRoom(final GroupChatRoom groupChatRoom) {
-        try {
-            final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_uploading_image)
-                    , true, false);
+        setLoadingMessage(getString(R.string.load_message_uploading_image));
+        showLoading();
 
+        try {
             LocalMedia localMedia = new LocalMedia(pictureUri);
             localMedia.setType(Media.Type.Picture);
 
@@ -315,26 +331,21 @@ public class CreateGroupFragment extends Fragment {
                 @Override
                 public void onTransferFinished(Media media) {
                     super.onTransferFinished(media);
-                    progressDialog.dismiss();
-                    groupChatRoom.setPicture(media);
-                    saveGroupChatRoom(groupChatRoom);
+                    pictureTransferListener.onTransferFinished(groupChatRoom, media);
                 }
 
                 @Override
                 public void onError(int id, Exception exception) {
-                    Log.e(TAG, "onError ", exception);
-                    progressDialog.dismiss();
-                    showUploadError();
+                    pictureTransferListener.onError(exception);
                 }
             });
-        } catch(Exception exception) {
-            exception.printStackTrace();
-            showUploadError();
+        } catch (Exception e) {
+            pictureTransferListener.onError(e);
         }
     }
 
     private void saveGroupChatRoom(final GroupChatRoom groupChatRoom) {
-        if(editMode) {
+        if (editMode) {
             chatRoomServices.updateGroupChatRoom(groupChatRoom);
             onChatRoomSavedListener.onChatRoomSaved(groupChatRoom, members);
         } else {
@@ -356,7 +367,7 @@ public class CreateGroupFragment extends Fragment {
     }
 
     private void showUploadError() {
-        Toast.makeText(getActivity(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
     }
 
     private boolean validateFields() {
@@ -366,12 +377,9 @@ public class CreateGroupFragment extends Fragment {
         return titleValid && descriptionValid;
     }
 
-    private View.OnClickListener onAddPictureClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            MediaPicker mediaPicker = new MediaPicker();
-            mediaPicker.pickImageFromGallery(CreateGroupFragment.this);
-        }
+    private View.OnClickListener onAddPictureClickListener = view -> {
+        MediaPicker mediaPicker = new MediaPicker();
+        mediaPicker.pickImageFromGallery(CreateGroupFragment.this);
     };
 
     private TextWatcher ureportersSearchTextWatcher = new TextWatcher() {
@@ -381,7 +389,7 @@ public class CreateGroupFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence text, int start, int before, int count) {
             String query = text.toString();
-            if(ureportersAdapter != null) {
+            if (ureportersAdapter != null) {
                 ureportersAdapter.search(query);
             }
         }
@@ -390,12 +398,15 @@ public class CreateGroupFragment extends Fragment {
         public void afterTextChanged(Editable editable) {}
     };
 
-    private TextView.OnEditorActionListener onSearchUreporterActionListener = new TextView.OnEditorActionListener() {
-        @Override
-        public boolean onEditorAction(TextView textView, int actionId, KeyEvent event) {
-            String query = textView.getText().toString();
-            ureportersAdapter.search(query);
-            return true;
-        }
+    private TextView.OnEditorActionListener onSearchUreporterActionListener = (textView, actionId, event) -> {
+        String query = textView.getText().toString();
+        ureportersAdapter.search(query);
+        return true;
     };
+
+    private interface PictureTransferListener {
+        void onTransferFinished(GroupChatRoom groupChatRoom, Media media);
+        void onError(Exception e);
+    }
+
 }

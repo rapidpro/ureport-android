@@ -93,7 +93,24 @@
     public *;
 }
 
+# Retrofit 2.X
+## https://square.github.io/retrofit/ ##
+
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-dontnote retrofit2.Platform
+-dontwarn retrofit2.Platform$Java8
+-keepattributes Signature
+-keepattributes Exceptions
+
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+
 #Retrofit
+
+-dontwarn com.fasterxml.**
+-dontwarn okio.**
 
 -keepattributes Signature
 -keepattributes *Annotation*
@@ -110,7 +127,6 @@
 
 -keep class sun.misc.Unsafe { *; }
 -keep class in.ureport.models.** { *; }
--keep class in.ureport.flowrunner.models.** { *; }
 -keep class in.ureport.network.** { *; }
 
 #Gson
@@ -152,6 +168,9 @@
 -dontwarn org.apache.commons.logging.impl.**
 -dontwarn org.apache.http.conn.scheme.**
 
+-keep class org.apache.http.** { *; }
+-dontwarn org.apache.http.**
+
 -dontwarn com.amazon.**
 -keep class com.amazon.** {*;}
 -keepattributes InnerClasses,*Annotation*
@@ -171,3 +190,9 @@
 -dontwarn com.amazonaws.services.sqs.**
 
 -dontnote com.amazonaws.services.sqs.QueueUrlHandler
+
+#Fcm Client
+-keep class io.rapidpro.sdk.core.models.** { *; }
+-keep class io.rapidpro.sdk.core.network.** { *; }
+-keep class io.rapidpro.sdk.services.** { *; }
+

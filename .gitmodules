@@ -1,9 +1,6 @@
 [submodule "support-android"]
 	path = support-android
 	url = http://github.com/ilhasoft/support-android
-[submodule "flow-runner"]
-	path = flow-runner
-	url = https://github.com/Ilhasoft/RapidPRO-Flow-Runner.git
 [submodule "video-compressor"]
 	path = video-compressor
 	url = https://github.com/Ilhasoft/video-compressor.git

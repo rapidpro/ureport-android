@@ -23,6 +23,7 @@ import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.views.adapters.ChatRoomsAdapter;
+import io.rapidpro.sdk.FcmClient;
 
 /**
  * Created by john-mac on 4/27/16.
@@ -117,6 +118,11 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
     public List<ChatRoomHolder> getChatRooms() {
         Log.d(TAG, "getChatRooms() returned: " + listChatRoomsFragment);
         return listChatRoomsFragment.getChatRooms();
+    }
+
+    @Override
+    public void onRapidproChatSelected() {
+        FcmClient.startFcmClientChatActivity(getContext());
     }
 
     @Override

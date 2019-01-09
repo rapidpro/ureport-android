@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +15,11 @@ import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
 import in.ureport.models.holders.LocationInfo;
 import in.ureport.models.ip.ProxyResponse;
-import in.ureport.models.rapidpro.Boundary;
 import in.ureport.network.GeonamesServices;
 import in.ureport.network.ProxyServices;
-import in.ureport.network.RapidProServices;
-import in.ureport.network.Response;
+import io.rapidpro.sdk.core.models.Boundary;
+import io.rapidpro.sdk.core.models.network.ApiResponse;
+import io.rapidpro.sdk.core.network.RapidProServices;
 
 /**
  * Created by johncordeiro on 10/09/15.
@@ -53,15 +54,15 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
     }
 
     @NonNull
-    private List<Boundary> loadBoundariesByRapidPro(String apiToken) {
+    private List<Boundary> loadBoundariesByRapidPro(String apiToken) throws IOException {
         CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryInfo.getIsoAlpha3());
-        RapidProServices rapidProServices = new RapidProServices(getContext().getString(countryProgram.getRapidproEndpoint()));
+        RapidProServices rapidProServices = new RapidProServices(getContext().getString(countryProgram.getRapidproEndpoint()), apiToken);
 
         List<Boundary> boundaries = new ArrayList<>();
-        Response<Boundary> response;
+        ApiResponse<Boundary> response;
         int page = 1;
         do {
-            response = rapidProServices.loadBoundaries(apiToken, page);
+            response = rapidProServices.loadBoundaries(page, true).execute().body();
             boundaries.addAll(response.getResults());
 
             page++;

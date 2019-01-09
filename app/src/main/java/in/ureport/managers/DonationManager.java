@@ -23,10 +23,14 @@ public class DonationManager {
     }
 
     public static boolean isDonationAllowed(User user) {
+        if (user.getCountry() == null)
+            return false;
+
         try {
             CountryDonation.valueOf(user.getCountry());
             return true;
-        } catch(IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) { }
+
         return false;
     }
 

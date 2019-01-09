@@ -3,7 +3,6 @@ package in.ureport.pref;
 import android.content.Context;
 
 import br.com.ilhasoft.support.preferences.Preferences;
-import in.ureport.models.rapidpro.Field;
 
 /**
  * Created by johncordeiro on 7/9/15.

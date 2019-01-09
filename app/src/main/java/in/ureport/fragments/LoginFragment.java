@@ -1,7 +1,6 @@
 package in.ureport.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -10,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +25,6 @@ import com.facebook.login.LoginResult;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
@@ -41,15 +38,16 @@ import com.twitter.sdk.android.core.identity.TwitterAuthClient;
 import java.util.Arrays;
 
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
+import in.ureport.BuildConfig;
 import in.ureport.R;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserSocialAuthBuilder;
 import in.ureport.models.User;
-import in.ureport.managers.FirebaseManager;
 
 /**
  * Created by johncordeiro on 7/7/15.
  */
-public class LoginFragment extends Fragment implements Firebase.AuthResultHandler {
+public class LoginFragment extends ProgressFragment {
 
     public static final String [] FACEBOOK_PERMISSIONS = { "email", "user_birthday" };
     public static final int ERROR_RESOLUTION_REQUEST_CODE = 300;
@@ -63,14 +61,17 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
     private TwitterAuthClient twitterAuthClient;
     private GoogleApiClient googleApiClient;
 
-    private ProgressDialog loadUserDialog;
-
     private boolean resolvingGoogleSignin = false;
     private boolean shouldResolveErrors = true;
+
+    private static Firebase.AuthResultHandler firebaseAuthCallback;
+    private static FacebookCallback<LoginResult> facebookAuthCallback;
+    private static Callback<TwitterSession> twitterAuthCallback;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setupContextDependencies();
         return inflater.inflate(R.layout.fragment_login, container, false);
     }
 
@@ -79,6 +80,7 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         super.onViewCreated(view, savedInstanceState);
         setupObjects();
         setupView(view);
+        setLoadingMessage(getString(R.string.login_load_user_message));
     }
 
     @Override
@@ -112,6 +114,72 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         }
     }
 
+    private void setupContextDependencies() {
+        firebaseAuthCallback = new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                dismissLoading();
+                User user = userSocialAuthBuilder.build(authData);
+                if (loginListener != null) {
+                    loginListener.onLoginWithSocialNetwork(user);
+                }
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                dismissLoading();
+                showLoginErrorAlert();
+            }
+        };
+        facebookAuthCallback = new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                showLoading();
+                FirebaseManager.authenticateWithFacebook(loginResult.getAccessToken(), new Firebase.AuthResultHandler() {
+                    @Override
+                    public void onAuthenticated(AuthData authData) {
+                        firebaseAuthCallback.onAuthenticated(authData);
+                    }
+
+                    @Override
+                    public void onAuthenticationError(FirebaseError firebaseError) {
+                        firebaseAuthCallback.onAuthenticationError(firebaseError);
+                    }
+                });
+            }
+
+            @Override
+            public void onCancel() { }
+
+            @Override
+            public void onError(FacebookException exception) {
+                showLoginErrorAlert();
+            }
+        };
+        twitterAuthCallback = new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                showLoading();
+                FirebaseManager.authenticateWithTwitter(result.data, new Firebase.AuthResultHandler() {
+                    @Override
+                    public void onAuthenticated(AuthData authData) {
+                        firebaseAuthCallback.onAuthenticated(authData);
+                    }
+
+                    @Override
+                    public void onAuthenticationError(FirebaseError firebaseError) {
+                        firebaseAuthCallback.onAuthenticationError(firebaseError);
+                    }
+                });
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                showLoginErrorAlert();
+            }
+        };
+    }
+
     private void setupObjects() {
         FacebookSdk.sdkInitialize(getActivity());
 
@@ -131,7 +199,11 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
     @Override
     public void onResume() {
         super.onResume();
-        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.yellow);
+        if (BuildConfig.FLAVOR.equals("onthemove")) {
+            statusBarDesigner.setStatusBarColorById(getActivity(), R.color.primary_dark_color);
+        } else {
+            statusBarDesigner.setStatusBarColorById(getActivity(), R.color.yellow);
+        }
     }
 
     private void setupView(View view) {
@@ -162,159 +234,121 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         }
     }
 
-    private View.OnClickListener onLoginWithCredentialsClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(loginListener != null) {
-                loginListener.onLoginWithCredentials();
-            }
+    private View.OnClickListener onLoginWithCredentialsClickListener = view -> {
+        if (loginListener != null) {
+            loginListener.onLoginWithCredentials();
         }
     };
 
-    private View.OnClickListener onSignUpClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (loginListener != null) {
-                loginListener.onSignUp();
-            }
+    private View.OnClickListener onSignUpClickListener = view -> {
+        if (loginListener != null) {
+            loginListener.onSignUp();
         }
     };
-
-    private FacebookCallback<LoginResult> onFacebookLoginCallback = new FacebookCallback<LoginResult>() {
-
-        @Override
-        public void onSuccess(LoginResult loginResult) {
-            loadUserDialog = showLoadUserProgress();
-            FirebaseManager.authenticateWithFacebook(loginResult.getAccessToken(), LoginFragment.this);
-        }
-
-        @Override
-        public void onCancel() {}
-
-        @Override
-        public void onError(FacebookException exception) {
-            showLoginErrorAlert();
-        }
-    };
-
-    @NonNull
-    private ProgressDialog showLoadUserProgress() {
-        return ProgressDialog.show(getActivity()
-                    , null, getString(R.string.login_load_user_message), true, false);
-    }
 
     private void showLoginErrorAlert() {
-        Toast.makeText(getActivity(), R.string.login_error, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), R.string.login_error, Toast.LENGTH_LONG).show();
     }
 
-    private View.OnClickListener onTwitterLoginClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            twitterAuthClient.authorize(getActivity(), twitterLoginCallback);
-        }
+    private View.OnClickListener onTwitterLoginClickListener = view -> {
+        twitterAuthClient.authorize(getActivity(), new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                twitterAuthCallback.success(result);
+            }
+
+            @Override
+            public void failure(TwitterException e) {
+                twitterAuthCallback.failure(e);
+            }
+        });
     };
 
     private GoogleApiClient.ConnectionCallbacks googleConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
             shouldResolveErrors = false;
-            FirebaseManager.authenticateWithGoogle(googleApiClient, LoginFragment.this);
-        }
-
-        @Override
-        public void onConnectionSuspended(int connectionSuspended) {}
-    };
-
-    private GoogleApiClient.OnConnectionFailedListener googleConnectionFailedListener = new GoogleApiClient.OnConnectionFailedListener() {
-        @Override
-        public void onConnectionFailed(ConnectionResult connectionResult) {
-            if (!resolvingGoogleSignin && shouldResolveErrors) {
-                if (connectionResult.hasResolution()) {
-                    try {
-                        connectionResult.startResolutionForResult(getActivity(), ERROR_RESOLUTION_REQUEST_CODE);
-                        resolvingGoogleSignin = true;
-                    } catch (IntentSender.SendIntentException exception) {
-                        resolvingGoogleSignin = false;
-                        googleApiClient.connect();
-                    }
-                } else {
-                    loadUserDialog.dismiss();
-                    showLoginErrorAlert();
+            FirebaseManager.authenticateWithGoogle(googleApiClient, new Firebase.AuthResultHandler() {
+                @Override
+                public void onAuthenticated(AuthData authData) {
+                    firebaseAuthCallback.onAuthenticated(authData);
                 }
-            }
+
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError) {
+                    firebaseAuthCallback.onAuthenticationError(firebaseError);
+                }
+            });
         }
+
+        @Override
+        public void onConnectionSuspended(int connectionSuspended) { }
     };
 
-    private Callback<TwitterSession> twitterLoginCallback = new Callback<TwitterSession>() {
-        @Override
-        public void success(Result<TwitterSession> result) {
-            loadUserDialog = showLoadUserProgress();
-            FirebaseManager.authenticateWithTwitter(result.data, LoginFragment.this);
-        }
-
-        @Override
-        public void failure(TwitterException exception) {
-            showLoginErrorAlert();
-        }
-    };
-
-    private View.OnClickListener onFacebookLoginClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            LoginManager loginManager = LoginManager.getInstance();
-            loginManager.registerCallback(callbackManager, onFacebookLoginCallback);
-            loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
-        }
-    };
-
-    private View.OnClickListener onGoogleLoginClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                int hasWriteContactsPermission = getActivity().checkSelfPermission(android.Manifest.permission.GET_ACCOUNTS);
-                if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[] { android.Manifest.permission.GET_ACCOUNTS }
-                            , REQUEST_CODE_GET_ACCOUNTS_PERMISSION);
+    private GoogleApiClient.OnConnectionFailedListener googleConnectionFailedListener = connectionResult -> {
+        if (!resolvingGoogleSignin && shouldResolveErrors) {
+            if (connectionResult.hasResolution()) {
+                try {
+                    connectionResult.startResolutionForResult(getActivity(), ERROR_RESOLUTION_REQUEST_CODE);
+                    resolvingGoogleSignin = true;
+                } catch (IntentSender.SendIntentException exception) {
+                    resolvingGoogleSignin = false;
+                    googleApiClient.connect();
                 }
             } else {
-                loginWithGooglePlus();
+                dismissLoading();
+                showLoginErrorAlert();
             }
+        }
+    };
+
+    private View.OnClickListener onFacebookLoginClickListener = view -> {
+        LoginManager loginManager = LoginManager.getInstance();
+        loginManager.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                facebookAuthCallback.onSuccess(loginResult);
+            }
+
+            @Override
+            public void onCancel() {
+                facebookAuthCallback.onCancel();
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                facebookAuthCallback.onError(error);
+            }
+        });
+        loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
+    };
+
+    private View.OnClickListener onGoogleLoginClickListener = view -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int hasWriteContactsPermission = getActivity().checkSelfPermission(android.Manifest.permission.GET_ACCOUNTS);
+            if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.GET_ACCOUNTS}
+                        , REQUEST_CODE_GET_ACCOUNTS_PERMISSION);
+            }
+        } else {
+            loginWithGooglePlus();
         }
     };
 
     private void loginWithGooglePlus() {
-        loadUserDialog = showLoadUserProgress();
+        showLoading();
 
-        if(!googleApiClient.isConnected()) {
+        if (!googleApiClient.isConnected()) {
             googleApiClient.connect();
         } else {
             googleConnectionCallbacks.onConnected(null);
         }
     }
 
-    private View.OnClickListener onSkipLoginClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (loginListener != null)
-                loginListener.onSkipLogin();
-        }
+    private View.OnClickListener onSkipLoginClickListener = view -> {
+        if (loginListener != null)
+            loginListener.onSkipLogin();
     };
-
-    @Override
-    public void onAuthenticated(AuthData authData) {
-        loadUserDialog.dismiss();
-
-        User user = userSocialAuthBuilder.build(authData);
-        if(loginListener != null) {
-            loginListener.onLoginWithSocialNetwork(user);
-        }
-    }
-
-    @Override
-    public void onAuthenticationError(FirebaseError firebaseError) {
-        loadUserDialog.dismiss();
-        showLoginErrorAlert();
-    }
 
     public interface LoginListener {
         void onLoginWithSocialNetwork(User user);
@@ -325,4 +359,5 @@ public class LoginFragment extends Fragment implements Firebase.AuthResultHandle
         void onForgotPassword();
         void onPasswordReset();
     }
+
 }

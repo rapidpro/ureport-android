@@ -4,8 +4,9 @@ import java.util.List;
 
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
-import retrofit.http.GET;
-import retrofit.http.Query;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 /**
  * Created by johncordeiro on 18/08/15.
@@ -13,13 +14,13 @@ import retrofit.http.Query;
 public interface GeonamesApi {
 
     @GET("/countryInfoJSON")
-    GeonamesResponse<CountryInfo> getCountryInfo(@Query("country") String country, @Query("username") String username);
+    Call<GeonamesResponse<CountryInfo>> getCountryInfo(@Query("country") String country, @Query("username") String username);
 
     @GET("/countryInfoJSON")
-    GeonamesResponse<CountryInfo> getCountriesByLanguage(@Query("lang") String language, @Query("username") String username);
+    Call<GeonamesResponse<CountryInfo>> getCountriesByLanguage(@Query("lang") String language, @Query("username") String username);
 
     @GET("/childrenJSON")
-    GeonamesResponse<Location> getStates(@Query("geonameId") Long geonameId, @Query("username") String username);
+    Call<GeonamesResponse<Location>> getStates(@Query("geonameId") Long geonameId, @Query("username") String username);
 
     public class GeonamesResponse<T> {
 

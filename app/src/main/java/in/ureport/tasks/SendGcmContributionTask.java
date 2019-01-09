@@ -6,7 +6,7 @@ import android.util.Log;
 
 import in.ureport.models.Contribution;
 import in.ureport.models.Story;
-import in.ureport.network.GcmServices;
+import in.ureport.network.FcmServices;
 
 /**
  * Created by johncordeiro on 06/10/15.
@@ -28,8 +28,8 @@ public class SendGcmContributionTask extends AsyncTask<Contribution, Void, Void>
         try {
             Contribution contribution = params[0];
 
-            GcmServices gcmServices = new GcmServices(context);
-            gcmServices.sendContribution(story, contribution);
+            FcmServices fcmServices = new FcmServices(context);
+            fcmServices.sendContribution(story, contribution);
         } catch(Exception exception) {
             Log.e(TAG, "doInBackground ", exception);
         }

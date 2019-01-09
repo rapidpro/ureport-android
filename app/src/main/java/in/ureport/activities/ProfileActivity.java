@@ -15,11 +15,10 @@ import in.ureport.models.User;
  */
 public class ProfileActivity extends AppCompatActivity implements OnEditProfileListener {
 
+    private static final String TAG_PROFILE_FRAGMENT = "profile_fragment";
     private static final int REQUEST_CODE_EDIT_USER = 100;
 
     public static final String ACTION_DISPLAY_RANKING = "in.ureport.ProfileDisplayRanking";
-
-    private ProfileFragment profileFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,10 +26,9 @@ public class ProfileActivity extends AppCompatActivity implements OnEditProfileL
         CountryProgramManager.setThemeIfNeeded(this);
         setContentView(R.layout.activity_profile);
 
-        if(savedInstanceState == null) {
-            profileFragment = new ProfileFragment();
+        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.content, profileFragment)
+                    .add(R.id.content, new ProfileFragment(), TAG_PROFILE_FRAGMENT)
                     .commit();
         }
     }
@@ -44,11 +42,10 @@ public class ProfileActivity extends AppCompatActivity implements OnEditProfileL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK) {
-            switch(requestCode) {
-                case REQUEST_CODE_EDIT_USER:
-                    profileFragment.loadUser();
-            }
+        if (requestCode == REQUEST_CODE_EDIT_USER && resultCode == RESULT_OK) {
+            ProfileFragment profileFragment = (ProfileFragment) getSupportFragmentManager()
+                    .findFragmentByTag(TAG_PROFILE_FRAGMENT);
+            profileFragment.loadUser();
         }
     }
 
@@ -58,4 +55,5 @@ public class ProfileActivity extends AppCompatActivity implements OnEditProfileL
         intent.putExtra(UserSettingsActivity.EXTRA_USER, user);
         startActivityForResult(intent, REQUEST_CODE_EDIT_USER);
     }
+
 }

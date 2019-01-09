@@ -1,28 +1,21 @@
 package in.ureport.tasks;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.support.annotation.NonNull;
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ShareCompat;
 import android.view.View;
 
-import java.io.File;
-
-import br.com.ilhasoft.support.tool.ShareManager;
-import br.com.ilhasoft.support.tool.UnitConverter;
-import br.com.ilhasoft.support.tool.bitmap.ImageStorage;
 import in.ureport.R;
+import in.ureport.models.News;
+import in.ureport.models.Story;
 import in.ureport.tasks.common.ProgressTask;
 
 /**
  * Created by johncordeiro on 02/10/15.
  */
 public abstract class ShareViewTask<T> extends ProgressTask<Void, Void, Void> {
-
-    private static final String filename = "ureport_share";
-
-    private static final int WIDTH = 400;
 
     protected Fragment fragment;
     private T object;
@@ -34,7 +27,7 @@ public abstract class ShareViewTask<T> extends ProgressTask<Void, Void, Void> {
         super(fragment.getActivity(), R.string.load_message_wait);
         this.fragment = fragment;
         this.object = object;
-        this.shareTitleId = R.string.title_share_story;
+        this.shareTitleId = shareTitleId;
     }
 
     @Override
@@ -47,37 +40,47 @@ public abstract class ShareViewTask<T> extends ProgressTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        Bitmap bitmap = drawBitmap();
+        StringBuilder sharableTextBuilder = new StringBuilder();
+        if (object instanceof Story) {
+            Story story = ((Story) object);
+            sharableTextBuilder
+                    .append(story.getContent());
 
-        ImageStorage imageStorage = new ImageStorage();
-        File file = imageStorage.saveBitmapToJpg(bitmap, filename);
+            if (story.getMedias() != null)
+                sharableTextBuilder
+                        .append("\n\n")
+                        .append(story.getCover().getUrl());
+        } else if (object instanceof News) {
+            News news = ((News) object);
+            sharableTextBuilder
+                    .append(news.getTitle())
+                    .append("\n\n")
+                    .append(news.getSummary());
 
-        ShareManager shareManager = new ShareManager(fragment.getActivity());
-        shareManager.shareBinary(file, "image/jpeg", fragment.getString(shareTitleId));
+            if (news.getImages() != null && !news.getImages().isEmpty())
+                sharableTextBuilder
+                        .append("\n\n")
+                        .append(news.getImages().get(0));
+        }
+        shareContent(fragment.getActivity(), fragment.getString(shareTitleId), sharableTextBuilder.toString());
         return null;
-    }
-
-    @NonNull
-    private Bitmap drawBitmap() {
-        UnitConverter unitConverter = new UnitConverter(fragment.getContext());
-        measureView((int)unitConverter.convertDpToPx(WIDTH));
-
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        view.draw(canvas);
-        return bitmap;
-    }
-
-    private void measureView(int width) {
-        view.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY)
-                , View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
     }
 
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        if(view != null) view.setDrawingCacheEnabled(false);
+        if (view != null) view.setDrawingCacheEnabled(false);
+    }
+
+    private void shareContent(Activity activity, String title, String sharableText) {
+        Intent sharingIntent = ShareCompat.IntentBuilder
+                .from(activity)
+                .setType("text/plain")
+                .setText(sharableText)
+                .getIntent();
+        if (sharingIntent.resolveActivity(activity.getPackageManager()) != null) {
+            activity.startActivity(Intent.createChooser(sharingIntent, title));
+        }
     }
 
 }

@@ -6,12 +6,13 @@
 
     <string name="login_email">Email</string>
     <string name="login_password">Password</string>
+    <string name="remember_me_option">Remember me</string>
     <string name="email">Email</string>
     <string name="error_required_field">Required field</string>
     <string name="login">Login</string>
-    <string name="login_facebook">Facebook</string>
+    <string name="login_facebook">Sign up with Facebook</string>
     <string name="login_google">Google+</string>
-    <string name="login_twitter">Sign up with Twitter</string>
+    <string name="login_twitter">Twitter</string>
     <string name="login_skip">Skip Login</string>
     <string name="login_or">Or</string>
     <string name="login_sign_up">Click here to sign up with email!</string>
@@ -246,6 +247,7 @@
     <string name="stories_moderation">Stories</string>
     <string name="label_moderation">Moderation</string>
     <string name="title_moderation">%1$s moderation</string>
+    <string name="label_denounce">Denounce</string>
     <string name="button_title_disapprove">Reject</string>
     <string name="button_title_publish">Publish</string>
     <string name="success_story_update_message">Story was updated with success!</string>
@@ -253,6 +255,7 @@
     <string name="label_remove">Remove</string>
     <string name="error_remove">An error occurred during removing process</string>
     <string name="message_success_remove">The data was removed with success!</string>
+    <string name="message_success_denounce">The data was denounced with success!</string>
     <string name="title_share_story">Share story using:</string>
     <string name="title_share_news">Share news using:</string>
     <string name="title_share_subject">Story shared using U-Report</string>
@@ -311,6 +314,7 @@
     <string name="error_video_load">An error occurred during the video load</string>
     <string name="title_click_to_play">Click to play</string>
     <string name="message_story_disapproved">This story has been successfully disapproved.</string>
+    <string name="message_story_denounced">This story has been successfully denounced.</string>
     <string name="title_chat_message">New chat message</string>
     <string name="prompt_media_notification">media</string>
     <string name="error_message_permission">It\'s not possible to login with Google+ without permissions</string>
@@ -350,6 +354,12 @@
     <string name="poll_comment">Add a comment</string>
     <string name="label_web_moderation">Web Moderation</string>
     <string name="message_authentication_started">Authentication started successfully</string>
+    <string name="message_fcm_floating_permission">Never miss a message or poll from U-Report, press Accept below and turn us on.</string>
+    <string name="error_message_channel_not_configured">The channel is not configured, contact the country administrator.</string>
+    <string name="error_message_dont_work_for_global_adms">It does not work for global administrators.</string>
+
+    <string name="ureport_name">U-Report %s</string>
+    <string name="ureport_description">A direct channel with us!</string>
 
     <plurals name="files_attached">
         <item quantity="one">%1$s file attached</item>

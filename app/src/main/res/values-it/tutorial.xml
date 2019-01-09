@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="tutorial_title1">Crea Storie</string>
+    <string name="tutorial_description1">Amplifica la tua voce e condividi cosa sta accadendo nella tua comunità creando storie e commentando su quelle degli altri</string>
+    <string name="tutorial_title2">Rispondi ai sondaggi</string>
+    <string name="tutorial_description2">Ogni settimana tu e altri milioni di U-Reporter potete rispondere ai sondaggi su argomenti che influenzano i giovani nella tua comunità. I risultati saranno sempre condivisi</string>
+    <string name="tutorial_title3">Chatta gratis</string>
+    <string name="tutorial_description3">Chatta con altri U-Reporters e segui le chat di gruppo su tematiche giovanili</string>
+</resources>

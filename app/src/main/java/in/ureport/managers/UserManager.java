@@ -4,22 +4,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
 
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.activities.LoginActivity;
 import in.ureport.activities.MainActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnUserLoadedListener;
 import in.ureport.models.ChatRoom;
+import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
+import in.ureport.services.UreportFcmRegistrationService;
+import io.rapidpro.sdk.FcmClient;
+import io.rapidpro.sdk.UiConfiguration;
 
 /**
  * Created by johncordeiro on 21/07/15.
@@ -53,10 +57,25 @@ public class UserManager {
         CountryProgramManager.switchCountryProgram(UserManager.getCountryCode());
     }
 
+    public static void initializeFcmClient(CountryProgram countryProgram) {
+        if (countryProgram.getChannel() == CountryProgramManager.INVALID_VALUE) return;
+        FcmClient.initialize(new FcmClient.Builder(context)
+                .setHost(context.getString(countryProgram.getRapidproEndpoint()))
+                .setToken(getCountryToken())
+                .setChannel(context.getString(countryProgram.getChannel()))
+                .setRegistrationServiceClass(UreportFcmRegistrationService.class)
+                .setUiConfiguration(new UiConfiguration()
+                    .setPermissionMessage(context.getString(R.string.message_fcm_floating_permission))
+                    .setIconResource(R.mipmap.icon)
+                    .setIconFloatingChat(R.mipmap.icon)
+                    .setTheme(countryProgram.getTheme())
+                    .setTitleString(countryProgram.getName())));
+    }
+
     public static boolean isUserCountryProgramEnabled() {
         Log.i(TAG, "isUserCountryProgramEnabled getCountryCode: " + getCountryCode());
         return getCountryCode() != null
-            && getCountryCode().equals(CountryProgramManager.getCurrentCountryProgram().getCode());
+            && (getCountryCode().equals(CountryProgramManager.getCurrentCountryProgram().getCode()) || BuildConfig.FLAVOR.equals("onthemove"));
     }
 
     public static void updateUserInfo(User user, final OnUserLoadedListener listener) {
@@ -109,6 +128,10 @@ public class UserManager {
                 listener.onUserLoaded();
             }
         });
+    }
+
+    public static String getFcmToken() {
+        return FcmClient.getPreferences().getFcmToken();
     }
 
     public static String getUserId() {
@@ -216,6 +239,7 @@ public class UserManager {
                 .setPositiveButton(R.string.confirm_neutral_dialog_button, (dialogInterface, i) -> {
                     User user = new User();
                     user.setKey(getUserId());
+                    user.setPushIdentity(getFcmToken());
                     user.setCountryProgram(UserManager.getCountryCode());
 
                     ChatRoomServices chatRoomServices = new ChatRoomServices();
@@ -233,6 +257,7 @@ public class UserManager {
         UserManager.countryToken = null;
 
         FirebaseManager.logout();
+        FcmClient.clearContact();
 
         SystemPreferences systemPreferences = new SystemPreferences(context);
         systemPreferences.setUserLoggedId(SystemPreferences.USER_NO_LOGGED_ID);
@@ -242,9 +267,8 @@ public class UserManager {
     }
 
     public static void startLoginFlow(Context context) {
-        Intent backIntent = new Intent(context, MainActivity.class);
+        Intent backIntent = MainActivity.createIntent(context);
         backIntent.putExtra(MainActivity.EXTRA_FORCED_LOGIN, true);
-        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(backIntent);
     }
 

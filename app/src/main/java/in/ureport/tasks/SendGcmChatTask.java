@@ -7,7 +7,7 @@ import android.util.Log;
 import in.ureport.models.ChatMessage;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.User;
-import in.ureport.network.GcmServices;
+import in.ureport.network.FcmServices;
 
 /**
  * Created by johncordeiro on 21/08/15.
@@ -33,8 +33,8 @@ public class SendGcmChatTask extends AsyncTask<ChatMessage, Void, Void> {
             ChatMessage chatMessage = params[0];
             chatMessage.setUser(user);
 
-            GcmServices gcmServices = new GcmServices(context);
-            gcmServices.sendChatMessage(chatRoom, chatMessage);
+            FcmServices fcmServices = new FcmServices(context);
+            fcmServices.sendChatMessage(chatRoom, chatMessage);
         } catch(Exception exception) {
             Log.e(TAG, "doInBackground ", exception);
         }

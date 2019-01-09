@@ -5,7 +5,6 @@ import android.content.Context;
 import com.facebook.AccessToken;
 import com.firebase.client.Config;
 import com.firebase.client.Firebase;
-import com.firebase.client.Logger;
 import com.firebase.client.core.RepoManager;
 import com.firebase.client.utilities.ParsedUrl;
 import com.firebase.client.utilities.Utilities;
@@ -15,7 +14,6 @@ import com.twitter.sdk.android.core.TwitterSession;
 import java.util.HashMap;
 import java.util.Map;
 
-import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.models.User;
 import in.ureport.tasks.GetGoogleAuthTokenTask;
@@ -32,9 +30,6 @@ public class FirebaseManager {
             Firebase.setAndroidContext(context);
 
             Config config = new Config();
-            if (BuildConfig.DEBUG) {
-                config.setLogLevel(Logger.Level.DEBUG);
-            }
             config.setPersistenceEnabled(true);
             if (proxyEnabled) {
                 config.setAuthenticationServer(context.getString(R.string.firebase_proxy_auth));

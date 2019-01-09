@@ -74,6 +74,8 @@
         android:layout_marginEnd="15dp"
         android:layout_marginLeft="12dp"
         android:layout_marginStart="12dp"
-        style="@style/Widget.AppCompat.Spinner" />
+        android:visibility="gone"
+        style="@style/Widget.AppCompat.Spinner"
+        tools:visibility="visible"/>
 
 </RelativeLayout>

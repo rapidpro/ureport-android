@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -8,7 +7,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 
 import in.ureport.R;
@@ -20,12 +18,13 @@ import in.ureport.views.adapters.StoriesAdapter;
  */
 public class StoriesModerationFragment extends StoriesListFragment implements StoriesAdapter.StoryModerationListener {
 
-    private ProgressDialog progressDialog;
+    private static Firebase.CompletionListener firebaseUpdateFinishedListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         publicType = false;
+        setupContextDependencies();
     }
 
     @Override
@@ -33,6 +32,7 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
         super.onViewCreated(view, savedInstanceState);
         storiesAdapter.enableModerationMode(this);
         hideFloatingButton();
+        setLoadingMessage(getString(R.string.load_message_wait));
     }
 
     @Override
@@ -42,29 +42,27 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
 
     @Override
     public void onApprove(Story story) {
-        progressDialog = ProgressDialog.show(getActivity(), null
-                , getString(R.string.load_message_wait), true, false);
-        storyServices.approveStory(story, onUpdateFinishedListener);
+        showLoading();
+        storyServices.approveStory(story, (firebaseError, firebase) ->
+                firebaseUpdateFinishedListener.onComplete(firebaseError, firebase));
     }
 
     @Override
     public void onDisapprove(Story story) {
-        progressDialog = ProgressDialog.show(getActivity(), null
-                , getString(R.string.load_message_wait), true, false);
-        storyServices.disapprovedStory(story, onUpdateFinishedListener);
+        showLoading();
+        storyServices.disapprovedStory(story, (firebaseError, firebase) ->
+                firebaseUpdateFinishedListener.onComplete(firebaseError, firebase));
     }
 
-    private Firebase.CompletionListener onUpdateFinishedListener = new Firebase.CompletionListener() {
-        @Override
-        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-            progressDialog.dismiss();
-            if (firebaseError == null) {
+    private void setupContextDependencies() {
+        firebaseUpdateFinishedListener = (firebaseError, firebase) -> {
+            dismissLoading();
+            if (firebaseError == null)
                 displayToast(R.string.success_story_update_message);
-            } else {
+            else
                 displayToast(R.string.error_update_user);
-            }
-        }
-    };
+        };
+    }
 
     @Override
     protected boolean hasCreateStoryButton() {
@@ -72,6 +70,7 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
     }
 
     private void displayToast(@StringRes int messageId) {
-        Toast.makeText(getActivity(), messageId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), messageId, Toast.LENGTH_SHORT).show();
     }
+
 }

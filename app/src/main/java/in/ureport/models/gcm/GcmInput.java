@@ -1,6 +1,7 @@
 package in.ureport.models.gcm;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by John Cordeiro on 5/1/17.
@@ -22,6 +23,10 @@ public class GcmInput<T extends NotificationHolder> {
 
     @Expose
     private Priority priority = Priority.high;
+
+    @Expose
+    @SerializedName("collapse_key")
+    private String collapseKey;
 
     @Expose
     private Notification notification;
@@ -53,6 +58,15 @@ public class GcmInput<T extends NotificationHolder> {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+    public String getCollapseKey() {
+        return collapseKey;
+    }
+
+    public GcmInput setCollapseKey(String collapseKey) {
+        this.collapseKey = collapseKey;
+        return this;
     }
 
     public Notification getNotification() {

@@ -1,7 +1,7 @@
 package in.ureport.tasks;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -10,13 +10,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 
+import in.ureport.BuildConfig;
 import in.ureport.R;
-import in.ureport.flowrunner.models.Contact;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ContactBuilder;
 import in.ureport.helpers.IOHelper;
@@ -27,83 +28,134 @@ import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.ip.ProxyResponse;
-import in.ureport.models.rapidpro.Field;
 import in.ureport.network.ProxyServices;
-import in.ureport.network.RapidProServices;
-import in.ureport.tasks.common.ProgressTask;
+import io.rapidpro.sdk.FcmClient;
+import io.rapidpro.sdk.core.models.Field;
+import io.rapidpro.sdk.core.models.base.ContactBase;
+import io.rapidpro.sdk.core.models.v1.Contact;
+import io.rapidpro.sdk.core.network.RapidProServices;
 import retrofit.RetrofitError;
 
 /**
  * Created by johncordeiro on 18/08/15.
  */
-public class SaveContactTask extends ProgressTask<User, Void, Contact> {
+public class SaveContactTask extends AsyncTask<Void, Void, ContactBase> {
 
     private static final String TAG = "SaveContactTask";
 
     private RapidProServices rapidProServices;
 
     private CountryInfo countryInfo;
+    private Contact currentContact;
+    private User user;
     private final boolean newUser;
 
-    public SaveContactTask(Context context, CountryInfo countryInfo, boolean newUser) {
-        super(context, R.string.load_message_save_user);
-        this.countryInfo = countryInfo;
+    private CountryProgram countryProgram;
+    private String rapidproEndpoint;
+    private String countryInfoJson;
+
+    private String proxyToken;
+
+    protected SaveContactTask(Context context, User user, boolean newUser) {
+        this.user = user;
         this.newUser = newUser;
+        this.countryProgram = getCountryProgram(user);
+        this.rapidproEndpoint = context.getString(countryProgram.getRapidproEndpoint());
+        this.countryInfoJson = IOHelper.loadJSONFromAsset(context, "countryInfo.json");
+
+        if (BuildConfig.SANDBOX_ORG) {
+            proxyToken = context.getString(R.string.fcm_client_token);
+        } else {
+            ProxyServices proxyServices = new ProxyServices(context);
+            try {
+                ProxyResponse response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
+                proxyToken = response.getToken();
+            } catch(Exception exception) { proxyToken = null; }
+        }
     }
 
-    public SaveContactTask(Context context, boolean newUser) {
-        super(context);
-        this.newUser = newUser;
+    protected SaveContactTask(Context context, User user, boolean newUser, CountryInfo countryInfo) {
+        this(context, user, newUser);
+        this.countryInfo = countryInfo;
     }
 
     @Override
-    protected Contact doInBackground(User... params) {
+    protected ContactBase doInBackground(Void... params) {
+        ContactBase contact = null;
         try {
-            User user = params[0];
-            String countryProgramCode = countryInfo != null ? countryInfo.getIsoAlpha3() : user.getCountryProgram();
+            rapidProServices = new RapidProServices(rapidproEndpoint, proxyToken);
 
-            String rapidproEndpoint = getContext().getString(CountryProgramManager
-                    .getCountryProgramForCode(countryProgramCode).getRapidproEndpoint());
-            this.rapidProServices = new RapidProServices(rapidproEndpoint);
+            UserManager.updateCountryToken(proxyToken);
+            if (proxyToken != null && !proxyToken.isEmpty()) {
+                currentContact = loadCurrentContact(user);
+                UserManager.initializeFcmClient(countryProgram);
 
-            CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryProgramCode);
-            String countryToken = getTokenFromProxy(countryProgram);
-            UserManager.updateCountryToken(countryToken);
-            if (countryToken != null && !countryToken.isEmpty()) {
-                String countryCode = countryInfo != null ? countryInfo.getCountryCode() : user.getCountry();
-                Contact contact = getContactForUser(countryToken, user, getRegistrationDate()
-                        , getISO2CountryCode(countryCode), countryProgram);
-                updateContactsWithGroups(countryToken, contact);
-
-                try {
-                    return rapidProServices.saveContact(countryToken, contact);
-                } catch (RetrofitError exception) {
-                    AnalyticsHelper.sendException(exception);
-                    Log.e(TAG, "doInBackground ", exception);
-                }
-                return rapidProServices.saveContact(countryToken, contact);
-            } else {
-                ContactBuilder contactBuilder = new ContactBuilder();
-                return contactBuilder.buildContactWithoutFields(user);
+                contact = saveContact(buildContact(user, getRegistrationDate(), countryProgram));
+                FcmClient.registerContact(user.getKey(), contact.getUuid());
+                return contact;
             }
+            ContactBuilder contactBuilder = new ContactBuilder();
+            contact = contactBuilder.buildContactWithoutFields(user);
         } catch (Exception exception) {
+            AnalyticsHelper.sendException(exception);
+            Log.e(TAG, "doInBackground ", exception);
+        }
+        return contact;
+    }
+
+    private CountryProgram getCountryProgram(User user) {
+        String countryProgramCode = countryInfo != null ? countryInfo.getIsoAlpha3() : user.getCountryProgram();
+        return CountryProgramManager.getCountryProgramForCode(countryProgramCode);
+    }
+
+    private io.rapidpro.sdk.core.models.v1.Contact loadCurrentContact(User user) {
+        String extUrn = ContactBuilder.formatExtUrn(user.getKey());
+        String fcmUrn = ContactBuilder.formatFcmUrn(user.getKey());
+
+        io.rapidpro.sdk.core.models.v1.Contact contact = loadContactWithUrn(extUrn);
+        if (contact == null) {
+            contact = loadContactWithUrn(fcmUrn);
+        }
+        return contact;
+    }
+
+    private ContactBase saveContact(Contact contact) throws IOException {
+        contact.setUrns(null);
+        updateContactWithUuid(contact);
+        updateContactWithGroups(contact);
+        try {
+            return rapidProServices.saveContactV1(contact).execute().body();
+        } catch (RetrofitError exception) {
             AnalyticsHelper.sendException(exception);
             Log.e(TAG, "doInBackground ", exception);
         }
         return null;
     }
 
-    private void updateContactsWithGroups(String countryToken, Contact contact) {
-        try {
-            Contact contactResult = this.rapidProServices.loadContact(countryToken, contact.getUrns().get(0));
-            if (contactHasGroups(contactResult))
-                contact.setGroups(null);
-        } catch(Exception exception) {
-            Log.e(TAG, "updateContactsWithGroups: ", exception);
+    private void updateContactWithUuid(Contact contact) {
+        if (currentContact != null) {
+            contact.setUuid(currentContact.getUuid());
         }
     }
 
-    private boolean contactHasGroups(Contact contactResult) {
+    private void updateContactWithGroups(Contact contact) {
+        try {
+            if (contactHasGroups(currentContact))
+                contact.setGroups(null);
+        } catch(Exception exception) {
+            Log.e(TAG, "updateContactWithGroups: ", exception);
+        }
+    }
+
+    private io.rapidpro.sdk.core.models.v1.Contact loadContactWithUrn(String urn) {
+        try {
+            return rapidProServices.loadContactV1(urn).execute().body().getResults().get(0);
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+
+    private boolean contactHasGroups(io.rapidpro.sdk.core.models.v1.Contact contactResult) {
         return contactResult != null && contactResult.getGroups() != null && !contactResult.getGroups().isEmpty();
     }
 
@@ -115,7 +167,6 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
             SntpClient client = new SntpClient();
             if (client.requestTime("pool.ntp.org", 4000)) {
                 long ntpTimeMillis = client.getNtpTime();
-                Log.i(TAG, "getRegistrationDate: ntpTimeMillis: " + new Date(ntpTimeMillis));
                 if (ntpTimeMillis > 0)
                     now = new Date(ntpTimeMillis);
             }
@@ -138,19 +189,11 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
         return countryCode;
     }
 
-    @Nullable
-    private String getTokenFromProxy(CountryProgram countryProgram) {
-        try {
-            ProxyServices proxyServices = new ProxyServices(getContext());
-            ProxyResponse response = proxyServices.getAuthenticationTokenByCountry(countryProgram.getCode());
-            return response.getToken();
-        } catch(Exception exception) {
-            return null;
-        }
-    }
+    private Contact buildContact(User user, Date registrationDate, CountryProgram countryProgram) throws IOException {
+        String userCountry = countryInfo != null ? countryInfo.getCountryCode() : user.getCountry();
+        String countryCode = getISO2CountryCode(userCountry);
 
-    private Contact getContactForUser(String token, User user, Date registrationDate, String countryCode, CountryProgram countryProgram) {
-        List<Field> fields = rapidProServices.loadFields(token);
+        List<Field> fields = rapidProServices.loadFields().execute().body().getResults();
 
         ContactBuilder contactBuilder = new ContactBuilder(fields);
         return contactBuilder.buildContactWithFields(user, registrationDate, countryCode, countryProgram);
@@ -158,19 +201,22 @@ public class SaveContactTask extends ProgressTask<User, Void, Contact> {
 
     private List<CountryInfo> getCountryInfoList() {
         try {
-            String json = IOHelper.loadJSONFromAsset(getContext(), "countryInfo.json");
-
             Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.TRANSIENT).create();
             Type type = new TypeToken<List<CountryInfo>>(){}.getType();
 
             JsonParser jsonParser = new JsonParser();
-            JsonObject jsonObject = (JsonObject) jsonParser.parse(json);
+            JsonObject jsonObject = (JsonObject) jsonParser.parse(countryInfoJson);
 
             return gson.fromJson(jsonObject.get("geonames"), type);
         } catch (Exception exception) {
             Log.e(TAG, "doInBackground: ", exception);
         }
         return null;
+    }
+
+    public interface Listener {
+        void onStart();
+        void onFinished(ContactBase contact, User user);
     }
 
 }

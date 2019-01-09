@@ -1,11 +1,9 @@
 package in.ureport.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +22,7 @@ import in.ureport.models.User;
 /**
  * Created by johncordeiro on 11/09/15.
  */
-public class ChangePasswordFragment extends Fragment {
+public class ChangePasswordFragment extends ProgressFragment {
 
     private static final String EXTRA_USER = "user";
 
@@ -37,7 +35,7 @@ public class ChangePasswordFragment extends Fragment {
 
     private User user;
 
-    private ProgressDialog progressDialog;
+    private static Firebase.ResultHandler firebaseResultCallback;
 
     public static ChangePasswordFragment newInstance(User user) {
         ChangePasswordFragment changePasswordFragment = new ChangePasswordFragment();
@@ -78,6 +76,8 @@ public class ChangePasswordFragment extends Fragment {
 
         setupObjects();
         setupView(view);
+        setupContextDependencies();
+        setLoadingMessage(getString(R.string.load_message_wait));
     }
 
     private void setupView(View view) {
@@ -92,14 +92,45 @@ public class ChangePasswordFragment extends Fragment {
         validator = new EditTextValidator();
     }
 
-    private View.OnClickListener onConfirmClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if(validateFields()) {
-                progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.load_message_wait), true, false);
-                FirebaseManager.changePassword(user, oldPassword.getText().toString()
-                        , newPassword.getText().toString(), onPasswordChanged);
+    private void setupContextDependencies() {
+        firebaseResultCallback = new Firebase.ResultHandler() {
+            @Override
+            public void onSuccess() {
+                dismissLoading();
+                if (userSettingsListener != null) {
+                    userSettingsListener.onEditFinished();
+                }
             }
+
+            @Override
+            public void onError(FirebaseError firebaseError) {
+                dismissLoading();
+                switch(firebaseError.getCode()) {
+                    case FirebaseError.INVALID_PASSWORD:
+                        Toast.makeText(getContext(), R.string.error_change_password, Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(getContext(), R.string.error_no_internet, Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+    }
+
+    private View.OnClickListener onConfirmClickListener = view -> {
+        if (validateFields()) {
+            showLoading();
+            FirebaseManager.changePassword(user, oldPassword.getText().toString(),
+                    newPassword.getText().toString(), new Firebase.ResultHandler() {
+                @Override
+                public void onSuccess() {
+                    firebaseResultCallback.onSuccess();
+                }
+
+                @Override
+                public void onError(FirebaseError firebaseError) {
+                    firebaseResultCallback.onError(firebaseError);
+                }
+            });
         }
     };
 
@@ -113,25 +144,4 @@ public class ChangePasswordFragment extends Fragment {
         return validator.validateSize(editText, UserInfoBaseFragment.FIELDS_MINIMUM_SIZE, messageNameValidation);
     }
 
-    private Firebase.ResultHandler onPasswordChanged = new Firebase.ResultHandler() {
-        @Override
-        public void onSuccess() {
-            progressDialog.dismiss();
-            if (userSettingsListener != null) {
-                userSettingsListener.onEditFinished();
-            }
-        }
-
-        @Override
-        public void onError(FirebaseError firebaseError) {
-            progressDialog.dismiss();
-            switch(firebaseError.getCode()) {
-                case FirebaseError.INVALID_PASSWORD:
-                    Toast.makeText(getActivity(), R.string.error_change_password, Toast.LENGTH_SHORT).show();
-                    break;
-                default:
-                    Toast.makeText(getActivity(), R.string.error_no_internet, Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 }

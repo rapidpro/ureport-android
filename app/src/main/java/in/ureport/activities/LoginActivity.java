@@ -1,35 +1,30 @@
 package in.ureport.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 
-import java.util.Locale;
-
+import in.ureport.BuildConfig;
 import in.ureport.R;
 import in.ureport.fragments.CredentialsLoginFragment;
 import in.ureport.fragments.ForgotPasswordFragment;
 import in.ureport.fragments.LoginFragment;
 import in.ureport.fragments.SignUpFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
-
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
-import in.ureport.flowrunner.models.Contact;
-import in.ureport.models.ip.IpResponse;
-import in.ureport.network.IpServices;
 import in.ureport.network.UserServices;
-import in.ureport.services.GcmRegistrationIntentService;
 import in.ureport.tasks.SaveContactTask;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import io.rapidpro.sdk.core.models.base.ContactBase;
 
 /**
  * Created by johncordeiro on 7/7/15.
@@ -37,16 +32,75 @@ import retrofit.client.Response;
 public class LoginActivity extends AppCompatActivity implements LoginFragment.LoginListener {
 
     private static final String TAG = "LoginActivity";
+    private static final String BUNDLE_LOADING_KEY = "loading";
+
+    private ProgressDialog progressDialog;
+    private boolean loading;
+
+    private static RapidProContactSavingListener rapidProContactSavingListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setupContextDependencies();
 
         if(savedInstanceState == null) {
             addLoginFragment();
         }
         checkVersionAndProceed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (progressDialog.isShowing())
+            progressDialog.dismiss();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(BUNDLE_LOADING_KEY, loading);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null)
+            loading = savedInstanceState.getBoolean(BUNDLE_LOADING_KEY);
+
+        if (loading) showLoading();
+    }
+
+    private void setupContextDependencies() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.load_message_wait));
+        progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
+
+        rapidProContactSavingListener = new RapidProContactSavingListener() {
+            @Override
+            public void onStart() {
+                showLoading();
+            }
+
+            @Override
+            public void onFinished(ContactBase contact, User user) {
+                dismissLoading();
+                updateUserAndDismiss(user, contact);
+            }
+        };
+    }
+
+    private void showLoading() {
+        loading = true;
+        progressDialog.show();
+    }
+
+    private void dismissLoading() {
+        loading = false;
+        progressDialog.dismiss();
     }
 
     private void checkVersionAndProceed() {
@@ -106,6 +160,9 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
                 if (dataSnapshot.exists()) {
                     User user = dataSnapshot.getValue(User.class);
                     user.setKey(dataSnapshot.getKey());
+                    if (BuildConfig.FLAVOR.equals("onthemove")) {
+                        user.setCountryProgram(CountryProgramManager.getCurrentCountryProgram().getCode());
+                    }
                     onUserReady(user, false);
                 } else {
                     addSignUpFragment(user);
@@ -121,37 +178,32 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
 
     @Override
     public void onUserReady(final User user, boolean newUser) {
-        if(user == null) return;
-        saveContactOnRapidPro(user, newUser);
+        if (user == null) return;
+        saveContactOnRapidPro(this, user, newUser);
     }
 
-    private void saveContactOnRapidPro(final User user, final boolean newUser) {
-        SaveContactTask saveContactTask = new SaveContactTask(this, newUser) {
-            ProgressDialog progressDialog;
+    private static void saveContactOnRapidPro(final Context context, final User user, final boolean newUser) {
+        new SaveContactTask(context, user, newUser) {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                progressDialog = ProgressDialog.show(LoginActivity.this, null
-                        , getString(R.string.load_message_wait), true, false);
+                rapidProContactSavingListener.onStart();
             }
+
             @Override
-            protected void onPostExecute(Contact contact) {
+            protected void onPostExecute(ContactBase contact) {
                 super.onPostExecute(contact);
-                if (progressDialog != null) progressDialog.dismiss();
-                updateUserAndDismiss(user);
+                rapidProContactSavingListener.onFinished(contact, user);
             }
-        };
-        saveContactTask.execute(user);
+        }.execute();
     }
 
-    private void updateUserAndDismiss(User user) {
+    private void updateUserAndDismiss(User user, ContactBase contact) {
+        if (contact != null && !TextUtils.isEmpty(contact.getUuid())) {
+            UserServices userServices = new UserServices();
+            userServices.saveUserContactUuid(user, contact.getUuid());
+        }
         UserManager.updateUserInfo(user, this::startMainActivity);
-        createGcmInstanceId();
-    }
-
-    private void createGcmInstanceId() {
-        Intent gcmRegisterIntent = new Intent(this, GcmRegistrationIntentService.class);
-        startService(gcmRegisterIntent);
     }
 
     @Override
@@ -171,8 +223,7 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
     }
 
     private void startMainActivity() {
-        Intent mainIntent = new Intent(this, MainActivity.class);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent mainIntent = MainActivity.createIntent(this);
         if (getIntent().getExtras() != null) {
             mainIntent.putExtras(getIntent().getExtras());
         }
@@ -192,4 +243,10 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
                 .addToBackStack(null)
                 .commit();
     }
+
+    interface RapidProContactSavingListener {
+        void onStart();
+        void onFinished(ContactBase contact, User user);
+    }
+
 }

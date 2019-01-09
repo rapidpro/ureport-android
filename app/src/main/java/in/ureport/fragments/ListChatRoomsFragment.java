@@ -1,5 +1,6 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -29,11 +31,13 @@ import java.util.Map;
 
 import in.ureport.R;
 import in.ureport.activities.ChatCreationActivity;
+import in.ureport.activities.ChatRoomActivity;
 import in.ureport.activities.InviteContactsActivity;
 import in.ureport.activities.MainActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.OnSeeOpenGroupsListener;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.LocalNotificationManager;
 import in.ureport.managers.SearchManager;
@@ -65,6 +69,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
 
     private Map<ChatRoom, Integer> chatNotifications;
     private RecyclerView chatsList;
+    private ProgressBar progressBar;
 
     private List<ChildEventListener> chatEventListenerList;
 
@@ -127,6 +132,28 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == Activity.RESULT_OK && requestCode == MainActivity.REQUEST_CODE_CHAT_CREATION) {
+            startChatRoom(data);
+        }
+    }
+
+    private void startChatRoom(Intent data) {
+        ChatRoom chatRoom = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_ROOM);
+        ChatMembers chatMembers = data.getParcelableExtra(ChatCreationActivity.EXTRA_RESULT_CHAT_MEMBERS);
+
+        if(chatRoom != null && chatMembers != null) {
+            Intent chatRoomIntent = new Intent(getContext(), ChatRoomActivity.class);
+            chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM, chatRoom);
+            chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_MEMBERS, chatMembers);
+
+            CountryProgramManager.switchToUserCountryProgram();
+            startActivity(chatRoomIntent);
+        }
+    }
+
     private void startInviteContacts() {
         Intent inviteContactsIntent = new Intent(getActivity(), InviteContactsActivity.class);
         startActivity(inviteContactsIntent);
@@ -153,6 +180,8 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     }
 
     private void setupView(View view) {
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
         chatsList = (RecyclerView) view.findViewById(R.id.chatsList);
         chatsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         chatsList.addItemDecoration(new DividerItemDecoration(getActivity()));
@@ -192,23 +221,29 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             super.onDataChange(dataSnapshot);
-            chatRoomsAdapter.getChatRooms().beginBatchedUpdates();
+            if (dataSnapshot.getChildrenCount() == 0) {
+                progressBar.setVisibility(View.GONE);
+                return;
+            }
 
             List<ChatRoomHolder> chatRoomHolders = new ArrayList<>();
-
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 String chatRoomKey = snapshot.getKey();
                 chatRoomServices.getChatRoom(chatRoomKey, new ChatRoomInterface.OnChatRoomLoadedListener() {
                     @Override
-                    public void onChatRoomLoadFailed() {}
+                    public void onChatRoomLoadFailed() {
+                        progressBar.setVisibility(View.GONE);
+                    }
                     @Override
                     public void onChatRoomLoaded(ChatRoom chatRoom, ChatMembers chatMembers) {
                         ChatRoomHolder holder = new ChatRoomHolder(chatRoom, chatMembers, null);
                         chatRoom.setUnreadMessages(chatNotifications.get(chatRoom));
                         chatRoomHolders.add(holder);
-
                         updateChatRoomsWithLastMessage(holder);
-                        onUpdatedChatRooms(chatRoomHolders);
+
+                        if (chatRoomHolders.size() >= snapshot.getChildrenCount()) {
+                            onUpdatedChatRooms(chatRoomHolders);
+                        }
                     }
                 });
             }
@@ -229,6 +264,8 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     }
 
     private void onUpdatedChatRooms(List<ChatRoomHolder> chatRoomHolders) {
+        progressBar.setVisibility(View.GONE);
+
         updateChatRooms(chatRoomHolders);
         selectChatRoomIfNeeded(selectableChatRoom);
         chatsList.postDelayed(this::selectFirstIfNeeded, 4000);
@@ -239,6 +276,7 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
             @Override
             public void onChatLastMessageLoaded(ChatMessage chatMessage) {
                 chatRoomsAdapter.addChatRoom(chatRoomHolder);
+                chatRoomsAdapter.sortChatRooms();
             }
             @Override
             public void onChatLastMessageLoadFailed() {}
@@ -246,13 +284,12 @@ public class ListChatRoomsFragment extends Fragment implements SearchView.OnQuer
     }
 
     private void updateChatRooms(List<ChatRoomHolder> chatRoomHolders) {
-        chatRoomsAdapter.getChatRooms().beginBatchedUpdates();
         chatRoomsAdapter.getChatRooms().clear();
         for (ChatRoomHolder chatRoomHolder : chatRoomHolders) {
             chatRoomsAdapter.addChatRoom(chatRoomHolder);
         }
         chatRoomsAdapter.fillSelectableWhenNull();
-        chatRoomsAdapter.getChatRooms().endBatchedUpdates();
+        chatRoomsAdapter.sortChatRooms();
     }
 
     private void selectFirstIfNeeded() {

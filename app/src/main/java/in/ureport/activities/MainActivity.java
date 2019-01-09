@@ -1,10 +1,12 @@
 package in.ureport.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,7 +41,10 @@ import in.ureport.models.holders.NavigationItem;
 import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
+import in.ureport.tasks.SaveContactTask;
 import in.ureport.views.adapters.NavigationAdapter;
+import io.rapidpro.sdk.FcmClient;
+import io.rapidpro.sdk.core.models.base.ContactBase;
 
 /**
  * Created by johncordeiro on 7/9/15.
@@ -51,6 +56,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
 
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     public static final int REQUEST_CODE_CHAT_CREATION = 200;
+    public static final int REQUEST_CODE_TUTORIAL = 201;
 
     private static final int POSITION_POLLS_FRAGMENT = 1;
     private static final int POSITION_CHAT_FRAGMENT = 2;
@@ -78,15 +84,49 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
     private int roomMembersLoaded = 0;
     private boolean chatRoomFound = false;
 
+    public static Intent createIntent(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return intent;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setupObjects();
         checkTutorialView();
-        checkForcedLogin();
         setContentView(R.layout.activity_main);
         setupView();
+        checkUserRegistration();
+    }
+
+    private void checkUserRegistration() {
+        if (!FcmClient.isContactRegistered() && UserManager.getUserId() != null) {
+            UserServices userServices = new UserServices();
+            userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    super.onDataChange(dataSnapshot);
+                    User user = dataSnapshot.getValue(User.class);
+                    saveContact(user);
+                }
+            });
+        }
+    }
+
+    private void saveContact(final User user) {
+        SaveContactTask saveContactTask = new SaveContactTask(this, user, false) {
+            @Override
+            protected void onPostExecute(ContactBase contact) {
+                super.onPostExecute(contact);
+                if (contact != null && !TextUtils.isEmpty(contact.getUuid())) {
+                    UserServices userServices = new UserServices();
+                    userServices.saveUserContactUuid(user, contact.getUuid());
+                }
+            }
+        };
+        saveContactTask.execute();
     }
 
     @Override
@@ -99,6 +139,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
     protected void onResume() {
         super.onResume();
         checkIntentNotifications(getIntent());
+        checkForcedLogin();
         localNotificationManager.cancelContributionNotification();
     }
 
@@ -116,7 +157,9 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
         SystemPreferences systemPreferences = new SystemPreferences(this);
         if(!systemPreferences.getTutorialView()) {
             Intent tutorialViewIntent = new Intent(this, TutorialActivity.class);
-            startActivity(tutorialViewIntent);
+            startActivityForResult(tutorialViewIntent, REQUEST_CODE_TUTORIAL);
+        } else {
+            FcmClient.requestFloatingPermissionsIfNeeded(this);
         }
     }
 
@@ -169,6 +212,9 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
             switch (requestCode) {
                 case REQUEST_CODE_CHAT_CREATION:
                     startChatRoom(data);
+                    break;
+                case REQUEST_CODE_TUTORIAL:
+                    FcmClient.requestFloatingPermissionsIfNeeded(this);
             }
         }
     }

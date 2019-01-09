@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import java.lang.reflect.Array;
 
+import br.com.ilhasoft.support.tool.DateFormatter;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.listener.OnNeedUpdateStoryListener;
@@ -33,6 +34,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     private final OnUserStartChattingListener onUserStartChattingListener;
     private final OnNeedUpdateStoryListener onNeedUpdateStoryListener;
 
+    private final TextView publishedDate;
     private final ImageView picture;
     private final ImageView image;
     private final TextView title;
@@ -57,6 +59,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
         contributionsTemplate = itemView.getContext().getString(R.string.stories_list_item_contributions);
 
+        publishedDate = (TextView) itemView.findViewById(R.id.publishedDate);
         picture = (ImageView) itemView.findViewById(R.id.picture);
         image = (ImageView) itemView.findViewById(R.id.image);
         title = (TextView) itemView.findViewById(R.id.title);
@@ -80,8 +83,9 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Story story) {
         this.story = story;
+        bindPublishDate(story);
 
-        if(story.getUserObject() != null) {
+        if (story.getUserObject() != null) {
             bindAuthor(story.getUserObject());
             bindLikes(story.getLikes());
             bindContributions(story.getContributions());
@@ -98,6 +102,15 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
         picture.setOnClickListener(onUserClickListener);
         author.setOnClickListener(onUserClickListener);
+    }
+
+    private void bindPublishDate(Story story) {
+        DateFormatter dateFormatter;
+        dateFormatter = new DateFormatter();
+
+        String timeElapsed = dateFormatter.getTimeElapsed(story.getCreatedDate().getTime()
+                , itemView.getContext().getString(R.string.date_now));
+        this.publishedDate.setText(timeElapsed.toLowerCase());
     }
 
     private void bindContributions(Integer contributionsCount) {
@@ -121,7 +134,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void bindLikes(Integer likeCount) {
-        if(likeCount != null && likeCount > 0) {
+        if (likeCount != null && likeCount > 0) {
             String likes = itemView.getResources().getQuantityString(R.plurals.like_count
                     , story.getLikes(), story.getLikes());
             likeCountText.setText(likes);
@@ -132,7 +145,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void bindFilesAttached(Story story) {
-        if(story.getMedias() != null && story.getMedias().size() > 0) {
+        if (story.getMedias() != null && story.getMedias().size() > 0) {
             String filesAttachedText = itemView.getResources().getQuantityString(R.plurals.files_attached
                     , story.getMedias().size(), story.getMedias().size());
             filesAttached.setText(filesAttachedText);
@@ -143,7 +156,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void bindMarkers(Story story) {
-        if(story.getMarkers() != null && story.getMarkers().length() > 0) {
+        if (story.getMarkers() != null && story.getMarkers().length() > 0) {
             markers.setText(story.getMarkers());
             markers.setVisibility(View.VISIBLE);
         } else {
@@ -153,13 +166,15 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
     private void bindImage(Story story) {
         Media cover = story.getCover();
-        if(cover != null) {
+        if (cover != null) {
             image.setBackgroundColor(itemView.getResources().getColor(android.R.color.transparent));
             image.setScaleType(ImageView.ScaleType.CENTER_CROP);
             image.setVisibility(View.VISIBLE);
 
             switch (cover.getType()) {
-                case Video: case VideoPhone: case Picture:
+                case Video:
+                case VideoPhone:
+                case Picture:
                     ImageLoader.loadGenericPictureToImageViewFit(image, getCoverUrl(story));
                     break;
                 default:
@@ -198,17 +213,17 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         }
 
         @NonNull
-        private Pair<View, String> [] getViewsTransitions() {
-            Pair<View, String> picturePair = Pair.create((View)picture
+        private Pair<View, String>[] getViewsTransitions() {
+            Pair<View, String> picturePair = Pair.create((View) picture
                     , itemView.getContext().getString(R.string.transition_profile_picture));
 
-            Pair<View, String> nicknamePair = Pair.create((View)author
+            Pair<View, String> nicknamePair = Pair.create((View) author
                     , itemView.getContext().getString(R.string.transition_profile_nickname));
 
-            Pair<View, String> storyTitle = Pair.create((View)title
+            Pair<View, String> storyTitle = Pair.create((View) title
                     , itemView.getContext().getString(R.string.transition_story_title));
 
-            Pair<View, String> [] views = (Pair<View, String> []) Array.newInstance(Pair.class, 3);
+            Pair<View, String>[] views = (Pair<View, String>[]) Array.newInstance(Pair.class, 3);
             views[0] = picturePair;
             views[1] = nicknamePair;
             views[2] = storyTitle;

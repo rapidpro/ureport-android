@@ -37,6 +37,12 @@
         <item name="colorAccent">#047ea2</item>
     </style>
 
+    <style name="AppTheme.India" parent="AppTheme">
+        <item name="colorPrimary">#FF5722</item>
+        <item name="colorPrimaryDark">#E64A19</item>
+        <item name="colorAccent">#FF5722</item>
+    </style>
+
     <style name="AppTheme.Indonesia" parent="AppTheme">
         <item name="colorPrimary">#b9001c</item>
         <item name="colorPrimaryDark">#c3001c</item>
@@ -161,6 +167,12 @@
         <item name="colorPrimary">#155ad0</item>
         <item name="colorPrimaryDark">#13469e</item>
         <item name="colorAccent">#12418a</item>
+    </style>
+
+    <style name="AppTheme.Otm" parent="AppTheme">
+        <item name="colorPrimary">#8750A0</item>
+        <item name="colorPrimaryDark">#6d4081</item>
+        <item name="colorAccent">#5a366b</item>
     </style>
 
 </resources>

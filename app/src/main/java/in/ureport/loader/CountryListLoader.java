@@ -2,6 +2,7 @@ package in.ureport.loader;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +17,8 @@ import in.ureport.network.GeonamesServices;
  * Created by johncordeiro on 7/9/15.
  */
 public class CountryListLoader extends AsyncTaskLoader<List<CountryInfo>> {
+
+    private static final String TAG = "CountryListLoader";
 
     public CountryListLoader(Context context) {
         super(context);
@@ -34,11 +37,11 @@ public class CountryListLoader extends AsyncTaskLoader<List<CountryInfo>> {
         try {
             GeonamesServices geonamesServices = new GeonamesServices();
             countries = geonamesServices.getCountriesByLanguage(Locale.getDefault().getLanguage());
+            Collections.sort(countries, new CountryInfoComparator());
         } catch(Exception exception) {
+            Log.e(TAG, "loadInBackground: ", exception);
             countries = new ArrayList<>();
         }
-
-        Collections.sort(countries, new CountryInfoComparator());
         return countries;
     }
 

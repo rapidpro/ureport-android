@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string-array name="markers">
+        <item>Advocacy</item>
+        <item>Protezione Infanzia</item>
+        <item>Istruzione</item>
+        <item>Emergenza</item>
+        <item>Salute</item>
+        <item>HIV/AIDS</item>
+        <item>Nutrizione</item>
+        <item>Politiche</item>
+        <item>Politiche Sociali</item>
+        <item>Servizi igienico-sanitari</item>
+        <item>Violenza</item>
+    </string-array>
+</resources>

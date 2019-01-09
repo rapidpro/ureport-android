@@ -26,6 +26,7 @@ public class TutorialActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setResult(RESULT_OK);
         setContentView(R.layout.activity_tutorial);
         setupView();
         setupTutorialView();
