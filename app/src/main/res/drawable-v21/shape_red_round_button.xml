@@ -3,7 +3,7 @@
     android:color="?android:attr/colorControlHighlight">
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#d76854"/>
+            <solid android:color="#E4002B"/>
             <corners android:radius="@dimen/button_radius"/>
         </shape>
     </item>

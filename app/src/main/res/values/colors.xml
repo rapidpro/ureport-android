@@ -7,7 +7,9 @@
     <color name="window_background">#eeeeee</color>
     <color name="light_window_background">#eeeeee</color>
     <color name="white_window_background">#fafafa</color>
-    <color name="yellow">#ebce2c</color>
+    <color name="yellow">#FFD100</color>
+
+    <color name="gray_bold">#2C2A29</color>
 
     <color name="highlight">#ec2248</color>
     <color name="light_gray">#e8e8e8</color>
