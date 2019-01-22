@@ -228,7 +228,8 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.Lo
         if (getIntent().getExtras() != null) {
             mainIntent.putExtras(getIntent().getExtras());
         }
-        startActivity(mainIntent);
+//        startActivity(mainIntent);
+        startActivity(HomeActivity.createIntent(this));
         finish();
     }
 

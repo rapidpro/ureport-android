@@ -40,6 +40,10 @@
             android:label="@string/label_home"
             android:windowSoftInputMode="adjustPan" />
         <activity
+            android:name=".activities.HomeActivity"
+            android:label="@string/label_home"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
             android:name=".activities.TutorialActivity"
             android:theme="@style/AppTheme.Fullscreen" />
         <activity

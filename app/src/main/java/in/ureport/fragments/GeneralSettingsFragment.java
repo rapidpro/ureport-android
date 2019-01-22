@@ -148,7 +148,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     .setDataAndType(pdfFileUri, "application/pdf");
             startActivity(intent);
-        } catch (FileNotFoundException | DocumentException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             displayMessage(R.string.user_data_pdf_error);
         }

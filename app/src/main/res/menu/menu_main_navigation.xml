@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/main"
+        android:icon="@drawable/ic_main_home"
+        android:title="@string/label_home"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/search"
+        android:icon="@drawable/ic_main_search"
+        android:title="@string/search_title"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/chat"
+        android:icon="@drawable/ic_main_chat"
+        android:title="@string/main_chat"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/ic_main_person"
+        android:title="@string/label_profile"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/ic_main_settings"
+        android:title="@string/label_settings"
+        app:showAsAction="never" />
+
+</menu>
