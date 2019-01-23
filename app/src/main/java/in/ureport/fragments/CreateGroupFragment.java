@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,8 +24,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -304,7 +305,7 @@ public class CreateGroupFragment extends ProgressFragment {
     private void createGroup() {
         if (validateFields()) {
             final GroupChatRoom groupChatRoom = new GroupChatRoom();
-            groupChatRoom.setCreatedDate(new Date());
+            groupChatRoom.setCreatedDate(new Date().getTime());
             groupChatRoom.setTitle(title.getText().toString());
             groupChatRoom.setSubject(description.getText().toString());
             groupChatRoom.setPrivateAccess(privateGroup.isChecked());
@@ -356,7 +357,7 @@ public class CreateGroupFragment extends ProgressFragment {
     private void loadUserAndSaveChat(final GroupChatRoom groupChatRoom) {
         userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 User user = dataSnapshot.getValue(User.class);
 

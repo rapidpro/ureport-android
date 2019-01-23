@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.marcorei.infinitefire.InfiniteFireArray;
 import com.marcorei.infinitefire.InfiniteFireRecyclerViewAdapter;
+import com.marcorei.infinitefire.InfiniteFireSnapshot;
 
 import java.util.HashSet;
 import java.util.List;
@@ -93,4 +94,9 @@ public class UreportersInfiniteAdapter extends InfiniteFireRecyclerViewAdapter<U
     public Integer getMaxSelectionCount() {
         return maxSelectionCount;
     }
+
+    private InfiniteFireSnapshot<User> getItem(int position) {
+        return snapshots.getItem(position - indexOffset);
+    }
+
 }

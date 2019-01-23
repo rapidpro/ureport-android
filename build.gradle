@@ -1,28 +1,26 @@
 buildscript {
     ext.versions = [
-            'gradleVersion'        : '2.3.3',
-            'retrolambdaVersion'   : '3.6.1',
-            'androidSupportVersion': '25.3.1',
-            'playServicesVersion'  : '10.2.6',
-            'firebaseClientVersion': '2.5.2',
+            'gradleVersion'        : '3.2.1',
+            'androidSupportVersion': '28.0.0',
             'facebookSdkVersion'   : '4.5.0',
             'picassoVersion'       : '2.5.2',
             'retrofitVersion'      : '1.6.0'
     ]
     repositories {
+        google()
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath "me.tatarka:gradle-retrolambda:${versions.retrolambdaVersion}"
         classpath "com.android.tools.build:gradle:${versions.gradleVersion}"
-        classpath 'com.google.gms:google-services:3.0.0'
-        classpath 'io.fabric.tools:gradle:1.24.3'
+        classpath 'com.google.gms:google-services:4.2.0'
+        classpath 'io.fabric.tools:gradle:1.25.4'
     }
 }
 
 allprojects {
     repositories {
+        google()
         jcenter()
     }
 }

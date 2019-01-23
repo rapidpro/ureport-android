@@ -1,8 +1,8 @@
 package in.ureport.helpers;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 /**
  * Created by johncordeiro on 15/08/15.
@@ -30,7 +30,7 @@ public abstract class ChildEventListenerAdapter implements ChildEventListener {
     }
 
     @Override
-    public void onCancelled(FirebaseError firebaseError) {
+    public void onCancelled(DatabaseError firebaseError) {
 
     }
 }

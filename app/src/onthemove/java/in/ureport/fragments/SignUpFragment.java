@@ -9,16 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-
-import java.util.Map;
+import com.google.firebase.auth.FirebaseAuth;
 
 import in.ureport.R;
 import in.ureport.helpers.AnalyticsHelper;
 import in.ureport.helpers.ToolbarDesigner;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.Login;
 import in.ureport.models.holders.UserGender;
@@ -35,6 +30,8 @@ public class SignUpFragment extends UserInfoBaseFragment {
 
     private ProgressDialog progressDialog;
 
+    private FirebaseAuth firebaseAuth;
+
     public static SignUpFragment newInstance(User user) {
         SignUpFragment signUpFragment = new SignUpFragment();
 
@@ -43,6 +40,12 @@ public class SignUpFragment extends UserInfoBaseFragment {
 
         signUpFragment.setArguments(args);
         return signUpFragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        firebaseAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -83,7 +86,7 @@ public class SignUpFragment extends UserInfoBaseFragment {
         user.setType(userType);
         user.setNickname(username.getText().toString());
         user.setEmail(email.getText().toString());
-        user.setBirthday(getBirthdayDate());
+        user.setBirthday(getBirthdayDate().getTime());
 
         if(userType != User.Type.ureport) {
             user.setKey(this.user.getKey());
@@ -116,46 +119,38 @@ public class SignUpFragment extends UserInfoBaseFragment {
     };
 
     private void createUserAndAuthenticate(final Login login, final User user) {
-        FirebaseManager.getReference().createUser(login.getEmail(), login.getPassword(), new Firebase.ValueResultHandler<Map<String, Object>>() {
-            @Override
-            public void onSuccess(Map<String, Object> result) {
-                user.setKey(result.get("uid").toString());
-                authenticateAndSaveUser(login, user);
-            }
-
-            @Override
-            public void onError(FirebaseError firebaseError) {
-                dismissDialog();
-                Toast.makeText(getActivity(), R.string.error_email_already_exists, Toast.LENGTH_LONG).show();
-
-                AnalyticsHelper.sendFirebaseError(firebaseError);
-            }
-        });
+        firebaseAuth.createUserWithEmailAndPassword(login.getEmail(), login.getPassword())
+                .addOnCompleteListener(task -> {
+                    dismissDialog();
+                    if (task.getResult() != null) {
+                        user.setKey(task.getResult().getUser().getUid());
+                        authenticateAndSaveUser(login, user);
+                    } else {
+                        Toast.makeText(getActivity(), R.string.error_email_already_exists, Toast.LENGTH_LONG).show();
+                        AnalyticsHelper.sendException(task.getException());
+                    }
+                });
     }
 
     private void authenticateAndSaveUser(Login login, final User user) {
-        FirebaseManager.getReference().authWithPassword(login.getEmail(), login.getPassword(), new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                dismissDialog();
-                storeUserAndFinish(user);
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                dismissDialog();
-                Toast.makeText(getActivity(), R.string.error_valid_email, Toast.LENGTH_LONG).show();
-            }
-        });
+        firebaseAuth.signInWithEmailAndPassword(login.getEmail(), login.getPassword())
+                .addOnCompleteListener(task -> {
+                    dismissDialog();
+                    if (task.getException() == null) {
+                        storeUserAndFinish(user);
+                    } else {
+                        Toast.makeText(getActivity(), R.string.error_valid_email, Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     private void storeUserAndFinish(final User user) {
         showDialog();
         UserServices userServices = new UserServices();
-        userServices.saveUser(user, (firebaseError, firebase) -> {
+        userServices.saveUser(user, (error, reference) -> {
             dismissDialog();
-            if (firebaseError != null)
-                Toast.makeText(getActivity().getApplicationContext(), firebaseError.getMessage(), Toast.LENGTH_LONG).show();
+            if (error != null)
+                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_LONG).show();
             else
                 loginListener.onUserReady(user, true);
         });

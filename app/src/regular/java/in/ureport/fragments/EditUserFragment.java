@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
 
     private UserSettingsFragment.UserSettingsListener userSettingsListener;
 
-    private static Firebase.CompletionListener firebaseCompletionListener;
+    private static DatabaseReference.CompletionListener firebaseCompletionListener;
     private static SaveContactTask.Listener saveContactTaskListener;
 
     public static EditUserFragment newInstance(User user) {
@@ -58,9 +58,9 @@ public class EditUserFragment extends UserInfoBaseFragment {
     }
 
     private void setupContextDependencies() {
-        firebaseCompletionListener = ((firebaseError, firebase) -> {
+        firebaseCompletionListener = ((error, reference) -> {
             dismissLoading();
-            if (firebaseError == null) {
+            if (error == null) {
                 updateContactToRapidpro(getContext(), user, getCountrySelected());
             } else {
                 displayError();
@@ -165,7 +165,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
     private View.OnClickListener onConfirmClickListener = view -> {
         if (validFieldsForCustomUser()) {
             user.setNickname(username.getText().toString());
-            user.setBirthday(getBirthdayDate());
+            user.setBirthday(getBirthdayDate().getTime());
 
             Location location = (Location) EditUserFragment.this.state.getSelectedItem();
             user.setState(location.getName());

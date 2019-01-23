@@ -30,11 +30,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.Query;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.marcorei.infinitefire.InfiniteFireArray;
-import com.marcorei.infinitefire.InfiniteFireLinearRecyclerView;
 
 import java.lang.reflect.Array;
 import java.util.Collections;
@@ -44,11 +43,12 @@ import java.util.Map;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.helpers.MediaSelector;
+import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.ChatRoomInterface;
 import in.ureport.listener.InfoGroupChatListener;
-import in.ureport.helpers.ImageLoader;
 import in.ureport.managers.MediaViewer;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
@@ -61,9 +61,9 @@ import in.ureport.models.LocalMedia;
 import in.ureport.models.Media;
 import in.ureport.models.User;
 import in.ureport.network.ChatRoomServices;
-import in.ureport.helpers.SpaceItemDecoration;
 import in.ureport.tasks.CleanUnreadByRoomTask;
 import in.ureport.tasks.SendGcmChatTask;
+import in.ureport.views.widgets.InfiniteFireLinearRecyclerView;
 import in.ureport.views.adapters.ChatMessagesAdapter;
 import in.ureport.views.holders.ChatMessageViewHolder;
 
@@ -215,7 +215,7 @@ public class ChatRoomFragment extends Fragment
     private void sendChatMessageWithMedia(Media media) {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setUser(user);
-        chatMessage.setDate(new Date());
+        chatMessage.setDate(new Date().getTime());
         chatMessage.setMedia(media);
         saveChatMessage(chatMessage);
     }
@@ -410,7 +410,7 @@ public class ChatRoomFragment extends Fragment
     }
 
     private void setupMessagesAdapter() {
-        Query query = chatRoomServices.getChatMessagesQuery(chatRoom.getKey());
+        final Query query = chatRoomServices.getChatMessagesQuery(chatRoom.getKey());
         chatMessageArray = new InfiniteFireArray<>(ChatMessage.class, query, 20, 20, false, false);
         adapter = new ChatMessagesAdapter(user, chatMessageArray);
         adapter.setOnChatMessageSelectedListener(this);
@@ -507,7 +507,7 @@ public class ChatRoomFragment extends Fragment
             String messageText = message.getText().toString();
             if(messageText.length() > 0) {
                 ChatMessage chatMessage = new ChatMessage();
-                chatMessage.setDate(new Date());
+                chatMessage.setDate(new Date().getTime());
                 chatMessage.setMessage(messageText);
                 chatMessage.setUser(user);
 
@@ -527,9 +527,9 @@ public class ChatRoomFragment extends Fragment
 
     private ValueEventListenerAdapter onChatRoomChangedListener = new ValueEventListenerAdapter() {
         @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             super.onDataChange(dataSnapshot);
-            if(dataSnapshot.exists()) {
+            if (dataSnapshot.exists()) {
                 chatRoom = chatRoomServices.getChatRoomFromSnapshot(dataSnapshot);
                 refreshChatRoomBlocking(chatRoom);
             }
@@ -593,8 +593,8 @@ public class ChatRoomFragment extends Fragment
         alertDialog.show();
     }
 
-    private Firebase.CompletionListener onChatMessageRemovedListener = (firebaseError, firebase) -> {
-        if(firebaseError == null) {
+    private DatabaseReference.CompletionListener onChatMessageRemovedListener = (error, reference) -> {
+        if (error == null) {
             displayMessage(R.string.message_delete_message_success);
         } else {
             displayMessage(R.string.error_remove);
@@ -606,7 +606,7 @@ public class ChatRoomFragment extends Fragment
     }
 
     private void dismissMediaPicker() {
-        if(pickMediaFragment != null)
+        if (pickMediaFragment != null)
             pickMediaFragment.dismiss();
     }
 

@@ -1,9 +1,10 @@
 package in.ureport.services;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.firebase.client.DataSnapshot;
+import com.google.firebase.database.DataSnapshot;
 
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.FcmTopicManager;
@@ -29,7 +30,7 @@ public class UreportFcmRegistrationService extends FcmClientRegistrationIntentSe
         try {
             String userKey = UserManager.getUserId();
 
-            if(userKey != null) {
+            if (userKey != null) {
                 registerTopics(pushIdentity, userKey);
             }
         } catch(Exception exception) {
@@ -42,7 +43,7 @@ public class UreportFcmRegistrationService extends FcmClientRegistrationIntentSe
         userServices.updatePushIdentity(userKey, pushIdentity);
         userServices.getUser(userKey, new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 final User user = dataSnapshot.getValue(User.class);
                 user.setKey(dataSnapshot.getKey());
@@ -57,7 +58,7 @@ public class UreportFcmRegistrationService extends FcmClientRegistrationIntentSe
         StoryServices storyServices = new StoryServices();
         storyServices.loadStoriesForUser(user, new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {

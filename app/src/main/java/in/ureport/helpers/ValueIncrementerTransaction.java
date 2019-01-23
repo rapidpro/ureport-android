@@ -2,10 +2,14 @@ package in.ureport.helpers;
 
 import android.util.Log;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.MutableData;
-import com.firebase.client.Transaction;
+//import com.firebase.client.DataSnapshot;
+//import com.firebase.client.FirebaseError;
+//import com.firebase.client.MutableData;
+//import com.firebase.client.Transaction;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 /**
  * Created by johncordeiro on 22/09/15.
@@ -31,7 +35,7 @@ public class ValueIncrementerTransaction implements Transaction.Handler {
     }
 
     @Override
-    public void onComplete(FirebaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
+    public void onComplete(DatabaseError firebaseError, boolean b, DataSnapshot dataSnapshot) {
         if(firebaseError != null) {
             Log.e(TAG, "onComplete " + firebaseError);
         }

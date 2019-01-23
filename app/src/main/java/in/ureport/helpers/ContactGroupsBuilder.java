@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import in.ureport.managers.CountryProgramManager;
@@ -60,7 +61,7 @@ public class ContactGroupsBuilder {
 
     private void addDefaultGroups(User user, List<String> userGroups) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(user.getBirthday());
+        calendar.setTime(new Date(user.getBirthday()));
 
         if(calendar.get(Calendar.YEAR) >= YOUTH_MIN_BIRTHDAY_YEAR) {
             userGroups.add(GROUP_UREPORT_YOUTH);

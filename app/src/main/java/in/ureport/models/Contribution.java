@@ -1,6 +1,5 @@
 package in.ureport.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
 import java.util.Date;
@@ -8,7 +7,6 @@ import java.util.Date;
 /**
  * Created by johncordeiro on 7/16/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Contribution {
 
     @Expose
@@ -20,7 +18,7 @@ public class Contribution {
     @Expose
     private User author;
 
-    private Date createdDate;
+    private Long createdDate;
 
     public Contribution() {
     }
@@ -54,11 +52,11 @@ public class Contribution {
         this.author = author;
     }
 
-    public Date getCreatedDate() {
+    public Long getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(Long createdDate) {
         this.createdDate = createdDate;
     }
 

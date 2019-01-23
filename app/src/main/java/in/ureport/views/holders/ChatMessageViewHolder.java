@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import in.ureport.R;
@@ -99,7 +100,7 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
         }
 
         date = (TextView) findIfNeeded(date, R.id.chatMessageDate);
-        date.setText(hourFormatter.format(chatMessage.getDate()));
+        date.setText(hourFormatter.format(new Date(chatMessage.getDate())));
     }
 
     private void bindMedia(User user, ChatMessage chatMessage) {
@@ -168,7 +169,8 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
         playAudio.setImageResource(R.drawable.ic_play_arrow_blue_36dp);
         Map<String, Object> metadata = chatMessage.getMedia().getMetadata();
         if(metadata != null && metadata.containsKey(Media.KEY_DURATION)) {
-            durationAudio.setText(TimeFormatter.getDurationString((Integer)metadata.get(Media.KEY_DURATION)));
+            Long duration = (Long) metadata.get(Media.KEY_DURATION);
+            durationAudio.setText(TimeFormatter.getDurationString(duration.intValue()));
         } else {
             durationAudio.setText(null);
         }

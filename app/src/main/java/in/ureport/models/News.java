@@ -3,7 +3,6 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.List;
 /**
  * Created by johncordeiro on 7/17/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class News implements Parcelable {
 
     private Integer id;

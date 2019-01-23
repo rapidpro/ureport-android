@@ -3,8 +3,7 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.firebase.database.Exclude;
 import com.google.gson.annotations.Expose;
 
 import java.util.Date;
@@ -13,7 +12,6 @@ import java.util.List;
 /**
  * Created by johncordeiro on 7/14/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Story implements Parcelable {
 
     @Expose
@@ -23,7 +21,7 @@ public class Story implements Parcelable {
 
     private String content;
 
-    private Date createdDate;
+    private Long createdDate;
 
     private String user;
 
@@ -31,7 +29,7 @@ public class Story implements Parcelable {
 
     private Integer contributions;
 
-    @JsonIgnore
+    @Exclude
     private Integer likes;
 
     private String markers;
@@ -67,11 +65,11 @@ public class Story implements Parcelable {
         this.content = content;
     }
 
-    public Date getCreatedDate() {
+    public Long getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(Long createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -141,7 +139,7 @@ public class Story implements Parcelable {
         dest.writeString(this.key);
         dest.writeString(this.title);
         dest.writeString(this.content);
-        dest.writeLong(createdDate != null ? createdDate.getTime() : -1);
+        dest.writeLong(createdDate);
         dest.writeString(this.user);
         dest.writeParcelable(this.userObject, 0);
         dest.writeValue(this.contributions);
@@ -155,8 +153,7 @@ public class Story implements Parcelable {
         this.key = in.readString();
         this.title = in.readString();
         this.content = in.readString();
-        long tmpCreatedDate = in.readLong();
-        this.createdDate = tmpCreatedDate == -1 ? null : new Date(tmpCreatedDate);
+        this.createdDate = in.readLong();
         this.user = in.readString();
         this.userObject = in.readParcelable(User.class.getClassLoader());
         this.contributions = (Integer) in.readValue(Integer.class.getClassLoader());

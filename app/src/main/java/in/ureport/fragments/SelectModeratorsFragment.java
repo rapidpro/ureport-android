@@ -10,9 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
 import com.marcorei.infinitefire.InfiniteFireArray;
-import com.marcorei.infinitefire.InfiniteFireLinearRecyclerView;
 
 import java.util.List;
 
@@ -20,6 +19,7 @@ import in.ureport.R;
 import in.ureport.listener.ItemSelectionListener;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
+import in.ureport.views.widgets.InfiniteFireLinearRecyclerView;
 import in.ureport.views.adapters.UreportersInfiniteAdapter;
 
 /**
@@ -86,8 +86,8 @@ public class SelectModeratorsFragment extends Fragment implements ItemSelectionL
         Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
     }
 
-    private Firebase.CompletionListener onUpdateUserCompletionListener = (firebaseError, firebase) -> {
-        if (firebaseError == null) {
+    private DatabaseReference.CompletionListener onUpdateUserCompletionListener = (error, reference) -> {
+        if (error == null) {
             displayToast(R.string.message_success_user_update);
         } else {
             displayToast(R.string.error_update_user);

@@ -3,16 +3,13 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by johncordeiro on 20/08/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Media implements Parcelable {
 
     public static final String KEY_DURATION = "duration";

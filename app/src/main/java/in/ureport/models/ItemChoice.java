@@ -3,12 +3,9 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * Created by johncordeiro on 14/09/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemChoice implements Parcelable {
 
     private String title;
@@ -27,8 +24,8 @@ public class ItemChoice implements Parcelable {
         return value;
     }
 
-    public void setValue(Integer value) {
-        this.value = value;
+    public void setValue(String value) {
+        this.value = Integer.parseInt(value);
     }
 
     @Override

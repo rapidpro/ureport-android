@@ -3,12 +3,9 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 /**
  * Created by johncordeiro on 14/09/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ItemKeyword implements Parcelable {
 
     private String keyword;

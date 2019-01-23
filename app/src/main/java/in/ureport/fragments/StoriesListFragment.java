@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -16,10 +17,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Query;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.Query;
 import com.marcorei.infinitefire.InfiniteFireArray;
-import com.marcorei.infinitefire.InfiniteFireLinearRecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,9 +27,9 @@ import java.util.Map;
 
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
+import in.ureport.helpers.RecyclerScrollListener;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.FloatingActionButtonListener;
-import in.ureport.helpers.RecyclerScrollListener;
 import in.ureport.listener.OnNeedUpdateStoryListener;
 import in.ureport.listener.OnStoryUpdatedListener;
 import in.ureport.listener.OnUserStartChattingListener;
@@ -45,6 +45,7 @@ import in.ureport.network.StoryServices;
 import in.ureport.network.UreportServices;
 import in.ureport.network.UserServices;
 import in.ureport.tasks.ShareNewsTask;
+import in.ureport.views.widgets.InfiniteFireLinearRecyclerView;
 import in.ureport.views.adapters.StoriesAdapter;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -132,7 +133,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
 
         setupObjects();
         setupView(view);
-        Query query = loadData();
+        final Query query = loadData();
         setupStoriesAdapter(query);
     }
 
@@ -279,7 +280,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     private void loadStoryLikeCount(Story story, final OnStoryUpdatedListener onStoryUpdatedListener) {
         storyServices.loadStoryLikeCount(story, new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 story.setLikes(dataSnapshot.exists() ? (int) dataSnapshot.getChildrenCount() : 0);
                 onStoryUpdatedListener.onStoryUpdated(story);
@@ -290,7 +291,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     private void loadUsersFromStory(final Story story, final OnStoryUpdatedListener onStoryUpdatedListener) {
         userServices.getUser(story.getUser(), new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 if(user != null) {
                     story.setUserObject(user);

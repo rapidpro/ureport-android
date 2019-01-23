@@ -1,8 +1,10 @@
 package in.ureport.helpers;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import android.support.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by johncordeiro on 16/08/15.
@@ -10,12 +12,9 @@ import com.firebase.client.ValueEventListener;
 public abstract class ValueEventListenerAdapter implements ValueEventListener {
 
     @Override
-    public void onDataChange(DataSnapshot dataSnapshot) {
-
-    }
+    public void onDataChange(@NonNull DataSnapshot dataSnapshot) { }
 
     @Override
-    public void onCancelled(FirebaseError firebaseError) {
+    public void onCancelled(@NonNull DatabaseError databaseError) { }
 
-    }
 }

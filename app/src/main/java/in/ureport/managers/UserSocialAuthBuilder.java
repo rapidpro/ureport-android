@@ -2,13 +2,12 @@ package in.ureport.managers;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArrayMap;
 
-import com.firebase.client.AuthData;
+import com.google.firebase.auth.AdditionalUserInfo;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 
 import in.ureport.models.User;
@@ -18,28 +17,31 @@ import in.ureport.models.User;
  */
 public class UserSocialAuthBuilder {
 
-    public User build(AuthData authData) {
-        String provider = authData.getProvider();
-        switch(User.Type.valueOf(provider)) {
+    public User build(AuthResult authResult) {
+        String provider = authResult.getAdditionalUserInfo().getProviderId().replace(".com", "");
+        switch (User.Type.valueOf(provider)) {
             case twitter:
-                return buildUserFromTwitter(authData);
+                return buildUserFromTwitter(authResult);
             case facebook:
-                return buildUserFromFacebook(authData);
+                return buildUserFromFacebook(authResult);
             case google:
-                return buildUserFromGoogle(authData);
+                return buildUserFromGoogle(authResult);
         }
         return null;
     }
 
     @NonNull
-    public User buildUserFromTwitter(AuthData authData) {
-        Map<String, Object> data = authData.getProviderData();
+    private User buildUserFromTwitter(AuthResult authResult) {
+        final String profileImageUrl = (String) authResult.getAdditionalUserInfo()
+                .getProfile().get("profile_image_url");
+        final User user = new User();
 
-        User user = new User();
-        user.setKey(authData.getUid());
+        user.setKey(authResult.getUser().getUid());
         user.setType(User.Type.twitter);
-        user.setNickname(getStringValue(data, "username"));
-        user.setPicture(getBiggerTwitterProfilePicture(getStringValue(data, "profileImageURL")));
+        user.setNickname(authResult.getAdditionalUserInfo().getUsername());
+        if (profileImageUrl != null) {
+            user.setPicture(getBiggerTwitterProfilePicture(profileImageUrl));
+        }
         return user;
     }
 
@@ -47,38 +49,49 @@ public class UserSocialAuthBuilder {
         return profileImageUrl.replace("_normal", "_bigger");
     }
 
-    public User buildUserFromGoogle(AuthData authData) {
-        Map<String, Object> data = authData.getProviderData();
-        Map<String, Object> cachedUserProfile = (Map<String, Object>) data.get("cachedUserProfile");
-
-        User user = new User();
-        user.setKey(authData.getUid());
-        user.setType(User.Type.google);
-        user.setNickname(getFormattedNickname(getStringValue(data, "displayName")));
-        user.setPicture(getStringValue(data, "profileImageURL"));
-        user.setGenderAsEnum(getUserGender(getStringValue(cachedUserProfile, "gender")));
-
-        return user;
-    }
-
     @NonNull
-    public User buildUserFromFacebook(AuthData authData) {
-        Map<String, Object> data = authData.getProviderData();
-        Map<String, Object> cachedUserProfile = (Map<String, Object>) authData.getProviderData().get("cachedUserProfile");
+    private User buildUserFromFacebook(AuthResult authResult) {
+        final FirebaseUser userInfo = authResult.getUser();
+        final AdditionalUserInfo additionalUserInfo = authResult.getAdditionalUserInfo();
+        final User user = new User();
 
-        User user = new User();
-        user.setKey(authData.getUid());
+        String pictureUrl;
+        try {
+            final Map<String, Object> pictureData = ((ArrayMap<String, Object>)
+                    ((ArrayMap<String, Object>) additionalUserInfo.getProfile().get("picture")).get("data"));
+            pictureUrl = (String) pictureData.get("url");
+        } catch (Exception e) {
+            pictureUrl = "";
+        }
+
+        user.setKey(userInfo.getUid());
         user.setType(User.Type.facebook);
-        user.setEmail(getStringValue(data, "email"));
-        user.setNickname(getFormattedNickname(getStringValue(data, "displayName")));
-        user.setPicture(getStringValue(data, "profileImageURL"));
-        user.setBirthday(getFormattedDate(getStringValue(cachedUserProfile, "birthday"), "MM/dd/yyyy"));
-        user.setGenderAsEnum(getUserGender(getStringValue(cachedUserProfile, "gender")));
+        user.setEmail(getStringValue(additionalUserInfo.getProfile(), "email"));
+        user.setPicture(pictureUrl);
+
+        final String nickname = getStringValue(additionalUserInfo.getProfile(), "name");
+        user.setNickname(nickname == null ? "" : getFormattedNickname(nickname));
+        user.setGenderAsEnum(getUserGender(getStringValue(additionalUserInfo.getProfile(), "gender")));
+        user.setPicture(getStringValue(additionalUserInfo.getProfile(), "profileImageURL"));
 
         return user;
     }
 
-    @Nullable
+    private User buildUserFromGoogle(AuthResult authResult) {
+        final String displayName = authResult.getUser().getDisplayName();
+        final String pictureUrl = (String) authResult.getAdditionalUserInfo().getProfile().get("picture");
+        final User user = new User();
+
+        user.setKey(authResult.getUser().getUid());
+        user.setType(User.Type.google);
+        if (displayName != null) {
+            user.setNickname(getFormattedNickname(displayName));
+        }
+        user.setPicture(pictureUrl);
+
+        return user;
+    }
+
     private User.Gender getUserGender(String gender) {
         if (gender != null && gender.equals("female"))
             return User.Gender.Female;
@@ -87,16 +100,6 @@ public class UserSocialAuthBuilder {
 
     private String getFormattedNickname(String name) {
         return name.replace(" ", "");
-    }
-
-    @Nullable
-    private Date getFormattedDate(String birthdayDate, String format) {
-        try {
-            DateFormat dateFormat = new SimpleDateFormat(format, Locale.US);
-            return dateFormat.parse(birthdayDate);
-        } catch (Exception exception) {
-            return null;
-        }
     }
 
     @Nullable

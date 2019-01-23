@@ -114,10 +114,12 @@ public abstract class UserInfoBaseFragment extends ProgressFragment implements L
     private void setupUserIfNeeded() {
         if(user != null) {
             userType = user.getType();
+            final Date birthdayDate = user.getBirthday() == null
+                    ? new Date() : new Date(user.getBirthday());
 
             setEditTextValue(username, user.getNickname());
             setEditTextValue(email, user.getEmail());
-            setEditTextDate(birthday, user.getBirthday());
+            setEditTextDate(birthday, birthdayDate);
             setPasswordVisibility();
             setUserGenderValue();
         }

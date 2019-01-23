@@ -13,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,9 +25,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.Date;
 
@@ -57,9 +56,8 @@ import in.ureport.views.adapters.MediaAdapter;
 /**
  * Created by johncordeiro on 7/16/15.
  */
-public class StoryViewFragment extends ProgressFragment
-        implements ContributionAdapter.OnContributionRemoveListener,
-        ContributionAdapter.OnContributionDenounceListener {
+public class StoryViewFragment extends ProgressFragment implements
+        ContributionAdapter.OnContributionRemoveListener, ContributionAdapter.OnContributionDenounceListener {
 
     private static final String EXTRA_STORY = "story";
     private static final String EXTRA_USER = "user";
@@ -84,8 +82,8 @@ public class StoryViewFragment extends ProgressFragment
     private StoryServices storyServices;
     private UserServices userServices;
 
-    private static Firebase.CompletionListener firebaseContributionDenouncedListener;
-    private static Firebase.CompletionListener firebaseContributionRemovedListener;
+    private static DatabaseReference.CompletionListener contributionDenouncedListener;
+    private static DatabaseReference.CompletionListener contributionRemovedListener;
 
     private MediaViewer mediaViewer;
     private KeyboardHandler keyboardHandler;
@@ -140,14 +138,14 @@ public class StoryViewFragment extends ProgressFragment
     }
 
     private void setupContextDependencies() {
-        firebaseContributionDenouncedListener = (firebaseError, firebase) -> {
+        contributionDenouncedListener = (firebaseError, firebase) -> {
             dismissLoading();
             if (firebaseError == null)
                 displayToast(R.string.message_success_denounce);
             else
                 displayToast(R.string.error_remove);
         };
-        firebaseContributionRemovedListener = (firebaseError, firebase) -> {
+        contributionRemovedListener = (firebaseError, firebase) -> {
             dismissLoading();
             if (firebaseError == null)
                 displayToast(R.string.message_success_remove);
@@ -159,9 +157,8 @@ public class StoryViewFragment extends ProgressFragment
     private void loadStoryAndSetupView(final View view) {
         storyServices.loadStory(story, new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
-
                 if (isAdded()) {
                     story = dataSnapshot.getValue(Story.class);
                     story.setKey(dataSnapshot.getKey());
@@ -194,7 +191,7 @@ public class StoryViewFragment extends ProgressFragment
     private void loadStoryLikesCount() {
         storyServices.loadStoryLikeCount(story, new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 if (isAdded())
                     updateLikes((int) dataSnapshot.getChildrenCount());
@@ -210,7 +207,7 @@ public class StoryViewFragment extends ProgressFragment
     private void checkLikeForUser() {
         storyServices.checkLikeForUser(story, new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 likeCount.setSelected(dataSnapshot.exists());
             }
         });
@@ -222,7 +219,7 @@ public class StoryViewFragment extends ProgressFragment
         } else if (UserManager.isUserLoggedIn()) {
             userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     super.onDataChange(dataSnapshot);
                     user = dataSnapshot.getValue(User.class);
                     user.setKey(dataSnapshot.getKey());
@@ -316,7 +313,7 @@ public class StoryViewFragment extends ProgressFragment
         } else {
             userServices.getUser(story.getUser(), new ValueEventListenerAdapter() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     super.onDataChange(dataSnapshot);
                     User user = dataSnapshot.getValue(User.class);
                     setupUserView(user);
@@ -388,28 +385,22 @@ public class StoryViewFragment extends ProgressFragment
     }
 
     private void disapproveStory() {
-        storyServices.removeStory(story, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError == null) {
-                    displayToast(R.string.message_story_disapproved);
-                    getActivity().finish();
-                } else {
-                    displayToast(R.string.error_remove);
-                }
+        storyServices.removeStory(story, (error, reference) -> {
+            if (error == null) {
+                displayToast(R.string.message_story_disapproved);
+                getActivity().finish();
+            } else {
+                displayToast(R.string.error_remove);
             }
         });
     }
 
     private void denounceStory() {
-        storyServices.denounceStory(story, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError == null) {
-                    displayToast(R.string.message_story_denounced);
-                } else {
-                    displayToast(R.string.error_remove);
-                }
+        storyServices.denounceStory(story, (error, reference) -> {
+            if (error == null) {
+                displayToast(R.string.message_story_denounced);
+            } else {
+                displayToast(R.string.error_remove);
             }
         });
     }
@@ -418,20 +409,14 @@ public class StoryViewFragment extends ProgressFragment
         return String.format(getString(R.string.stories_list_item_contributions), story.getContributions());
     }
 
-    private View.OnClickListener onContributeClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (UserManager.validateKeyAction(getActivity())) {
-                updateViewForContribution();
-            }
+    private View.OnClickListener onContributeClickListener = view -> {
+        if (UserManager.validateKeyAction(getActivity())) {
+            updateViewForContribution();
         }
     };
 
-    private View.OnClickListener onShareClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            shareStory();
-        }
+    private View.OnClickListener onShareClickListener = view -> {
+        shareStory();
     };
 
     private void shareStory() {
@@ -442,7 +427,7 @@ public class StoryViewFragment extends ProgressFragment
     public void addContribution(String content) {
         if (UserManager.validateKeyAction(getActivity())) {
             final Contribution contribution = new Contribution(content, user);
-            contribution.setCreatedDate(new Date());
+            contribution.setCreatedDate(new Date().getTime());
 
             contributionServices.saveContribution(story.getKey(), contribution, (firebaseError, firebase) -> {
                 if (firebaseError == null) {
@@ -529,7 +514,7 @@ public class StoryViewFragment extends ProgressFragment
     private void loadUserFromContribution(final Contribution contribution, final OnAfterLoadUserListener listener) {
         userServices.getUser(contribution.getAuthor().getKey(), new ValueEventListenerAdapter() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 contribution.setAuthor(user);
                 if (listener != null) listener.onAfterLoadUser(contribution);
@@ -541,19 +526,11 @@ public class StoryViewFragment extends ProgressFragment
         contributions.setText(getContributionsText(story));
     }
 
-    private View.OnClickListener onAddContributionClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            onAddNewContribution();
-        }
-    };
+    private View.OnClickListener onAddContributionClickListener = view -> onAddNewContribution();
 
-    private TextView.OnEditorActionListener onDescriptionEditorActionListener = new TextView.OnEditorActionListener() {
-        @Override
-        public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-            onAddNewContribution();
-            return true;
-        }
+    private TextView.OnEditorActionListener onDescriptionEditorActionListener = (textView, i, keyEvent) -> {
+        onAddNewContribution();
+        return true;
     };
 
     private void onAddNewContribution() {
@@ -565,15 +542,15 @@ public class StoryViewFragment extends ProgressFragment
     @Override
     public void onContributionRemove(Contribution contribution) {
         showLoading();
-        contributionServices.removeContribution(story.getKey(), contribution, (firebaseError, firebase) ->
-                firebaseContributionRemovedListener.onComplete(firebaseError, firebase));
+        contributionServices.removeContribution(story.getKey(), contribution, (error, reference) ->
+                contributionRemovedListener.onComplete(error, reference));
     }
 
     @Override
     public void onContributionDenounce(Contribution contribution) {
         showLoading();
-        contributionServices.denounceContribution(story.getKey(), contribution, (firebaseError, firebase) ->
-                firebaseContributionDenouncedListener.onComplete(firebaseError, firebase));
+        contributionServices.denounceContribution(story.getKey(), contribution, (error, reference) ->
+                contributionDenouncedListener.onComplete(error, reference));
     }
 
     private void cleanNotification() {
@@ -599,11 +576,11 @@ public class StoryViewFragment extends ProgressFragment
 
     private void toggleLike(View view, boolean selected) {
         if (selected) {
-            storyServices.removeStoryLike(story, user
-                    , (FirebaseError firebaseError, Firebase firebase) -> view.setSelected(false));
+            storyServices.removeStoryLike(story, user,
+                    (DatabaseError error, DatabaseReference reference) -> view.setSelected(false));
         } else {
-            storyServices.addStoryLike(story, user
-                    , (FirebaseError firebaseError, Firebase firebase) -> view.setSelected(true));
+            storyServices.addStoryLike(story, user,
+                    (DatabaseError error, DatabaseReference reference) -> view.setSelected(true));
         }
     }
 

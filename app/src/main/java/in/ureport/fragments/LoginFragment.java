@@ -22,13 +22,17 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.firebase.client.AuthData;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.TwitterAuthProvider;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
@@ -40,16 +44,16 @@ import java.util.Arrays;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.BuildConfig;
 import in.ureport.R;
-import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserSocialAuthBuilder;
 import in.ureport.models.User;
+import in.ureport.tasks.GetGoogleAuthTokenTask;
 
 /**
  * Created by johncordeiro on 7/7/15.
  */
 public class LoginFragment extends ProgressFragment {
 
-    public static final String [] FACEBOOK_PERMISSIONS = { "email", "user_birthday" };
+    public static final String[] FACEBOOK_PERMISSIONS = {"email", "user_birthday"};
     public static final int ERROR_RESOLUTION_REQUEST_CODE = 300;
     public static final int REQUEST_CODE_GET_ACCOUNTS_PERMISSION = 101;
 
@@ -64,9 +68,17 @@ public class LoginFragment extends ProgressFragment {
     private boolean resolvingGoogleSignin = false;
     private boolean shouldResolveErrors = true;
 
-    private static Firebase.AuthResultHandler firebaseAuthCallback;
+    private FirebaseAuth firebaseAuth;
+
+    private static OnCompleteListener<AuthResult> userSigninListener;
     private static FacebookCallback<LoginResult> facebookAuthCallback;
     private static Callback<TwitterSession> twitterAuthCallback;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        firebaseAuth = FirebaseAuth.getInstance();
+    }
 
     @Nullable
     @Override
@@ -101,12 +113,12 @@ public class LoginFragment extends ProgressFragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch(requestCode) {
+        switch (requestCode) {
             case REQUEST_CODE_GET_ACCOUNTS_PERMISSION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     loginWithGooglePlus();
                 } else {
-                    Toast.makeText(getContext(),  R.string.error_message_permission, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.error_message_permission, Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -115,19 +127,14 @@ public class LoginFragment extends ProgressFragment {
     }
 
     private void setupContextDependencies() {
-        firebaseAuthCallback = new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                dismissLoading();
-                User user = userSocialAuthBuilder.build(authData);
+        userSigninListener = task -> {
+            dismissLoading();
+            if (task.isSuccessful() && task.getResult() != null) {
+                User user = userSocialAuthBuilder.build(task.getResult());
                 if (loginListener != null) {
                     loginListener.onLoginWithSocialNetwork(user);
                 }
-            }
-
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                dismissLoading();
+            } else {
                 showLoginErrorAlert();
             }
         };
@@ -135,21 +142,15 @@ public class LoginFragment extends ProgressFragment {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 showLoading();
-                FirebaseManager.authenticateWithFacebook(loginResult.getAccessToken(), new Firebase.AuthResultHandler() {
-                    @Override
-                    public void onAuthenticated(AuthData authData) {
-                        firebaseAuthCallback.onAuthenticated(authData);
-                    }
-
-                    @Override
-                    public void onAuthenticationError(FirebaseError firebaseError) {
-                        firebaseAuthCallback.onAuthenticationError(firebaseError);
-                    }
-                });
+                final AuthCredential credential = FacebookAuthProvider.getCredential(
+                        loginResult.getAccessToken().getToken());
+                firebaseAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(task -> userSigninListener.onComplete(task));
             }
 
             @Override
-            public void onCancel() { }
+            public void onCancel() {
+            }
 
             @Override
             public void onError(FacebookException exception) {
@@ -160,17 +161,11 @@ public class LoginFragment extends ProgressFragment {
             @Override
             public void success(Result<TwitterSession> result) {
                 showLoading();
-                FirebaseManager.authenticateWithTwitter(result.data, new Firebase.AuthResultHandler() {
-                    @Override
-                    public void onAuthenticated(AuthData authData) {
-                        firebaseAuthCallback.onAuthenticated(authData);
-                    }
-
-                    @Override
-                    public void onAuthenticationError(FirebaseError firebaseError) {
-                        firebaseAuthCallback.onAuthenticationError(firebaseError);
-                    }
-                });
+                final AuthCredential credential = TwitterAuthProvider.getCredential(
+                        result.data.getAuthToken().token,
+                        result.data.getAuthToken().secret);
+                firebaseAuth.signInWithCredential(credential)
+                        .addOnCompleteListener(task -> userSigninListener.onComplete(task));
             }
 
             @Override
@@ -188,7 +183,7 @@ public class LoginFragment extends ProgressFragment {
         callbackManager = CallbackManager.Factory.create();
         twitterAuthClient = new TwitterAuthClient();
 
-        googleApiClient = new GoogleApiClient.Builder(getActivity())
+        googleApiClient = new GoogleApiClient.Builder(requireContext())
                 .addConnectionCallbacks(googleConnectionCallbacks)
                 .addOnConnectionFailedListener(googleConnectionFailedListener)
                 .addApi(Plus.API)
@@ -229,8 +224,8 @@ public class LoginFragment extends ProgressFragment {
     @Override
     public void onAttach(Context activity) {
         super.onAttach(activity);
-        if(activity instanceof LoginListener) {
-            loginListener = (LoginListener)activity;
+        if (activity instanceof LoginListener) {
+            loginListener = (LoginListener) activity;
         }
     }
 
@@ -250,39 +245,25 @@ public class LoginFragment extends ProgressFragment {
         Toast.makeText(getContext(), R.string.login_error, Toast.LENGTH_LONG).show();
     }
 
-    private View.OnClickListener onTwitterLoginClickListener = view -> {
-        twitterAuthClient.authorize(getActivity(), new Callback<TwitterSession>() {
-            @Override
-            public void success(Result<TwitterSession> result) {
-                twitterAuthCallback.success(result);
-            }
-
-            @Override
-            public void failure(TwitterException e) {
-                twitterAuthCallback.failure(e);
-            }
-        });
-    };
-
     private GoogleApiClient.ConnectionCallbacks googleConnectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
             shouldResolveErrors = false;
-            FirebaseManager.authenticateWithGoogle(googleApiClient, new Firebase.AuthResultHandler() {
+            GetGoogleAuthTokenTask getGoogleAuthTokenTask = new GetGoogleAuthTokenTask() {
                 @Override
-                public void onAuthenticated(AuthData authData) {
-                    firebaseAuthCallback.onAuthenticated(authData);
+                protected void onPostExecute(String token) {
+                    super.onPostExecute(token);
+                    AuthCredential credential = GoogleAuthProvider.getCredential(null, token);
+                    firebaseAuth.signInWithCredential(credential)
+                            .addOnCompleteListener(task -> userSigninListener.onComplete(task));
                 }
-
-                @Override
-                public void onAuthenticationError(FirebaseError firebaseError) {
-                    firebaseAuthCallback.onAuthenticationError(firebaseError);
-                }
-            });
+            };
+            getGoogleAuthTokenTask.execute(googleApiClient);
         }
 
         @Override
-        public void onConnectionSuspended(int connectionSuspended) { }
+        public void onConnectionSuspended(int connectionSuspended) {
+        }
     };
 
     private GoogleApiClient.OnConnectionFailedListener googleConnectionFailedListener = connectionResult -> {
@@ -316,28 +297,41 @@ public class LoginFragment extends ProgressFragment {
             }
 
             @Override
-            public void onError(FacebookException error) {
-                facebookAuthCallback.onError(error);
+            public void onError(FacebookException exception) {
+                facebookAuthCallback.onError(exception);
             }
         });
         loginManager.logInWithReadPermissions(LoginFragment.this, Arrays.asList(FACEBOOK_PERMISSIONS));
     };
 
+    private View.OnClickListener onTwitterLoginClickListener = view -> {
+        twitterAuthClient.authorize(requireActivity(), new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                twitterAuthCallback.success(result);
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                twitterAuthCallback.failure(exception);
+            }
+        });
+    };
+
     private View.OnClickListener onGoogleLoginClickListener = view -> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int hasWriteContactsPermission = getActivity().checkSelfPermission(android.Manifest.permission.GET_ACCOUNTS);
+            int hasWriteContactsPermission = requireActivity().checkSelfPermission(android.Manifest.permission.GET_ACCOUNTS);
             if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{android.Manifest.permission.GET_ACCOUNTS}
-                        , REQUEST_CODE_GET_ACCOUNTS_PERMISSION);
+                requestPermissions(new String[]{android.Manifest.permission.GET_ACCOUNTS},
+                        REQUEST_CODE_GET_ACCOUNTS_PERMISSION);
+                return;
             }
-        } else {
-            loginWithGooglePlus();
         }
+        loginWithGooglePlus();
     };
 
     private void loginWithGooglePlus() {
         showLoading();
-
         if (!googleApiClient.isConnected()) {
             googleApiClient.connect();
         } else {
@@ -352,11 +346,17 @@ public class LoginFragment extends ProgressFragment {
 
     public interface LoginListener {
         void onLoginWithSocialNetwork(User user);
+
         void onLoginWithCredentials();
+
         void onSkipLogin();
+
         void onSignUp();
+
         void onUserReady(User user, boolean newUser);
+
         void onForgotPassword();
+
         void onPasswordReset();
     }
 

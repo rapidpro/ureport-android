@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.marcorei.infinitefire.InfiniteFireLinearRecyclerView
+<in.ureport.views.widgets.InfiniteFireLinearRecyclerView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ureportersList"
     android:layout_width="match_parent"

@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.firebase.client.DataSnapshot;
+import com.google.firebase.database.DataSnapshot;
 
 import org.json.JSONObject;
 
@@ -106,7 +106,7 @@ public class MainActivity extends BaseActivity implements OnSeeOpenGroupsListene
             UserServices userServices = new UserServices();
             userServices.getUser(UserManager.getUserId(), new ValueEventListenerAdapter() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     super.onDataChange(dataSnapshot);
                     User user = dataSnapshot.getValue(User.class);
                     saveContact(user);

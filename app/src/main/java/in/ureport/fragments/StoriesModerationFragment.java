@@ -6,8 +6,8 @@ import android.support.annotation.StringRes;
 import android.view.View;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.Query;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 
 import in.ureport.R;
 import in.ureport.models.Story;
@@ -18,7 +18,7 @@ import in.ureport.views.adapters.StoriesAdapter;
  */
 public class StoriesModerationFragment extends StoriesListFragment implements StoriesAdapter.StoryModerationListener {
 
-    private static Firebase.CompletionListener firebaseUpdateFinishedListener;
+    private static DatabaseReference.CompletionListener updateFinishedListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,20 +44,20 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
     public void onApprove(Story story) {
         showLoading();
         storyServices.approveStory(story, (firebaseError, firebase) ->
-                firebaseUpdateFinishedListener.onComplete(firebaseError, firebase));
+                updateFinishedListener.onComplete(firebaseError, firebase));
     }
 
     @Override
     public void onDisapprove(Story story) {
         showLoading();
         storyServices.disapprovedStory(story, (firebaseError, firebase) ->
-                firebaseUpdateFinishedListener.onComplete(firebaseError, firebase));
+                updateFinishedListener.onComplete(firebaseError, firebase));
     }
 
     private void setupContextDependencies() {
-        firebaseUpdateFinishedListener = (firebaseError, firebase) -> {
+        updateFinishedListener = (error, reference) -> {
             dismissLoading();
-            if (firebaseError == null)
+            if (error == null)
                 displayToast(R.string.success_story_update_message);
             else
                 displayToast(R.string.error_update_user);

@@ -12,6 +12,7 @@ import android.widget.Toast;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import in.ureport.R;
@@ -164,7 +165,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 return 1;
             if (item2.lastMessage == null)
                 return -1;
-            return item2.lastMessage.getDate().compareTo(item1.lastMessage.getDate());
+            return new Date(item2.lastMessage.getDate()).compareTo(new Date(item1.lastMessage.getDate()));
         });
         notifyDataSetChanged();
     }
@@ -222,7 +223,7 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 lastMessageText.setText(chatRoomHolder.lastMessage.getMessage());
 
                 lastMessageDate.setVisibility(View.VISIBLE);
-                lastMessageDate.setText(hourFormatter.format(chatRoomHolder.lastMessage.getDate()));
+                lastMessageDate.setText(hourFormatter.format(new Date(chatRoomHolder.lastMessage.getDate())));
             } else {
                 lastMessageText.setVisibility(View.GONE);
                 lastMessageDate.setVisibility(View.GONE);

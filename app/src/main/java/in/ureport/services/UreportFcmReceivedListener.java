@@ -46,9 +46,9 @@ public class UreportFcmReceivedListener extends FcmClientIntentService {
         String from = remoteMessage.getFrom();
         Map<String, String> data = remoteMessage.getData();
 
-        if(from.startsWith(FcmTopicManager.CHAT_TOPICS_PATH) || hasType(data, Type.Chat)) {
+        if (from.startsWith(FcmTopicManager.CHAT_TOPICS_PATH) || hasType(data, Type.Chat)) {
             sendChatMessageNotification(data);
-        } else if(from.startsWith(FcmTopicManager.STORY_TOPICS_PATH) || hasType(data, Type.Contribution)) {
+        } else if (from.startsWith(FcmTopicManager.STORY_TOPICS_PATH) || hasType(data, Type.Contribution)) {
             sendContributionNotification(data);
         }
     }
@@ -68,11 +68,11 @@ public class UreportFcmReceivedListener extends FcmClientIntentService {
             Contribution contribution = getObject(data, EXTRA_CONTRIBUTION, Contribution.class);
             Story story = getObject(data, EXTRA_STORY, Story.class);
 
-            if(isUserAllowedForMessageNotification(contribution.getAuthor())) {
+            if (isUserAllowedForMessageNotification(contribution.getAuthor())) {
                 ContributionNotificationTask contributionNotificationTask = new ContributionNotificationTask(this, story);
                 contributionNotificationTask.execute(contribution);
             }
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             Log.e(TAG, "sendChatMessageNotification ", exception);
         }
     }
@@ -82,11 +82,11 @@ public class UreportFcmReceivedListener extends FcmClientIntentService {
             ChatRoom chatRoom = getObject(data, EXTRA_CHAT_ROOM, ChatRoom.class);
             ChatMessage chatMessage = getObject(data, EXTRA_CHAT_MESSAGE, ChatMessage.class);
 
-            if(isUserAllowedForMessageNotification(chatMessage.getUser())) {
+            if (isUserAllowedForMessageNotification(chatMessage.getUser())) {
                 ChatNotificationTask chatNotificationTask = new ChatNotificationTask(this, chatRoom);
                 chatNotificationTask.execute(chatMessage);
             }
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             Log.e(TAG, "sendChatMessageNotification ", exception);
         }
     }

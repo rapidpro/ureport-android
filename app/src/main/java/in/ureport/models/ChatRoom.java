@@ -3,13 +3,11 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
 /**
  * Created by johncordeiro on 19/07/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatRoom implements Parcelable {
 
     public enum Type {

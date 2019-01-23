@@ -175,6 +175,7 @@
     <string name="load_message_reset_password">Resetting password...</string>
     <string name="error_email_check">Your password was reset. Please check your email to get the new password.</string>
     <string name="label_login">Login</string>
+    <string name="message_invalid_login">Email/password not found</string>
     <string name="label_forgot_password">Forgot password</string>
     <string name="label_data_confirmation">Data confirmation</string>
 

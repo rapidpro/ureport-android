@@ -3,7 +3,6 @@ package in.ureport.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
 import java.util.Date;
@@ -11,7 +10,6 @@ import java.util.Date;
 /**
  * Created by johncordeiro on 7/21/15.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatMessage implements Parcelable {
 
     @Expose
@@ -21,7 +19,7 @@ public class ChatMessage implements Parcelable {
     private String message;
 
     @Expose
-    private Date date;
+    private long date;
 
     @Expose
     private User user;
@@ -45,11 +43,11 @@ public class ChatMessage implements Parcelable {
         this.message = message;
     }
 
-    public Date getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(long date) {
         this.date = date;
     }
 
@@ -104,7 +102,7 @@ public class ChatMessage implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.key);
         dest.writeString(this.message);
-        dest.writeLong(date != null ? date.getTime() : -1);
+        dest.writeLong(date);
         dest.writeParcelable(this.user, 0);
         dest.writeParcelable(this.media, 0);
     }
@@ -115,8 +113,7 @@ public class ChatMessage implements Parcelable {
     protected ChatMessage(Parcel in) {
         this.key = in.readString();
         this.message = in.readString();
-        long tmpDate = in.readLong();
-        this.date = tmpDate == -1 ? null : new Date(tmpDate);
+        this.date = in.readLong();
         this.user = in.readParcelable(User.class.getClassLoader());
         this.media = in.readParcelable(Media.class.getClassLoader());
     }
