@@ -2,11 +2,9 @@ package in.ureport.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -27,9 +25,7 @@ import java.util.Map;
 
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
-import in.ureport.helpers.RecyclerScrollListener;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.listener.FloatingActionButtonListener;
 import in.ureport.listener.OnNeedUpdateStoryListener;
 import in.ureport.listener.OnStoryUpdatedListener;
 import in.ureport.listener.OnUserStartChattingListener;
@@ -54,7 +50,7 @@ import retrofit2.Callback;
  * Created by johncordeiro on 7/13/15.
  */
 public class StoriesListFragment extends ProgressFragment implements StoriesAdapter.OnStoryViewListener
-        , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener, OnNeedUpdateStoryListener, FloatingActionButtonListener {
+        , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener, OnNeedUpdateStoryListener {
 
     private static final String TAG = "StoriesListFragment";
 
@@ -64,9 +60,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
 
     private InfiniteFireLinearRecyclerView storiesList;
     private View info;
-    private FloatingActionButton createStoryButton;
 
-    private RecyclerScrollListener recyclerFloatingScrollListener;
     private LinearLayoutManager layoutManager;
 
     private User user;
@@ -106,7 +100,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     }
 
     private void getInstanceStateObjects(@Nullable Bundle savedInstanceState) {
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             user = savedInstanceState.getParcelable(EXTRA_USER);
             newsList = savedInstanceState.getParcelableArrayList(EXTRA_NEWS);
             publicType = savedInstanceState.getBoolean(EXTRA_PUBLIC_TYPE);
@@ -115,7 +109,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
 
     private void getDataFromArguments() {
         Bundle extras = getArguments();
-        if(extras != null && extras.containsKey(EXTRA_USER)) {
+        if (extras != null && extras.containsKey(EXTRA_USER)) {
             user = extras.getParcelable(EXTRA_USER);
             publicType = false;
         }
@@ -142,7 +136,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         super.onDestroyView();
         try {
             storiesAdapter.unregisterAdapterDataObserver(storiesAdapterObserver);
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             Log.e(TAG, "onDestroyView: ", exception);
         }
     }
@@ -159,11 +153,11 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if(context instanceof OnPublishStoryListener) {
+        if (context instanceof OnPublishStoryListener) {
             onPublishStoryListener = (OnPublishStoryListener) context;
         }
 
-        if(context instanceof OnUserStartChattingListener) {
+        if (context instanceof OnUserStartChattingListener) {
             onUserStartChattingListener = (OnUserStartChattingListener) context;
         }
     }
@@ -178,14 +172,14 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     }
 
     public Query loadData() {
-        if(publicType) {
+        if (publicType) {
             loadNewsForPage(previousPageLoaded);
         }
         return publicType ? storyServices.getStoryReference() : storyServices.getStoryQueryByUser(user);
     }
 
     private void loadNewsForPage(int page) {
-        if(newsList == null) {
+        if (newsList == null) {
             loadingNews = true;
             ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization(), page)
                     .enqueue(onNewsLoadedCallback);
@@ -201,13 +195,6 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         layoutManager = new LinearLayoutManager(getActivity());
         storiesList.setLayoutManager(layoutManager);
         storiesList.addOnScrollListener(onStoriesListScrollListener);
-
-        recyclerFloatingScrollListener = new RecyclerScrollListener(this);
-
-        createStoryButton = (FloatingActionButton) view.findViewById(R.id.createStoryButton);
-        createStoryButton.setOnClickListener(onCreateStoryClickListener);
-
-        createStoryButton.postDelayed(this::hideFloatingButton, 1000);
     }
 
     private void setupStoriesAdapter(Query query) {
@@ -218,7 +205,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         storiesAdapter.setHasStableIds(true);
         storiesAdapter.registerAdapterDataObserver(storiesAdapterObserver);
 
-        if(needsUserPublish()) storiesAdapter.setUser(user);
+        if (needsUserPublish()) storiesAdapter.setUser(user);
 
         storiesAdapter.setOnStoryViewListener(this);
         storiesAdapter.setOnNewsViewListener(this);
@@ -247,7 +234,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
 
     public void updateUser(User user) {
         this.user = user;
-        if(storiesAdapter != null && needsUserPublish()) storiesAdapter.setUser(user);
+        if (storiesAdapter != null && needsUserPublish()) storiesAdapter.setUser(user);
     }
 
     private boolean needsUserPublish() {
@@ -264,9 +251,9 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
             loadUsersFromStory(story, storyWithUser ->
                     contributionServices.getContributionCount(story, storyWithContributions ->
                             loadStoryLikeCount(story, storyWithLikes -> {
-                                        storiesLoaded.put(story.getKey(), new StoryHolder(storyWithLikes));
-                                        storiesAdapter.updateStory(storyWithLikes);
-                                    })));
+                                storiesLoaded.put(story.getKey(), new StoryHolder(storyWithLikes));
+                                storiesAdapter.updateStory(storyWithLikes);
+                            })));
             return null;
         }
     }
@@ -293,7 +280,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                if(user != null) {
+                if (user != null) {
                     story.setUserObject(user);
                     onStoryUpdatedListener.onStoryUpdated(story);
                 }
@@ -332,11 +319,8 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
 
     private RecyclerView.OnScrollListener onStoriesListScrollListener = new RecyclerView.OnScrollListener() {
         @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            if (hasCreateStoryButton()) {
-                recyclerFloatingScrollListener.onScrolled(recyclerView, dx, dy);
-            }
             checkNewsPageLoading();
         }
     };
@@ -346,8 +330,8 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         int totalItemCount = layoutManager.getItemCount();
         int pastVisiblesItems = layoutManager.findFirstVisibleItemPosition();
 
-        if(hasNewsNextPage && !loadingNews) {
-            if((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+        if (hasNewsNextPage && !loadingNews) {
+            if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                 previousPageLoaded++;
                 loadNewsForPage(previousPageLoaded);
             }
@@ -370,38 +354,6 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         }
     };
 
-    private View.OnClickListener onCreateStoryClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            onPublishStoryListener.onPublishStory();
-        }
-    };
-
-    @Override
-    public void showFloatingButton() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            createStoryButton.animate().translationY(0).start();
-        } else {
-            createStoryButton.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void hideFloatingButton() {
-        if(isAdded()) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                createStoryButton.animate().translationY(createStoryButton.getHeight()
-                        + getResources().getDimension(R.dimen.fab_margin)).start();
-            } else {
-                createStoryButton.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    protected boolean hasCreateStoryButton() {
-        return true;
-    }
-
     private interface OnAfterStoryLoadedListener {
         void onAfterStoryLoaded(Story story);
     }
@@ -409,4 +361,5 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     public interface OnPublishStoryListener {
         void onPublishStory();
     }
+
 }

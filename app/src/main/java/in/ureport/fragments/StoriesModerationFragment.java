@@ -31,7 +31,6 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         storiesAdapter.enableModerationMode(this);
-        hideFloatingButton();
         setLoadingMessage(getString(R.string.load_message_wait));
     }
 
@@ -62,11 +61,6 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
             else
                 displayToast(R.string.error_update_user);
         };
-    }
-
-    @Override
-    protected boolean hasCreateStoryButton() {
-        return false;
     }
 
     private void displayToast(@StringRes int messageId) {

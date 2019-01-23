@@ -49,8 +49,8 @@ public class HomeActivity extends AppCompatActivity implements StoriesListFragme
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
         CountryProgramManager.setThemeIfNeeded(this);
+        setContentView(R.layout.activity_home);
         setupObjects();
         checkTutorialView();
         setupView();
