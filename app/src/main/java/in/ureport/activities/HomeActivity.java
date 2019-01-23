@@ -19,9 +19,11 @@ import java.util.Locale;
 import in.ureport.R;
 import in.ureport.fragments.ChatsFragment;
 import in.ureport.fragments.GeneralSettingsFragment;
+import in.ureport.fragments.HomeFragment;
 import in.ureport.fragments.ProfileFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.LocalNotificationManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
@@ -36,7 +38,6 @@ public class HomeActivity extends AppCompatActivity implements StoriesListFragme
     private static final int REQUEST_CODE_CREATE_STORY = 10;
     public static final int REQUEST_CODE_TUTORIAL = 201;
 
-    private User user;
     private LocalNotificationManager localNotificationManager;
 
     public static Intent createIntent(Context context) {
@@ -49,7 +50,7 @@ public class HomeActivity extends AppCompatActivity implements StoriesListFragme
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        loadData();
+        CountryProgramManager.setThemeIfNeeded(this);
         setupObjects();
         checkTutorialView();
         setupView();
@@ -76,32 +77,6 @@ public class HomeActivity extends AppCompatActivity implements StoriesListFragme
         }
     }
 
-    private void loadData() {
-        if (!UserManager.isUserLoggedIn()) {
-            return;
-        }
-        UserServices userServices = new UserServices();
-        userServices.getUser(UserManager.getUserId(), new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                HomeActivity.this.user = refreshUserCountry(user);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) { }
-        });
-    }
-
-    @NonNull
-    private User refreshUserCountry(User user) {
-        if (user == null) {
-            user = new User();
-            user.setCountry(Locale.getDefault().getDisplayCountry());
-        }
-        return user;
-    }
-
     private void setupObjects() {
         localNotificationManager = new LocalNotificationManager(this);
     }
@@ -121,9 +96,7 @@ public class HomeActivity extends AppCompatActivity implements StoriesListFragme
         bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.main:
-                    final StoriesListFragment fragment = new StoriesListFragment();
-                    replaceContent(fragment);
-                    fragment.updateUser(user);
+                    replaceContent(new HomeFragment());
                     break;
                 case R.id.search:
                     break;
