@@ -222,14 +222,11 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     }
 
     @Override
-    public void onStoryViewClick(Story story, Pair<View, String>... views) {
-        Intent storyViewIntent = new Intent(getActivity(), StoryViewActivity.class);
-        storyViewIntent.putExtra(StoryViewActivity.EXTRA_STORY, story);
-        storyViewIntent.putExtra(StoryViewActivity.EXTRA_USER, user);
-
-        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(getActivity(), views);
-        ActivityCompat.startActivity(getActivity(), storyViewIntent, optionsCompat.toBundle());
+    public void onStoryViewClick(Story story) {
+        Intent intent = new Intent(requireContext(), StoryViewActivity.class);
+        intent.putExtra(StoryViewActivity.EXTRA_STORY, story);
+        intent.putExtra(StoryViewActivity.EXTRA_USER, user);
+        startActivity(intent);
     }
 
     public void updateUser(User user) {

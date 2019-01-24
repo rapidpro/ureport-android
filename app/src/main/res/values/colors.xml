@@ -12,6 +12,8 @@
     <color name="highlight">#ec2248</color>
     <color name="light_gray">#e8e8e8</color>
     <color name="dark_gray">#c0c0c0</color>
+    <color name="gray">#808080</color>
+    <color name="light_black">#2C2A29</color>
     <color name="line">#44c9c9c9</color>
     <color name="line_strong">#d7d7d7</color>
 

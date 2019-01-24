@@ -74,7 +74,7 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
                 return new NewsItemViewHolder(newsView, onNewsViewListener, onShareNewsListener);
             default:
             case TYPE_STORY:
-                View view = inflater.inflate(R.layout.item_story, viewGroup, false);
+                View view = inflater.inflate(R.layout.item_story_, viewGroup, false);
                 if(moderationType)
                     return new ModeratedItemViewHolder(view);
                 else
@@ -268,7 +268,7 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
     }
 
     public interface OnStoryViewListener {
-        void onStoryViewClick(Story story, Pair<View, String>... views);
+        void onStoryViewClick(Story story);
     }
 
     public interface OnNewsViewListener {

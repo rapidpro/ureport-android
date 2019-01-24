@@ -36,7 +36,7 @@
     <string name="base_menu_close_drawer">Fechar Menu</string>
     <string name="stories_list_item_author">por %1$s</string>
     <string name="stories_list_item_contributions">%1$s contribuições</string>
-    <string name="story_item_read_full_story">Leia a história completa</string>
+    <string name="story_item_read_full_story">Ver história completa</string>
     <string name="label_new_story">Nova história</string>
     <string name="create_story_insert_cover">Insira uma imagem de capa</string>
     <string name="create_story_insert_title">Insira um título</string>
