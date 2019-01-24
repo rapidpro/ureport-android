@@ -33,61 +33,50 @@ import in.ureport.views.holders.StoryItemViewHolder;
  */
 public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
 
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_STORY = 1;
-    private static final int TYPE_NEWS = 2;
+    private static final int TYPE_STORY = 0;
+    private static final int TYPE_NEWS = 1;
 
     private List<News> news;
-
-    private boolean publicType = false;
     private boolean moderationType = false;
-
-    private User user;
 
     private OnStoryViewListener onStoryViewListener;
     private OnNewsViewListener onNewsViewListener;
-    private StoriesListFragment.OnPublishStoryListener onPublishStoryListener;
     private StoryModerationListener storyModerationListener;
     private OnUserStartChattingListener onUserStartChattingListener;
     private OnShareNewsListener onShareNewsListener;
     private OnNeedUpdateStoryListener onNeedUpdateStoryListener;
 
-    public StoriesAdapter(InfiniteFireArray<Story> snapshots, boolean publicType) {
-        this(snapshots, publicType, new ArrayList<>());
+    public StoriesAdapter(InfiniteFireArray<Story> snapshots) {
+        this(snapshots, new ArrayList<>());
     }
 
-    public StoriesAdapter(InfiniteFireArray<Story> snapshots, boolean publicType, List<News> news) {
-        super(snapshots, publicType ? 1 : 0, 0);
+    public StoriesAdapter(InfiniteFireArray<Story> snapshots, List<News> news) {
+        super(snapshots, 0, 0);
         setHasStableIds(true);
-        this.publicType = publicType;
         this.news = news;
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         switch(type) {
-            case TYPE_HEADER:
-                return new HeaderViewHolder(inflater.inflate(R.layout.item_story_header, viewGroup, false));
             case TYPE_NEWS:
                 View newsView = inflater.inflate(R.layout.item_news, viewGroup, false);
                 return new NewsItemViewHolder(newsView, onNewsViewListener, onShareNewsListener);
             default:
-            case TYPE_STORY:
                 View view = inflater.inflate(R.layout.item_story_, viewGroup, false);
-                if(moderationType)
+                if (moderationType) {
                     return new ModeratedItemViewHolder(view);
-                else
+                } else {
                     return new StoryItemViewHolder(view, onStoryViewListener, onUserStartChattingListener, onNeedUpdateStoryListener);
+                }
         }
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        switch(getItemViewType(position)) {
-            case TYPE_HEADER:
-                ((HeaderViewHolder)viewHolder).bind(user);
-                break;
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        switch (getItemViewType(position)) {
             case TYPE_STORY:
                 ((StoryItemViewHolder)viewHolder).bind(getStory(position));
                 break;
@@ -112,8 +101,6 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
     @Override
     public long getItemId(int position) {
         switch(getItemViewType(position)) {
-            case TYPE_HEADER:
-                return 0;
             case TYPE_NEWS:
                 return news.get(getNewsPosition(position)).getId();
             case TYPE_STORY:
@@ -130,9 +117,7 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
 
     @Override
     public int getItemViewType(int position) {
-        if(publicType && position == 0) {
-            return TYPE_HEADER;
-        } else if(isNewsPosition(position)) {
+        if (isNewsPosition(position)) {
             return TYPE_NEWS;
         } else {
             return TYPE_STORY;
@@ -163,10 +148,6 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
         this.onStoryViewListener = onStoryViewListener;
     }
 
-    public void setOnPublishStoryListener(StoriesListFragment.OnPublishStoryListener onPublishStoryListener) {
-        this.onPublishStoryListener = onPublishStoryListener;
-    }
-
     public void setOnUserStartChattingListener(OnUserStartChattingListener onUserStartChattingListener) {
         this.onUserStartChattingListener = onUserStartChattingListener;
     }
@@ -187,36 +168,6 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
     public void enableModerationMode(StoryModerationListener storyModerationListener) {
         this.storyModerationListener = storyModerationListener;
         moderationType = true;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-        notifyItemChanged(0);
-    }
-
-    private class HeaderViewHolder extends RecyclerView.ViewHolder {
-        private final ImageView picture;
-        private final TextView name;
-
-        public HeaderViewHolder(View itemView) {
-            super(itemView);
-
-            picture = (ImageView) itemView.findViewById(R.id.picture);
-            name = (TextView) itemView.findViewById(R.id.name);
-            itemView.setOnClickListener(onPublishStoryClickListener);
-        }
-
-        private void bind(User user) {
-            if (user != null) {
-                name.setHint(itemView.getContext().getString(R.string.list_stories_header_title, user.getNickname()));
-                ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
-            }
-        }
-
-        private View.OnClickListener onPublishStoryClickListener = view -> {
-            if (onPublishStoryListener != null)
-                onPublishStoryListener.onPublishStory();
-        };
     }
 
     private class ModeratedItemViewHolder extends StoryItemViewHolder {

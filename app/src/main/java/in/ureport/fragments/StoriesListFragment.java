@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -68,7 +69,6 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     private Map<String, StoryHolder> storiesLoaded;
     protected boolean publicType = true;
 
-    private OnPublishStoryListener onPublishStoryListener;
     protected OnUserStartChattingListener onUserStartChattingListener;
 
     protected StoriesAdapter storiesAdapter;
@@ -152,11 +152,6 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        if (context instanceof OnPublishStoryListener) {
-            onPublishStoryListener = (OnPublishStoryListener) context;
-        }
-
         if (context instanceof OnUserStartChattingListener) {
             onUserStartChattingListener = (OnUserStartChattingListener) context;
         }
@@ -190,10 +185,14 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         info = view.findViewById(R.id.info);
         info.setVisibility(publicType ? View.GONE : View.VISIBLE);
 
-        storiesList = (InfiniteFireLinearRecyclerView) view.findViewById(R.id.storiesList);
-
+        storiesList = view.findViewById(R.id.storiesList);
         layoutManager = new LinearLayoutManager(getActivity());
         storiesList.setLayoutManager(layoutManager);
+
+        final DividerItemDecoration itemDecoration = new DividerItemDecoration(
+                requireContext(), layoutManager.getOrientation());
+        storiesList.addItemDecoration(itemDecoration);
+
         storiesList.addOnScrollListener(onStoriesListScrollListener);
     }
 
@@ -201,16 +200,13 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         InfiniteFireArray<Story> storyFireArray = new InfiniteFireArray<>(Story.class
                 , query, 10, 10, false, false);
 
-        storiesAdapter = new StoriesAdapter(storyFireArray, publicType);
+        storiesAdapter = new StoriesAdapter(storyFireArray);
         storiesAdapter.setHasStableIds(true);
         storiesAdapter.registerAdapterDataObserver(storiesAdapterObserver);
-
-        if (needsUserPublish()) storiesAdapter.setUser(user);
 
         storiesAdapter.setOnStoryViewListener(this);
         storiesAdapter.setOnNewsViewListener(this);
         storiesAdapter.setOnShareNewsListener(this);
-        storiesAdapter.setOnPublishStoryListener(onPublishStoryListener);
         storiesAdapter.setOnUserStartChattingListener(onUserStartChattingListener);
         storiesAdapter.setOnNeedUpdateStoryListener(this);
         storiesList.setAdapter(storiesAdapter);
@@ -231,7 +227,6 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
 
     public void updateUser(User user) {
         this.user = user;
-        if (storiesAdapter != null && needsUserPublish()) storiesAdapter.setUser(user);
     }
 
     private boolean needsUserPublish() {
