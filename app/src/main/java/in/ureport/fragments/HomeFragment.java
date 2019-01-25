@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Locale;
 
+import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.UserManager;
@@ -55,6 +57,10 @@ public class HomeFragment extends Fragment {
 
         final TabLayout tabLayout = view.findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(pager);
+
+        final int primaryColorRes = new ResourceUtil(requireContext()).getColorByAttr(R.attr.colorPrimary);
+        tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(), R.color.gray), primaryColorRes);
+        tabLayout.setSelectedTabIndicatorColor(primaryColorRes);
     }
 
     @NonNull

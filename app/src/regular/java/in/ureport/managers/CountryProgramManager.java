@@ -2,11 +2,11 @@ package in.ureport.managers;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.ilhasoft.support.tool.ResourceUtil;
 import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.models.CountryProgram;
@@ -82,9 +82,8 @@ public class CountryProgramManager {
         CountryProgram countryProgram = getCurrentCountryProgram();
         activity.setTheme(countryProgram.getTheme());
 
-        ResourceUtil resourceUtil = new ResourceUtil(activity);
         StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
-        statusBarDesigner.setStatusBarColor(activity, resourceUtil.getColorByAttr(R.attr.colorPrimaryDark));
+        statusBarDesigner.setStatusBarColor(activity, ContextCompat.getColor(activity, R.color.statusbar_default));
     }
 
     public static boolean isPollEnabledForCurrentCountry() {

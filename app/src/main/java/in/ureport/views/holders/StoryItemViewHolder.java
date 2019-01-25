@@ -1,22 +1,19 @@
 package in.ureport.views.holders;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.reflect.Array;
-
+import br.com.ilhasoft.support.tool.ColorHelper;
 import br.com.ilhasoft.support.tool.DateFormatter;
+import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.listener.OnNeedUpdateStoryListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.UserViewManager;
-import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.models.holders.StoryHolder;
@@ -64,6 +61,8 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
         readFullStory = itemView.findViewById(R.id.readFullStory);
         readFullStory.setOnClickListener(onReadFullStoryClickListener);
+        readFullStory.setTextColor(new ResourceUtil(itemView.getContext())
+                .getColorByAttr(R.attr.colorPrimary));
 
         userViewManager = new UserViewManager(itemView.getContext());
     }

@@ -7,6 +7,7 @@
     <color name="window_background">#eeeeee</color>
     <color name="light_window_background">#eeeeee</color>
     <color name="white_window_background">#ffffff</color>
+    <color name="statusbar_default">#808080</color>
     <color name="yellow">#ebce2c</color>
 
     <color name="highlight">#ec2248</color>
