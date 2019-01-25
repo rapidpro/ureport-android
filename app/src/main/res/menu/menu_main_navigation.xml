@@ -15,9 +15,9 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/chat"
+        android:id="@+id/chats"
         android:icon="@drawable/ic_main_chat"
-        android:title="@string/main_chat"
+        android:title="@string/label_chat"
         app:showAsAction="never" />
 
     <item

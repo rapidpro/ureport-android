@@ -29,6 +29,8 @@ import in.ureport.views.adapters.NavigationAdapter;
 
 public class HomeFragment extends Fragment {
 
+    public static final String TAG = "HomeFragment";
+
     private StoriesListFragment storiesListFragment;
 
     @Nullable
@@ -51,8 +53,7 @@ public class HomeFragment extends Fragment {
         final ViewPager pager = view.findViewById(R.id.pager);
         pager.setOffscreenPageLimit(2);
 
-        NavigationAdapter adapter = new NavigationAdapter(
-                requireActivity().getSupportFragmentManager(), getNavigationItems());
+        NavigationAdapter adapter = new NavigationAdapter(getChildFragmentManager(), getNavigationItems());
         pager.setAdapter(adapter);
 
         final TabLayout tabLayout = view.findViewById(R.id.tabLayout);

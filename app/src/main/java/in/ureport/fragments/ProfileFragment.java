@@ -43,7 +43,7 @@ import in.ureport.views.adapters.NavigationAdapter;
  */
 public class ProfileFragment extends ProgressFragment {
 
-    private static final String TAG = "ProfileFragment";
+    public static final String TAG = "ProfileFragment";
 
     private static final String EXTRA_USER = "user";
     private static final int RANKING_POSITION = 1;
@@ -101,7 +101,7 @@ public class ProfileFragment extends ProgressFragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 user = dataSnapshot.getValue(User.class);
-                updateUser(user);
+                if (isAdded()) updateUser(user);
             }
         };
         firebaseImageTransferListenerAdapter = new TransferListenerAdapter(getContext(), null) {
@@ -214,7 +214,7 @@ public class ProfileFragment extends ProgressFragment {
         NavigationItem storiesItem = new NavigationItem(StoriesListFragment.newInstance(user), getString(R.string.profile_my_stories));
         NavigationItem rankingItem = new NavigationItem(RankingFragment.newInstance(user), getString(R.string.profile_ranking));
 
-        NavigationAdapter navigationAdapter = new NavigationAdapter(getFragmentManager(), storiesItem, rankingItem);
+        NavigationAdapter navigationAdapter = new NavigationAdapter(getChildFragmentManager(), storiesItem, rankingItem);
         pager.setAdapter(navigationAdapter);
         pager.setOffscreenPageLimit(2);
         tabs.setupWithViewPager(pager);

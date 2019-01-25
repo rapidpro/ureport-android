@@ -96,22 +96,23 @@ public class HomeActivity extends AppCompatActivity implements StoriesListFragme
         bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.main:
-                    replaceContent(new HomeFragment());
+                    switchToHome();
                     break;
                 case R.id.search:
                     break;
-                case R.id.chat:
-                    replaceContent(new ChatsFragment());
+                case R.id.chats:
+                    switchToChats();
                     break;
                 case R.id.profile:
-                    replaceContent(new ProfileFragment());
+                    switchToProfile();
                     break;
                 case R.id.settings:
-                    replaceContent(new GeneralSettingsFragment());
+                    switchToSettings();
                     break;
             }
             return true;
         });
+        switchToHome();
     }
 
     private void checkUserRegistration() {
@@ -129,11 +130,44 @@ public class HomeActivity extends AppCompatActivity implements StoriesListFragme
         });
     }
 
-    private void replaceContent(final Fragment fragment) {
+    private void switchToHome() {
+        if (isVisibleFragment(HomeFragment.TAG)) {
+            return;
+        }
+        replaceContent(new HomeFragment(), HomeFragment.TAG);
+    }
+
+    private void switchToChats() {
+        if (isVisibleFragment(ChatsFragment.TAG)) {
+            return;
+        }
+        replaceContent(new ChatsFragment(), ChatsFragment.TAG);
+    }
+
+    private void switchToProfile() {
+        if (isVisibleFragment(ProfileFragment.TAG)) {
+            return;
+        }
+        replaceContent(new ProfileFragment(), ProfileFragment.TAG);
+    }
+
+    private void switchToSettings() {
+        if (isVisibleFragment(GeneralSettingsFragment.TAG)) {
+            return;
+        }
+        replaceContent(new GeneralSettingsFragment(), GeneralSettingsFragment.TAG);
+    }
+
+    private void replaceContent(final Fragment fragment, final String tag) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.container, fragment)
+                .replace(R.id.container, fragment, tag)
                 .commit();
+    }
+
+    private boolean isVisibleFragment(final String tag) {
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(tag);
+        return fragment != null && fragment.isVisible();
     }
 
     private void saveContact(final User user) {

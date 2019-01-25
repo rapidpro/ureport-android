@@ -43,6 +43,8 @@ import in.ureport.network.UserServices;
  */
 public class GeneralSettingsFragment extends PreferenceFragmentCompat {
 
+    public static final String TAG = "GeneralSettingsFragment";
+
     private static final String PUBLIC_PROFILE_KEY = "pref_key_chat_available";
     private static final String DATA_EXPORT_KEY = "pref_key_export_data";
     private static final String ACCOUNT_CLOSE_KEY = "pref_key_close_account";

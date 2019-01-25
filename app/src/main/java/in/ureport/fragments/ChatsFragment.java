@@ -31,6 +31,7 @@ import io.rapidpro.sdk.FcmClient;
 public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRoomSelectedListener,
         ChatRoomFragment.ChatRoomListener, InfoGroupChatListener {
 
+    public static final String TAG = "ChatsFragment";
     public static final String EXTRA_RESULT_CHAT_ROOM = "chatRoom";
 
     private static final int REQUEST_CODE_CHAT_ROOM = 100;
@@ -112,8 +113,6 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
             }
         }
     }
-
-    private static final String TAG = "ChatsFragment";
 
     public List<ChatRoomHolder> getChatRooms() {
         Log.d(TAG, "getChatRooms() returned: " + listChatRoomsFragment);
