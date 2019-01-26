@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <in.ureport.views.widgets.InfiniteFireLinearRecyclerView
         android:id="@+id/storiesList"
-        android:layout_width="550dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <TextView
         android:id="@+id/info"
@@ -22,6 +20,7 @@
         android:layout_centerHorizontal="true"
         android:drawableTop="@drawable/ic_report_problem_grey_600_36dp"
         android:drawablePadding="5dp"
-        android:text="@string/list_stories_error"/>
+        android:text="@string/list_stories_error"
+        android:visibility="gone" />
 
 </RelativeLayout>

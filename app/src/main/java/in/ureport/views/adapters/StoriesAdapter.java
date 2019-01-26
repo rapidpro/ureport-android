@@ -7,8 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.marcorei.infinitefire.InfiniteFireArray;
 import com.marcorei.infinitefire.InfiniteFireRecyclerViewAdapter;
@@ -18,13 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import in.ureport.R;
-import in.ureport.fragments.StoriesListFragment;
-import in.ureport.helpers.ImageLoader;
+import in.ureport.helpers.StringBooleanMapHelper;
 import in.ureport.listener.OnNeedUpdateStoryListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.models.News;
 import in.ureport.models.Story;
-import in.ureport.models.User;
 import in.ureport.views.holders.NewsItemViewHolder;
 import in.ureport.views.holders.StoryItemViewHolder;
 
@@ -36,6 +32,7 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
     private static final int TYPE_STORY = 0;
     private static final int TYPE_NEWS = 1;
 
+    private StringBooleanMapHelper stringBooleanMapHelper;
     private List<News> news;
     private boolean moderationType = false;
 
@@ -48,6 +45,7 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
 
     public StoriesAdapter(InfiniteFireArray<Story> snapshots) {
         this(snapshots, new ArrayList<>());
+        stringBooleanMapHelper = new StringBooleanMapHelper();
     }
 
     public StoriesAdapter(InfiniteFireArray<Story> snapshots, List<News> news) {
@@ -69,7 +67,10 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
                 if (moderationType) {
                     return new ModeratedItemViewHolder(view);
                 } else {
-                    return new StoryItemViewHolder(view, onStoryViewListener, onUserStartChattingListener, onNeedUpdateStoryListener);
+                    final StoryItemViewHolder viewHolder = new StoryItemViewHolder(view,
+                            onStoryViewListener, onUserStartChattingListener, onNeedUpdateStoryListener);
+                    viewHolder.setStringBooleanMapHelper(stringBooleanMapHelper);
+                    return viewHolder;
                 }
         }
     }

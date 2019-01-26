@@ -1,22 +1,33 @@
 package in.ureport.views.holders;
 
+import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import br.com.ilhasoft.support.tool.ColorHelper;
+import com.google.firebase.database.DataSnapshot;
+
 import br.com.ilhasoft.support.tool.DateFormatter;
 import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.helpers.StringBooleanMapHelper;
+import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnNeedUpdateStoryListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.managers.UserViewManager;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.models.holders.StoryHolder;
+import in.ureport.network.StoryServices;
 import in.ureport.views.adapters.StoriesAdapter;
 
 /**
@@ -27,6 +38,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     private final StoriesAdapter.OnStoryViewListener onStoryViewListener;
     private final OnUserStartChattingListener onUserStartChattingListener;
     private final OnNeedUpdateStoryListener onNeedUpdateStoryListener;
+    private StringBooleanMapHelper stringBooleanMapHelper;
 
     private final ImageView authorPicture;
     private final TextView authorName;
@@ -39,6 +51,8 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView readFullStory;
 
     private Story story;
+    private StoryServices storyServices;
+    private int primaryColorRes;
 
     private UserViewManager userViewManager;
 
@@ -49,6 +63,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         this.onStoryViewListener = onStoryViewListener;
         this.onUserStartChattingListener = onUserStartChattingListener;
         this.onNeedUpdateStoryListener = onNeedUpdateStoryListener;
+        primaryColorRes = new ResourceUtil(itemView.getContext()).getColorByAttr(R.attr.colorPrimary);
 
         authorPicture = itemView.findViewById(R.id.authorPicture);
         authorName = itemView.findViewById(R.id.authorName);
@@ -61,10 +76,14 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
         readFullStory = itemView.findViewById(R.id.readFullStory);
         readFullStory.setOnClickListener(onReadFullStoryClickListener);
-        readFullStory.setTextColor(new ResourceUtil(itemView.getContext())
-                .getColorByAttr(R.attr.colorPrimary));
+        readFullStory.setTextColor(primaryColorRes);
 
         userViewManager = new UserViewManager(itemView.getContext());
+        storyServices = new StoryServices();
+    }
+
+    public void setStringBooleanMapHelper(final StringBooleanMapHelper helper) {
+        this.stringBooleanMapHelper = helper;
     }
 
     public void bindInfo(@StringRes int info) {
@@ -115,6 +134,20 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
 
     private void bindLikes(Integer count) {
         likeCount.setText((count == null) ? "0" : String.valueOf(count));
+        final String storyKey = story.getKey();
+
+        if (stringBooleanMapHelper.containsKey(storyKey)) {
+            swapFavoriteIcon(stringBooleanMapHelper.check(storyKey));
+            return;
+        }
+        storyServices.checkLikeForUser(story, new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                stringBooleanMapHelper.add(storyKey, dataSnapshot.exists());
+                swapFavoriteIcon(stringBooleanMapHelper.check(storyKey));
+            }
+        });
     }
 
     private void bindContributions(Integer count) {
@@ -137,6 +170,25 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         } else {
             authorPicture.setImageResource(R.drawable.face);
             authorName.setText("");
+        }
+    }
+
+    private void swapFavoriteIcon(final boolean userLike) {
+        final Context context = itemView.getContext();
+        final Drawable icon;
+
+        if (userLike) {
+            icon = ContextCompat.getDrawable(context, R.drawable.ic_favorite);
+            if (icon != null) {
+                icon.setColorFilter(new PorterDuffColorFilter(primaryColorRes, PorterDuff.Mode.SRC_IN));
+            }
+        } else {
+            icon = ContextCompat.getDrawable(context, R.drawable.ic_favorite_border);
+        }
+
+        likeCount.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            likeCount.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
         }
     }
 
