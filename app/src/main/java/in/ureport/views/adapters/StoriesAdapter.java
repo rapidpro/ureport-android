@@ -13,16 +13,18 @@ import com.marcorei.infinitefire.InfiniteFireRecyclerViewAdapter;
 import com.marcorei.infinitefire.InfiniteFireSnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import in.ureport.R;
-import in.ureport.helpers.StringBooleanMapHelper;
 import in.ureport.listener.OnNeedUpdateStoryListener;
 import in.ureport.listener.OnUserStartChattingListener;
 import in.ureport.models.News;
 import in.ureport.models.Story;
 import in.ureport.views.holders.NewsItemViewHolder;
 import in.ureport.views.holders.StoryItemViewHolder;
+import in.ureport.views.holders.StoryItemViewHolder.OnStoryLikesBindingListener;
 
 /**
  * Created by johncordeiro on 7/14/15.
@@ -32,7 +34,6 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
     private static final int TYPE_STORY = 0;
     private static final int TYPE_NEWS = 1;
 
-    private StringBooleanMapHelper stringBooleanMapHelper;
     private List<News> news;
     private boolean moderationType = false;
 
@@ -45,7 +46,6 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
 
     public StoriesAdapter(InfiniteFireArray<Story> snapshots) {
         this(snapshots, new ArrayList<>());
-        stringBooleanMapHelper = new StringBooleanMapHelper();
     }
 
     public StoriesAdapter(InfiniteFireArray<Story> snapshots, List<News> news) {
@@ -69,7 +69,7 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
                 } else {
                     final StoryItemViewHolder viewHolder = new StoryItemViewHolder(view,
                             onStoryViewListener, onUserStartChattingListener, onNeedUpdateStoryListener);
-                    viewHolder.setStringBooleanMapHelper(stringBooleanMapHelper);
+                    viewHolder.setOnStoryLikesBindingListener(onStoryLikesBindingListener);
                     return viewHolder;
                 }
         }
@@ -170,6 +170,27 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
         this.storyModerationListener = storyModerationListener;
         moderationType = true;
     }
+
+    private OnStoryLikesBindingListener onStoryLikesBindingListener = new OnStoryLikesBindingListener() {
+
+        private Map<String, Boolean> map = new HashMap<>();
+
+        @Override
+        public void addLike(String storyKey, Boolean like) {
+            map.put(storyKey, like);
+        }
+
+        @Override
+        public boolean checkLike(String storyKey) {
+            final Boolean value = map.get(storyKey);
+            return value != null && value;
+        }
+
+        @Override
+        public boolean checkStoryKey(String storyKey) {
+            return map.containsKey(storyKey);
+        }
+    };
 
     private class ModeratedItemViewHolder extends StoryItemViewHolder {
 

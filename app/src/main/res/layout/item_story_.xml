@@ -42,18 +42,31 @@
         app:layout_constraintTop_toBottomOf="@+id/authorName"
         tools:text="January 23, 2019" />
 
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/cover"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authorPicture"
+        app:riv_corner_radius="12dp"
+        app:riv_mutate_background="true"
+        tools:src="@drawable/ambassadors_cover" />
+
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:textColor="@android:color/black"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/authorPicture"
+        app:layout_constraintTop_toBottomOf="@+id/cover"
         tools:text="Boosting community development, disease control with sms-based platform" />
 
     <TextView
