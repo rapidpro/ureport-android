@@ -19,6 +19,7 @@ import com.makeramen.roundedimageview.RoundedImageView;
 
 import br.com.ilhasoft.support.tool.DateFormatter;
 import br.com.ilhasoft.support.tool.ResourceUtil;
+import de.hdodenhof.circleimageview.CircleImageView;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.helpers.ValueEventListenerAdapter;
@@ -42,7 +43,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     private final OnNeedUpdateStoryListener onNeedUpdateStoryListener;
     private OnStoryLikesBindingListener onStoryLikesBindingListener;
 
-    private final ImageView authorPicture;
+    private final CircleImageView authorPicture;
     private final TextView authorName;
     private final TextView publishedDate;
     private final RoundedImageView coverImage;
@@ -145,7 +146,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
             return;
         }
         if (onStoryLikesBindingListener.checkStoryKey(storyKey)) {
-            swapFavoriteIcon(onStoryLikesBindingListener.checkLike(storyKey));
+            toggleLikeIcon(onStoryLikesBindingListener.checkLike(storyKey));
             return;
         }
         storyServices.checkLikeForUser(story, new ValueEventListenerAdapter() {
@@ -153,7 +154,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
                 onStoryLikesBindingListener.addLike(storyKey, dataSnapshot.exists());
-                swapFavoriteIcon(onStoryLikesBindingListener.checkLike(storyKey));
+                toggleLikeIcon(onStoryLikesBindingListener.checkLike(storyKey));
             }
         });
     }
@@ -209,11 +210,11 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    private void swapFavoriteIcon(final boolean userLike) {
+    private void toggleLikeIcon(final boolean like) {
         final Context context = itemView.getContext();
         final Drawable icon;
 
-        if (userLike) {
+        if (like) {
             icon = ContextCompat.getDrawable(context, R.drawable.ic_favorite);
             if (icon != null) {
                 icon.setColorFilter(new PorterDuffColorFilter(primaryColorRes, PorterDuff.Mode.SRC_IN));

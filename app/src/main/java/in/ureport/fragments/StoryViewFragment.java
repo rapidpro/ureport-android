@@ -1,9 +1,15 @@
 package in.ureport.fragments;
 
+import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +34,8 @@ import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.Date;
 
+import br.com.ilhasoft.support.tool.DateFormatter;
+import br.com.ilhasoft.support.tool.ResourceUtil;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import br.com.ilhasoft.support.utils.KeyboardHandler;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -39,6 +48,7 @@ import in.ureport.managers.FcmTopicManager;
 import in.ureport.managers.MediaViewer;
 import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
+import in.ureport.models.Media;
 import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.network.ContributionServices;
@@ -206,7 +216,9 @@ public class StoryViewFragment extends ProgressFragment implements
         storyServices.checkLikeForUser(story, new ValueEventListenerAdapter() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                likeCount.setSelected(dataSnapshot.exists());
+                boolean like = dataSnapshot.exists();
+                likeCount.setSelected(like);
+                toggleLikeIcon(like);
             }
         });
     }
@@ -259,11 +271,23 @@ public class StoryViewFragment extends ProgressFragment implements
         contributionsCount = view.findViewById(R.id.contributionsCount);
 
         title.setText(story.getTitle());
+        share.setOnClickListener(onShareClickListener);
         content.setMovementMethod(LinkMovementMethod.getInstance());
         content.setText(story.getContent());
+        likeCount.setOnClickListener(onLikeClickListener);
+        contributionsCount.setText(getContributionsText(story));
 
-        setupMarkers(markers);
+        final DateFormatter dateFormatter = new DateFormatter();
+        final String timeElapsed = dateFormatter.getTimeElapsed(story.getCreatedDate(),
+                requireContext().getString(R.string.date_now));
+        publishedDate.setText(timeElapsed);
+
+        final RecyclerView mediaList = view.findViewById(R.id.mediaList);
+        setupMediaList(mediaList);
+
         setupUser();
+        setupCoverImage(coverImage, story.getCover());
+        setupMarkers(markers);
     }
 
     private void setupUser() {
@@ -275,7 +299,7 @@ public class StoryViewFragment extends ProgressFragment implements
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     super.onDataChange(dataSnapshot);
                     User user = dataSnapshot.getValue(User.class);
-                    setupUserView(user);
+                    if (user != null) setupUserView(user);
                 }
             });
         }
@@ -284,6 +308,34 @@ public class StoryViewFragment extends ProgressFragment implements
     private void setupUserView(User user) {
         authorName.setText(user.getNickname());
         ImageLoader.loadPersonPictureToImageView(authorPicture, user.getPicture());
+    }
+
+    private void setupCoverImage(ImageView image, Media cover) {
+        if (cover != null) {
+            image.setVisibility(View.VISIBLE);
+            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            switch (cover.getType()) {
+                case Video:
+                case VideoPhone:
+                case Picture:
+                    ImageLoader.loadGenericPictureToImageViewFit(image, getCoverUrl(cover));
+                    break;
+                default:
+                    image.setVisibility(View.GONE);
+            }
+        } else {
+            image.setVisibility(View.GONE);
+        }
+    }
+
+    private String getCoverUrl(final Media cover) {
+        switch (cover.getType()) {
+            case VideoPhone:
+                return cover.getThumbnail();
+            default:
+                return cover.getUrl();
+        }
     }
 
     private void setupMarkers(TextView markers) {
@@ -543,17 +595,38 @@ public class StoryViewFragment extends ProgressFragment implements
             storyLikeCount += selected ? -1 : 1;
             updateLikes(storyLikeCount);
 
-            toggleLike(view, selected);
+            toggleLike(selected);
         }
     };
 
-    private void toggleLike(View view, boolean selected) {
+    private void toggleLike(boolean selected) {
         if (selected) {
             storyServices.removeStoryLike(story, user,
-                    (DatabaseError error, DatabaseReference reference) -> view.setSelected(false));
+                    (DatabaseError error, DatabaseReference reference) -> {});
         } else {
             storyServices.addStoryLike(story, user,
-                    (DatabaseError error, DatabaseReference reference) -> view.setSelected(true));
+                    (DatabaseError error, DatabaseReference reference) -> {});
+        }
+        toggleLikeIcon(!selected);
+    }
+
+    private void toggleLikeIcon(boolean like) {
+        final Context context = requireContext();
+        final Drawable icon;
+
+        if (like) {
+            icon = ContextCompat.getDrawable(context, R.drawable.ic_favorite);
+            if (icon != null) {
+                final int colorRes = new ResourceUtil(context).getColorByAttr(R.attr.colorPrimary);
+                icon.setColorFilter(new PorterDuffColorFilter(colorRes, PorterDuff.Mode.SRC_IN));
+            }
+        } else {
+            icon = ContextCompat.getDrawable(context, R.drawable.ic_favorite_border);
+        }
+
+        likeCount.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            likeCount.setCompoundDrawablesRelativeWithIntrinsicBounds(icon, null, null, null);
         }
     }
 
