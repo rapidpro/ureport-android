@@ -4,13 +4,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -19,20 +16,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.Date;
 
 import br.com.ilhasoft.support.tool.UnitConverter;
 import br.com.ilhasoft.support.utils.KeyboardHandler;
+import de.hdodenhof.circleimageview.CircleImageView;
 import in.ureport.R;
 import in.ureport.helpers.ChildEventListenerAdapter;
 import in.ureport.helpers.ImageLoader;
@@ -67,27 +64,28 @@ public class StoryViewFragment extends ProgressFragment implements
     private User user;
     private Boolean isLoaded;
 
-    private ContributionAdapter contributionAdapter;
-    private TextView contributions;
-    private View contribute;
+    private CircleImageView authorPicture;
+    private TextView authorName;
+    private TextView publishedDate;
+    private ImageButton share;
+    private RoundedImageView coverImage;
+    private TextView title;
+    private TextView markers;
+    private TextView content;
     private TextView likeCount;
-    private EditText contribution;
-    private TextView author;
-    private ImageView picture;
-    private View addContributionContainer;
-    private NestedScrollView scrollView;
-    private FloatingActionButton shareActionButton;
+    private TextView contributionsCount;
+
+    private int storyLikeCount;
 
     private ContributionServices contributionServices;
     private StoryServices storyServices;
     private UserServices userServices;
 
-    private static DatabaseReference.CompletionListener contributionDenouncedListener;
-    private static DatabaseReference.CompletionListener contributionRemovedListener;
-
     private MediaViewer mediaViewer;
     private KeyboardHandler keyboardHandler;
-    private int storyLikeCount;
+
+    private static DatabaseReference.CompletionListener contributionDenouncedListener;
+    private static DatabaseReference.CompletionListener contributionRemovedListener;
 
     public static StoryViewFragment newInstance(Story story, User user) {
         return newInstance(story, user, true);
@@ -119,12 +117,12 @@ public class StoryViewFragment extends ProgressFragment implements
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_story_view, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_story_view_, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         setupObjects();
@@ -238,73 +236,34 @@ public class StoryViewFragment extends ProgressFragment implements
 
     private void setupView(View view) {
         setHasOptionsMenu(true);
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (activity != null) {
+            activity.setSupportActionBar(toolbar);
+            ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
+        }
 
-        TextView title = (TextView) view.findViewById(R.id.title);
+        authorPicture = view.findViewById(R.id.authorPicture);
+        authorName = view.findViewById(R.id.authorName);
+        publishedDate = view.findViewById(R.id.publishedDate);
+        share = view.findViewById(R.id.share);
+        coverImage = view.findViewById(R.id.cover);
+        title = view.findViewById(R.id.title);
+        markers = view.findViewById(R.id.markers);
+        content = view.findViewById(R.id.content);
+        likeCount = view.findViewById(R.id.likeCount);
+        contributionsCount = view.findViewById(R.id.contributionsCount);
+
         title.setText(story.getTitle());
-
-        TextView content = (TextView) view.findViewById(R.id.content);
         content.setMovementMethod(LinkMovementMethod.getInstance());
         content.setText(story.getContent());
 
-        scrollView = (NestedScrollView) view.findViewById(R.id.scrollView);
-        if (scrollView != null) {
-            scrollTo(View.FOCUS_UP);
-        }
-
-        TextView markers = (TextView) view.findViewById(R.id.markers);
         setupMarkers(markers);
-
-        author = (TextView) view.findViewById(R.id.tags);
-        picture = (ImageView) view.findViewById(R.id.picture);
-
         setupUser();
-
-        contributions = (TextView) view.findViewById(R.id.contributors);
-        contributions.setText(getContributionsText(story));
-
-        addContributionContainer = view.findViewById(R.id.addContributionContainer);
-
-        contribute = view.findViewById(R.id.contribute);
-        contribute.setOnClickListener(onContributeClickListener);
-
-        ImageButton addContribution = (ImageButton) view.findViewById(R.id.addContribution);
-        addContribution.setOnClickListener(onAddContributionClickListener);
-
-        contribution = (EditText) view.findViewById(R.id.contribution);
-        contribution.setOnEditorActionListener(onDescriptionEditorActionListener);
-
-        likeCount = (TextView) view.findViewById(R.id.likeCount);
-        likeCount.setOnClickListener(onLikeClickListener);
-
-        RecyclerView contributionList = (RecyclerView) view.findViewById(R.id.contributionList);
-        ((SimpleItemAnimator) contributionList.getItemAnimator()).setSupportsChangeAnimations(false);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext()
-                , LinearLayoutManager.VERTICAL, false);
-        linearLayoutManager.setAutoMeasureEnabled(true);
-        linearLayoutManager.setStackFromEnd(true);
-        contributionList.setLayoutManager(linearLayoutManager);
-
-        contributionAdapter = new ContributionAdapter();
-        contributionAdapter.setOnContributionRemoveListener(this);
-        contributionAdapter.setOnContributionDenounceListener(this);
-        contributionList.setAdapter(contributionAdapter);
-
-        RecyclerView mediaList = (RecyclerView) view.findViewById(R.id.mediaList);
-        setupMediaList(mediaList);
-
-        shareActionButton = (FloatingActionButton) view.findViewById(R.id.share);
-        if (shareActionButton != null) {
-            shareActionButton.setOnClickListener(onShareClickListener);
-        }
-    }
-
-    private void scrollTo(int direction) {
-        scrollView.postDelayed(() -> scrollView.fullScroll(direction), 200);
     }
 
     private void setupUser() {
@@ -323,8 +282,8 @@ public class StoryViewFragment extends ProgressFragment implements
     }
 
     private void setupUserView(User user) {
-        author.setText(user.getNickname());
-        ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
+        authorName.setText(user.getNickname());
+        ImageLoader.loadPersonPictureToImageView(authorPicture, user.getPicture());
     }
 
     private void setupMarkers(TextView markers) {
@@ -367,12 +326,6 @@ public class StoryViewFragment extends ProgressFragment implements
             menuRes = R.menu.menu_denounce_story;
         }
         inflater.inflate(menuRes, menu);
-
-        if (shareActionButton == null) {
-            MenuItem menuItem = menu.add(Menu.NONE, R.id.share, Menu.NONE, R.string.title_share);
-            menuItem.setIcon(R.drawable.ic_share_white_24dp);
-            MenuItemCompat.setShowAsAction(menuItem, MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-        }
     }
 
     @Override
@@ -464,11 +417,11 @@ public class StoryViewFragment extends ProgressFragment implements
     }
 
     private void resetCommentsView() {
-        StoryViewFragment.this.contribution.setText(null);
-        if (scrollView != null) {
-            scrollTo(View.FOCUS_DOWN);
-            keyboardHandler.changeKeyboardVisibility(getActivity(), false);
-        }
+//        StoryViewFragment.this.contribution.setText(null);
+//        if (scrollView != null) {
+//            scrollTo(View.FOCUS_DOWN);
+//            keyboardHandler.changeKeyboardVisibility(getActivity(), false);
+//        }
     }
 
     private void sendNotification(Contribution contribution) {
@@ -505,7 +458,7 @@ public class StoryViewFragment extends ProgressFragment implements
             super.onChildRemoved(dataSnapshot);
 
             Contribution contribution = getContributionFromSnapshot(dataSnapshot);
-            contributionAdapter.removeContribution(contribution);
+//            contributionAdapter.removeContribution(contribution);
         }
     };
 
@@ -521,14 +474,14 @@ public class StoryViewFragment extends ProgressFragment implements
         public void onAfterLoadUser(Contribution contribution) {
             updateViewForContribution();
             if (contribution.getAuthor() != null) {
-                contributionAdapter.addContribution(contribution);
+//                contributionAdapter.addContribution(contribution);
             }
         }
     };
 
     private void updateViewForContribution() {
-        addContributionContainer.setVisibility(View.VISIBLE);
-        contribute.setVisibility(View.GONE);
+//        addContributionContainer.setVisibility(View.VISIBLE);
+//        contribute.setVisibility(View.GONE);
     }
 
     private void loadUserFromContribution(final Contribution contribution, final OnAfterLoadUserListener listener) {
@@ -543,7 +496,7 @@ public class StoryViewFragment extends ProgressFragment implements
     }
 
     private void refreshContribution() {
-        contributions.setText(getContributionsText(story));
+//        contributions.setText(getContributionsText(story));
     }
 
     private View.OnClickListener onAddContributionClickListener = view -> onAddNewContribution();
@@ -554,9 +507,9 @@ public class StoryViewFragment extends ProgressFragment implements
     };
 
     private void onAddNewContribution() {
-        if (contribution.getText().length() > 0) {
-            addContribution(contribution.getText().toString());
-        }
+//        if (contribution.getText().length() > 0) {
+//            addContribution(contribution.getText().toString());
+//        }
     }
 
     @Override
