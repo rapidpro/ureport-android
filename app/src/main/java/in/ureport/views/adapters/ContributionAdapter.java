@@ -1,9 +1,9 @@
 package in.ureport.views.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +17,6 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.DateFormatter;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
-import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
 
 /**
@@ -35,14 +34,15 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         setHasStableIds(true);
     }
 
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         return new ItemViewHolder(inflater.inflate(R.layout.item_contribution, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ((ItemViewHolder) holder).bindView(contributions.get(position));
     }
 
@@ -84,7 +84,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final TextView author;
         private final ImageView picture;
         private final TextView date;
-        private final ImageView options;
+//        private final ImageView options;
 
         private final DateFormatter dateFormatter;
 
@@ -93,22 +93,22 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             dateFormatter = new DateFormatter();
 
-            picture = (ImageView) itemView.findViewById(R.id.picture);
-            contribution = (TextView) itemView.findViewById(R.id.contribution);
+            picture = itemView.findViewById(R.id.authorPicture);
+            contribution = itemView.findViewById(R.id.contribution);
             contribution.setMovementMethod(LinkMovementMethod.getInstance());
-            author = (TextView) itemView.findViewById(R.id.tags);
-            date = (TextView) itemView.findViewById(R.id.date);
+            author = itemView.findViewById(R.id.authorName);
+            date = itemView.findViewById(R.id.date);
 
-            options = itemView.findViewById(R.id.moderationOptions);
-            options.setVisibility(View.VISIBLE);
+//            options = itemView.findViewById(R.id.moderationOptions);
+//            options.setVisibility(View.VISIBLE);
         }
 
         private void bindView(Contribution contribution) {
-            final PopupMenu popupMenu = new PopupMenu(itemView.getContext(), options, Gravity.CENTER);
-            popupMenu.inflate(UserManager.canModerate() || contribution.getAuthor().getKey().equals(UserManager.getUserId())
-                    ? R.menu.menu_remove_contribution : R.menu.menu_denounce_contribution);
-            options.setOnClickListener(view -> popupMenu.show());
-            popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
+//            final PopupMenu popupMenu = new PopupMenu(itemView.getContext(), options, Gravity.CENTER);
+//            popupMenu.inflate(UserManager.canModerate() || contribution.getAuthor().getKey().equals(UserManager.getUserId())
+//                    ? R.menu.menu_remove_contribution : R.menu.menu_denounce_contribution);
+//            options.setOnClickListener(view -> popupMenu.show());
+//            popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
 
             if (contribution.getAuthor() != null) {
                 ImageLoader.loadPersonPictureToImageView(picture, contribution.getAuthor().getPicture());

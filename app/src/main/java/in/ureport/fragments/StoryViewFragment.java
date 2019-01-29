@@ -12,8 +12,10 @@ import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -84,6 +86,8 @@ public class StoryViewFragment extends ProgressFragment implements
     private TextView content;
     private TextView likeCount;
     private TextView contributionsCount;
+
+    private ContributionAdapter contributionsAdapter;
 
     private int storyLikeCount;
 
@@ -288,6 +292,16 @@ public class StoryViewFragment extends ProgressFragment implements
         setupUser();
         setupCoverImage(coverImage, story.getCover());
         setupMarkers(markers);
+
+        final RecyclerView contributionList = view.findViewById(R.id.contributionList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager.setStackFromEnd(true);
+        contributionList.setLayoutManager(linearLayoutManager);
+
+        contributionsAdapter = new ContributionAdapter();
+        contributionsAdapter.setOnContributionRemoveListener(this);
+        contributionsAdapter.setOnContributionDenounceListener(this);
+        contributionList.setAdapter(contributionsAdapter);
     }
 
     private void setupUser() {
@@ -510,7 +524,7 @@ public class StoryViewFragment extends ProgressFragment implements
             super.onChildRemoved(dataSnapshot);
 
             Contribution contribution = getContributionFromSnapshot(dataSnapshot);
-//            contributionAdapter.removeContribution(contribution);
+            contributionsAdapter.removeContribution(contribution);
         }
     };
 
@@ -526,7 +540,7 @@ public class StoryViewFragment extends ProgressFragment implements
         public void onAfterLoadUser(Contribution contribution) {
             updateViewForContribution();
             if (contribution.getAuthor() != null) {
-//                contributionAdapter.addContribution(contribution);
+                contributionsAdapter.addContribution(contribution);
             }
         }
     };
