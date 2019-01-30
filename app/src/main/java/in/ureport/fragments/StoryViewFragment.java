@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -132,7 +133,7 @@ public class StoryViewFragment extends ProgressFragment implements
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_story_view_, container, false);
+        return inflater.inflate(R.layout.fragment_story_view, container, false);
     }
 
     @Override
@@ -403,18 +404,26 @@ public class StoryViewFragment extends ProgressFragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.disapproveStory:
-                disapproveStory();
+                onDisapproveStory();
                 break;
             case R.id.deleteStory:
-                deleteStory();
+                onDeleteStory();
                 break;
             case R.id.denounceStory:
-                denounceStory();
+                onDenounceStory();
                 break;
             case R.id.share:
                 shareStory();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onDisapproveStory() {
+        new AlertDialog.Builder(requireContext())
+                .setMessage(R.string.question_disapprove_story)
+                .setPositiveButton(R.string.yes, (dialog, which) -> disapproveStory())
+                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     private void disapproveStory() {
@@ -428,6 +437,14 @@ public class StoryViewFragment extends ProgressFragment implements
         });
     }
 
+    private void onDeleteStory() {
+        new AlertDialog.Builder(requireContext())
+                .setMessage(R.string.question_delete_story)
+                .setPositiveButton(R.string.yes, (dialog, which) -> deleteStory())
+                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
     private void deleteStory() {
         storyServices.removeStory(story, (firebaseError, firebase) -> {
             if (firebaseError == null) {
@@ -437,6 +454,14 @@ public class StoryViewFragment extends ProgressFragment implements
                 displayToast(R.string.error_remove);
             }
         });
+    }
+
+    private void onDenounceStory() {
+        new AlertDialog.Builder(requireContext())
+                .setMessage(R.string.question_denounce_story)
+                .setPositiveButton(R.string.yes, (dialog, which) -> denounceStory())
+                .setNegativeButton(R.string.no, (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     private void denounceStory() {
@@ -453,9 +478,7 @@ public class StoryViewFragment extends ProgressFragment implements
         return String.format(getString(R.string.stories_list_item_contributions), story.getContributions());
     }
 
-    private View.OnClickListener onShareClickListener = view -> {
-        shareStory();
-    };
+    private View.OnClickListener onShareClickListener = view -> shareStory();
 
     private void shareStory() {
         ShareStoryTask shareStoryTask = new ShareStoryTask(StoryViewFragment.this, story);

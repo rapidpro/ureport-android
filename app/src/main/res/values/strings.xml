@@ -368,6 +368,7 @@
     <string name="question_delete_contribution">Do you want delete this contribution?</string>
     <string name="question_denounce_contribution">Do you want denounce this contribution?</string>
     <string name="question_delete_story">Do you want delete this story?</string>
+    <string name="question_disapprove_story">Do you want disapprove this story?</string>
     <string name="question_denounce_story">Do you want denounce this story?</string>
 
     <plurals name="files_attached">
