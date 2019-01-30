@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:minHeight="60dp">
+    android:layout_height="50dp"
+    android:minHeight="50dp">
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/light_gray"/>
+        android:layout_height="2dp"
+        android:background="@color/gray" />
 
     <EditText
         android:id="@+id/contribution"
@@ -19,24 +19,27 @@
         android:paddingRight="60dp"
         android:paddingEnd="60dp"
         android:gravity="start|center_vertical"
-        android:textAlignment="viewStart"
+        android:background="@color/very_light_gray"
         android:inputType="textMultiLine"
         android:imeOptions="actionSend|flagNoEnterAction"
-        android:maxLines="3"
-        android:background="@android:color/transparent"
         android:hint="@string/story_contribution_add"
+        android:maxLines="1"
+        android:textAlignment="viewStart"
+        android:textSize="16sp"
         tools:targetApi="17"/>
 
     <ImageButton
         android:id="@+id/addContribution"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_centerVertical="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginRight="10dp"
         android:layout_marginEnd="10dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/send"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_send_blue_36dp" />
 
 </RelativeLayout>

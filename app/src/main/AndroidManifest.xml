@@ -135,8 +135,7 @@
         <activity
             android:name=".activities.StoryViewActivity"
             android:label="@string/label_story_view"
-            android:parentActivityName=".activities.HomeActivity"
-            android:windowSoftInputMode="stateHidden|adjustPan" >
+            android:parentActivityName=".activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.HomeActivity" />

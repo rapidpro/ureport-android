@@ -35,7 +35,7 @@
     <string name="base_menu_open_drawer">Abrir menú</string>
     <string name="base_menu_close_drawer">Cerrar menú</string>
     <string name="stories_list_item_author">por %1$s</string>
-    <string name="stories_list_item_contributions">%1$s aportes</string>
+    <string name="stories_list_item_contributions">%1$d aportes</string>
     <string name="story_item_read_full_story">Ver historia completa</string>
     <string name="label_new_story">Nueva hisoria</string>
     <string name="create_story_insert_cover">Insertar una imagen de portada</string>

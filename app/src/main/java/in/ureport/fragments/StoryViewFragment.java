@@ -12,10 +12,8 @@ import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -24,6 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -86,6 +85,7 @@ public class StoryViewFragment extends ProgressFragment implements
     private TextView content;
     private TextView likeCount;
     private TextView contributionsCount;
+    private EditText contribution;
 
     private ContributionAdapter contributionsAdapter;
 
@@ -280,6 +280,7 @@ public class StoryViewFragment extends ProgressFragment implements
         content.setText(story.getContent());
         likeCount.setOnClickListener(onLikeClickListener);
         contributionsCount.setText(getContributionsText(story));
+        contribution = view.findViewById(R.id.contribution);
 
         final DateFormatter dateFormatter = new DateFormatter();
         final String timeElapsed = dateFormatter.getTimeElapsed(story.getCreatedDate(),
@@ -302,6 +303,10 @@ public class StoryViewFragment extends ProgressFragment implements
         contributionsAdapter.setOnContributionRemoveListener(this);
         contributionsAdapter.setOnContributionDenounceListener(this);
         contributionList.setAdapter(contributionsAdapter);
+
+        contribution.setOnEditorActionListener(onDescriptionEditorActionListener);
+        ImageButton addContribution = view.findViewById(R.id.addContribution);
+        addContribution.setOnClickListener(onAddContributionClickListener);
     }
 
     private void setupUser() {
@@ -448,12 +453,6 @@ public class StoryViewFragment extends ProgressFragment implements
         return String.format(getString(R.string.stories_list_item_contributions), story.getContributions());
     }
 
-    private View.OnClickListener onContributeClickListener = view -> {
-        if (UserManager.validateKeyAction(getActivity())) {
-            updateViewForContribution();
-        }
-    };
-
     private View.OnClickListener onShareClickListener = view -> {
         shareStory();
     };
@@ -464,30 +463,28 @@ public class StoryViewFragment extends ProgressFragment implements
     }
 
     public void addContribution(String content) {
-        if (UserManager.validateKeyAction(getActivity())) {
-            final Contribution contribution = new Contribution(content, user);
-            contribution.setCreatedDate(new Date().getTime());
-
-            contributionServices.saveContribution(story.getKey(), contribution, (firebaseError, firebase) -> {
-                if (firebaseError == null) {
-                    userServices.incrementContributionPoint();
-
-                    resetCommentsView();
-                    incrementContributionsText();
-                    refreshContribution();
-                    addAuthorToTopic();
-                    sendNotification(contribution);
-                }
-            });
+        if (!UserManager.validateKeyAction(getActivity())) {
+            return;
         }
+        final Contribution contribution = new Contribution(content, user);
+        contribution.setCreatedDate(new Date().getTime());
+
+        contributionServices.saveContribution(story.getKey(), contribution, (firebaseError, firebase) -> {
+            if (firebaseError != null) {
+                return;
+            }
+            userServices.incrementContributionPoint();
+            resetCommentsView();
+            incrementContributionsText();
+            refreshContribution();
+            addAuthorToTopic();
+            sendNotification(contribution);
+        });
     }
 
     private void resetCommentsView() {
-//        StoryViewFragment.this.contribution.setText(null);
-//        if (scrollView != null) {
-//            scrollTo(View.FOCUS_DOWN);
-//            keyboardHandler.changeKeyboardVisibility(getActivity(), false);
-//        }
+        StoryViewFragment.this.contribution.setText(null);
+        keyboardHandler.changeKeyboardVisibility(requireActivity(), false);
     }
 
     private void sendNotification(Contribution contribution) {
@@ -538,17 +535,11 @@ public class StoryViewFragment extends ProgressFragment implements
     private OnAfterLoadUserListener onAfterLoadUserListener = new OnAfterLoadUserListener() {
         @Override
         public void onAfterLoadUser(Contribution contribution) {
-            updateViewForContribution();
             if (contribution.getAuthor() != null) {
                 contributionsAdapter.addContribution(contribution);
             }
         }
     };
-
-    private void updateViewForContribution() {
-//        addContributionContainer.setVisibility(View.VISIBLE);
-//        contribute.setVisibility(View.GONE);
-    }
 
     private void loadUserFromContribution(final Contribution contribution, final OnAfterLoadUserListener listener) {
         userServices.getUser(contribution.getAuthor().getKey(), new ValueEventListenerAdapter() {
@@ -562,7 +553,7 @@ public class StoryViewFragment extends ProgressFragment implements
     }
 
     private void refreshContribution() {
-//        contributions.setText(getContributionsText(story));
+        contributionsCount.setText(getContributionsText(story));
     }
 
     private View.OnClickListener onAddContributionClickListener = view -> onAddNewContribution();
@@ -573,9 +564,9 @@ public class StoryViewFragment extends ProgressFragment implements
     };
 
     private void onAddNewContribution() {
-//        if (contribution.getText().length() > 0) {
-//            addContribution(contribution.getText().toString());
-//        }
+        if (contribution.getText().length() > 0) {
+            addContribution(contribution.getText().toString());
+        }
     }
 
     @Override

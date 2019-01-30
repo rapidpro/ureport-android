@@ -35,7 +35,7 @@
     <string name="base_menu_open_drawer">قائمة مفتوحة</string>
     <string name="base_menu_close_drawer">قائمة مغلقة</string>
     <string name="stories_list_item_author">عن طريق %1$s </string>
-    <string name="stories_list_item_contributions">مساهمات %1$s</string>
+    <string name="stories_list_item_contributions">مساهمات %1$d</string>
     <string name="story_item_read_full_story">القصة كاملة</string>
     <string name="label_new_story">قصة جديدة</string>
     <string name="create_story_insert_cover">حمل صورة الغلاف</string>

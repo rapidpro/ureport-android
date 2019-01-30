@@ -40,7 +40,7 @@
     <string name="base_menu_open_drawer">Open Menu</string>
     <string name="base_menu_close_drawer">Close Menu</string>
     <string name="stories_list_item_author">by %1$s</string>
-    <string name="stories_list_item_contributions">%1$s contributions</string>
+    <string name="stories_list_item_contributions">%1$d contributions</string>
     <string name="title_story">Story</string>
     <string name="story_item_read_full_story">See full story</string>
     <string name="label_new_story">New Story</string>

@@ -35,7 +35,7 @@
     <string name="base_menu_open_drawer">Відкрити меню</string>
     <string name="base_menu_close_drawer">Закрити меню</string>
     <string name="stories_list_item_author">на %1$s</string>
-    <string name="stories_list_item_contributions">%1$s внески</string>
+    <string name="stories_list_item_contributions">%1$d внески</string>
     <string name="story_item_read_full_story">Дивитись повну версію</string>
     <string name="label_new_story">Нова Історія</string>
     <string name="create_story_insert_cover">Додати зображення </string>
