@@ -1,11 +1,12 @@
 package in.ureport.views.adapters;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.PopupMenu;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import java.util.List;
 import br.com.ilhasoft.support.tool.DateFormatter;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
+import in.ureport.managers.UserManager;
 import in.ureport.models.Contribution;
 
 /**
@@ -84,7 +86,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final TextView author;
         private final ImageView picture;
         private final TextView date;
-//        private final ImageView options;
+        private final ImageView action;
 
         private final DateFormatter dateFormatter;
 
@@ -98,17 +100,18 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             contribution.setMovementMethod(LinkMovementMethod.getInstance());
             author = itemView.findViewById(R.id.authorName);
             date = itemView.findViewById(R.id.date);
-
-//            options = itemView.findViewById(R.id.moderationOptions);
-//            options.setVisibility(View.VISIBLE);
+            action = itemView.findViewById(R.id.action);
         }
 
         private void bindView(Contribution contribution) {
-//            final PopupMenu popupMenu = new PopupMenu(itemView.getContext(), options, Gravity.CENTER);
-//            popupMenu.inflate(UserManager.canModerate() || contribution.getAuthor().getKey().equals(UserManager.getUserId())
-//                    ? R.menu.menu_remove_contribution : R.menu.menu_denounce_contribution);
-//            options.setOnClickListener(view -> popupMenu.show());
-//            popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
+            final Context context = itemView.getContext();
+            if (UserManager.canModerate() || checkCurrentUserContribution(contribution)) {
+                action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_remove));
+                action.setOnClickListener(onRemoveContributionClickListener);
+            } else {
+                action.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_report));
+                action.setOnClickListener(onDenounceContributionClickListener);
+            }
 
             if (contribution.getAuthor() != null) {
                 ImageLoader.loadPersonPictureToImageView(picture, contribution.getAuthor().getPicture());
@@ -121,21 +124,36 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.date.setText(timeElapsed.toLowerCase());
         }
 
-        private PopupMenu.OnMenuItemClickListener onMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.removeContribution:
-                        if (onContributionRemoveListener != null)
-                            onContributionRemoveListener.onContributionRemove(contributions.get(getLayoutPosition()));
-                        break;
-                    case R.id.denounceContribution:
-                        if (onContributionDenounceListener != null)
-                            onContributionDenounceListener.onContributionDenounce(contributions.get(getLayoutPosition()));
-                        break;
-                }
-                return true;
+        private boolean checkCurrentUserContribution(final Contribution contribution) {
+            return contribution.getAuthor().getKey().equals(UserManager.getUserId());
+        }
+
+        private View.OnClickListener onRemoveContributionClickListener = view -> {
+            if (onContributionRemoveListener == null) {
+                return;
             }
+            new AlertDialog.Builder(itemView.getContext())
+                    .setMessage(R.string.question_delete_contribution)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
+                        onContributionRemoveListener
+                                .onContributionRemove(contributions.get(getLayoutPosition()));
+                    })
+                    .setNegativeButton(R.string.no, ((dialog, which) -> dialog.dismiss()))
+                    .show();
+        };
+
+        private View.OnClickListener onDenounceContributionClickListener = view -> {
+            if (onContributionDenounceListener == null) {
+                return;
+            }
+            new AlertDialog.Builder(itemView.getContext())
+                    .setMessage(R.string.question_denounce_contribution)
+                    .setPositiveButton(R.string.yes, (dialog, which) -> {
+                        onContributionDenounceListener
+                                .onContributionDenounce(contributions.get(getLayoutPosition()));
+                    })
+                    .setNegativeButton(R.string.no, ((dialog, which) -> dialog.dismiss()))
+                    .show();
         };
     }
 
