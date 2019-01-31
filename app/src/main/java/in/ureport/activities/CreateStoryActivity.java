@@ -77,7 +77,7 @@ public class CreateStoryActivity extends AppCompatActivity implements CreateStor
     }
 
     private void setupView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

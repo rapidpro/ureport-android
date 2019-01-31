@@ -1,11 +1,17 @@
 package in.ureport.fragments;
 
 import android.content.Context;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +24,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.listener.ItemSelectionListener;
 import in.ureport.listener.SelectionResultListener;
@@ -92,9 +99,22 @@ public class MarkersFragment extends Fragment implements LoaderManager.LoaderCal
     @Override
     public void onResume() {
         super.onResume();
+        setDoneIconToNavigation();
+    }
 
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
-        activity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_done_white_24dp);
+    private void setDoneIconToNavigation() {
+        final Context context = requireContext();
+        final Drawable icon = ContextCompat.getDrawable(context, R.drawable.ic_done);
+        final int color = new ResourceUtil(context).getColorByAttr(R.attr.colorPrimary);
+        final ColorFilter colorFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
+
+        if (icon != null) icon.setColorFilter(colorFilter);
+
+        final AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            final ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) actionBar.setHomeAsUpIndicator(icon);
+        }
     }
 
     private void setupView(View view) {

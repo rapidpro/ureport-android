@@ -1,9 +1,15 @@
 package in.ureport.fragments;
 
 import android.content.Context;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.ilhasoft.support.tool.EditTextValidator;
+import br.com.ilhasoft.support.tool.ResourceUtil;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import br.com.ilhasoft.support.utils.KeyboardHandler;
 import in.ureport.R;
@@ -229,8 +236,18 @@ public class CreateStoryFragment extends ProgressFragment implements MediaAdapte
     }
 
     private void setCloseIconToNavigation() {
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
-        activity.getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
+        final Context context = requireContext();
+        final Drawable icon = ContextCompat.getDrawable(context, R.drawable.ic_close);
+        final int color = new ResourceUtil(context).getColorByAttr(R.attr.colorPrimary);
+        final ColorFilter colorFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
+
+        if (icon != null) icon.setColorFilter(colorFilter);
+
+        final AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            final ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) actionBar.setHomeAsUpIndicator(icon);
+        }
     }
 
     private void publishStory() {

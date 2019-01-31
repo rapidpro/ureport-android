@@ -2,17 +2,24 @@ package in.ureport.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -24,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.ilhasoft.support.tool.ResourceUtil;
+import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
@@ -69,6 +78,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     private Map<String, StoryHolder> storiesLoaded;
     protected boolean publicType = true;
 
+    private OnPublishStoryListener onPublishStoryListener;
     protected OnUserStartChattingListener onUserStartChattingListener;
 
     protected StoriesAdapter storiesAdapter;
@@ -95,6 +105,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         getInstanceStateObjects(savedInstanceState);
         getDataFromArguments();
     }
@@ -152,9 +163,32 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof OnPublishStoryListener) {
+            onPublishStoryListener = (OnPublishStoryListener) context;
+        }
         if (context instanceof OnUserStartChattingListener) {
             onUserStartChattingListener = (OnUserStartChattingListener) context;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_new_story, menu);
+
+        final int color = new ResourceUtil(requireContext()).getColorByAttr(R.attr.colorPrimary);
+        final PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
+
+        menu.findItem(R.id.newStory).getIcon().setColorFilter(colorFilter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.newStory) {
+            onPublishStoryListener.onPublishStory();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupObjects() {

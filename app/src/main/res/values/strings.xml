@@ -43,7 +43,7 @@
     <string name="stories_list_item_contributions">%1$d contributions</string>
     <string name="title_story">Story</string>
     <string name="story_item_read_full_story">See full story</string>
-    <string name="label_new_story">New Story</string>
+    <string name="label_new_story">New story</string>
     <string name="create_story_insert_cover">Insert a cover picture</string>
     <string name="create_story_insert_title">Insert a title</string>
     <string name="create_story_insert_story_content">Tell us what\'s going on</string>

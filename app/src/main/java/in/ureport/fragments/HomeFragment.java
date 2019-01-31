@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +50,11 @@ public class HomeFragment extends Fragment {
     private void setupView(final View view) {
         final Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.setTitle(CountryProgramManager.getCurrentCountryProgram().getName());
+
+        AppCompatActivity activity = ((AppCompatActivity) getActivity());
+        if (activity != null) {
+            activity.setSupportActionBar(toolbar);
+        }
 
         final ViewPager pager = view.findViewById(R.id.pager);
         pager.setOffscreenPageLimit(2);

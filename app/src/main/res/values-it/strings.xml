@@ -36,7 +36,7 @@
     <string name="stories_list_item_author">da %1$s</string>
     <string name="stories_list_item_contributions">%1$d contributi</string>
     <string name="story_item_read_full_story">Visualizza la storia intera</string>
-    <string name="label_new_story">Nuova Storia</string>
+    <string name="label_new_story">Nuova storia</string>
     <string name="create_story_insert_cover">Inserisci un\'immagine di copertina</string>
     <string name="create_story_insert_title">Inserisci un titolo</string>
     <string name="create_story_insert_story_content">Raccontaci cosa succede</string>

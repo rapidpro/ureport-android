@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/AppTheme.FormMargin"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="16dp">
 
                 <EditText
                     android:id="@+id/title"
@@ -31,6 +31,23 @@
                     android:inputType="textCapSentences"
                     android:imeOptions="flagNoFullscreen"
                     android:hint="@string/create_story_insert_title"/>
+
+            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
+
+            <br.com.ilhasoft.support.widget.CustomTextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                style="@style/AppTheme.FormMargin">
+
+                <EditText
+                    android:id="@+id/content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|left|start"
+                    android:textSize="16sp"
+                    android:inputType="textMultiLine"
+                    android:hint="@string/create_story_insert_story_content"/>
 
             </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
@@ -49,22 +66,6 @@
                 style="@style/AppTheme.FormMargin"
                 android:textColorHint="?attr/colorPrimary"
                 android:hint="@string/create_story_add_markers"/>
-
-            <br.com.ilhasoft.support.widget.CustomTextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/AppTheme.FormMargin">
-
-                <EditText
-                    android:id="@+id/content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="top|left|start"
-                    android:textSize="16sp"
-                    android:inputType="textMultiLine"
-                    android:hint="@string/create_story_insert_story_content"/>
-
-            </br.com.ilhasoft.support.widget.CustomTextInputLayout>
 
             <TextView
                 android:layout_width="wrap_content"

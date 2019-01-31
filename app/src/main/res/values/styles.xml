@@ -8,6 +8,8 @@
         <item name="android:windowBackground">@color/white_window_background</item>
         <item name="buttonStyle">@style/AppTheme.Button</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="actionMenuTextColor">@color/primary_color</item>
+        <item name="android:actionMenuTextColor">@color/primary_color</item>
     </style>
 
     <style name="AppTheme.Fullscreen" parent="AppTheme">
@@ -99,6 +101,11 @@
         <item name="android:ellipsize">end</item>
         <item name="android:textSize">22sp</item>
         <item name="android:transitionName">@string/transition_story_title</item>
+    </style>
+
+    <style name="NewStoryToolbar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="actionMenuTextColor">?attr/colorPrimary</item>
+        <item name="android:actionMenuTextColor">?attr/colorPrimary</item>
     </style>
 
 </resources>
