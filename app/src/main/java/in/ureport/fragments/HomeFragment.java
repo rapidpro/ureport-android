@@ -43,11 +43,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupView(view);
+        setupView(view, UserManager.canModerate());
         loadData();
     }
 
-    private void setupView(final View view) {
+    private void setupView(final View view, final boolean moderatorUser) {
         final Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.setTitle(CountryProgramManager.getCurrentCountryProgram().getName());
 
@@ -57,9 +57,9 @@ public class HomeFragment extends Fragment {
         }
 
         final ViewPager pager = view.findViewById(R.id.pager);
-        pager.setOffscreenPageLimit(2);
+        pager.setOffscreenPageLimit(moderatorUser ? 3 : 2);
 
-        NavigationAdapter adapter = new NavigationAdapter(getChildFragmentManager(), getNavigationItems());
+        NavigationAdapter adapter = new NavigationAdapter(getChildFragmentManager(), getNavigationItems(moderatorUser));
         pager.setAdapter(adapter);
 
         final TabLayout tabLayout = view.findViewById(R.id.tabLayout);
@@ -71,14 +71,24 @@ public class HomeFragment extends Fragment {
     }
 
     @NonNull
-    private NavigationItem[] getNavigationItems() {
+    private NavigationItem[] getNavigationItems(final boolean moderatorUser) {
+        final NavigationItem[] items;
         storiesListFragment = new StoriesListFragment();
+
         final NavigationItem storiesItem = new NavigationItem(
                 storiesListFragment, getString(R.string.main_stories));
         final NavigationItem pollsItem = new NavigationItem(
                 new PollsFragment(), getString(R.string.main_polls));
 
-        return new NavigationItem[]{storiesItem, pollsItem};
+        if (moderatorUser) {
+            final NavigationItem moderationItem = new NavigationItem(
+                    new StoriesModerationFragment(), getString(R.string.label_moderation)
+            );
+            items = new NavigationItem[]{storiesItem, pollsItem, moderationItem};
+        } else {
+            items = new NavigationItem[]{storiesItem, pollsItem};
+        }
+        return items;
     }
 
     private void loadData() {

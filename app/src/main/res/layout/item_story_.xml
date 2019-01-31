@@ -137,4 +137,15 @@
         app:layout_constraintTop_toBottomOf="@+id/content"
         tools:textColor="@color/primary_color" />
 
+    <ViewStub
+        android:id="@+id/moderationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout="@layout/view_moderation_story"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/readFullStory"
+        tools:visibility="visible" />
+
 </android.support.constraint.ConstraintLayout>

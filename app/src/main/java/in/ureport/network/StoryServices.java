@@ -62,6 +62,7 @@ public class StoryServices extends ProgramServices {
     public void removeStoryByModerator(Story story, DatabaseReference.CompletionListener listener) {
         cleanStory(story);
         getDefaultRoot().child(storyPath).child(story.getKey()).removeValue();
+        getDefaultRoot().child(storyModeratePath).child(story.getKey()).removeValue();
         getDefaultRoot().child(storyDisapprovedPath).child(story.getKey()).setValue(story, listener);
     }
 

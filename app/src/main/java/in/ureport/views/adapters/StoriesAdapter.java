@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.Button;
 
 import com.marcorei.infinitefire.InfiniteFireArray;
@@ -194,21 +195,15 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
 
     private class ModeratedItemViewHolder extends StoryItemViewHolder {
 
-        private Story story;
-
         public ModeratedItemViewHolder(View itemView) {
             super(itemView, onStoryViewListener, onUserStartChattingListener, onNeedUpdateStoryListener);
+            final ViewStub moderationView = itemView.findViewById(R.id.moderationView);
+            moderationView.inflate();
 
-            Button readFullStory = (Button) itemView.findViewById(R.id.readFullStory);
-            readFullStory.setVisibility(View.GONE);
-
-            View storyModeration = itemView.findViewById(R.id.storyModeration);
-            storyModeration.setVisibility(View.VISIBLE);
-
-            Button publish = (Button) itemView.findViewById(R.id.publish);
+            final Button publish = itemView.findViewById(R.id.publish);
             publish.setOnClickListener(onApproveClickListener);
 
-            Button disapprove = (Button) itemView.findViewById(R.id.disapprove);
+            final Button disapprove = itemView.findViewById(R.id.disapprove);
             disapprove.setOnClickListener(onDisapproveClickListener);
         }
 
@@ -220,13 +215,13 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
 
         private View.OnClickListener onApproveClickListener = view -> {
             if (storyModerationListener != null) {
-                storyModerationListener.onApprove(story);
+                storyModerationListener.onApprove(this.story);
             }
         };
 
         private View.OnClickListener onDisapproveClickListener = view -> {
             if (storyModerationListener != null) {
-                storyModerationListener.onDisapprove(story);
+                storyModerationListener.onDisapprove(this.story);
             }
         };
     }

@@ -35,6 +35,11 @@ public class StoriesModerationFragment extends StoriesListFragment implements St
     }
 
     @Override
+    protected boolean enableNewStoryButton() {
+        return false;
+    }
+
+    @Override
     public Query loadData() {
         return storyServices.getStoriesModerationQuery();
     }

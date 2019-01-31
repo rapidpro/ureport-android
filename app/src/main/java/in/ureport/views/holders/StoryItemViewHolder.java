@@ -54,7 +54,7 @@ public class StoryItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView likeCount;
     private final TextView readFullStory;
 
-    private Story story;
+    protected Story story;
     private StoryServices storyServices;
     private int primaryColorRes;
 

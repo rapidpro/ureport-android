@@ -5,7 +5,7 @@
     <item
         android:id="@+id/disapproveStory"
         android:title="@string/button_title_disapprove"
-        android:icon="@drawable/ic_remove"
+        android:icon="@drawable/ic_not_interested"
         app:showAsAction="always" />
 
 </menu>
