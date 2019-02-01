@@ -7,8 +7,7 @@
     <in.ureport.views.widgets.InfiniteFireLinearRecyclerView
         android:id="@+id/storiesList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/info"

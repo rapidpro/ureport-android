@@ -16,13 +16,14 @@
             android:background="@color/white_window_background"
             android:elevation="4dp"
             app:title="@string/label_my_profile"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            app:layout_scrollFlags="scroll"
+            tools:targetApi="lollipop" />
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white_window_background"
-            app:layout_scrollFlags="scroll|enterAlways"
+            app:layout_scrollFlags="scroll"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <de.hdodenhof.circleimageview.CircleImageView
