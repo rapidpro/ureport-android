@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
@@ -64,6 +69,7 @@ public class ProfileFragment extends ProgressFragment {
     private TextView location;
     private ViewPager pager;
     private TextView points;
+    private TextView ranking;
     private TextView stories;
     private ImageView picture;
     private TabLayout tabs;
@@ -187,6 +193,25 @@ public class ProfileFragment extends ProgressFragment {
                 firebaseValueEventListenerAdapter.onDataChange(dataSnapshot);
             }
         });
+        userServices.getRankingQuery().addListenerForSingleValueEvent(new ValueEventListenerAdapter() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                super.onDataChange(dataSnapshot);
+                final List<User> users = new ArrayList<>(1000);
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    users.add(data.getValue(User.class));
+                }
+                Collections.reverse(users);
+                if (!isAdded()) {
+                    return;
+                }
+                int userPosition = users.indexOf(user) + 1;
+                ranking.setText(makeUserMetricTextTemplate(
+                        String.valueOf(userPosition).concat("º"),
+                        getString(R.string.profile_ranking).toLowerCase()
+                ));
+            }
+        });
     }
 
     @Override
@@ -208,10 +233,15 @@ public class ProfileFragment extends ProgressFragment {
         picture.setOnClickListener(onPictureClickListener);
 
         points = view.findViewById(R.id.points);
+        ranking = view.findViewById(R.id.ranking);
         stories = view.findViewById(R.id.storiesCount);
 
         pager = view.findViewById(R.id.pager);
         tabs = view.findViewById(R.id.tabs);
+
+        final int primaryColorRes = new ResourceUtil(requireContext()).getColorByAttr(R.attr.colorPrimary);
+        tabs.setTabTextColors(ContextCompat.getColor(requireContext(), R.color.gray), primaryColorRes);
+        tabs.setSelectedTabIndicatorColor(primaryColorRes);
 
 //        Button logout = (Button) view.findViewById(R.id.logout);
 //        logout.setOnClickListener(onLogoutClickListener);
@@ -233,6 +263,7 @@ public class ProfileFragment extends ProgressFragment {
         final String storiesCount = String.valueOf(getIntegerValue(user.getStories()));
 
         points.setText(makeUserMetricTextTemplate(pointsCount, getString(R.string.label_view_points).toLowerCase()));
+        ranking.setText(makeUserMetricTextTemplate("0º", getString(R.string.profile_ranking).toLowerCase()));
         stories.setText(makeUserMetricTextTemplate(storiesCount, getString(R.string.label_view_stories).toLowerCase()));
     }
 
