@@ -80,6 +80,7 @@
     <string name="poll_results_by_region">See results by region</string>
     <string name="menu_notifications_title">Notifications</string>
     <string name="label_profile">Profile</string>
+    <string name="label_my_profile">My profile</string>
     <string name="label_edit">Edit</string>
     <string name="label_logout">Logout</string>
     <string name="profile_my_stories">My stories</string>

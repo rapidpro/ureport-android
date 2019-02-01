@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +21,9 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -27,6 +32,7 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 
+import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.activities.ProfileActivity;
 import in.ureport.helpers.ImageLoader;
@@ -75,6 +81,7 @@ public class ProfileFragment extends ProgressFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         Bundle extras = getArguments();
         if (extras != null && extras.containsKey(EXTRA_USER)) {
             user = extras.getParcelable(EXTRA_USER);
@@ -95,6 +102,15 @@ public class ProfileFragment extends ProgressFragment {
         setupContextDependencies();
         loadUser();
         setLoadingMessage(getString(R.string.load_message_uploading_image));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_my_profile, menu);
+        final int color = new ResourceUtil(requireContext()).getColorByAttr(R.attr.colorPrimary);
+        final PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
+        menu.findItem(R.id.edit).getIcon().setColorFilter(colorFilter);
     }
 
     private void setupObjects() {
@@ -194,8 +210,8 @@ public class ProfileFragment extends ProgressFragment {
         points = view.findViewById(R.id.points);
         stories = view.findViewById(R.id.storiesCount);
 
-//        pager = (ViewPager)view.findViewById(R.id.pager);
-//        tabs = (TabLayout)view.findViewById(R.id.tabs);
+        pager = view.findViewById(R.id.pager);
+        tabs = view.findViewById(R.id.tabs);
 
 //        Button logout = (Button) view.findViewById(R.id.logout);
 //        logout.setOnClickListener(onLogoutClickListener);
@@ -205,7 +221,7 @@ public class ProfileFragment extends ProgressFragment {
     }
 
     private void updateUser(User user) {
-//        setupPagerWithUser(user);
+        setupPagerWithUser(user);
 
         name.setText(user.getNickname());
         ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());

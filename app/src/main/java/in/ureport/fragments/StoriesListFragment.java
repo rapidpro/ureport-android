@@ -174,7 +174,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        if (!enableNewStoryButton()) {
+        if (!publicType) {
             return;
         }
         inflater.inflate(R.menu.menu_new_story, menu);
@@ -190,10 +190,6 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    protected boolean enableNewStoryButton() {
-        return true;
     }
 
     private void setupObjects() {
