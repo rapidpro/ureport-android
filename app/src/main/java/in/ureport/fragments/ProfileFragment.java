@@ -3,6 +3,8 @@ package in.ureport.fragments;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,10 +14,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +34,7 @@ import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.listener.OnEditProfileListener;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.LocalMedia;
@@ -49,6 +55,7 @@ public class ProfileFragment extends ProgressFragment {
     private static final int RANKING_POSITION = 1;
 
     private TextView name;
+    private TextView location;
     private ViewPager pager;
     private TextView points;
     private TextView stories;
@@ -173,37 +180,52 @@ public class ProfileFragment extends ProgressFragment {
     }
 
     private void setupView(View view) {
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        activity.getSupportActionBar().setTitle("");
+        if (activity != null) {
+            activity.setSupportActionBar(toolbar);
+        }
 
-        name = (TextView)view.findViewById(R.id.name);
-        picture = (ImageView)view.findViewById(R.id.picture);
+        picture = view.findViewById(R.id.picture);
+        name = view.findViewById(R.id.name);
+        location = view.findViewById(R.id.location);
         picture.setOnClickListener(onPictureClickListener);
 
-        points = (TextView) view.findViewById(R.id.points);
-        stories = (TextView) view.findViewById(R.id.stories);
+        points = view.findViewById(R.id.points);
+        stories = view.findViewById(R.id.storiesCount);
 
-        pager = (ViewPager)view.findViewById(R.id.pager);
-        tabs = (TabLayout)view.findViewById(R.id.tabs);
+//        pager = (ViewPager)view.findViewById(R.id.pager);
+//        tabs = (TabLayout)view.findViewById(R.id.tabs);
 
-        Button logout = (Button) view.findViewById(R.id.logout);
-        logout.setOnClickListener(onLogoutClickListener);
+//        Button logout = (Button) view.findViewById(R.id.logout);
+//        logout.setOnClickListener(onLogoutClickListener);
 
-        Button edit = (Button) view.findViewById(R.id.edit);
-        edit.setOnClickListener(onEditClickListener);
+//        Button edit = (Button) view.findViewById(R.id.edit);
+//        edit.setOnClickListener(onEditClickListener);
     }
 
     private void updateUser(User user) {
-        setupPagerWithUser(user);
+//        setupPagerWithUser(user);
 
         name.setText(user.getNickname());
         ImageLoader.loadPersonPictureToImageView(picture, user.getPicture());
 
-        points.setText(getString(R.string.menu_points, getIntegerValue(user.getPoints())));
-        stories.setText(getString(R.string.profile_stories, getIntegerValue(user.getStories())));
+        final String country = CountryProgramManager.getCurrentCountryProgram().getName();
+        location.setText(country.concat(", ").concat(user.getState()));
+
+        final String pointsCount = String.valueOf(getIntegerValue(user.getPoints()));
+        final String storiesCount = String.valueOf(getIntegerValue(user.getStories()));
+
+        points.setText(makeUserMetricTextTemplate(pointsCount, getString(R.string.label_view_points).toLowerCase()));
+        stories.setText(makeUserMetricTextTemplate(storiesCount, getString(R.string.label_view_stories).toLowerCase()));
+    }
+
+    private CharSequence makeUserMetricTextTemplate(final String count, final String label) {
+        final SpannableString spannableString = new SpannableString(count.concat("\n").concat(label));
+        spannableString.setSpan(new RelativeSizeSpan(2.1f), 0, count.length(), 0);
+        spannableString.setSpan(new StyleSpan(Typeface.BOLD), 0, count.length(), 0);
+        spannableString.setSpan(new ForegroundColorSpan(Color.BLACK), 0, count.length(), 0);
+        return spannableString;
     }
 
     private int getIntegerValue(Integer value) {
