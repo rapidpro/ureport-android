@@ -22,7 +22,7 @@
 
         <Preference
             android:key="pref_key_close_account"
-            android:title="@string/close_your_account" />
+            android:title="@string/delete_account" />
 
     </PreferenceCategory>
 

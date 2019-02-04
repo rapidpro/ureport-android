@@ -76,8 +76,6 @@ public class ProfileFragment extends ProgressFragment {
 
     private User user;
 
-    private OnEditProfileListener onEditProfileListener;
-
     private MediaSelector mediaSelector;
     private UserServices userServices;
 
@@ -117,6 +115,19 @@ public class ProfileFragment extends ProgressFragment {
         final int color = new ResourceUtil(requireContext()).getColorByAttr(R.attr.colorPrimary);
         final PorterDuffColorFilter colorFilter = new PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN);
         menu.findItem(R.id.edit).getIcon().setColorFilter(colorFilter);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.edit) {
+            addEditProfileFragment(user);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void addEditProfileFragment(final User user) {
+
     }
 
     private void setupObjects() {
@@ -172,14 +183,6 @@ public class ProfileFragment extends ProgressFragment {
                 displayPictureError();
             }
         };
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnEditProfileListener) {
-            onEditProfileListener = (OnEditProfileListener) context;
-        }
     }
 
     public void loadUser() {
@@ -242,12 +245,6 @@ public class ProfileFragment extends ProgressFragment {
         final int primaryColorRes = new ResourceUtil(requireContext()).getColorByAttr(R.attr.colorPrimary);
         tabs.setTabTextColors(ContextCompat.getColor(requireContext(), R.color.gray), primaryColorRes);
         tabs.setSelectedTabIndicatorColor(primaryColorRes);
-
-//        Button logout = (Button) view.findViewById(R.id.logout);
-//        logout.setOnClickListener(onLogoutClickListener);
-
-//        Button edit = (Button) view.findViewById(R.id.edit);
-//        edit.setOnClickListener(onEditClickListener);
     }
 
     private void updateUser(User user) {
@@ -297,14 +294,6 @@ public class ProfileFragment extends ProgressFragment {
             pager.setCurrentItem(RANKING_POSITION);
         }
     }
-
-    private View.OnClickListener onLogoutClickListener = view -> logout();
-
-    private View.OnClickListener onEditClickListener = view -> {
-        if (onEditProfileListener != null) {
-            onEditProfileListener.onEditProfile(user);
-        }
-    };
 
     private View.OnClickListener onPictureClickListener = view -> {
         new AlertDialog.Builder(getContext())
@@ -365,12 +354,6 @@ public class ProfileFragment extends ProgressFragment {
 
     private void displayPictureError() {
         Toast.makeText(getContext(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
-    }
-
-    private void logout() {
-        UserManager.logout(getContext());
-        UserManager.startLoginFlow(getContext());
-        getActivity().finish();
     }
 
 }

@@ -218,7 +218,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
 
     private void setupView(View view) {
         info = view.findViewById(R.id.info);
-        info.setVisibility(publicType ? View.GONE : View.VISIBLE);
+        info.setVisibility(publicType || user == null ? View.GONE : View.VISIBLE);
 
         storiesList = view.findViewById(R.id.storiesList);
         layoutManager = new LinearLayoutManager(getActivity());
