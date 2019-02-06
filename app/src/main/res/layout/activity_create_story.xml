@@ -12,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/white_window_background"
         android:elevation="4dp"
-        android:theme="@style/NewStoryToolbar"
+        android:theme="@style/Toolbar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         tools:targetApi="lollipop" />
 

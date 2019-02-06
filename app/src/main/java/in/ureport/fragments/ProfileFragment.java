@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -44,7 +45,6 @@ import in.ureport.helpers.ImageLoader;
 import in.ureport.helpers.MediaSelector;
 import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
-import in.ureport.listener.OnEditProfileListener;
 import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
@@ -127,7 +127,13 @@ public class ProfileFragment extends ProgressFragment {
     }
 
     private void addEditProfileFragment(final User user) {
+        final FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager == null) return;
 
+        fragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.container, EditProfileFragment.newInstance(user))
+                .commit();
     }
 
     private void setupObjects() {
