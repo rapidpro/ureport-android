@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -102,6 +103,15 @@ public class EditUserFragment extends UserInfoBaseFragment {
         inflater.inflate(R.menu.menu_edit_profile, menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.save) {
+            onUpdateUser();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void setupContextDependencies() {
         firebaseImageTransferListenerAdapter = new TransferListenerAdapter(getContext(), null) {
             @Override
@@ -161,7 +171,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
             public void onFinished(ContactBase contact, User user) {
                 dismissLoading();
                 if (contact != null) {
-                    userSettingsListener.onEditFinished();
+                    requireActivity().onBackPressed();
                 } else {
                     displayError();
                 }
@@ -195,7 +205,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
         changePhoto.setVisibility(View.VISIBLE);
         changePhoto.setOnClickListener(onPhotoClickListener);
         email.setEnabled(false);
-        password.setText("password");
+        view.findViewById(R.id.passwordLayout).setVisibility(View.GONE);
         view.findViewById(R.id.line).setVisibility(View.VISIBLE);
         view.findViewById(R.id.privateInformation).setVisibility(View.VISIBLE);
         view.findViewById(R.id.deleteAccount).setVisibility(View.VISIBLE);
@@ -227,7 +237,7 @@ public class EditUserFragment extends UserInfoBaseFragment {
 
     private int dpsToPixels(int dps) {
         final float density = getResources().getDisplayMetrics().density;
-        return Math.round(dps * density);
+        return Math.round(dps*density);
     }
 
     @Override
@@ -283,6 +293,32 @@ public class EditUserFragment extends UserInfoBaseFragment {
 
     private boolean hasUserState(Location location) {
         return location.getName().equals(user.getState()) || location.getToponymName().equals(user.getState());
+    }
+
+    public void onUpdateUser() {
+        if (!validFieldsForCustomUser()) {
+            return;
+        }
+        setLoadingMessage(getString(R.string.load_message_save_user));
+
+        user.setNickname(username.getText().toString());
+        user.setBirthday(getBirthdayDate().getTime());
+
+        Location location = (Location) EditUserFragment.this.state.getSelectedItem();
+        user.setState(location.getName());
+
+        if (containsDistrict) {
+            Location district = (Location) EditUserFragment.this.district.getSelectedItem();
+            user.setDistrict(district.getName());
+        }
+
+        UserGender gender = (UserGender) EditUserFragment.this.gender.getSelectedItem();
+        user.setGenderAsEnum(gender.getGender());
+
+        showLoading();
+        userServices.editUser(user, (firebaseError, firebase) ->
+                firebaseCompletionListener.onComplete(firebaseError, firebase)
+        );
     }
 
     public static void updateContactToRapidpro(Context context, User user, CountryInfo countryInfo) {
@@ -355,31 +391,6 @@ public class EditUserFragment extends UserInfoBaseFragment {
                 e.printStackTrace();
                 firebaseImageTransferListenerAdapter.onTransferFailed();
             }
-        }
-    };
-
-    private View.OnClickListener onConfirmClickListener = view -> {
-        if (validFieldsForCustomUser()) {
-            setLoadingMessage(getString(R.string.load_message_save_user));
-
-            user.setNickname(username.getText().toString());
-            user.setBirthday(getBirthdayDate().getTime());
-
-            Location location = (Location) EditUserFragment.this.state.getSelectedItem();
-            user.setState(location.getName());
-
-            if (containsDistrict) {
-                Location district = (Location) EditUserFragment.this.district.getSelectedItem();
-                user.setDistrict(district.getName());
-            }
-
-            UserGender gender = (UserGender) EditUserFragment.this.gender.getSelectedItem();
-            user.setGenderAsEnum(gender.getGender());
-
-            showLoading();
-            userServices.editUser(user, (firebaseError, firebase) ->
-                    firebaseCompletionListener.onComplete(firebaseError, firebase)
-            );
         }
     };
 

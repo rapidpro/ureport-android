@@ -11,6 +11,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -103,20 +104,10 @@ public class ProfileFragment extends ProgressFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.edit) {
-            addEditProfileFragment(user);
+            displayUpdateOptions();
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void addEditProfileFragment(final User user) {
-        final FragmentManager fragmentManager = getFragmentManager();
-        if (fragmentManager == null) return;
-
-        fragmentManager.beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.container, EditUserFragment.newInstance(user))
-                .commit();
     }
 
     private void setupContextDependencies() {
@@ -231,6 +222,42 @@ public class ProfileFragment extends ProgressFragment {
         if (action != null && action.equals(ProfileActivity.ACTION_DISPLAY_RANKING)) {
             pager.setCurrentItem(RANKING_POSITION);
         }
+    }
+
+    public void displayUpdateOptions() {
+        final String[] items = new String[]{
+                getString(R.string.title_pref_edit_profile),
+                getString(R.string.title_pref_change_password)
+        };
+        new AlertDialog.Builder(requireContext())
+                .setItems(items, (dialog, which) -> {
+                    if (which == 0) {
+                        addEditProfileFragment(user);
+                    } else {
+                        addChangePasswordFragment();
+                    }
+                })
+                .show();
+    }
+
+    private void addEditProfileFragment(final User user) {
+        final FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager == null) return;
+
+        fragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.container, EditUserFragment.newInstance(user))
+                .commit();
+    }
+
+    private void addChangePasswordFragment() {
+        final FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager == null) return;
+
+        fragmentManager.beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.container, new ChangePasswordFragment())
+                .commit();
     }
 
 }
