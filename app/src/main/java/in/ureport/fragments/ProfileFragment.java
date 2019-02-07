@@ -1,13 +1,9 @@
 package in.ureport.fragments;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,7 +11,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
@@ -30,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 
@@ -42,14 +36,9 @@ import br.com.ilhasoft.support.tool.ResourceUtil;
 import in.ureport.R;
 import in.ureport.activities.ProfileActivity;
 import in.ureport.helpers.ImageLoader;
-import in.ureport.helpers.MediaSelector;
-import in.ureport.helpers.TransferListenerAdapter;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.CountryProgramManager;
-import in.ureport.managers.TransferManager;
 import in.ureport.managers.UserManager;
-import in.ureport.models.LocalMedia;
-import in.ureport.models.Media;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
 import in.ureport.network.UserServices;
@@ -76,11 +65,7 @@ public class ProfileFragment extends ProgressFragment {
 
     private User user;
 
-    private MediaSelector mediaSelector;
-    private UserServices userServices;
-
     private static ValueEventListenerAdapter firebaseValueEventListenerAdapter;
-    private static TransferListenerAdapter firebaseImageTransferListenerAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,11 +86,9 @@ public class ProfileFragment extends ProgressFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupObjects();
         setupView(view);
         setupContextDependencies();
         loadUser();
-        setLoadingMessage(getString(R.string.load_message_uploading_image));
     }
 
     @Override
@@ -136,11 +119,6 @@ public class ProfileFragment extends ProgressFragment {
                 .commit();
     }
 
-    private void setupObjects() {
-        userServices = new UserServices();
-        mediaSelector = new MediaSelector(getContext());
-    }
-
     private void setupContextDependencies() {
         firebaseValueEventListenerAdapter = new ValueEventListenerAdapter() {
             @Override
@@ -148,45 +126,6 @@ public class ProfileFragment extends ProgressFragment {
                 super.onDataChange(dataSnapshot);
                 user = dataSnapshot.getValue(User.class);
                 if (isAdded()) updateUser(user);
-            }
-        };
-        firebaseImageTransferListenerAdapter = new TransferListenerAdapter(getContext(), null) {
-            @Override
-            public void onStart() {
-                super.onStart();
-                showLoading();
-            }
-
-            @Override
-            public void onTransferFinished(Media media) {
-                super.onTransferFinished(media);
-                dismissLoading();
-                if (user == null)
-                    return;
-
-                showLoading();
-                user.setPicture(media.getUrl());
-                userServices.editUserPicture(user, (firebaseError, firebase) -> {
-                    dismissLoading();
-                    if (firebaseError == null)
-                        ImageLoader.loadPersonPictureToImageView(picture, media.getUrl());
-                    else
-                        displayPictureError();
-                });
-            }
-
-            @Override
-            public void onTransferFailed() {
-                super.onTransferFailed();
-                dismissLoading();
-                displayPictureError();
-            }
-
-            @Override
-            public void onError(int id, Exception ex) {
-                super.onError(id, ex);
-                dismissLoading();
-                displayPictureError();
             }
         };
     }
@@ -223,12 +162,6 @@ public class ProfileFragment extends ProgressFragment {
         });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mediaSelector.onActivityResult(this, onLoadLocalMediaListener, requestCode, resultCode, data);
-    }
-
     private void setupView(View view) {
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
@@ -239,7 +172,6 @@ public class ProfileFragment extends ProgressFragment {
         picture = view.findViewById(R.id.picture);
         name = view.findViewById(R.id.name);
         location = view.findViewById(R.id.location);
-        picture.setOnClickListener(onPictureClickListener);
 
         points = view.findViewById(R.id.points);
         ranking = view.findViewById(R.id.ranking);
@@ -299,67 +231,6 @@ public class ProfileFragment extends ProgressFragment {
         if (action != null && action.equals(ProfileActivity.ACTION_DISPLAY_RANKING)) {
             pager.setCurrentItem(RANKING_POSITION);
         }
-    }
-
-    private View.OnClickListener onPictureClickListener = view -> {
-        new AlertDialog.Builder(getContext())
-                .setMessage(R.string.message_question_profile_picture)
-                .setNegativeButton(R.string.cancel_dialog_button, null)
-                .setPositiveButton(R.string.confirm_neutral_dialog_button, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mediaSelector.selectImage(ProfileFragment.this);
-                    }
-                })
-                .show();
-    };
-
-    private MediaSelector.OnLoadLocalMediaListener onLoadLocalMediaListener = new MediaSelector.OnLoadLocalMediaListener() {
-        @Override
-        public void onLoadLocalImage(Uri uri) {
-            LocalMedia localMedia = new LocalMedia(uri);
-            localMedia.setType(Media.Type.Picture);
-            transferMedia(getContext(), localMedia);
-        }
-
-        @Override
-        public void onLoadLocalVideo(Uri uri) { }
-
-        @Override
-        public void onLoadFile(Uri uri) { }
-
-        @Override
-        public void onLoadAudio(Uri uri, int duration) { }
-
-        private void transferMedia(Context context, LocalMedia localMedia) {
-            if (firebaseImageTransferListenerAdapter == null)
-                return;
-
-            firebaseImageTransferListenerAdapter.onStart();
-            try {
-                TransferManager transferManager = new TransferManager(context);
-                transferManager.transferMedia(localMedia, "user", new TransferListenerAdapter(context, localMedia) {
-                    @Override
-                    public void onTransferFinished(Media media) {
-                        super.onTransferFinished(media);
-                        firebaseImageTransferListenerAdapter.onTransferFinished(media);
-                    }
-
-                    @Override
-                    public void onError(int id, Exception ex) {
-                        super.onError(id, ex);
-                        firebaseImageTransferListenerAdapter.onError(id, ex);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                firebaseImageTransferListenerAdapter.onTransferFailed();
-            }
-        }
-    };
-
-    private void displayPictureError() {
-        Toast.makeText(getContext(), R.string.error_image_upload, Toast.LENGTH_SHORT).show();
     }
 
 }
