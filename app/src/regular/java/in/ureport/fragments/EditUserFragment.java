@@ -1,16 +1,27 @@
 package in.ureport.fragments;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import in.ureport.R;
+import in.ureport.helpers.ImageLoader;
 import in.ureport.models.User;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.geonames.Location;
@@ -31,6 +42,9 @@ public class EditUserFragment extends UserInfoBaseFragment {
     private static DatabaseReference.CompletionListener firebaseCompletionListener;
     private static SaveContactTask.Listener saveContactTaskListener;
 
+    private CircleImageView photo;
+    private TextView changePhoto;
+
     public static EditUserFragment newInstance(User user) {
         EditUserFragment editUserFragment = new EditUserFragment();
 
@@ -42,10 +56,16 @@ public class EditUserFragment extends UserInfoBaseFragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupContextDependencies();
-        setupView();
+        setupView(view);
         setLoadingMessage(getString(R.string.load_message_save_user));
     }
 
@@ -55,6 +75,12 @@ public class EditUserFragment extends UserInfoBaseFragment {
         if(context instanceof UserSettingsFragment.UserSettingsListener) {
             userSettingsListener = (UserSettingsFragment.UserSettingsListener) context;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_edit_profile, menu);
     }
 
     private void setupContextDependencies() {
@@ -84,11 +110,59 @@ public class EditUserFragment extends UserInfoBaseFragment {
         };
     }
 
-    private void setupView() {
-        password.setVisibility(View.GONE);
-        email.setVisibility(View.GONE);
+    private void setupView(View view) {
+        final AppCompatActivity activity = (AppCompatActivity) requireActivity();
+        final ActionBar actionBar = activity.getSupportActionBar();
+        activity.setSupportActionBar(toolbar);
 
-        confirm.setOnClickListener(onConfirmClickListener);
+        if (actionBar != null) {
+            final Drawable indicator = ContextCompat.getDrawable(requireContext(), R.drawable.ic_close);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(indicator);
+        }
+        toolbar.setTitle(R.string.title_pref_edit_profile);
+        toolbar.setTitleTextColor(ContextCompat.getColor(activity, android.R.color.black));
+
+        photo = view.findViewById(R.id.photo);
+        changePhoto = view.findViewById(R.id.changePhoto);
+        view.findViewById(R.id.line).setVisibility(View.VISIBLE);
+
+        photo.setVisibility(View.VISIBLE);
+        changePhoto.setVisibility(View.VISIBLE);
+        email.setEnabled(false);
+        password.setText("password");
+        view.findViewById(R.id.line).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.privateInformation).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.deleteAccount).setVisibility(View.VISIBLE);
+        confirm.setVisibility(View.GONE);
+
+        updateLayoutConstraints(view);
+        ImageLoader.loadPersonPictureToImageView(photo, user.getPicture());
+    }
+
+    private void updateLayoutConstraints(View parent) {
+        final ConstraintLayout content = parent.findViewById(R.id.content);
+        final ConstraintSet set = new ConstraintSet();
+        set.clone(content);
+
+        set.clear(R.id.emailLayout, ConstraintSet.TOP);
+        set.clear(R.id.birthdayLayout, ConstraintSet.TOP);
+        set.clear(R.id.gender, ConstraintSet.TOP);
+        set.clear(R.id.line, ConstraintSet.TOP);
+        set.clear(R.id.deleteAccount, ConstraintSet.TOP);
+
+        set.connect(R.id.emailLayout, ConstraintSet.TOP, R.id.privateInformation, ConstraintSet.BOTTOM, dpsToPixels(32));
+        set.connect(R.id.birthdayLayout, ConstraintSet.TOP, R.id.nameLayout, ConstraintSet.BOTTOM, dpsToPixels(16));
+        set.connect(R.id.gender, ConstraintSet.TOP, R.id.passwordLayout, ConstraintSet.BOTTOM, dpsToPixels(16));
+        set.connect(R.id.line, ConstraintSet.TOP, R.id.district, ConstraintSet.BOTTOM, dpsToPixels(24));
+        set.connect(R.id.deleteAccount, ConstraintSet.TOP, R.id.gender, ConstraintSet.BOTTOM, dpsToPixels(32));
+
+        set.applyTo(content);
+    }
+
+    private int dpsToPixels(int dps) {
+        final float density = getResources().getDisplayMetrics().density;
+        return Math.round(dps * density);
     }
 
     @Override

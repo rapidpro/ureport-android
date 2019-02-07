@@ -132,7 +132,7 @@ public class ProfileFragment extends ProgressFragment {
 
         fragmentManager.beginTransaction()
                 .addToBackStack(null)
-                .replace(R.id.container, EditProfileFragment.newInstance(user))
+                .replace(R.id.container, EditUserFragment.newInstance(user))
                 .commit();
     }
 

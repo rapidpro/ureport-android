@@ -100,7 +100,7 @@ public abstract class UserInfoBaseFragment extends ProgressFragment implements L
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_sign_up, container, false);
+        return inflater.inflate(R.layout.fragment_profile_register, container, false);
     }
 
     @Override
@@ -145,27 +145,27 @@ public abstract class UserInfoBaseFragment extends ProgressFragment implements L
     }
 
     private void setupView(View view) {
-        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        username = (EditText) view.findViewById(R.id.username);
-        email = (EditText) view.findViewById(R.id.email);
-        password = (EditText) view.findViewById(R.id.password);
+        toolbar = view.findViewById(R.id.toolbar);
+        username = view.findViewById(R.id.nickname);
+        email = view.findViewById(R.id.email);
+        password = view.findViewById(R.id.password);
 
-        birthday = (EditText) view.findViewById(R.id.birthday);
+        birthday = view.findViewById(R.id.birthday);
         birthday.setOnClickListener(onBirthdayClickListener);
 
-        gender = (Spinner) view.findViewById(R.id.gender);
+        gender = view.findViewById(R.id.gender);
         loadUserGenders();
 
-        country = (Spinner) view.findViewById(R.id.country);
+        country = view.findViewById(R.id.country);
         country.setOnItemSelectedListener(onCountrySelectedListener);
         resetLocationSpinner(country, R.array.spinner_loading);
 
-        state = (Spinner) view.findViewById(R.id.state);
+        state = view.findViewById(R.id.state);
         state.setOnItemSelectedListener(onStateSelectedListener);
         resetLocationSpinner(state, R.array.spinner_loading);
 
-        district = (Spinner) view.findViewById(R.id.district);
-        confirm = (Button) view.findViewById(R.id.confirm);
+        district = view.findViewById(R.id.district);
+        confirm = view.findViewById(R.id.confirm);
     }
 
     private void getUserFromArguments() {
@@ -352,7 +352,7 @@ public abstract class UserInfoBaseFragment extends ProgressFragment implements L
     public void onLoaderReset(Loader loader) {}
 
     private void updateCountries(List<CountryInfo> data) {
-        ArrayAdapter<CountryInfo> localeAdapter = new ArrayAdapter<>(getActivity(), R.layout.view_spinner_dropdown, data);
+        ArrayAdapter<CountryInfo> localeAdapter = new ArrayAdapter<>(requireContext(), R.layout.view_spinner_dropdown, data);
         localeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         country.setAdapter(localeAdapter);
