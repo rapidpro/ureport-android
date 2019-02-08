@@ -21,6 +21,7 @@ import in.ureport.fragments.ChatsFragment;
 import in.ureport.fragments.GeneralSettingsFragment;
 import in.ureport.fragments.HomeFragment;
 import in.ureport.fragments.ProfileFragment;
+import in.ureport.fragments.SettingsFragment;
 import in.ureport.fragments.StoriesListFragment;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.CountryProgramManager;
@@ -152,10 +153,10 @@ public class HomeActivity extends AppCompatActivity implements StoriesListFragme
     }
 
     private void switchToSettings() {
-        if (isVisibleFragment(GeneralSettingsFragment.TAG)) {
+        if (isVisibleFragment(SettingsFragment.TAG)) {
             return;
         }
-        replaceContent(new GeneralSettingsFragment(), GeneralSettingsFragment.TAG);
+        replaceContent(SettingsFragment.newInstance(), GeneralSettingsFragment.TAG);
     }
 
     private void replaceContent(final Fragment fragment, final String tag) {

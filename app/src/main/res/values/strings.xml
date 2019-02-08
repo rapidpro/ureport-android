@@ -139,6 +139,7 @@
     <string name="list_stories_header_title">Hi %1$s, tell us what\'s going on</string>
     <string name="main_menu_group_institutional">Institutional</string>
     <string name="label_settings">Settings</string>
+    <string name="label_terms_of_use">Terms of use</string>
     <string name="group_info_add_ureporter">Add U-Reporter</string>
     <string name="label_group_information">Information</string>
     <string name="country_program_validation_error">You can\'t do this action for this country program!</string>
@@ -151,7 +152,9 @@
     <string name="points_earning_close">Close</string>
     <string name="polls_previous_title">Previous polls</string>
     <string name="switch_country_program">Switch Country Program</string>
+    <string name="label_select_country">Select country</string>
     <string name="about_title">About U-Report</string>
+    <string name="label_privacy_policy">Privacy policy</string>
     <string name="label_unicef_ambassadors">Unicef Ambassadors</string>
     <string name="ambassadors_content">
         What qualifies a singer, an actor or an athlete to represent UNICEF? And what good can celebrities really do?\n
@@ -226,7 +229,9 @@
     <string name="title_preferences_privacy">Privacy</string>
     <string name="title_preferences_notifications">Notifications</string>
     <string name="title_preferences_account">Account</string>
-    <string name="title_pref_chat_available">Available in chat</string>
+    <string name="title_pref_chat_available">Chat availability</string>
+    <string name="label_available">Available</string>
+    <string name="label_unavailable">Unavailable</string>
     <string name="title_pref_chat_notifications">Receive chat notifications</string>
     <string name="title_pref_edit_profile">Edit profile</string>
     <string name="title_pref_change_password">Change password</string>

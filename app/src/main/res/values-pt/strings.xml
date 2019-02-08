@@ -214,7 +214,7 @@ Celebridades da UNICEF tem uma grande quantidade de talentos e conquistas, mas e
     <string name="title_preferences_privacy">Privacidade</string>
     <string name="title_preferences_notifications">Notificações</string>
     <string name="title_preferences_account">Conta</string>
-    <string name="title_pref_chat_available">Disponível no chat</string>
+    <string name="title_pref_chat_available">Disponibilidade no chat</string>
     <string name="title_pref_chat_notifications">Receber notificações de chat</string>
     <string name="title_pref_edit_profile">Editar perfil</string>
     <string name="title_pref_change_password">Mudar senha</string>
