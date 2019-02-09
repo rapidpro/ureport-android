@@ -211,7 +211,8 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     private void loadNewsForPage(int page) {
         if (newsList == null) {
             loadingNews = true;
-            ureportServices.listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization(), page)
+            ureportServices
+                    .listNews(CountryProgramManager.getCurrentCountryProgram().getOrganization(), page)
                     .enqueue(onNewsLoadedCallback);
         }
     }
@@ -315,8 +316,7 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
         });
     }
 
-    private Callback<Response<News>>
-            onNewsLoadedCallback = new Callback<Response<News>>() {
+    private Callback<Response<News>> onNewsLoadedCallback = new Callback<Response<News>>() {
         @Override
         public void onResponse(Call<Response<News>> call, retrofit2.Response<Response<News>> response) {
             final Response<News> body = response.body();

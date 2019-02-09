@@ -20,6 +20,7 @@ public class ServiceFactory {
                 .writeTimeout(1, TimeUnit.MINUTES);
         if (BuildConfig.DEBUG) {
             final HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             clientBuilder.addInterceptor(interceptor);
             builder.client(clientBuilder.build());
         }
