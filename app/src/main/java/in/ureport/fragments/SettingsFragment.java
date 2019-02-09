@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.List;
 
 import in.ureport.R;
+import in.ureport.activities.AboutActivity;
 import in.ureport.activities.HomeActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.CountryProgramManager;
@@ -31,17 +33,12 @@ import in.ureport.network.UserServices;
 public class SettingsFragment extends ProgressFragment {
 
     public static final String TAG = "GeneralSettingsFragment";
+    private static final String URL_PRIVACY_POLICY = "https://ureport.in/about/";
 
     private User user;
     private boolean isAvailableOnChat;
     private UserServices userServices;
 
-    private View selectCountry;
-    private View selectChatAvailability;
-    private View about;
-    private View termsOfUse;
-    private View privacyPolicy;
-    private View logout;
     private TextView chatAvailability;
 
     public static SettingsFragment newInstance() {
@@ -66,17 +63,23 @@ public class SettingsFragment extends ProgressFragment {
         final TextView selectedCountry = view.findViewById(R.id.selectedCountry);
         selectedCountry.setText(CountryProgramManager.getCurrentCountryProgram().getName());
 
-        selectCountry = view.findViewById(R.id.selectCountry);
+        final View selectCountry = view.findViewById(R.id.selectCountry);
         selectCountry.setOnClickListener(onSelectCountryClickListener);
 
-        selectChatAvailability = view.findViewById(R.id.selectChatAvailability);
+        final View selectChatAvailability = view.findViewById(R.id.selectChatAvailability);
         selectChatAvailability.setOnClickListener(onSelectChatAvailabilityClickListener);
-
         chatAvailability = view.findViewById(R.id.chatAvailability);
-        about = view.findViewById(R.id.about);
-        termsOfUse = view.findViewById(R.id.termsOfUse);
-        privacyPolicy = view.findViewById(R.id.privacyPolicy);
-        logout = view.findViewById(R.id.logout);
+
+        final View about = view.findViewById(R.id.about);
+        about.setOnClickListener(onAboutClickListener);
+
+        final View termsOfUse = view.findViewById(R.id.termsOfUse);
+
+        final View privacyPolicy = view.findViewById(R.id.privacyPolicy);
+        privacyPolicy.setOnClickListener(onPrivacyPolicyClickListener);
+
+        final View logout = view.findViewById(R.id.logout);
+        logout.setOnClickListener(onLogoutClickListener);
     }
 
     private void setupObjects() {
@@ -161,6 +164,29 @@ public class SettingsFragment extends ProgressFragment {
             userServices.changePublicProfile(user, false, onChangePublicProfileListener);
             dialog.dismiss();
         });
+    };
+
+    private View.OnClickListener onAboutClickListener = view -> {
+        final Intent intent = new Intent(requireContext(), AboutActivity.class);
+        startActivity(intent);
+    };
+
+    private View.OnClickListener onPrivacyPolicyClickListener = view -> {
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(URL_PRIVACY_POLICY));
+        startActivity(intent);
+    };
+
+    private View.OnClickListener onLogoutClickListener = view -> {
+        final Activity activity = requireActivity();
+        new AlertDialog.Builder(activity)
+                .setMessage(R.string.question_logout)
+                .setPositiveButton(R.string.yes, (dialog, which) -> {
+                    UserManager.logout(activity);
+                    UserManager.startLoginFlow(activity);
+                    activity.finish();
+                })
+                .setNegativeButton(R.string.cancel_dialog_button, (dialog, which) -> dialog.dismiss())
+                .show();
     };
 
 }

@@ -85,6 +85,7 @@
     <string name="label_change_photo">Change photo</string>
     <string name="label_private_information">Private information</string>
     <string name="label_logout">Logout</string>
+    <string name="question_logout">Do you want really logout from U-report?</string>
     <string name="profile_my_stories">My stories</string>
     <string name="profile_answered_polls">Answered Polls</string>
     <string name="profile_ranking">Ranking</string>
