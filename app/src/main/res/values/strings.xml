@@ -59,6 +59,8 @@
     <string name="label_story_view">Story View</string>
     <string name="story_view_contribute">Contribute to this story</string>
     <string name="story_contribution_add">Add a contribution</string>
+    <string name="label_official">Official</string>
+    <string name="label_see_full_news">See full news</string>
     <string name="polls_participate">Answer</string>
     <string name="polls_current">Current poll</string>
     <string name="polls_responded_info">%1$s responded out of %2$s polled</string>

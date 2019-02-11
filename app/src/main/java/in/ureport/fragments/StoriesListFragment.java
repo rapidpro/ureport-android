@@ -1,17 +1,13 @@
 package in.ureport.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,7 +28,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import br.com.ilhasoft.support.tool.ResourceUtil;
-import br.com.ilhasoft.support.tool.StatusBarDesigner;
 import in.ureport.R;
 import in.ureport.activities.StoryViewActivity;
 import in.ureport.helpers.ValueEventListenerAdapter;
@@ -60,7 +55,7 @@ import retrofit2.Callback;
  * Created by johncordeiro on 7/13/15.
  */
 public class StoriesListFragment extends ProgressFragment implements StoriesAdapter.OnStoryViewListener
-        , StoriesAdapter.OnNewsViewListener, StoriesAdapter.OnShareNewsListener, OnNeedUpdateStoryListener {
+        , StoriesAdapter.OnNewsViewListener, OnNeedUpdateStoryListener {
 
     private static final String TAG = "StoriesListFragment";
 
@@ -242,7 +237,6 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
 
         storiesAdapter.setOnStoryViewListener(this);
         storiesAdapter.setOnNewsViewListener(this);
-        storiesAdapter.setOnShareNewsListener(this);
         storiesAdapter.setOnUserStartChattingListener(onUserStartChattingListener);
         storiesAdapter.setOnNeedUpdateStoryListener(this);
         storiesList.setAdapter(storiesAdapter);
@@ -335,13 +329,12 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
     };
 
     @Override
-    public void onNewsViewClick(News news, Pair<View, String>... views) {
-        Intent storyViewIntent = new Intent(getActivity(), StoryViewActivity.class);
+    public void onNewsViewClick(News news) {
+        final Activity activity = requireActivity();
+        Intent storyViewIntent = new Intent(activity, StoryViewActivity.class);
         storyViewIntent.putExtra(StoryViewActivity.EXTRA_NEWS, news);
 
-        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat
-                .makeSceneTransitionAnimation(getActivity(), views);
-        ActivityCompat.startActivity(getActivity(), storyViewIntent, optionsCompat.toBundle());
+        startActivity(storyViewIntent);
     }
 
     private RecyclerView.OnScrollListener onStoriesListScrollListener = new RecyclerView.OnScrollListener() {
@@ -363,12 +356,6 @@ public class StoriesListFragment extends ProgressFragment implements StoriesAdap
                 loadNewsForPage(previousPageLoaded);
             }
         }
-    }
-
-    @Override
-    public void onShareNews(News news) {
-        ShareNewsTask shareNewsTask = new ShareNewsTask(this, news);
-        shareNewsTask.execute();
     }
 
     private RecyclerView.AdapterDataObserver storiesAdapterObserver = new RecyclerView.AdapterDataObserver() {

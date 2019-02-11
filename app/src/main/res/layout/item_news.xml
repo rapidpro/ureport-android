@@ -1,101 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/card_margin"
-    android:clickable="true"
-    android:foreground="?attr/selectableItemBackground">
+    android:padding="16dp"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/authorPicture"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@mipmap/icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/authorName"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:background="#f00">
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/authorPicture"
+        app:layout_constraintTop_toTopOf="@id/authorPicture"
+        app:layout_constraintBottom_toBottomOf="@id/authorPicture"
+        tools:text="U-report Brasil" />
 
-        <ImageView
-            android:id="@+id/cover"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/default_cover_height"
-            android:scaleType="centerCrop"
-            android:transitionName="@string/transition_media"
-            android:background="@drawable/shape_media"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/background_rounded_label_primary_color"
+        android:text="@string/label_official"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/authorName"
+        app:layout_constraintStart_toEndOf="@+id/authorName"
+        app:layout_constraintTop_toTopOf="@+id/authorName" />
 
-        <View
-            android:id="@+id/mediaLayer"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/default_cover_height"
-            android:background="@color/translucent_cover"
-            android:transitionName="@string/transition_media_layer"/>
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/cover"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authorPicture"
+        app:riv_corner_radius="12dp"
+        app:riv_mutate_background="true"
+        tools:src="@drawable/ambassadors_cover" />
 
-        <Button
-            android:id="@+id/share"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="10dp"
-            android:background="@drawable/ic_share_white_24dp"/>
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cover"
+        tools:text="Boosting community development, disease control with sms-based platform" />
 
-        <TextView
-            android:id="@+id/category"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:paddingTop="1dp"
-            android:paddingBottom="1dp"
-            android:background="?attr/colorPrimary"
-            android:textColor="@android:color/white"
-            android:transitionName="@string/transition_news_category"
-            tools:text="@string/news1_category"/>
+    <TextView
+        android:id="@+id/markers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:drawableStart="@drawable/ic_marker"
+        android:drawableLeft="@drawable/ic_marker"
+        android:drawablePadding="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textAllCaps="true"
+        android:textColor="@color/gray"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        tools:text="Water, Violence, Education" />
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_above="@+id/tags"
-            android:maxLines="3"
-            android:gravity="start"
-            android:textAlignment="viewStart"
-            android:ellipsize="end"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:transitionName="@string/transition_story_title"
-            tools:text="Boosting community development, disease control with sms-based platform"/>
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/light_black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/markers"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
 
-        <TextView
-            android:id="@+id/tags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/cover"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:textAllCaps="true"
-            android:maxLines="1"
-            android:textColor="@android:color/white"
-            android:transitionName="@string/transition_tags"
-            tools:text="@string/stories_list_item_author"/>
+    <TextView
+        android:id="@+id/seeFullNews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="10dp"
+        android:padding="8dp"
+        android:text="@string/label_see_full_news"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/content" />
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/cover"
-            android:gravity="start"
-            android:textAlignment="viewStart"
-            android:maxLines="3"
-            android:ellipsize="end"
-            android:textSize="16sp"
-            android:padding="10dp"
-            tools:text="Description"/>
-
-    </RelativeLayout>
-
-</android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

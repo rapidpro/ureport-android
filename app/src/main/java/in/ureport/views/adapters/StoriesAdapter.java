@@ -1,7 +1,6 @@
 package in.ureport.views.adapters;
 
 import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +41,6 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
     private OnNewsViewListener onNewsViewListener;
     private StoryModerationListener storyModerationListener;
     private OnUserStartChattingListener onUserStartChattingListener;
-    private OnShareNewsListener onShareNewsListener;
     private OnNeedUpdateStoryListener onNeedUpdateStoryListener;
 
     public StoriesAdapter(InfiniteFireArray<Story> snapshots) {
@@ -62,9 +60,9 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
         switch(type) {
             case TYPE_NEWS:
                 View newsView = inflater.inflate(R.layout.item_news, viewGroup, false);
-                return new NewsItemViewHolder(newsView, onNewsViewListener, onShareNewsListener);
+                return new NewsItemViewHolder(newsView, onNewsViewListener);
             default:
-                View view = inflater.inflate(R.layout.item_story_, viewGroup, false);
+                View view = inflater.inflate(R.layout.item_story, viewGroup, false);
                 if (moderationType) {
                     return new ModeratedItemViewHolder(view);
                 } else {
@@ -154,10 +152,6 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
         this.onUserStartChattingListener = onUserStartChattingListener;
     }
 
-    public void setOnShareNewsListener(OnShareNewsListener onShareNewsListener) {
-        this.onShareNewsListener = onShareNewsListener;
-    }
-
     public void setOnNeedUpdateStoryListener(OnNeedUpdateStoryListener onNeedUpdateStoryListener) {
         this.onNeedUpdateStoryListener = onNeedUpdateStoryListener;
     }
@@ -240,7 +234,7 @@ public class StoriesAdapter extends InfiniteFireRecyclerViewAdapter<Story> {
     }
 
     public interface OnNewsViewListener {
-        void onNewsViewClick(News news, Pair<View, String>... views);
+        void onNewsViewClick(News news);
     }
 
     public interface OnShareNewsListener {

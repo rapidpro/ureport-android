@@ -1,192 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/card_margin"
-    android:clickable="true"
-    android:foreground="?attr/selectableItemBackground">
+    android:padding="16dp"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/authorPicture"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/face" />
+
+    <TextView
+        android:id="@+id/authorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="4dp"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/authorPicture"
+        app:layout_constraintTop_toTopOf="@+id/authorPicture"
+        tools:text="Jon Snow" />
+
+    <TextView
+        android:id="@+id/publishedDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/gray"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/authorPicture"
+        app:layout_constraintStart_toEndOf="@+id/authorPicture"
+        app:layout_constraintTop_toBottomOf="@+id/authorName"
+        tools:text="January 23, 2019" />
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/cover"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="16dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/authorPicture"
+        app:riv_corner_radius="12dp"
+        app:riv_mutate_background="true"
+        tools:src="@drawable/ambassadors_cover" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@android:color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cover"
+        tools:text="Boosting community development, disease control with sms-based platform" />
+
+    <TextView
+        android:id="@+id/markers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:drawableStart="@drawable/ic_marker"
+        android:drawableLeft="@drawable/ic_marker"
+        android:drawablePadding="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textAllCaps="true"
+        android:textColor="@color/gray"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        tools:text="Water, Violence, Education" />
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textColor="@color/light_black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/markers"
+        tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." />
+
+    <TextView
+        android:id="@+id/likeCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_favorite_border"
+        android:drawableLeft="@drawable/ic_favorite_border"
+        android:drawablePadding="8dp"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/content"
+        tools:text="25" />
+
+    <TextView
+        android:id="@+id/contributionsCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:drawableStart="@drawable/ic_chat_bubble"
+        android:drawableLeft="@drawable/ic_chat_bubble"
+        android:drawablePadding="8dp"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/likeCount"
+        app:layout_constraintTop_toBottomOf="@+id/content"
+        tools:text="17" />
+
+    <TextView
+        android:id="@+id/readFullStory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="8dp"
+        android:text="@string/story_item_read_full_story"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/content"
+        tools:textColor="@color/primary_color" />
+
+    <ViewStub
+        android:id="@+id/moderationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="@dimen/item_story_height"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_marginTop="16dp"
+        android:layout="@layout/view_moderation_story"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/readFullStory"
+        tools:visibility="visible" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/picture"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:transitionName="@string/transition_profile_picture"
-            tools:src="@drawable/face" />
-
-        <LinearLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@+id/picture"
-            android:layout_toRightOf="@+id/picture"
-            android:orientation="vertical"
-            android:weightSum="1">
-
-            <TextView
-                android:id="@+id/tags"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
-                android:gravity="center_vertical|start"
-                android:textAlignment="viewStart"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:transitionName="@string/transition_profile_nickname"
-                tools:text="\@Jon Snow" />
-
-            <TextView
-                android:id="@+id/publishedDate"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.5"
-                android:gravity="center_vertical|start"
-                android:textAlignment="viewStart"
-                android:textColor="@android:color/black"
-                android:textSize="12sp"
-                android:transitionName="@string/transition_profile_nickname"
-                tools:text="\@Jon Snow" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/container"
-            android:layout_marginTop="10dp"
-            android:ellipsize="end"
-            android:gravity="start"
-            android:maxLines="2"
-            android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:transitionName="@string/transition_story_title"
-            tools:text="Boosting community development, disease control with sms-based platform" />
-
-        <TextView
-            android:id="@+id/markers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title"
-            android:layout_marginTop="5dp"
-            android:drawableLeft="@drawable/ic_marker"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_marker"
-            android:ellipsize="end"
-            android:gravity="center_vertical|start"
-            android:maxLines="2"
-            android:textAlignment="viewStart"
-            android:visibility="visible"
-            tools:text="Water, Violence, Education" />
-
-        <TextView
-            android:id="@+id/filesAttached"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/markers"
-            android:layout_marginTop="5dp"
-            android:drawableLeft="@drawable/ic_file_attached"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_file_attached"
-            android:ellipsize="end"
-            android:gravity="center_vertical|start"
-            android:maxLines="2"
-            android:textAlignment="viewStart"
-            android:visibility="visible"
-            tools:text="3 files attached" />
-
-        <View
-            android:id="@+id/line"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/filesAttached"
-            android:layout_marginTop="10dp"
-            android:background="@color/line" />
-
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/item_story_height"
-            android:layout_below="@+id/line"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="10dp"
-            android:scaleType="centerCrop"
-            android:visibility="visible"
-            tools:src="@drawable/tutorial_item1" />
-
-        <TextView
-            android:id="@+id/summary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/image"
-            android:layout_marginTop="5dp"
-            android:ellipsize="end"
-            android:gravity="center_vertical|start"
-            android:maxLines="4"
-            android:textAlignment="viewStart"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            tools:text="Story 1 content" />
-
-        <TextView
-            android:id="@+id/contributors"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/summary"
-            android:layout_marginTop="10dp"
-            android:drawableLeft="@drawable/ic_person_black_24dp"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/ic_person_black_24dp"
-            android:gravity="center_vertical"
-            android:textSize="14sp"
-            tools:text="25 contributions" />
-
-        <TextView
-            android:id="@+id/likeCountText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/contributors"
-            android:layout_marginTop="2dp"
-            android:drawableLeft="@drawable/ic_like_small"
-            android:drawablePadding="10dp"
-            android:drawableStart="@drawable/ic_like_small"
-            android:gravity="center_vertical"
-            android:textSize="14sp"
-            android:visibility="gone"
-            tools:text="25 likes"
-            tools:visibility="visible" />
-
-        <Button
-            android:id="@+id/readFullStory"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_below="@+id/likeCountText"
-            android:background="@null"
-            android:text="@string/story_item_contribute_to_story"
-            android:textColor="?attr/colorPrimary" />
-
-        <include
-            android:id="@+id/storyModeration"
-            layout="@layout/view_moderation_story"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@+id/likeCountText"
-            android:layout_marginTop="5dp"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-    </RelativeLayout>
-
-</android.support.v7.widget.CardView>
+</android.support.constraint.ConstraintLayout>

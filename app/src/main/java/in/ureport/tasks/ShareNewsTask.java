@@ -20,9 +20,8 @@ public class ShareNewsTask extends ShareViewTask<News> {
     @Override
     protected View createViewForObject(News object) {
         LayoutInflater inflater = LayoutInflater.from(fragment.getContext());
-        NewsItemViewHolder itemViewHolder = new NewsItemViewHolder(inflater.inflate(R.layout.item_news, null), null, null);
+        NewsItemViewHolder itemViewHolder = new NewsItemViewHolder(inflater.inflate(R.layout.item_news, null), null);
         itemViewHolder.bind(object);
-        itemViewHolder.prepareForShare();
         return itemViewHolder.itemView;
     }
 }
