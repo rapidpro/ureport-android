@@ -118,6 +118,11 @@
 -keep interface com.squareup.okhttp.** { *; }
 -dontwarn com.squareup.okhttp.**
 
+-dontwarn okhttp3.**
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
 -dontwarn rx.**
 -dontwarn retrofit.**
 -keep class retrofit.** { *; }
@@ -196,3 +201,6 @@
 -keep class io.rapidpro.sdk.core.network.** { *; }
 -keep class io.rapidpro.sdk.services.** { *; }
 
+# iText
+-keep class com.itextpdf.** { *; }
+-dontwarn com.itextpdf.**

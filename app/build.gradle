@@ -56,8 +56,8 @@ android {
     productFlavors {
         regular {
             defaultConfig {
-                versionCode 47
-                versionName "2.8.5"
+                versionCode 48
+                versionName "2.8.6"
             }
         }
         onthemove {
