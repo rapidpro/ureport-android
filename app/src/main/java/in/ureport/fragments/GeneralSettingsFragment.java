@@ -184,6 +184,7 @@ public class GeneralSettingsFragment extends PreferenceFragmentCompat {
         firebaseFunctions.getHttpsCallable("clearData")
                 .call()
                 .continueWith(Task::getResult)
+                .addOnFailureListener(Throwable::printStackTrace)
                 .addOnCompleteListener(task -> {
                     progressDialog.dismiss();
                     if (task.getResult() != null) {
