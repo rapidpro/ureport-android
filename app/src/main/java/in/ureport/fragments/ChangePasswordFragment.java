@@ -1,6 +1,5 @@
 package in.ureport.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,8 +26,6 @@ public class ChangePasswordFragment extends ProgressFragment {
 
     private EditTextValidator validator;
 
-    private UserSettingsFragment.UserSettingsListener userSettingsListener;
-
     private EditText oldPassword;
     private EditText newPassword;
 
@@ -40,14 +37,6 @@ public class ChangePasswordFragment extends ProgressFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         firebaseAuth = FirebaseAuth.getInstance();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof UserSettingsFragment.UserSettingsListener) {
-            userSettingsListener = (UserSettingsFragment.UserSettingsListener) context;
-        }
     }
 
     @Nullable
@@ -96,9 +85,8 @@ public class ChangePasswordFragment extends ProgressFragment {
         passwordChangeListener = task -> {
             dismissLoading();
             if (task.getException() == null) {
-                if (userSettingsListener != null) {
-                    userSettingsListener.onEditFinished();
-                }
+                Toast.makeText(getContext(), R.string.message_success_user_update, Toast.LENGTH_SHORT).show();
+                requireActivity().onBackPressed();
             } else {
                 Toast.makeText(getContext(), R.string.error_update_user, Toast.LENGTH_SHORT).show();
             }

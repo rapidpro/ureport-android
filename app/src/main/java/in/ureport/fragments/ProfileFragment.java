@@ -39,6 +39,7 @@ import in.ureport.activities.ProfileActivity;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.helpers.ValueEventListenerAdapter;
 import in.ureport.managers.CountryProgramManager;
+import in.ureport.managers.FirebaseManager;
 import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.models.holders.NavigationItem;
@@ -104,7 +105,11 @@ public class ProfileFragment extends ProgressFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.edit) {
-            displayUpdateOptions();
+            if (user != null && user.getType() == User.Type.ureport) {
+                displayUpdateOptions();
+            } else {
+                addEditProfileFragment(user);
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
