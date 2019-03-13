@@ -9,12 +9,9 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.Locale;
 
 import in.ureport.R;
 import in.ureport.fragments.ChatsFragment;
@@ -94,6 +91,13 @@ public class HomeActivity extends AppCompatActivity implements StoriesListFragme
 
     private void setupView() {
         BottomNavigationView bottomNavigation = findViewById(R.id.bottom_navigation);
+
+        if (!UserManager.isUserLoggedIn()) {
+            bottomNavigation.setVisibility(View.GONE);
+            switchToHome();
+            return;
+        }
+
         bottomNavigation.setOnNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.main:
