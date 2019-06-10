@@ -266,6 +266,11 @@ public class UserManager {
         systemPreferences.setUserLoggedRapidUuid(SystemPreferences.USER_NO_LOGGED_ID);
         systemPreferences.setCountryCode("");
         systemPreferences.setCountryToken("");
+        systemPreferences.setMaster(false);
+        systemPreferences.setModerator(false);
+
+        master = false;
+        moderator = false;
     }
 
     public static void startLoginFlow(Context context) {
