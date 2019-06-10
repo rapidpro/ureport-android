@@ -141,19 +141,20 @@ public class ProfileFragment extends ProgressFragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 super.onDataChange(dataSnapshot);
-                final List<User> users = new ArrayList<>(1000);
-                for (DataSnapshot data : dataSnapshot.getChildren()) {
-                    users.add(data.getValue(User.class));
-                }
-                Collections.reverse(users);
-                if (!isAdded()) {
-                    return;
-                }
-                int userPosition = users.indexOf(user) + 1;
-                ranking.setText(makeUserMetricTextTemplate(
-                        String.valueOf(userPosition).concat("º"),
-                        getString(R.string.profile_ranking).toLowerCase()
-                ));
+                new Thread(() -> {
+                    final List<User> users = new ArrayList<>(1000);
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        users.add(data.getValue(User.class));
+                    }
+                    int userPosition = users.size() - users.indexOf(user);
+
+                    ranking.post(() -> {
+                        ranking.setText(makeUserMetricTextTemplate(
+                                String.valueOf(userPosition).concat("º"),
+                                getString(R.string.profile_ranking).toLowerCase()
+                        ));
+                    });
+                }).start();
             }
         });
     }
