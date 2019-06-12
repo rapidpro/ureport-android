@@ -214,7 +214,7 @@ public class StoryViewFragment extends ProgressFragment implements
 
     private void updateLikes(int likesCount) {
         storyLikeCount = likesCount;
-        likeCount.setText(getResources().getQuantityString(R.plurals.like_count, storyLikeCount, storyLikeCount));
+        likeCount.setText(String.valueOf(likesCount));
     }
 
     private void checkLikeForUser() {
@@ -475,7 +475,7 @@ public class StoryViewFragment extends ProgressFragment implements
     }
 
     private String getContributionsText(Story story) {
-        return String.format(getString(R.string.stories_list_item_contributions), story.getContributions());
+        return String.valueOf(story.getContributions());
     }
 
     private View.OnClickListener onShareClickListener = view -> shareStory();
