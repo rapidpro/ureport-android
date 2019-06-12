@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,6 +14,9 @@ import java.util.List;
 public class News implements Parcelable {
 
     private Integer id;
+
+    @SerializedName("created_on")
+    private Date createdAt;
 
     private String title;
 
@@ -40,6 +44,14 @@ public class News implements Parcelable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Date getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getTitle() {
@@ -138,6 +150,7 @@ public class News implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.id);
+        dest.writeLong(this.createdAt.getTime());
         dest.writeString(this.title);
         dest.writeValue(this.featured);
         dest.writeString(this.summary);
@@ -154,6 +167,7 @@ public class News implements Parcelable {
 
     protected News(Parcel in) {
         this.id = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.createdAt = new Date(in.readLong());
         this.title = in.readString();
         this.featured = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.summary = in.readString();
@@ -179,6 +193,7 @@ public class News implements Parcelable {
     public String toString() {
         return "News{" +
                 "id=" + id +
+                ", createdAt=" + createdAt +
                 ", title='" + title + '\'' +
                 ", featured=" + featured +
                 ", summary='" + summary + '\'' +

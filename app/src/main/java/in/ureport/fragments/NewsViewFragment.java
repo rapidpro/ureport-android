@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,10 +21,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.ilhasoft.support.tool.DateFormatter;
 import br.com.ilhasoft.support.tool.UnitConverter;
 import in.ureport.R;
 import in.ureport.helpers.ImageLoader;
 import in.ureport.helpers.SpaceItemDecoration;
+import in.ureport.managers.CountryProgramManager;
 import in.ureport.models.Media;
 import in.ureport.models.News;
 import in.ureport.tasks.ShareNewsTask;
@@ -44,7 +45,7 @@ public class NewsViewFragment extends Fragment {
 
     private MediaAdapter.OnMediaViewListener onMediaViewListener;
 
-    private FloatingActionButton share;
+    private ImageView share;
 
     public static NewsViewFragment newInstance(News news) {
         NewsViewFragment newsViewFragment = new NewsViewFragment();
@@ -93,28 +94,35 @@ public class NewsViewFragment extends Fragment {
         activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         activity.setTitle("");
 
-        TextView category = (TextView) view.findViewById(R.id.category);
-        if(news.getCategory() != null && news.getCategory().getName() != null) {
-            category.setText(news.getCategory().getName());
-        }
+        TextView authorName = view.findViewById(R.id.authorName);
+        authorName.setText(getString(R.string.ureport_name,
+                CountryProgramManager.getCurrentCountryProgram().getName()));
 
-        TextView title = (TextView) view.findViewById(R.id.title);
+        DateFormatter dateFormatter = new DateFormatter();
+        String timeElapsed = dateFormatter.getTimeElapsed(news.getCreatedAt().getTime(),
+                requireContext().getString(R.string.date_now));
+
+        TextView publishedDate = view.findViewById(R.id.publishedDate);
+        publishedDate.setText(timeElapsed);
+
+        TextView title = view.findViewById(R.id.title);
         title.setText(news.getTitle());
 
-        TextView content = (TextView) view.findViewById(R.id.content);
+        TextView content = view.findViewById(R.id.content);
         content.setText(news.getSummary());
 
-        TextView author = (TextView) view.findViewById(R.id.tags);
-        author.setText(news.getTags());
+        TextView markers = view.findViewById(R.id.markers);
+        markers.setText(news.getTags());
 
-        ImageView cover = (ImageView) view.findViewById(R.id.cover);
-        if(hasImages()) {
+        ImageView cover = view.findViewById(R.id.cover);
+        if (hasImages()) {
             ImageLoader.loadGenericPictureToImageViewFit(cover, news.getImages().get(0));
+        } else {
+            cover.setVisibility(View.GONE);
         }
 
-        share = (FloatingActionButton) view.findViewById(R.id.share);
+        share = view.findViewById(R.id.share);
         share.setOnClickListener(onShareClickListener);
-        showFloatingButton();
 
         setupMediaList(view);
     }
@@ -131,20 +139,13 @@ public class NewsViewFragment extends Fragment {
         share.startAnimation(animation);
     }
 
-    private void showFloatingButton() {
-        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.scale_floating_button_in);
-        animation.setStartOffset(START_OFFSET_FAB_ANIMATION);
-        animation.setInterpolator(new OvershootInterpolator());
-        share.startAnimation(animation);
-    }
-
     private boolean hasImages() {
         return news.getImages() != null && !news.getImages().isEmpty();
     }
 
     private void setupMediaList(View view) {
-        RecyclerView mediaList = (RecyclerView) view.findViewById(R.id.mediaList);
-        if(hasImages()) {
+        RecyclerView mediaList = view.findViewById(R.id.mediaList);
+        if (hasImages()) {
             mediaList.setVisibility(View.VISIBLE);
             mediaList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
