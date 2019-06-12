@@ -45,8 +45,7 @@
                 android:padding="8dp"
                 android:text="@string/label_change_photo"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:textSize="15sp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="@+id/photo"
                 app:layout_constraintStart_toStartOf="@+id/photo"
@@ -70,6 +69,7 @@
                     android:id="@+id/nickname"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_edit_border_bottom"
                     android:hint="@string/sign_up_nickname"
                     android:inputType="text"
                     android:maxLines="1" />
@@ -93,6 +93,7 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_edit_border_bottom"
                     android:hint="@string/email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1" />
@@ -116,6 +117,7 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_edit_border_bottom"
                     android:hint="@string/login_password"
                     android:inputType="textPassword" />
 
@@ -138,6 +140,7 @@
                     android:id="@+id/birthday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/bg_edit_border_bottom"
                     android:focusable="false"
                     android:hint="@string/sign_up_birthday"
                     android:inputType="date" />
@@ -153,6 +156,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
+                android:background="@drawable/bg_spinner_border_bottom"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/birthdayLayout" />
@@ -166,6 +170,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
+                android:background="@drawable/bg_spinner_border_bottom"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/country" />
@@ -179,6 +184,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
+                android:background="@drawable/bg_spinner_border_bottom"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -194,6 +200,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
+                android:background="@drawable/bg_spinner_border_bottom"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/district" />
@@ -241,7 +248,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/line"
                 tools:visibility="visible" />
 
-            <Button
+            <TextView
                 android:id="@+id/deleteAccount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -250,12 +257,16 @@
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:background="@android:color/transparent"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
                 android:text="@string/delete_account"
                 android:textColor="@color/red"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
