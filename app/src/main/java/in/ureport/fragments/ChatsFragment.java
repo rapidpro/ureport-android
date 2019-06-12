@@ -148,6 +148,12 @@ public class ChatsFragment extends Fragment implements ChatRoomsAdapter.OnChatRo
         startActivityForResult(chatRoomIntent, REQUEST_CODE_CHAT_ROOM);
     }
 
+    public static void startChatRoom(Activity context, ChatRoom chatRoom) {
+        Intent chatRoomIntent = new Intent(context, ChatRoomActivity.class);
+        chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM_KEY, chatRoom.getKey());
+        context.startActivityForResult(chatRoomIntent, REQUEST_CODE_CHAT_ROOM);
+    }
+
     private void startChatRoomWithMembers(ChatRoom chatRoom, ChatMembers members) {
         Intent chatRoomIntent = new Intent(getActivity(), ChatRoomActivity.class);
         chatRoomIntent.putExtra(ChatRoomActivity.EXTRA_CHAT_ROOM, chatRoom);
