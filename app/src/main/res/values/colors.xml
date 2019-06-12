@@ -10,6 +10,8 @@
     <color name="statusbar_default">#808080</color>
     <color name="yellow">#ebce2c</color>
 
+    <color name="gray_bold">#2C2A29</color>
+
     <color name="highlight">#ec2248</color>
     <color name="very_light_gray">#f2f2f2</color>
     <color name="light_gray">#e8e8e8</color>
@@ -21,6 +23,7 @@
 
     <color name="light_green_highlight">#00d755</color>
     <color name="dark_green_highlight">#00cd4e</color>
+    <color name="fun_green">#009A17</color>
 
     <color name="light_yellow_highlight">#ffcc01</color>
     <color name="dark_yellow_highlight">#f7bb01</color>

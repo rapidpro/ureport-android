@@ -22,6 +22,7 @@
     <dimen name="tutorial_image_height">230dp</dimen>
 
     <dimen name="login_item_width">300dp</dimen>
+    <dimen name="login_item_height">44dp</dimen>
     <dimen name="credential_item_width">400dp</dimen>
 
     <dimen name="max_chat_item_width">-1dp</dimen>

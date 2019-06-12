@@ -95,7 +95,7 @@ public class CredentialsLoginFragment extends ProgressFragment {
 
     private void setLoginStatusBarColor() {
         StatusBarDesigner statusBarDesigner = new StatusBarDesigner();
-        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.dark_green_highlight);
+        statusBarDesigner.setStatusBarColorById(getActivity(), R.color.fun_green);
     }
 
     private void setupContextDependencies() {

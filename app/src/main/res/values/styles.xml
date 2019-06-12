@@ -64,6 +64,7 @@
 
     <style name="AppTheme.CustomButton">
         <item name="android:layout_width">@dimen/login_item_width</item>
+        <item name="android:layout_height">@dimen/login_item_height</item>
         <item name="android:layout_marginLeft">25dp</item>
         <item name="android:layout_marginRight">25dp</item>
         <item name="android:textColor">@android:color/white</item>
