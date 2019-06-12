@@ -136,14 +136,15 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         this.chatRooms.addAll(chatRooms);
     }
 
-    public int addChatRoom(ChatRoomHolder newChatRoomHolder) {
+    public void addChatRoom(ChatRoomHolder newChatRoomHolder) {
+        if (newChatRoomHolder.members.getUsers().size() == 2
+                && newChatRoomHolder.members.getUsers().contains(null)) return;
+
         int indexOfChatRoom = getIndexOfChatRoom(newChatRoomHolder);
         if (indexOfChatRoom < 0) {
             chatRooms.add(newChatRoomHolder);
-            return chatRooms.size() - 1;
         } else {
             chatRooms.set(indexOfChatRoom, newChatRoomHolder);
-            return indexOfChatRoom;
         }
     }
 
