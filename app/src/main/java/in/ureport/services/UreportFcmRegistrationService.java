@@ -13,8 +13,8 @@ import in.ureport.models.Story;
 import in.ureport.models.User;
 import in.ureport.network.StoryServices;
 import in.ureport.network.UserServices;
-import io.rapidpro.sdk.core.models.v2.Contact;
-import io.rapidpro.sdk.services.FcmClientRegistrationIntentService;
+import io.fcmchannel.sdk.core.models.v2.Contact;
+import io.fcmchannel.sdk.services.FcmClientRegistrationIntentService;
 
 /**
  * Created by John Cordeiro on 5/15/17.

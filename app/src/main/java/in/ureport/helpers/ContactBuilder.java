@@ -13,8 +13,8 @@ import java.util.TimeZone;
 
 import in.ureport.models.CountryProgram;
 import in.ureport.models.User;
-import io.rapidpro.sdk.core.models.Field;
-import io.rapidpro.sdk.core.models.v1.Contact;
+import io.fcmchannel.sdk.core.models.Field;
+import io.fcmchannel.sdk.core.models.v1.Contact;
 
 import static java.util.Calendar.DATE;
 import static java.util.Calendar.MONTH;

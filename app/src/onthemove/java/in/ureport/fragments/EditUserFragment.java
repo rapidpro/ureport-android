@@ -16,7 +16,7 @@ import in.ureport.models.User;
 import in.ureport.models.holders.UserGender;
 import in.ureport.network.UserServices;
 import in.ureport.tasks.SaveContactTask;
-import io.rapidpro.sdk.core.models.base.ContactBase;
+import io.fcmchannel.sdk.core.models.base.ContactBase;
 
 /**
  * Created by johncordeiro on 10/09/15.

@@ -26,7 +26,7 @@ import in.ureport.models.GroupChatRoom;
 import in.ureport.models.IndividualChatRoom;
 import in.ureport.models.User;
 import in.ureport.models.holders.ChatRoomHolder;
-import io.rapidpro.sdk.FcmClient;
+import io.fcmchannel.sdk.FcmClient;
 
 /**
  * Created by johncordeiro on 19/07/15.

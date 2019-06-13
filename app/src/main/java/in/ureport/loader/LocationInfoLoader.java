@@ -17,9 +17,9 @@ import in.ureport.models.holders.LocationInfo;
 import in.ureport.models.ip.ProxyResponse;
 import in.ureport.network.GeonamesServices;
 import in.ureport.network.ProxyServices;
-import io.rapidpro.sdk.core.models.Boundary;
-import io.rapidpro.sdk.core.models.network.ApiResponse;
-import io.rapidpro.sdk.core.network.RapidProServices;
+import io.fcmchannel.sdk.core.models.Boundary;
+import io.fcmchannel.sdk.core.models.network.ApiResponse;
+import io.fcmchannel.sdk.core.network.RestServices;
 
 /**
  * Created by johncordeiro on 10/09/15.
@@ -56,13 +56,13 @@ public class LocationInfoLoader extends AsyncTaskLoader<LocationInfo> {
     @NonNull
     private List<Boundary> loadBoundariesByRapidPro(String apiToken) throws IOException {
         CountryProgram countryProgram = CountryProgramManager.getCountryProgramForCode(countryInfo.getIsoAlpha3());
-        RapidProServices rapidProServices = new RapidProServices(getContext().getString(countryProgram.getRapidproEndpoint()), apiToken);
+        RestServices restServices = new RestServices(getContext().getString(countryProgram.getRapidproEndpoint()), apiToken);
 
         List<Boundary> boundaries = new ArrayList<>();
         ApiResponse<Boundary> response;
         int page = 1;
         do {
-            response = rapidProServices.loadBoundaries(page, true).execute().body();
+            response = restServices.loadBoundaries(page, true).execute().body();
             boundaries.addAll(response.getResults());
 
             page++;

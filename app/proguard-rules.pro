@@ -192,7 +192,7 @@
 -dontnote com.amazonaws.services.sqs.QueueUrlHandler
 
 #Fcm Client
--keep class io.rapidpro.sdk.core.models.** { *; }
--keep class io.rapidpro.sdk.core.network.** { *; }
--keep class io.rapidpro.sdk.services.** { *; }
+-keep class io.fcmchannel.sdk.core.models.** { *; }
+-keep class io.fcmchannel.sdk.core.network.** { *; }
+-keep class io.fcmchannel.sdk.services.** { *; }
 

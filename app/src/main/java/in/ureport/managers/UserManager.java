@@ -24,8 +24,8 @@ import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
 import in.ureport.services.UreportFcmRegistrationService;
-import io.rapidpro.sdk.FcmClient;
-import io.rapidpro.sdk.UiConfiguration;
+import io.fcmchannel.sdk.FcmClient;
+import io.fcmchannel.sdk.UiConfiguration;
 
 /**
  * Created by johncordeiro on 21/07/15.

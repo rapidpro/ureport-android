@@ -205,7 +205,7 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/primary_color" />
 
-        <activity android:name="io.rapidpro.sdk.chat.FcmClientChatActivity" />
+        <activity android:name="io.fcmchannel.sdk.chat.FcmClientChatActivity" />
 
         <service android:name=".services.UreportFcmReceivedListener">
             <intent-filter>
@@ -218,14 +218,14 @@
             android:exported="false" />
 
         <service
-            android:name="io.rapidpro.sdk.services.FcmClientInstanceIntentIdService"
+            android:name="io.fcmchannel.sdk.services.FcmClientInstanceIntentIdService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
-        <service android:name="io.rapidpro.sdk.chat.menu.FcmClientMenuService" />
+        <service android:name="io.fcmchannel.sdk.chat.menu.FcmClientMenuService" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

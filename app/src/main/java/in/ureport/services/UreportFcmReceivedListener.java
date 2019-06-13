@@ -21,7 +21,7 @@ import in.ureport.models.gcm.Type;
 import in.ureport.network.FcmServices;
 import in.ureport.tasks.ChatNotificationTask;
 import in.ureport.tasks.ContributionNotificationTask;
-import io.rapidpro.sdk.services.FcmClientIntentService;
+import io.fcmchannel.sdk.services.FcmClientIntentService;
 
 /**
  * Created by John Cordeiro on 5/19/17.

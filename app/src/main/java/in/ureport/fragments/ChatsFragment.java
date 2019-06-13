@@ -23,7 +23,7 @@ import in.ureport.models.ChatMembers;
 import in.ureport.models.ChatRoom;
 import in.ureport.models.holders.ChatRoomHolder;
 import in.ureport.views.adapters.ChatRoomsAdapter;
-import io.rapidpro.sdk.FcmClient;
+import io.fcmchannel.sdk.FcmClient;
 
 /**
  * Created by john-mac on 4/27/16.

@@ -25,7 +25,7 @@ import in.ureport.managers.UserManager;
 import in.ureport.models.User;
 import in.ureport.network.UserServices;
 import in.ureport.tasks.SaveContactTask;
-import io.rapidpro.sdk.core.models.base.ContactBase;
+import io.fcmchannel.sdk.core.models.base.ContactBase;
 
 /**
  * Created by johncordeiro on 7/7/15.

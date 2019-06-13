@@ -17,8 +17,8 @@ import in.ureport.managers.FirebaseProxyManager;
 import in.ureport.managers.UserManager;
 import in.ureport.services.UreportFcmRegistrationService;
 import io.fabric.sdk.android.Fabric;
-import io.rapidpro.sdk.FcmClient;
-import io.rapidpro.sdk.UiConfiguration;
+import io.fcmchannel.sdk.FcmClient;
+import io.fcmchannel.sdk.UiConfiguration;
 
 /**
  * Created by johncordeiro on 7/9/15.

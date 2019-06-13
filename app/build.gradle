@@ -113,7 +113,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.1'
 
     implementation 'com.github.allancslima:Infinite-Fire:2.0.1'
-    implementation('com.github.ilhasoft.rapidpro-android-sdk:fcm-channel:1.0.4.2') {
+    implementation('com.github.ilhasoft.rapidpro-android-sdk:fcm-channel:1.0.6') {
         exclude group: 'com.android.support'
         exclude group: 'com.google.firebase'
     }

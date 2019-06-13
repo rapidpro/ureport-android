@@ -43,8 +43,8 @@ import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
 import in.ureport.tasks.SaveContactTask;
 import in.ureport.views.adapters.NavigationAdapter;
-import io.rapidpro.sdk.FcmClient;
-import io.rapidpro.sdk.core.models.base.ContactBase;
+import io.fcmchannel.sdk.FcmClient;
+import io.fcmchannel.sdk.core.models.base.ContactBase;
 
 /**
  * Created by johncordeiro on 7/9/15.

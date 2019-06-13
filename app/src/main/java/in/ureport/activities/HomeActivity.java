@@ -35,8 +35,8 @@ import in.ureport.network.ChatRoomServices;
 import in.ureport.network.UserServices;
 import in.ureport.pref.SystemPreferences;
 import in.ureport.tasks.SaveContactTask;
-import io.rapidpro.sdk.FcmClient;
-import io.rapidpro.sdk.core.models.base.ContactBase;
+import io.fcmchannel.sdk.FcmClient;
+import io.fcmchannel.sdk.core.models.base.ContactBase;
 
 public class HomeActivity extends AppCompatActivity
         implements StoriesListFragment.OnPublishStoryListener, OnUserStartChattingListener {

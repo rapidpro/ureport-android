@@ -29,11 +29,11 @@ import in.ureport.models.User;
 import in.ureport.models.geonames.CountryInfo;
 import in.ureport.models.ip.ProxyResponse;
 import in.ureport.network.ProxyServices;
-import io.rapidpro.sdk.FcmClient;
-import io.rapidpro.sdk.core.models.Field;
-import io.rapidpro.sdk.core.models.base.ContactBase;
-import io.rapidpro.sdk.core.models.v1.Contact;
-import io.rapidpro.sdk.core.network.RapidProServices;
+import io.fcmchannel.sdk.FcmClient;
+import io.fcmchannel.sdk.core.models.Field;
+import io.fcmchannel.sdk.core.models.base.ContactBase;
+import io.fcmchannel.sdk.core.models.v1.Contact;
+import io.fcmchannel.sdk.core.network.RestServices;
 
 /**
  * Created by johncordeiro on 18/08/15.
@@ -42,7 +42,7 @@ public class SaveContactTask extends AsyncTask<Void, Void, ContactBase> {
 
     private static final String TAG = "SaveContactTask";
 
-    private RapidProServices rapidProServices;
+    private RestServices restServices;
 
     private CountryInfo countryInfo;
     private Contact currentContact;
@@ -82,7 +82,7 @@ public class SaveContactTask extends AsyncTask<Void, Void, ContactBase> {
     protected ContactBase doInBackground(Void... params) {
         ContactBase contact = null;
         try {
-            rapidProServices = new RapidProServices(rapidproEndpoint, proxyToken);
+            restServices = new RestServices(rapidproEndpoint, proxyToken);
 
             UserManager.updateCountryToken(proxyToken);
             if (proxyToken != null && !proxyToken.isEmpty()) {
@@ -107,11 +107,11 @@ public class SaveContactTask extends AsyncTask<Void, Void, ContactBase> {
         return CountryProgramManager.getCountryProgramForCode(countryProgramCode);
     }
 
-    private io.rapidpro.sdk.core.models.v1.Contact loadCurrentContact(User user) {
+    private io.fcmchannel.sdk.core.models.v1.Contact loadCurrentContact(User user) {
         String extUrn = ContactBuilder.formatExtUrn(user.getKey());
         String fcmUrn = ContactBuilder.formatFcmUrn(user.getKey());
 
-        io.rapidpro.sdk.core.models.v1.Contact contact = loadContactWithUrn(extUrn);
+        io.fcmchannel.sdk.core.models.v1.Contact contact = loadContactWithUrn(extUrn);
         if (contact == null) {
             contact = loadContactWithUrn(fcmUrn);
         }
@@ -123,7 +123,7 @@ public class SaveContactTask extends AsyncTask<Void, Void, ContactBase> {
         updateContactWithUuid(contact);
         updateContactWithGroups(contact);
         try {
-            return rapidProServices.saveContactV1(contact).execute().body();
+            return restServices.saveContactV1(contact).execute().body();
         } catch (IOException exception) {
             AnalyticsHelper.sendException(exception);
             Log.e(TAG, "doInBackground ", exception);
@@ -146,15 +146,15 @@ public class SaveContactTask extends AsyncTask<Void, Void, ContactBase> {
         }
     }
 
-    private io.rapidpro.sdk.core.models.v1.Contact loadContactWithUrn(String urn) {
+    private io.fcmchannel.sdk.core.models.v1.Contact loadContactWithUrn(String urn) {
         try {
-            return rapidProServices.loadContactV1(urn).execute().body().getResults().get(0);
+            return restServices.loadContactV1(urn).execute().body().getResults().get(0);
         } catch (Exception exception) {
             return null;
         }
     }
 
-    private boolean contactHasGroups(io.rapidpro.sdk.core.models.v1.Contact contactResult) {
+    private boolean contactHasGroups(io.fcmchannel.sdk.core.models.v1.Contact contactResult) {
         return contactResult != null && contactResult.getGroups() != null && !contactResult.getGroups().isEmpty();
     }
 
@@ -192,7 +192,7 @@ public class SaveContactTask extends AsyncTask<Void, Void, ContactBase> {
         String userCountry = countryInfo != null ? countryInfo.getCountryCode() : user.getCountry();
         String countryCode = getISO2CountryCode(userCountry);
 
-        List<Field> fields = rapidProServices.loadFields().execute().body().getResults();
+        List<Field> fields = restServices.loadFields().execute().body().getResults();
 
         ContactBuilder contactBuilder = new ContactBuilder(fields);
         return contactBuilder.buildContactWithFields(user, registrationDate, countryCode, countryProgram);
