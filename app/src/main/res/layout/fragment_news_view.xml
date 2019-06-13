@@ -56,7 +56,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:background="@drawable/background_rounded_label_primary_color"
+                android:background="@drawable/bg_gray_rounded"
                 android:text="@string/label_official"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
