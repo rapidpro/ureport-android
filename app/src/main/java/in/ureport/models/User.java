@@ -138,6 +138,8 @@ public class User implements Parcelable {
             return Gender.valueOf(this.gender);
         } catch (Exception exception) {
             return Gender.Male;
+        } catch (NullPointerException exception) {
+            return Gender.Male;
         }
     }
 
