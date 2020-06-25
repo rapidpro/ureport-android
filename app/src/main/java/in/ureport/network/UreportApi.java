@@ -11,7 +11,7 @@ import retrofit2.http.Query;
  */
 public interface UreportApi {
 
-    @GET("/stories/org/{org}/")
+    @GET("/api/v1/stories/org/{org}/")
     Call<Response<News>> listNews(@Path("org") int organization, @Query("page") int page);
 
 }
