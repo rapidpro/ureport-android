@@ -4,8 +4,6 @@ import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
-
-import com.crashlytics.android.Crashlytics;
 import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
@@ -16,7 +14,6 @@ import in.ureport.managers.CountryProgramManager;
 import in.ureport.managers.FirebaseProxyManager;
 import in.ureport.managers.UserManager;
 import in.ureport.services.UreportFcmRegistrationService;
-import io.fabric.sdk.android.Fabric;
 import io.rapidpro.sdk.FcmClient;
 import io.rapidpro.sdk.UiConfiguration;
 
@@ -29,9 +26,6 @@ public class UreportApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(this, new Crashlytics());
-        }
         TwitterConfig config = new TwitterConfig.Builder(this)
                 .logger(new DefaultLogger(BuildConfig.DEBUG ? Log.DEBUG : Log.ASSERT))
                 .twitterAuthConfig(new TwitterAuthConfig(getString(R.string.twitter_key), getString(R.string.twitter_secret)))
