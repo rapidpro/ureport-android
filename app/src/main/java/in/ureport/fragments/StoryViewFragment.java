@@ -358,9 +358,15 @@ public class StoryViewFragment extends ProgressFragment implements
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(UserManager.canModerate()
-                ? R.menu.menu_reject_story
-                : R.menu.menu_denounce_story, menu);
+        final int menuRes;
+        if (UserManager.canModerate()) {
+            menuRes = R.menu.menu_reject_story;
+        } else if (story.getUser().equals(UserManager.getUserId())) {
+            menuRes = R.menu.menu_delete_story;
+        } else {
+            menuRes = R.menu.menu_denounce_story;
+        }
+        inflater.inflate(menuRes, menu);
 
         if (shareActionButton == null) {
             MenuItem menuItem = menu.add(Menu.NONE, R.id.share, Menu.NONE, R.string.title_share);
@@ -375,6 +381,9 @@ public class StoryViewFragment extends ProgressFragment implements
             case R.id.disapproveStory:
                 disapproveStory();
                 break;
+            case R.id.deleteStory:
+                deleteStory();
+                break;
             case R.id.denounceStory:
                 denounceStory();
                 break;
@@ -385,10 +394,21 @@ public class StoryViewFragment extends ProgressFragment implements
     }
 
     private void disapproveStory() {
-        storyServices.removeStory(story, (error, reference) -> {
+        storyServices.removeStoryByModerator(story, (error, reference) -> {
             if (error == null) {
                 displayToast(R.string.message_story_disapproved);
-                getActivity().finish();
+                requireActivity().finish();
+            } else {
+                displayToast(R.string.error_remove);
+            }
+        });
+    }
+
+    private void deleteStory() {
+        storyServices.removeStory(story, (firebaseError, firebase) -> {
+            if (firebaseError == null) {
+                displayToast(R.string.message_success_remove);
+                requireActivity().finish();
             } else {
                 displayToast(R.string.error_remove);
             }

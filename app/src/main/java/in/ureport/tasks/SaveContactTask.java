@@ -34,7 +34,6 @@ import io.rapidpro.sdk.core.models.Field;
 import io.rapidpro.sdk.core.models.base.ContactBase;
 import io.rapidpro.sdk.core.models.v1.Contact;
 import io.rapidpro.sdk.core.network.RapidProServices;
-import retrofit.RetrofitError;
 
 /**
  * Created by johncordeiro on 18/08/15.
@@ -125,7 +124,7 @@ public class SaveContactTask extends AsyncTask<Void, Void, ContactBase> {
         updateContactWithGroups(contact);
         try {
             return rapidProServices.saveContactV1(contact).execute().body();
-        } catch (RetrofitError exception) {
+        } catch (IOException exception) {
             AnalyticsHelper.sendException(exception);
             Log.e(TAG, "doInBackground ", exception);
         }

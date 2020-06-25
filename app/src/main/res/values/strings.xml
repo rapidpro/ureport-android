@@ -248,6 +248,7 @@
     <string name="stories_moderation">Stories</string>
     <string name="label_moderation">Moderation</string>
     <string name="title_moderation">%1$s moderation</string>
+    <string name="label_delete">Delete</string>
     <string name="label_denounce">Denounce</string>
     <string name="button_title_disapprove">Reject</string>
     <string name="button_title_publish">Publish</string>
@@ -263,6 +264,7 @@
     <string name="story_share_info">Download U-Report app: http://goo.gl/Xxyodt</string>
     <string name="label_country_moderator">Country Moderators</string>
     <string name="message_success_user_update">User was updated with success!</string>
+    <string name="error_request">An error occurred during request</string>
 
     <string-array name="spinner_loading">
         <item>Loading...</item>
@@ -371,5 +373,43 @@
         <item quantity="one">%1$d like</item>
         <item quantity="other">%1$d likes</item>
     </plurals>
+
+    <string name="download_your_data">Download your data</string>
+    <string name="message_user_data_export">Want to download your data?</string>
+    <string name="close_your_account">Close your account</string>
+    <string name="message_user_account_close">Want to delete your account?</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="type_confirm">Type \"%1$s\" to close your account:</string>
+    <string name="confirm">Confirm</string>
+    <string name="error_type_confirm">Wrong input</string>
+    <string name="account_deleted">Account deleted</string>
+
+    <string name="user_data_user">User information</string>
+    <string name="user_data_nickname">Nickname: %s</string>
+    <string name="user_data_birthday">Birthday: %s</string>
+    <string name="user_data_email">Email: %s</string>
+    <string name="user_data_gender">Gender: %s</string>
+    <string name="user_data_country_program">Country program: %s</string>
+    <string name="user_data_state">State: %s</string>
+    <string name="user_data_district">District: %s</string>
+    <string name="user_data_chats">Chats</string>
+    <string name="user_data_chat_room">Chat type: %s, Messages:</string>
+    <string name="user_data_stories">Stories</string>
+    <string name="user_data_story_title">Story title: %s</string>
+    <string name="user_data_poll_title">Poll title: %s</string>
+    <string name="user_data_story">Story</string>
+    <string name="user_data_poll">Poll</string>
+    <string name="user_data_published_stories">Published stories</string>
+    <string name="user_data_liked_stories">Liked stories</string>
+    <string name="user_data_stories_in_moderation">Stories in moderation</string>
+    <string name="user_data_disapproved_stories">Disapproved stories</string>
+    <string name="user_data_content">Content: %s</string>
+    <string name="user_data_markers">Markers: %s</string>
+    <string name="user_data_created_date">Created date: %s</string>
+    <string name="user_data_contributions">Contributions</string>
+    <string name="user_data_contribution">Contribution: %s</string>
+    <string name="user_data_story_contributions">Story contributions</string>
+    <string name="user_data_poll_contributions">Poll contributions</string>
+    <string name="user_data_pdf_error">An error occurred during PDF generation process</string>
 
 </resources>

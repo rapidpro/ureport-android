@@ -67,9 +67,7 @@ public class ContributionServices extends ProgramServices {
     }
 
     public void removeContribution(String key, Contribution contribution, DatabaseReference.CompletionListener listener) {
-        getDefaultRoot().child(type.path).child(key).child(contribution.getKey()).removeValue();
-        getDefaultRoot().child(type.disapprovedPath).child(key)
-                .child(contribution.getKey()).setValue(contribution, listener);
+        getDefaultRoot().child(type.path).child(key).child(contribution.getKey()).removeValue(listener);
     }
 
     public void denounceContribution(String key, Contribution contribution, DatabaseReference.CompletionListener listener) {

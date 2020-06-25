@@ -84,7 +84,7 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         private final TextView author;
         private final ImageView picture;
         private final TextView date;
-        private PopupMenu popupMenu;
+        private final ImageView options;
 
         private final DateFormatter dateFormatter;
 
@@ -99,22 +99,17 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             author = (TextView) itemView.findViewById(R.id.tags);
             date = (TextView) itemView.findViewById(R.id.date);
 
-            setupViewForModeration(itemView);
-        }
-
-        private void setupViewForModeration(View itemView) {
-            ImageView moderationOptions = (ImageView) itemView.findViewById(R.id.moderationOptions);
-            moderationOptions.setVisibility(View.VISIBLE);
-            moderationOptions.setOnClickListener(onModerationOptionsClickListener);
-
-            popupMenu = new PopupMenu(itemView.getContext(), moderationOptions, Gravity.CENTER);
-            popupMenu.inflate(UserManager.canModerate()
-                    ? R.menu.menu_remove_contribution
-                    : R.menu.menu_denounce_contribution);
-            popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
+            options = itemView.findViewById(R.id.moderationOptions);
+            options.setVisibility(View.VISIBLE);
         }
 
         private void bindView(Contribution contribution) {
+            final PopupMenu popupMenu = new PopupMenu(itemView.getContext(), options, Gravity.CENTER);
+            popupMenu.inflate(UserManager.canModerate() || contribution.getAuthor().getKey().equals(UserManager.getUserId())
+                    ? R.menu.menu_remove_contribution : R.menu.menu_denounce_contribution);
+            options.setOnClickListener(view -> popupMenu.show());
+            popupMenu.setOnMenuItemClickListener(onMenuItemClickListener);
+
             if (contribution.getAuthor() != null) {
                 ImageLoader.loadPersonPictureToImageView(picture, contribution.getAuthor().getPicture());
                 this.author.setText(contribution.getAuthor().getNickname());
@@ -133,18 +128,13 @@ public class ContributionAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     case R.id.removeContribution:
                         if (onContributionRemoveListener != null)
                             onContributionRemoveListener.onContributionRemove(contributions.get(getLayoutPosition()));
+                        break;
                     case R.id.denounceContribution:
                         if (onContributionDenounceListener != null)
                             onContributionDenounceListener.onContributionDenounce(contributions.get(getLayoutPosition()));
+                        break;
                 }
                 return true;
-            }
-        };
-
-        private View.OnClickListener onModerationOptionsClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupMenu.show();
             }
         };
     }
